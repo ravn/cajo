@@ -153,7 +153,7 @@ public class ItemServer {
     * with other applications, checking for already bound items is unnecessary.
     * <p> The provided item will first have its startThread method invoked
     * with a null argument, to signal it to start its main processing thread
-    * (if it has one). Next it will have its setProxy method invoked remote
+    * (if it has one). Then it will have its setProxy method invoked with remote
     * reference to itself, with which it can share with remote VMs, in an
     * application specific manner (again if it has one).
     * @param item The item to be bound.  It may be either local to the machine,
@@ -172,8 +172,8 @@ public class ItemServer {
       }
       Remote handle = item instanceof Remote ? (Remote)item : new Remote(item);
       try {
-         Remote.invoke(item, "setProxy", new MarshalledObject(handle));
          Remote.invoke(item, "startThread", null);
+         Remote.invoke(item, "setProxy", new MarshalledObject(handle));
       } catch(Exception x) {}
       registry.rebind(name, handle);
       return handle;
@@ -181,11 +181,12 @@ public class ItemServer {
    /**
     * This method is used to bind a proxy serving item. It will remote a
     * reference to the server item, and bind in it the local rmiregistry under
-    * the name provided. It works identically to the bind operation for regular
-    * server items, with a few additional steps.<p>
-    * If the proxy has a setProxy method, it will be called with a remote
-    * reference to the serving item. If the item implements a setProxy method
-    * it will be called with a MarshalledObject containing the proxy item.
+    * the name provided. If the proxy has a setItem method, it will be called
+    * with a remote reference to the serving item. Next, the item will have its
+    * startThread method invoked (if it has one) with a null argument, to
+    * signal it to start its main processing thread. Then it will have its
+    * setProxy method invoked, (again if it has one) with a MarshalledObject
+    * containing the proxy item.
     * @param item The item to be bound.  It may be either local to the machine,
     * or remote, it can even be a proxy from a remote item, if proxy
     * {@link #acceptProxies acceptance} was enabled for this VM.
@@ -206,8 +207,8 @@ public class ItemServer {
       try { Remote.invoke(proxy, "setItem", handle); }
       catch(Exception x) {}
       try {
-         Remote.invoke(item, "setProxy", new MarshalledObject(proxy));
          Remote.invoke(item, "startThread", null);
+         Remote.invoke(item, "setProxy", new MarshalledObject(proxy));
       } catch(Exception x) {}
       registry.rebind(name, handle);
       return handle;
