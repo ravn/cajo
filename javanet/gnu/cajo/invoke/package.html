@@ -9,17 +9,17 @@ Items can also be mobile, moving from one VM to another, even providing
 graphical user interfaces to itself on remote hosts having video capability.
 It is designed to harness the power of such concepts as scale-free
 networking, and the emergent behavior of a collective network.<p>
-For the purposes of this paradigm, any object implementing the invoke
-interface is considered an <code>Item</code>. If a VM allows the loading
-of remote code, and an item is sent to it, that item is referred to as a
-<code>Proxy</code>.<p>
+For the purposes of this paradigm, any object implementing the
+{@link gnu.cajo.invoke.Invoke Invoke} interface is considered an
+<code>Item</code>. If a VM allows the loading of remote code, and an item is
+sent to it, that item is referred to as a <code>Proxy</code>.<p>
 This package must always be local to any client, and therefore would never
 be included in a proxy's codebase jar file.  This is to reduce the proxy's
 codebase size, while at the same time, create a level of development
 standardization.<p>
-Also included in the package is a client application/applet.  While not
-strictly necessary, it provides another standard paradigm for creating
-and using graphical proxy items. It could be compared to a next-generation
-X-client, but is much more capable, being able to perform general purpose
-computation on the client.<p>
+Also included in the package is a {@link gnu.cajo.invoke.Client client}
+application/applet. While not strictly topical to this package, it provides
+another standard paradigm for creating and using graphical proxy items. It
+could be compared to a next-generation X-client, but is much more capable,
+being able to perform general purpose computation on the client.<p>
 </body>
