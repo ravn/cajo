@@ -69,39 +69,38 @@
                                       Remotely accessible items are created from otherwise ordinary objects using
                                       the <a href=docs/gnu/cajo/invoke/Remote.html>Remote</a> class. Remote takes
                                       the object in its constructor, and implements the <a href=docs/gnu/cajo/invoke/Invoke.html>Invoke</a>
-                                      interface, which serves to make all of the member object's public methods
+                                      interface, which serves to make all of its member object's public methods
                                       remotely callable. The Invoke interface defines only one method:
 
                                          <pre><code>   Object invoke(String method, Object args);</code></pre>
 
                                       Remote objects call the invoke method on a remote reference to the object,
                                       passing it a method name, and an argument that can either be an object, and
-                                      object array, or null.  The invoke implementation of the Remote class uses a
-                                      Java mechanism called <i>reflection</i>, whereby it finds the public method
-                                      of its member object matching the name provided in the remote call, accepting
+                                      object array, or null.  The invoke implementation of the Remote class uses
+                                      the Java reflection mechanism, whereby it finds the public method of its
+                                      wrapped object matching the name provided in the remote call, accepting
                                       arguments of the type, and in the order provided by the caller.  If there is
                                       a match, it will invoke that method on the item, and return the result if
                                       any, or the exception, if thrown. If no matching method can be found however,
-                                      in both method name <i>and</i> argument order, the invocation will result in
-                                      a <code>NoSuchMethodException</code> being thrown at the caller.<br><br>
+                                      in <u>both</u> method name <i>and</i> argument order, the invocation will
+                                      result in a <code>NoSuchMethodException</code> being thrown at the caller.<br><br>
 
                                       Item objects are free to implement any public, in this case meaning remotely
                                       callable, methods of any type. The only requirement is that the calling
                                       object from a different machine, virtual <i>or</i> physical, must know the
                                       item's method signature. This is no different than for local objects, with
-                                      two exceptions. First there is no compile time type checking; all argument
+                                      two exceptions. First there is no compile time typechecking; all argument
                                       and return typechecking will be done at runtime. Second, primitive types
                                       such as <code>int</code> or <code>char</code> for example, cannot be sent
-                                      as arguments, or returned, rather they must be sent in their object wrappers,
+                                      as arguments, nor returned, rather they must be sent in their object wrappers,
                                       in this case <code>Integer</code> or <code>Character</code>. Essentially,
-                                      only objects can be passed between items.
+                                      only objects may be passed between items.
                                    </span>
                                  </td>
                               </tr>
                            </table></td>
                         </tr>
                      </table>
-
 
 <!-- begin regular section -->
    <table width="98%" height="35" border="0" align="center" cellpadding="0" cellspacing="0">
@@ -160,10 +159,11 @@
       <tr>
          <td valign="top">
             <span class="spacing style4 style7 style9">
-               By handling objects using the static Remote.invoke method, calling objects
-               need not know, or even care, if the objects are local or remote. However,
-               when it is important to know either the remoteness, or locality of an object
-               reference; it can be tested easily, in the following way:
+               When objects have their methods invoked using the static<a href=docs/gnu/cajo/invoke/Remote.html#invoke(java.lang.Object,%20java.lang.String,%20java.lang.Object)>
+               Remote.invoke</a> method, the calling object need not know if the object is
+               local or remote. However, if it is important to know the remoteness, or
+               locality of an object reference, it can be tested easily, in the following
+               way:
 
 <blockquote><code><pre>
    if (foo instanceof RemoteInvoke) {
@@ -201,12 +201,12 @@
          <td valign="top">
             <span class="spacing style4 style7 style9">
                The utility BaseItem class can optionally define a <a href= docs/gnu/cajo/utils/BaseItem.MainThread.html>MainThread</a>
-               object, which would be started automatically by the ItemServer, the on the
+               object, which would be started automatically by the ItemServer, on the
                binding of the item. This allows an item to perform default processing,
                independently of its other method invocation threads. Its main thread
                instance can be accessed via its public member named <a href=docs/gnu/cajo/utils/BaseItem.html#thread>thread</a>,
                on which it can be interrupted. In fact, the item's run method should
-               periodically monitor, to check if the thread <code>isInterrupted()</code>,
+               periodically monitor, to check if the thread <tt>isInterrupted()</tt>,
                and perform an orderly shutdown. An item can optionally have no main thread.
                This would be known as an <i>event-driven</i> item; meaning it executes only
                when called by a client. <i>Note:</i> having multiple clients can cause an
