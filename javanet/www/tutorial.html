@@ -291,9 +291,11 @@
                            on one port, and routing it to your machine on a another one.  For example,
                            port 80 is sometimes translated in a *nix environment.  In this case you would
                            specify the outside port. PT is <u><i>advanced</i></u> guru magic. If you are
-                           doing this, you already know what the command line would look like, so I won't
-                           waste everyone's time going into it here. Suffice it to say that it's
-                           supported.<br><br>
+                           doing this, you already know what the command line would look like, but just
+                           for the rest of us, here it is:
+                           <pre>    <code>java -jar server.jar 8080 1234 guru.org 100.100.100.100 80</code></pre>
+                           Here a client connecting on port 80 of the public address actually connects
+                           to an internal machine on its port 8080.<br><br>
 
                            <b><a href=tutorial.html#connecting name=connecting>Connecting to the server:</a></b><br><br>
                            Connecting to this example is generally done using a browser.  You will need
@@ -327,7 +329,7 @@
                            <div align="center">
                               <font face="Verdana, Helvetica" size="-2">
                                  <hr width="80%">
-                                 The deeper you look, the more the framework's power will reveal itself to you.
+                                 The deeper you look, the more of the framework's power will reveal itself to you.
                               </font>
                            </div>
 <!-- end main.html -->
