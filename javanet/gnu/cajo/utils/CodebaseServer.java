@@ -111,7 +111,8 @@ public final class CodebaseServer extends Thread {
     * @param port The TCP port on which to serve the codebase, and client
     * applet. It can be zero, to use an anonymous port. If zero, the actual
     * port selected by the OS at runtime will be stored in the
-    * {@link #port port} member.
+    * {@link #port port} member. To shut the service down, call its inherited
+	* interrupt method.
     * @throws IOException If the HTTP socket providing the codebase and applet
     * tag service could not be created.
     * @throws IllegalStateException If a second instance of this class is
@@ -142,11 +143,11 @@ public final class CodebaseServer extends Thread {
     * unspecified it will be 80.
     * <li><i>clientPort</i> The client's external port number on which the
     * remote proxy can be reached. It is often explicitly specified when the
-    * client is behind a firewall.  Unspecified, it will be the same as the
-    * localPort value, described next.
-    * <li><i>localPort</i> The client's internal port number the remote proxy
-    * can be reached. This may need to be specified if the client is using NAT
-    * Unspecified, it will be selected anonymously by the client at runtime.
+    * client is behind a firewall, or is using port translation.  Unspecified,
+    * it will be the same as the localPort value, described next.
+    * <li><i>localPort</i> The client's internal port number on which the
+    * remote proxy can be reached. Unspecified, it will be selected anonymously
+    * by the client at runtime.
     * <li><i>proxyName</i> The registered name of the proxy serving item, by
     * default "main", however a single server can support multiple items.
     * <li><i>!</i> This operator causes the proxy to be sent using JNLP. This
@@ -154,11 +155,15 @@ public final class CodebaseServer extends Thread {
     * <p>To unspecify any optional item, simply omit it, from the URL, along
     * with its preceeding delimiter, if any.  The <u>order</u> of the arguments
     * must be maintained however.<p>
-   */
+	* <i>Note:</i> other item servers can share this instance, by placing their
+	* proxy jar files in the same working directory. However, those item
+	* servers will not be able to use the client service feature, as it is
+	* unique to the VM in which the CodebaseServer is running.
+    */
    public void run() {
       try {
          byte msg[] = new byte[256];
-         while(true) {
+         while(!isInterrupted()) {
             Socket s = ss.accept();
             try {
                InputStream  is = s.getInputStream();
