@@ -273,16 +273,16 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
             int closeness = 0;
             Method m = (Method)match_list.get(i);
             for (int j = 0; j < args.length; j++) {
-               // If next method argument is a superclass of the
+               // If next method argument is a subclass of the
                // corresponding argument in the current "best match
-               // method"  -> Increase closeness count. If it is a
-               // subclass -> Decrease closeness count. If it is a
-               // peer     -> Leave closeness count unchanged. This
+               // method"    -> Increase closeness count. If it is a
+               // superclass -> Decrease closeness count. If it is a
+               // peer       -> Leave closeness count unchanged. This
                // will handle implemented interfaces in addition to
                // extended classes of the argument
                Class best = m_selected.getParameterTypes()[j];
                Class next = m.getParameterTypes()[j];
-               if (!next.isAssignableFrom(best))closeness++;
+               if (!next.isAssignableFrom(best))closeness++; else
                if (!best.isAssignableFrom(next))closeness--;
             }
             if (closeness > goodness) {
