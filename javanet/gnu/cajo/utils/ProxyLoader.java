@@ -91,14 +91,14 @@ public final class ProxyLoader implements Invoke {
             ois.close();
             is.close();
          } else proxy = (Invoke)Class.forName(handle).newInstance();
-         proxy.invoke(null, server);
-         return proxy.invoke(method, args);
-      } else return ((Invoke)proxy).invoke(method, args);
+         proxy.invoke("setItem", server);
+      }
+      return proxy.invoke(method, args);
    }
    /**
     * This method is used to identify the contents of the ProxyLoader.
     * It returns the value stored in the handle member variable.  This is
-    * rimarily intended to assist in debugging.
+    * primarily intended to assist in debugging.
     * @return The path and filename of the proxy resource, either class or
     * object.
     */
