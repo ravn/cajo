@@ -6,6 +6,7 @@
       <meta name="Author" content="John Catherino">
    </head>
    <body bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800000" alink="#FF0000">
+<div id="projecthome" class="app">
       <table width="100%" cellspacing="0" cellpadding="0" border="0">
          <tr>
             <td><img src="images/topl.gif" width="17" height="17" border="0"></td>
@@ -106,7 +107,9 @@
                            proxy invocation, cannonically a descendant of java.awt.Container, is added
                            to the applet's panel.  This allows a single client to host an unlimited
                            variety of graphical application proxies, using only one client applet, with
-                           <u>all</u> of the code provided by the server.<br><br>
+                           <u>all</u> of the code provided by the server.
+
+                           <h3>Applet Configuration</h3><br>
 
                            The server fully configures the applet using the parameters specified in
                            its tag.  The client can provide three of the optional configuration
@@ -135,7 +138,9 @@
                            <pre><code>   http://host[:port]/[clientPort][:localPort][-proxyName]</code></pre>
 
                            The parameters in brackets can be selectively omitted, but the order of
-                           arguments is required.<br><br>
+                           arguments is required.
+
+                           <h3>Application configuration</h3><br>
 
                            The class can also operate as an application. In this case, it provides two
                            distinct capabilities. First it creates a remotely accessible proxy hosting
@@ -171,10 +176,12 @@
                               <li> //host[:port]/[name] to load it from an rmiregistry
                            </ul>
 
-                           <b><u>Very Important:</u></b> This class, when run as an application, is
-                           intended for testing and development purposes in a trusted enviornment.
-                           It is <u>extremely unsafe</u> to run on the Internet. To make its use
-                           for development purposes simpler, the client application employs a
+                           <h3>Very Important:</h3><br>
+
+                           This client, when run as an application, is intended for testing and
+                           development purposes in a trusted enviornment. It is <i>extremely unsafe</i>
+                           to run on the Internet. To make its use for development purposes simpler,
+                           the client application employs a
                            <a href=docs/gnu/cajo/invoke/NoSecurityManager.html>NoSecurityManager</a>.
                            As its name implies, this allows any loaded proxy to do anything it wants, on
                            the host's physical machine. Under some circumstances granting proxy
@@ -203,13 +210,15 @@ grant {
                            make the same
                            <a href=http://developer.java.sun.com/developer/bugParade/bugs/4915879.html target=_blank>
                            mistake</a> I did. (essentially, omission of the first argument, completely
-                           negates the second)<br><br>
+                           negates the second)
 
-                           One more detail: by design, the client VM is vulnerable to a <i>denial of
-                           service attack</i>.  Though unlikely, a malicious server could flood the
-                           client's Virtual Machine with so many proxies that it crashes.  However with
-                           proper security installed, no real harm would come to the host machine. It's
-                           an inherent risk of hosting mobile code... just so you know.<br><br>
+                           <h3>Conclusion</h3><br>
+
+                           Keep in mind, any client VM is vulnerable to a <i>denial of service attack</i>.
+                           Though unlikely, a malicious server could flood the client's Virtual Machine
+                           with so many proxies that it crashes.  However with proper security installed,
+                           no real harm would come to the host machine. It's an inherent risk of hosting
+                           mobile code... just so you know.<br><br>
 
                            Lastly, all classes in the <a href=docs/gnu/cajo/invoke/package-summary.html>
                            invoke</a> package have no knowlege of the existence of the
