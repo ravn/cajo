@@ -76,10 +76,10 @@
                                       burdensome, especially if the interaction between objects becomes highly
                                       diverse; and is completely impossible when method signatures are unknown
                                       at compile time. To address these issues, the framework defines only one
-                                      functional interface; every item inherits the <a href=docs/gnu/cajo/invoke/Invoke.html>
-                                      Invoke</a> interface. It defines a single method, to represent all object
-                                      methods; it accepts a method name, the arguments to be provided to it, and
-                                      the data to be returned; i.e.:
+                                      remote interface; called <a href=docs/gnu/cajo/invoke/Invoke.html>
+                                      Invoke</a>. It defines a single method, to represent all object
+                                      methods; it accepts a method name, the arguments to be provided to it,
+                                      and the data to be returned; i.e.:
 
                                       <pre>   Object invoke(String method, Object args);</pre>
 
@@ -92,8 +92,8 @@
                                       invocations, both the argument and the return can be of type Object[]
                                       indicating multiple objects are being transferred, or they can be null
                                       indicating no object transfer. Also, it is <i>highly</i> recommended that
-                                      rather than using the invoke interface directly, always interact with a
-                                      remote reference using the static invoke method of the <a href=docs/gnu/cajo/invoke/Remote.html>
+                                      rather than using the invoke interface directly, always interact with an
+                                      object reference using the static invoke method of the <a href=docs/gnu/cajo/invoke/Remote.html>
                                       Remote</a> class.  It has the following signature:
 
                                       <pre>   Object Remote.invoke(Object object, String method, Object args);</pre>
@@ -132,10 +132,10 @@
                Java feature known as <i>reflection</i>.  The Remote class takes <i>any</i>
                object, and places a remotely invokable wrapper around it. When remote
                objects execute the invoke method, Remote uses reflection to find the method
-               on its internal object, matching both the name and the argument types. If it
-               is found, it executes that method, and returns the result, if any.  If no
-               matching method can be found on the internal object, a
-               <tt>NoSuchMethodException</tt> is thrown. This technique effectively
+               on its internal object, matching both the name and the argument types, if
+               any. If it is found, it executes that method, and returns the result, or
+               exception, if any. If no matching method can be found on the internal object,
+               a <tt>NoSuchMethodException</tt> is thrown. This technique effectively
                makes all public methods of the internal object remotely callable;
                except those using primitive types, such as int and char, in arguments,
                or as returns.
@@ -201,10 +201,10 @@
       <tr>
          <td valign="top">
             <span class="spacing style4 style7 style9">
-               References to remote items can be easily passed to other items,
-               as a method argument, or return. They can even be written to disc, and
-               read back for use at some later time. However, obtaining initial references
-               is done via two standard mechanisms:<br><br>
+               References to remote items can be easily passed to other items, as a method
+               argument, or return, even in an exception. They can also be written to disc,
+               and read back for use at some later time. However, obtaining initial
+               references is done via two standard mechanisms:<br><br>
 
                First, it is generally useful to <a href=docs/gnu/cajo/utils/ItemServer.html#bind(java.lang.Object,%20java.lang.String)>
                bind</a> each item with the ItemServer class. ItemServer will automatically
@@ -213,11 +213,11 @@
                item by name. The rmiregistry, and the item communicate using the same TCP
                port. Therefore, all that is required for a client to obtain a reference to
                an item using this mechanism is the server host name, port number, and the
-               name under which the item is bound. Cannonically, the default item for any
+               name under which the item is bound. Canonically, the default item for any
                server is bound under the name "<i>main</i>". Obtaining a reference to a
                bound remote item is accomplished using the static <a href=docs/gnu/cajo/invoke/Remote.html#getItem(java.lang.String)>
                getItem</a> method of the Remote class. This mechanism is called linking
-               <i>statically</i>. <br><br>
+               <u><i>statically</i></u>. <br><br>
 
                The second mechanism to obtain a reference to a remote item is using the <a href=docs/gnu/cajo/utils/Multicast.html>
                Multicast</a> class. Unlike the previous method which uses TCP/IP to obtain
@@ -225,8 +225,8 @@
                server's TCP address and port number, the client needs to know the UDP
                address and port number the server will be using. The difference is that
                servers can pick their UDP addresses, and they are independent of their TCP
-               address. Also, a server can use multiple multiple UDP addresses if needed.
-               Multiple servers will share the same address, to form <i>groups</i>. A server
+               address. Also, a server can use multiple UDP addresses if needed. Multiple
+               servers will share the same address, to form <i>groups</i>. A server
                <i>broadcasts</i> a remote reference to an item by calling the <a href=docs/gnu/cajo/utils/Multicast.html#announce(java.lang.Object,%20int)>
                announce</a> method of Multicast.  This will send the reference to all
                clients listening in the <i>group</i>. Items listen for these announcements
@@ -235,7 +235,7 @@
                to be unfamiliar to a lot of developers, so an entire tutorial <a href=multicast.html>
                page</a> has been dedicated to the use of the Multicast class. This mechanism
                allows items to spontaneously form networks of functionality by linking
-               <i>dynamically</i>.
+               <u><i>dynamically</i></u>.
             </span>
          </td>
       </tr>
@@ -260,7 +260,7 @@
       <tr>
          <td valign="top">
             <span class="spacing style4 style7 style9">
-               Essentially, any Java application is but a collection of objects, used by a
+               Essentially, any Java application is just a collection of objects, used by a
                virtual machine, to accomplish a specific purpose. This framework
                transparently provides developers the object resources of other remote
                virtual machines, with which to create applications.<br><br>
@@ -275,21 +275,19 @@
                other virtual machines. Additionally, they can interact with remote
                objects of other virtual machines. They can even interact with proxy
                objects loaded into their virtual machine, typically from other virtual
-               machines, whose class definitions, if unknown to the client, would be
-               provided by codebase servers. They can even interact with remote proxy
-               objects. Proxies have the same connection options as local objects. In fact,
-               every type of object can freely interact with any other type of object
-               within a virutal machine, and even across virtual machine boundaries, with
-               the exception of local-to-local.<br><br>
+               machines, whose class definitions would be provided by codebase servers.
+               They can even interact with remote proxy objects. Proxies have the same
+               connection options as local objects. In fact, every type of object can
+               freely interact with any other type of object within a virutal machine, and
+               even across virtual machine boundaries, but then with the exception of
+               local-to-local.<br><br>
 
                Now relax; this has been a lot of material, presented in a <i>very</i> short
-               time. Trust me, it took <u>much</u> longer to come up with this, than to
-               explain it. So now take a break, do something else, let it soak in. Soon a
-               profound <i>breakthrough</i> will occur; then, let me be the first to welcome
-               you to:
-               <blockquote>
-                  The <a href=http://weblogs.java.net/pub/wlg/1715>World Wide Virtual Machine</a>! :-)
-               </blockquote>
+               time. It took <u>much</u> longer to come up with this, than it did to explain
+               it. So now take a break, do something else, and let it all soak in. Soon a
+               profound <i>revelation</i> will occur... Then, let me be the first to welcome
+               you to: The <a href=http://weblogs.java.net/pub/wlg/1715>World Wide Virtual
+               Machine</a>!
             </span>
          </td>
       </tr>
