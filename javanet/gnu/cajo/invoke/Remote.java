@@ -323,7 +323,9 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
     * the result returned, if any. The method is declared static to centralize
     * the implementation, and allow other derived classes to use this
     * mechanism without having to reimplement it.
-    * @param item The object on which to invoke the method.
+    * @param item The object on which to invoke the method. If the item
+    * implements the {@link Invoke Invoke} interface, the call will be passed
+    * directly to it.
     * @param method The method name to be invoked.
     * @param args The arguments to provide to the method for its invocation.
     * @return The resulting data, if any, from the invocation.
@@ -334,6 +336,7 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
     */
    public static Object invoke
       (Object item, String method, Object args) throws Exception {
+      if (item instanceof Invoke) return ((Invoke)item).invoke(method, args);
       if (method == null) throw
          new IllegalArgumentException("Method argument cannot be null");
       if(args instanceof Object[]) {
@@ -390,13 +393,8 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
    /**
     * The sole generic, multi-purpose interface for communication between VMs.
     * This function may be called reentrantly, so the inner object <i>must</i>
-    * synchronize its critical sections as necessary.  If the internal object
-    * implements the {@link Invoke Invoke} interface, the call will simply be
-    * forwarded to the internal implementation's method.  Otherwise, the
-    * method specified will be invoked, with the provided arguments if any,
-    * on the internal object's public method via the Java reflection mechanism,
-    * and the result returned, if any. Technically, it simply passes the call
-    * to this class' static invoke method.
+    * synchronize its critical sections as necessary. Technically, it simply
+    * passes the call to this class' static invoke method.
     * @param method The method to invoke on the internal object.
     * @param args The arguments to provide to the method for its invocation.
     * It can be a single object, an array of objects, or even null.
@@ -410,8 +408,7 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
     * application specific reasons.
     */
    public Object invoke(String method, Object args) throws Exception {
-      return (item instanceof Invoke) ?
-         ((Invoke)item).invoke(method, args): invoke(item, method, args);
+      return invoke(item, method, args);
    }
    /**
     * This method sends its remote reference to another item, either from a
