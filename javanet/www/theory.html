@@ -100,11 +100,8 @@
                            within its virtual machine. Items can call other items (local or remote)
                            and an item can also be called by other items (local or remote). A special
                            type of item is known as a <a href=proxy.html>Proxy</a>. Proxies are items
-                           sent from one virtual machine, to execute in the context of another.  This
-                           allows an application to be originally designed with all of its items
-                           local to its virtual machine, then evolve until each item exists
-                           in a separate virtual, or even physical machine; with no changes to the
-                           source code</u>.<br><br>
+                           sent from one virtual machine, to execute in the context of another. Proxies
+                           can also be called by other items, or proxies, either local, or remote.<br><br>
 
                            In the standard RMI framework, each remote object must have a unique <i>"stub"</i>
                            compiled for it. This can quickly become burdensome, especially if the
@@ -117,8 +114,8 @@
 
                               <pre><tt>   Object invoke(String method, Object args);</tt></pre>
 
-                           <a id="rules"></a><i>Note:</i> this mechanism operates slightly differently
-                           from local Java method invocation in two distinct ways.  First the return
+                           </a><i>Note:</i> this mechanism operates slightly differently
+                           from standard Java method invocation in two distinct ways.  First the return
                            type must be of type Object or a derived type.  This means an invocation
                            cannot return a primitive type, such as int or char. Second, the argument
                            type must also be of type Object, meaning it too cannot be a primitive type.
@@ -127,7 +124,7 @@
                            they can even be null, indicating no object transfer.<br><br>
 
                            <b>Remoting Items</b><br>
-                           The invocation of a method on a remote item using the Invoke interface is
+                           The invocation of a method on a remote object using the Invoke interface is
                            made possible using the
                            <a href=docs/gnu/cajo/invoke/Remote.html>Remote</a> class.  It utilizes
                            a Java feature known as <i>reflection</i>.  The Remote class can take
@@ -137,19 +134,20 @@
                            argument types. If it is found, it executes that method, and returns the
                            result, if any.  If no matching method can be found on the internal object,
                            a <code>NoSuchMethodException</code> is thrown. This technique effectively
-                           makes all public methods of the internal object remotely callable<br><br>
+                           makes all public methods of the internal object remotely callable. Naturally,
+                           excepting those using primitive types.<br><br>
 
                            <b>Contacting Items</b><br>
                            Items, i.e. objects wrapped by a Remote object, are made remotely
-                           accessible in one of two ways. First it is generally useful to bind the
+                           accessible in two distinct ways. First, it is generally useful to bind the
                            object with the <a href=docs/gnu/cajo/utils/ItemServer.html>ItemServer</a>
                            class. ItemServer will create an rmiregistry and bind the object under the
-                           name provided. Now other clients can contact this registry, and obtain a
+                           name provided. Other clients can now contact this registry, and obtain a
                            remote reference to the item.  The rmiregistry, and the item communication
-                           use the same TCP port, therefore all that is required of a client to obtain
-                           a reference to the item is the IP address and port of the item server, and
+                           use the same TCP port, therefore all that is required for a client to obtain
+                           a reference to the item is the host name and port of the item server, and
                            the name under which the item is bound in the rmiregistry. Cannonically,
-                           the default item for a server is bound under the name "<i>main</i>".<br><br>
+                           the default item for any server is bound under the name "<i>main</i>".<br><br>
 
                            The second method to obtain a reference to a remote item is done using the
                            <a href=docs/gnu/cajo/utils/Multicast.html>Multicast</a> class. Unlike the
@@ -161,7 +159,7 @@
                            calling the announce method of ItemServer.  This will send the reference to
                            all clients listening on the address/port pair.  Items listen for these
                            announcements using the listen method of Multicast.  This allows items to
-                           dynamically collaborate to form item networks of functionality.<br><br>
+                           dynamically link to form item networks of functionality.<br><br>
 
                            <b>Mobile Code</b><br>
                            An item can send mobile code, complex objects, and proxy items to clients
