@@ -39,7 +39,7 @@
 
 It is very easy to incorporate the cajo framework into any existing
 application. Hopefully this overview will help clarify the
-process...<br><br>
+process.<br><br>
 
 Let's start with an example object:<br>
 
@@ -61,7 +61,7 @@ One of the most important aspects of the cajo framework is that it does not
 require any changes to your objects, in order to use them remotely. Even if
 your application is already using another distributed object framework,
 you'll see it is very easy to drop in cajo support too, thereby increasing
-your distributed user base. To make this object remotely accessible, the
+your distributed user base. To make an object remotely accessible, the
 framework provides two options, commonly known as static and dynamic binding;
 both may even be used on the same object.<br><br>
 
@@ -86,18 +86,18 @@ client with a reference, when a remote object makes an announcement.<br><br>
 In either case, once a remote reference to an object is obtained, it can be
 used to invoke its public methods. The reference can also be passed to other
 objects, including remote ones, as either a method argument, or a return
-value. It could even be thrown in an Exception, even to a remote caller. The
-object receiving this reference can also invoke its remote methods. The
-reference can even be written to a file, via the static
+value. It could even be thrown in an Exception, and even to a remote caller.
+The object receiving this reference can also invoke its remote methods. The
+reference can even be written to a file, typically using the static
 <a href=docs/gnu/cajo/invoke/Remote.html#zedmob(java.io.OutputStream,%20java.lang.Object)>zedmob</a>
 method of the
-Remote class, to be used later, possibly by another program.  The key
-to all this is the static
-<a href=docs/gnu/cajo/invoke/Invoke.html#invoke(java.lang.String,%20java.lang.Object)>invoke</a>
+Remote class, for use later, even possibly by another program.  The key
+to all this power is the static
+<a href=docs/gnu/cajo/invoke/Remote.html#invoke(java.lang.Object,%20java.lang.String,%20java.lang.Object)>invoke</a>
 method of the Remote class.<br><br>
 
 Invoke is the cajo architecture approach to dynamic method invocation,
-supplemented by the use of Java reflection. It is the foundation of the
+supplemented with the use of Java reflection. It is the foundation of the
 framework. It can be used to invoke any public method on any type of object,
 even local ones.<br><br>
 
@@ -110,14 +110,14 @@ object, local or remote. The method argument is quite reasonably the name of
 the method to be invoked. The args argument represents naturally enough, the
 arguments to be provided to the method, if any. Multiple arguments are
 represented when args is an Object array. The args value can even be null.
-The method's result works in the typical fashion. The method declares that it
-throws Exception, to allow the called method the freedom to throw any type of
-Exception, including none at all.<br><br>
+The method's result works in the typical fashion, as would be expected. The
+method declares that it throws Exception, to allow the called method the
+freedom to throw any type of Exception, including none at all.<br><br>
 
 Now it might appear that all type safety has been completely abandoned,
 looking somewhat like a return to the C language; however, what has really
-happened is that stron type checking has moved, necessarily from to compile
-time, to run time. There is however a very useful technique to restore
+happened is that strong type checking has moved, necessarily from to compile
+time, to run time. There is however, a very useful technique to restore
 compile time checking; it is called a
 <a href=docs/gnu/cajo/utils/extra/Wrapper.html>wrapper</a> class.<br><br>
 
@@ -125,7 +125,7 @@ In the case where the interface to a remote object is already known by the
 client, it can define a wrapper class that will take the remote reference,
 and provide a compile time type safe interface to it.<br><br>
 
-For example:<br>
+Wrapping our previous example:<br>
 
 <tt><pre>public class WrapperObject {
    protected final SomeObject obj;
@@ -143,7 +143,7 @@ Again note that since the Remote.invoke method works on both remote and
 ordinary local objects, the wrapper paradigm provides the ability to
 transparently scale from local to remote object interaction, without
 affecting the remaining source code. It provides the ultimate in freedom;
-the wrapped object can even change, from local, to remote, to a different
+the wrapped object can even be changed, from local, to remote, to a different
 server, even at runtime!<br><br>
 
 
