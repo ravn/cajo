@@ -6,6 +6,7 @@ import java.rmi.RemoteException;
 import java.rmi.server.ServerNotActiveException;
 import java.io.PrintStream;
 import java.io.OutputStream;
+import java.io.ObjectOutputStream;
 
 /*
  * Item Invocation Monitor
@@ -48,22 +49,38 @@ import java.io.OutputStream;
  * @version 1.0, 01-Nov-99 Initial release
  * @author John Catherino
  */
-public final class MonitorItem implements Invoke {
+public class MonitorItem implements Invoke {
    private final Object item;
-   private final PrintStream ps;
-   private long oldtime;
+   private final OutputStream os;
+   private long oldtime = System.currentTimeMillis();
    /**
     * This creates the monitor object, to instrument the target object's use.
     * The the logging information is passed to the OutputStream, where it can
     * be logged to a file, a socket, or simply sent to the console (System.out).
+    * The logged data is in text format.
     * @param item The object to receive the client invocation.
     * @param os The OutputStream to send the formatted log information.
     */
    public MonitorItem(Object item, OutputStream os) {
       this.item = item;
-      this.ps = os instanceof PrintStream ?
-         (PrintStream)os : new PrintStream(os);
-      oldtime = System.currentTimeMillis();
+      this.os = os instanceof PrintStream ? os : new PrintStream(os);
+   }
+   /**
+    * This creates the monitor object, to instrument the target object's use.
+    * The the logging information is passed to an ObjectOutputStream.
+    * <i>Note:</i> this type of monitoring provides both the greatest detail,
+    * and can be most easily manipulated programmatically. However, it is even
+    * </i>more</i> expensive than text logging. The log file can become
+    * <i>extremely</i> large, if the objects passed in or out are complex, or
+    * if the object is called frequently. Therefore, it is <u>highly</u>
+    * recommended to implement the ObjectOutputStream on top of a
+    * GZipOutputStream.
+    * @param item The object to receive the client invocation.
+    * @param os The ObjectOutputStream to send input and result objects.
+    */
+   public MonitorItem(Object item, ObjectOutputStream os) {
+      this.item = item;
+      this.os = os;
    }
    /**
     * This method is overridden here to ensure that two different monitor
@@ -95,6 +112,8 @@ public final class MonitorItem implements Invoke {
     * <li> The idle time between invocations, in milliseconds.
     * <li> The run time of the invocation time, in milliseconds
     * <li> The free memory percentage, following the invocation</ul>
+    * If the write operation to the log file results in an exception, the
+    * stack trace of will be printed to System.err.
     * @param method The internal object's public method being called.
     * @param  args The arguments to pass to the internal object's method.
     * @return The sychronous data, if any, resulting from the invocation.
@@ -111,55 +130,71 @@ public final class MonitorItem implements Invoke {
          result = x;
          throw x;
       } finally {
-         try {
-            int run = (int)(System.currentTimeMillis() - time);
-            synchronized(ps) {
-               ps.print("\nCaller host =\t");
-               try { ps.print(RemoteServer.getClientHost()); }
-               catch(ServerNotActiveException x) { ps.print("localhost"); }
-               ps.print("\nItem called =\t");
-               ps.print(item.toString());
-               ps.print("\nMethod call =\t");
-               ps.print(method);
-               ps.print("\nMethod args =\t");
-               if (args instanceof java.rmi.MarshalledObject)
-                  args = ((java.rmi.MarshalledObject)args).get();
-               if (args instanceof Object[]) {
-                  ps.print("<array>");
-                  for (int i = 0; i < ((Object[])args).length; i++) {
-                     ps.print("\n\t[");
-                     ps.print(i);
-                     ps.print("] =\t");
-                     ps.print(((Object[])args)[i].toString());
-                  }
-               } else ps.print(args != null ? args.toString() : "null");
-               ps.print("\nResult data =\t");
-               if (result instanceof java.rmi.MarshalledObject)
-                  result = ((java.rmi.MarshalledObject)result).get();
-               if (result instanceof Exception) {
-                  ((Exception)result).printStackTrace(ps);
-               } else if (result instanceof Object[]) {
-                  ps.print("array");
-                  for (int i = 0; i < ((Object[])result).length; i++) {
-                     ps.print("\n\t[");
-                     ps.print(i);
-                     ps.print("] =\t");
-                     ps.print(((Object[])result)[i].toString());
-                  }
-               } else ps.print(result != null ? result.toString() : "null");
-               ps.print("\nIdle time   =\t");
-               ps.print(time - oldtime);
-               ps.print(" ms");
-               ps.print("\nBusy time   =\t");
-               ps.print(run);
-               ps.print(" ms");
-               Runtime rt = Runtime.getRuntime();
-               ps.print("\nFree memory =\t");
-               ps.print((int)((rt.freeMemory() * 100) / rt.totalMemory()));
-               ps.println('%');
-               oldtime = time;
-            }
-         } catch(Exception x) { x.printStackTrace(System.err); }
+         int run = (int)(System.currentTimeMillis() - time);
+         String clientHost = null;
+         try { clientHost = RemoteServer.getClientHost(); }
+         catch(ServerNotActiveException x) { clientHost = "localhost"; }
+         Runtime rt = Runtime.getRuntime();
+         int freeMemory =
+            (int)((rt.freeMemory() * 100) / rt.totalMemory());
+         ObjectOutputStream oos =
+             os instanceof ObjectOutputStream ? (ObjectOutputStream) os : null;
+         PrintStream ps = os instanceof PrintStream ? (PrintStream)  os : null;
+         synchronized(os) {
+            try {
+               if (oos != null) {
+                  oos.writeObject( new Object[] {
+                     clientHost, item.toString(), // may not be serializable!
+                     method, args, result, new Long(time - oldtime),
+                     new Integer(run), new Integer(freeMemory)
+                  });
+                  oos.flush(); // just for good measure...
+               } else if (ps != null) {
+                  ps.print("\nCaller host = ");
+                  ps.print(clientHost);
+                  ps.print("\nItem called = ");
+                  ps.print(item.toString());
+                  ps.print("\nMethod call = ");
+                  ps.print(method);
+                  ps.print("\nMethod args = ");
+                  if (args instanceof java.rmi.MarshalledObject)
+                     args = ((java.rmi.MarshalledObject)args).get();
+                  if (args instanceof Object[]) {
+                     ps.print("<array>");
+                     for (int i = 0; i < ((Object[])args).length; i++) {
+                        ps.print("\n\t[");
+                        ps.print(i);
+                        ps.print("] =\t");
+                        ps.print(((Object[])args)[i].toString());
+                     }
+                  } else ps.print(args != null ? args.toString() : "null");
+                  ps.print("\nResult data = ");
+                  if (result instanceof java.rmi.MarshalledObject)
+                     result = ((java.rmi.MarshalledObject)result).get();
+                  if (result instanceof Exception) {
+                     ((Exception)result).printStackTrace(ps);
+                  } else if (result instanceof Object[]) {
+                     ps.print("array");
+                     for (int i = 0; i < ((Object[])result).length; i++) {
+                        ps.print("\n\t[");
+                        ps.print(i);
+                        ps.print("] =\t");
+                        ps.print(((Object[])result)[i].toString());
+                     }
+                  } else ps.print(result != null ? result.toString() : "null");
+                  ps.print("\nIdle time   = ");
+                  ps.print(time - oldtime);
+                  ps.print(" ms");
+                  ps.print("\nBusy time   = ");
+                  ps.print(run);
+                  ps.print(" ms");
+                  ps.print("\nFree memory = ");
+                  ps.print(freeMemory);
+                  ps.println('%');
+               }
+            } catch(Exception x) { x.printStackTrace(System.err); }
+         }
+         oldtime = time;
       }
    }
 }
