@@ -84,7 +84,7 @@ public final class ClientProxy implements Invoke {
          done = false;          // indicate callback pending
          notify();              // wake the client callback thread
          wait(5000);            // suspend the server item thread
-         if (!done) throw new InterruptedException("Callback Timeouw");
+         if (!done) throw new InterruptedException("Callback Timeout");
          if (this.args instanceof Exception) throw (Exception)this.args;
          return this.args;      // return the callback result
       }
