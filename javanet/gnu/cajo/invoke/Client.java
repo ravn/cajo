@@ -83,7 +83,7 @@ public final class Client extends java.applet.Applet implements Invoke {
    }
    /**
     * When running as an applet, this method is describes the optional client
-    * applet perameters. There are six such parameters which can be specified:
+    * applet perameters. There are five such parameters which can be specified:
     * <ul>
     * <li>The <code>proxyName</code> parameter is the name of the proxy server
     * registered in the server's rmiregistry.  Unspecified it will be "main".
@@ -100,11 +100,6 @@ public final class Client extends java.applet.Applet implements Invoke {
     * specified if the client is behind NAT, to map to the correct local port.
     * If a firewall is being used, it must be a permitted inbound port.
     * Unspecified, it will be the same as the local port value below.
-    * <li>The <code>localHost</code> parameter is the internal domain name or
-    * IP address the proxy will use when calling back its server.  It may need
-    * to be specified if the client has multiple network interfaces, or is
-    * operating behind NAT. Unspecified it will be the client's default local
-    * host address.
     * <li>The <code>localPort</code> parameter is the internal inbound port
     * number on which the server will callback its proxy. It may need to be
     * specified if the client is behind NAT, to map to the correct remote port.
@@ -119,7 +114,6 @@ public final class Client extends java.applet.Applet implements Invoke {
          { "proxyPort",  "Integer", "Server's proxy's port number"   },
          { "clientHost", "String",  "Client's external host name"    },
          { "clientPort", "Integer", "Client's external port number"  },
-         { "localHost",  "String",  "Client's internal host name"    },
          { "localPort",  "Integer", "Client's internal port number"  },
       };
    }
@@ -141,13 +135,11 @@ public final class Client extends java.applet.Applet implements Invoke {
          String proxyPort  = getParameter("proxyPort");
          String clientHost = getParameter("clientHost");
          String clientPort = getParameter("clientPort");
-         String localHost  = getParameter("localHost");
          String localPort  = getParameter("localPort");
          int pPort = proxyPort  != null ? Integer.parseInt(proxyPort)  : 1099;
          int cPort = clientPort != null ? Integer.parseInt(clientPort) : 0;
          int lPort = localPort  != null ? Integer.parseInt(localPort)  : 0;
-         if (localHost == null) localHost = clientHost;
-         Remote.config(localHost, lPort, clientHost, cPort);
+         Remote.config(null, lPort, clientHost, cPort);
          if (proxyName == null) proxyName = "main";
          Object proxy =
             LocateRegistry.getRegistry(getCodeBase().getHost(), pPort);
@@ -212,10 +204,10 @@ public final class Client extends java.applet.Applet implements Invoke {
     * The application creates a remotely accessible proxy hosting VM, bound
     * in its own rmiregistry under the name "main". It will use the getProxy
     * method of the Remote class to load the item. <i>Note:</i> by default,
-    * it will load a NoSecurityManager if no external SecurityManager is
-    * specified.
-    * <p>The startup can take up to five optional configuration parameters,
-    * in order:<p>
+    * it will load a {@link NoSecurityManager NoSecurityManager} if no external
+    * SecurityManager is specified.
+    * <br><br>The startup can take up to five optional configuration parameters,
+    * in this order:<br><br>
     * @param args[0] The optional external client host name, if using NAT.
     * @param args[1] The optional external client port number, if using NAT.
     * @param args[2] The optional internal client host name, if multi home/NIC.

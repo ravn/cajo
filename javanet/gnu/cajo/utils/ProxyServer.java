@@ -148,25 +148,17 @@ public final class ProxyServer implements Runnable {
     * {@link java.rmi.MarshalledObject MarshalledObject} containing the proxy
     * item.
     * <br><br>The format of a browser's proxy request URL one required and has
-    * six optional parameters, utilizing the following format:<p><code>
-    * http://serverHost[:serverPort]/[clientHost][;clientPort][@localHost][:localPort][-proxyName]
+    * three optional parameters, utilizing the following format:<p><code>
+    * http://serverHost[:serverPort]/[clientPort][:localPort][-proxyName]
     * </code><p>
     * Where the parameters have the following meanings:<ul>
     * <li><i>serverHost</i> The domain name, or IP address of the proxy server.
     * <li><i>serverPort</i> The port number of the applet/codebases service,
     * unspecified it will be 80.
-    * <li><i>clientHost</i> The client's host name.  It must be specified when
-    * the client is operating behind NAT, has multiple network interfaces, is
-    * multi-homed, or one or more of the above.  Left unspecified, the client's
-    * incoming host address as received by the server will be used.
     * <li><i>clientPort</i> The client's external port number on which the
     * remote proxy can be reached. It is often explicitly specified when the
     * client is behind a firewall.  Unspecified, it will be an anonymous port
     * selection, made by the client's operating system at runtime.
-    * <li><i>localHost</i> The domain name, or IP address the proxy must use
-    * to callback to its server.  This may need to be specified if the client
-    * has multiple network interfaces, or is multi-homed. Unspecified, the
-    * client will call back on the client's default network interface.
     * <li><i>localPort</i> The port number the proxy must use to callback the
     * server.  This may need to be specified if the client is behind a
     * firewall.  Unspecified, it will be selected anonymously by the client
@@ -283,36 +275,22 @@ public final class ProxyServer implements Runnable {
                } else if (itemName.indexOf('/', 1) == -1) {
                   try { // parse request arguments
                      int proxyPort = Remote.getClientPort();
-                     int ia = itemName.indexOf(';') != -1 ? itemName.indexOf(';') :
-                        itemName.indexOf('@') != -1 ? itemName.indexOf('@') :
-                        itemName.indexOf(':') != -1 ? itemName.indexOf(':') :
+                     int ia = itemName.indexOf(':') != -1 ? itemName.indexOf(':') :
                         itemName.indexOf('-') != -1 ? itemName.indexOf('-') :
                         itemName.length();
-                     int ib = itemName.indexOf('@') != -1 ? itemName.indexOf('@') :
-                        itemName.indexOf(':') != -1 ? itemName.indexOf(':') :
-                        itemName.indexOf('-') != -1 ? itemName.indexOf('-') :
+                     int ib = itemName.indexOf('-') != -1 ? itemName.indexOf('-') :
                         itemName.length();
-                     int ic = itemName.indexOf(':') != -1 ? itemName.indexOf(':') :
-                        itemName.indexOf('-') != -1 ? itemName.indexOf('-') :
-                        itemName.length();
-                     int id = itemName.indexOf('-') != -1 ? itemName.indexOf('-') :
-                        itemName.length();
-                     int ie = itemName.length() > ic ? itemName.length() : ic;
-                     String clientHost =
-                        ia >  1 ? itemName.substring(     1, ia) : null;
+                     int ic = itemName.length() > ib ? itemName.length() : ib;
                      String clientPort =
-                        ib > ia ? itemName.substring(ia + 1, ib) : null;
-                     String localHost =
-                        ic > ib ? itemName.substring(ib + 1, ic) : null;
+                        ia >  1 ? itemName.substring(     1, ia) : null;
                      String localPort =
-                        id > ic ? itemName.substring(ic + 1, id) : null;
+                        ib > ia ? itemName.substring(ia + 1, ib) : null;
                      String proxyName =
-                        ie > id ? itemName.substring(id + 1, ie) : name;
-                     if (clientHost == null) clientHost = s.getInetAddress().getHostAddress();
+                        ic > ib ? itemName.substring(ib + 1, ic) : name;
+                     String clientHost = s.getInetAddress().getHostAddress();
                      byte iex[] = ( // used by Internet Explorer:
                         "<PARAM NAME = \"clientHost\" VALUE = \"" + clientHost + "\">\r\n" +
 (clientPort != null ?   "<PARAM NAME = \"clientPort\" VALUE = \"" + clientPort + "\">\r\n" : "") +
-(localHost  != null ?   "<PARAM NAME = \"localHost\"  VALUE = \"" + localHost  + "\">\r\n" : "") +
 (localPort  != null ?   "<PARAM NAME = \"localPort\"  VALUE = \"" + localPort  + "\">\r\n" : "") +
                         "<PARAM NAME = \"proxyPort\"  VALUE = \"" + proxyPort  + "\">\r\n" +
                         "<PARAM NAME = \"proxyName\"  VALUE = \"" + proxyName  + "\">\r\n"
@@ -320,7 +298,6 @@ public final class ProxyServer implements Runnable {
                      byte nav[] = ( // used by Navigator and Appletviewer:
                         "clientHost = " + clientHost + "\r\n" +
 (clientPort != null ?   "clientPort = " + clientPort + "\r\n" : "") +
-(localHost  != null ?   "localHost  = " + localHost  + "\r\n" : "") +
 (localPort  != null ?   "localPort  = " + localPort  + "\r\n" : "") +
                         "proxyPort  = " + proxyPort  + "\r\n" +
                         "proxyName  = " + proxyName  + "\r\n"
