@@ -1,0 +1,69 @@
+<body>
+A set of common utilities used by either proxies, or servers.  Since the
+client might not have these classes locally, the ones used must be sent,
+to its RMIClassLoader as needed.  This package is a generalized collection
+of various helpful classes, to be drawn on for application specific needs.
+As a general rule, do not compile all of the utility classes blindly, rather
+jar any classes resulting from the compilation of the proxy or server classes.
+<p>Two core architectural entities, are used as the foundation to create a
+confederation of interoperating items. They work together to accomplish
+complex tasks in a modular and free-form fashion.
+A single VM can implement as many of these items as it wishes.
+<p>There are two established core entities in this package:<ul>
+   <li><code>ItemServer</code>
+   This is the base server utility.  It creates a local rmiregistry,
+   one per VM, and binds each object in it under the name returned by its
+   toString() method.  Basic servers derive from its member class.
+   <li><code>ProxyServer</code>
+   This is used for sending proxy code from an item to execute in a
+   remote VM.  The proxies can communicate back with the sending item
+   asynchronously, and send a remote reference to themselves on which
+   the server, or other remote items, can communicate asynchronously with
+   it.
+</ul>
+Items can bridge to each other items across either virtually, logically, and
+physically separated items. One VM can serve multiple items and proxies
+simultaneously.  The package seeks to establish the following roles
+between items:<p>
+An item is the control element of the system, it performs three major
+tasks:<ul>
+  <li>control system resources
+  <li>monitor system operation
+  <li>log system transactions
+</ul>A proxy is a item-specific interface program, designed to
+separate, and manage the following functions:<ul>
+  <li>item data formatting and presentation
+  <li>user input; validation, and feedback
+  <li>localization and internationalization
+</ul>Each item instance can invoke a remote method invocation on another.
+The invocation may, or may not, carry inbound data, and may, or may not,
+result in a synchronous response of data.  Additionally, a remote method
+invocation may initiate an asynchronous operation in the receiver, resulting
+in a subsequent RMI invocation from the receiver back to the client, at a
+later time.<p>
+The overall network structure looks something like this:<pre>
+
+ --------------         --------------
+|  Server VM   |       |  Client VM   |
+|  ----------  | TCP   |  ----------  |
+| | Item     | | links | | Proxy    | |
+| |----------| |       | |----------| |
+| | http     | |<------| | codebase | |
+| | callback | |<------| | notify   | |
+| | notify   | |------>| | callback | |
+|  ----------  |       |  ----------  |
+ --------------         --------------
+
+</pre>
+<i>Note:</i> Each established TCP link consumes a corresponding anonymous
+return link, so the following port consumption realities must be considered:
+<ul>
+<li>The item consumes 2 inbound ports permanently (http/callback)
+<li>The item consumes 1 outbound short-term port per client (http)
+<li>The item consumes 2 outbound session-term ports per client (notify/callback)
+</ul>
+Therefore, it should be understood that since each connecting client
+will consume 2 dynamically allocated TCP ports, theoretically, no more
+than 32k simultaneous clients could be served by one address, assuming the
+address had no other servers.  Therefore for very high usage sites, multiple
+physical machines, or a multi-homed host, would become necessary.</body>

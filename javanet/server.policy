@@ -1,0 +1,7 @@
+grant codeBase "file:${java.class.path}" {
+   permission java.security.AllPermission;
+}; // the server jar file can do anything it wants, however ...
+grant { // loaded proxies get only extremely limited permission:
+   permission java.net.SocketPermission "*:1024-", "accept";
+   permission java.net.SocketPermission "*", "connect";
+};
