@@ -80,9 +80,9 @@
 
                            The
                            <a href=docs/gnu/cajo/utils/CodebaseServer.html>CodebaseServer</a> could be
-                           considered one of the world's smallest application server. It is completely
+                           considered one of the world's smallest application servers. It is completely
                            customized to support the cajo framework. The entire server consists of
-                           a single class, yet it serves (no pun intended) two <i>major</i> purposes.
+                           a single class, yet it serves (no pun intended) two <i>major</i> roles.
 
                            <h3>Codebase Service</h3><br>
 
@@ -93,7 +93,7 @@
                            case with proxies, it will not have the application specific classes needed
                            by the received proxy. When this happens, the RMI framework steps in; it will
                            call back to the item server, and request the class definitions. The primary
-                           use of the CodebaseServer is to manage this transfer, and it does it
+                           use of the CodebaseServer is to manage this transfer, and it does this
                            automatically and transparently. The necessary classes are provided to the
                            remote host, loaded into its runtime, and the proxy then operates locally in
                            the context of that VM.<br><br>
@@ -101,8 +101,7 @@
                            All proxy-specific class files, and other files needed by the proxy, such as
                            images or localized string tables, are packaged into a single jar file. The
                            next topic, <a href=example.html>example</a>, will illustrate a very easy way
-                           to do this. The jar file will be sent, as requested by remote proxy hosts,
-                           when reconstructing the proxy object in their runtimes.<br><br>
+                           to do this.<br><br>
 
                            You will need a codebase server any time you are sending proxies to another
                            remote machine.  You will also need one if you are sending application
@@ -132,9 +131,9 @@
                            interpret this as a request for the client to be run as an applet, inside the
                            requesting browser. If an exclamation point is appended, this will be
                            interpreted as a request for the client to be run as an application, on the
-                           desktop of the requesting host. The provided arguments themselves are used to
-                           configure the client for operation within the requester's VM, as explained in
-                           the client topic. <i>Note:</i> the client is also contained in a separate jar
+                           desktop of the requesting host. The provided arguments are used to configure
+                           the client for operation within the requester's VM, as explained in the
+                           client topic. <i>Note:</i> the client itself is contained in a separate jar
                            file. The CodebaseServer will also handle its transfer automatically.<br><br>
 
                            The client loading process is as follows:<ol>
@@ -150,9 +149,9 @@
 
                            </ol>An elaborate process, to be sure, but all handled transparently behind
                            the scenes. The code is all there, for the curious, but truth be told, like
-                           the Java API source, you need not read it, in order to use it effectively.
-                           This was only a high-level overview, for your edification, the
-                           <i>mind-numbing</i> technical details were intentionally omitted. If this
+                           the Java API source, you need not understand it completely, in order to use
+                           it effectively. This was only a high-level overview, for your edification,
+                           the <i>mind-numbing</i> technical details were intentionally omitted. If this
                            already has your head spinning, don't worry about it; especially don't worry
                            about the next section, simply go on to the conclusion.
 
@@ -160,13 +159,13 @@
 
                            OK, for you <i>hot-shots</i> who want to squeeze out every last ounce of
                            performance, you probably already thought of this, but here it is anyway.
-                           Because the CodebaseServer performs the functionality of a generic http
+                           Since the CodebaseServer performs the functionality of a generic http
                            server, if you do not require the client application service functionality,
-                           you can share another item's CodebaseServer. <i>Simply</i> place your proxy
-                           jar file in the working directory of another CodebaseServer, and use the
-                           fully-qualified constructor of the ItemServer, to tell clients where to
-                           find the file. <i>Note:</i> The CodebaseServer need not even be in the same
-                           physical box as the server item. Just ponder the implications of that :-)
+                           you can share another item's CodebaseServer (or generic server). Simply place
+                           your proxy jar file in the working directory of another CodebaseServer, and
+                           use the fully-qualified constructor of the ItemServer, to tell clients where
+                           to find the file. <i>Note:</i> The CodebaseServer need not even be in the
+                           same physical box as the server item. Just ponder the implications of that :-)
                                                       
                            <h3>Conclusion</h3><br>
 
