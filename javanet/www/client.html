@@ -36,19 +36,19 @@
                               <b>Inside the cajo graphical client application.</b>
                            </font><br><br>
 
-                           The
-                           <a href=docs/gnu/cajo/invoke/Client.html>Client</a> class operates in two
-                           fundamentally different, but functionally complementary ways.<br><br>
+                           The client class is a generic, general purpose graphical proxy host. It can
+                           be used to display and interact with any graphical proxy, without need for
+                           any customication. It can operate in two fundamentally different, but
+                           functionally complementary ways; as an applet, or as an application.<br><br>
 
-                           One way it runs is as an Applet.  The applet, upon loading by a Java
-                           enabled browser, will connect back to its host and request either the
-                           default proxy, or one specified in the applet tag. Next it will initialize
-                           the proxy, by calling its init method, providing a reference to the proxy
-                           remoted within the context of the plug-in's VM.  Finally, the return of this
-                           proxy invocation, cannonically a descendant of java.awt.Container, is added
-                           to the applet's panel.  This allows a single client to host an unlimited
-                           variety of graphical application proxies, using only one client applet, with
-                           <u>all</u> of the code provided by the server.
+                           As an applet, on loading by a Java enabled browser, it will connect back to
+                           its host and request either the default proxy, or one specified in the
+                           applet tag. Next it will initialize the proxy, by calling its init method,
+                           providing a reference to the proxy remoted within the context of the plug-in's
+                           VM.  Finally, the return of this proxy invocation, cannonically a descendant
+                           of java.awt.Container, is added to the applet's panel. This allows a single
+                           client to host an unlimited variety of graphical application proxies, using
+                           only one client applet. All of the code is provided by the server.
 
                            <h3>Applet Configuration</h3><br>
 
@@ -87,16 +87,12 @@
 
                            <h3>Application configuration</h3><br>
 
-                           The class can also operate as an application. In this case, it provides two
-                           distinct capabilities. First it creates a remotely accessible proxy hosting
-                           item.  This item accepts invocations with an argument of either a remote
-                           reference, or a proxy. If the provided argument is a remote item, it will
-                           first invoke getProxy() on it, to receive its proxy item. Either way, it will
-                           initialize it in the identical manner as the applet does, and if the
-                           initialization returns a Component (or JComponent), it will create a frame
-                           (or JFrame) on the client machine, displaying the result. The second optional
-                           function, provided by the client is to additionally load an initial proxy
-                           item at startup.<br><br>
+                           The class can also operate as an application. This is very useful for testing
+                           and development purposes. It is also the fastest and most efficient means to
+                           host a remote graphical proxy. It connects to a remote item, requests its
+                           proxy, initializes it in the identical manner as the applet does, and if the
+                           initialization returns a Component (or a JComponent), it will create a frame
+                           (or a JFrame) on the client machine, displaying the result.<br><br>
 
                            The application can take up to five optional parameters.  They are in order,
                            from  most often changed, to least often, because to change an option, all of
