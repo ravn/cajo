@@ -1,88 +1,156 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN""http://www.w3.org/TR/html4/loose.dtd">
 <html>
-   <head>
-      <title>The CaJo Project</title>
-      <meta name="Keywords" content="cajo, rmi, java, distributed computing, Transparent Distributed Computing">
-      <meta name="Description" content="Cajo Distributed Application Framework">
-      <meta name="Author" content="John Catherino">
-   </head>
-   <body>
-      <div id="projecthome" class="app">
-      <table width="100%" align="center">
+
+<head>
+   <title>cajo - The cajo project</title>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <link href="ventro/css.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+
+<table width="98%" border="0" cellpadding="0" cellspacing="0">
+   <tr>
+      <table width="100%" height="67"  border="0" cellpadding="4" cellspacing="0">
          <tr>
-            <td>
-
-<!-- begin main.html -->
-
-                           <font size="4">
-                              <b>Some folks who are making a big difference...</b>
-                           </font><br><br>
-                           <ul>
-
-                              <li>Richard M. Stallman and the <a href="http://www.fsf.org" target=_blank>
-                              Free Software Foundation</a>, for starting it all, and for donating the cajo
-                              <a href=http://www.gnu.org/software/java/packages.html target=_blank>
-                              namespace</a>. If you don't know who rms is, you should definitely read this
-                              excellent <a href=http://www.oreilly.com/catalog/freedom/ target=_blank>
-                              book</a> about him! OK, well, technically, I've only
-                              <a href=http://mail.gnu.org/archive/html/javaweb-submit/2003-08/msg00004.html target=_blank>
-                              requested</a> the namespace.<br><br>
-
-                              <li>Eric S. Raymond, and Rob Landley, with whom I had the pleasure to confer
-                              with at length, at <a href="http://www.penguicon.org" target=_blank>Penguicon</a>.
-                              For encouraging me to open my most precious and personal source code; you
-                              made the case guys. I did it!  By the way, congratulations Eric on your
-                              very excellent new
-                              <a href=http://www.awprofessional.com/isapi/product_id~%7B463E5844-9CE8-4CB6-9DBB-3847C768E000%7D/catalog/product.asp target=_blank>
-                              book</a>!<br><br>
-
-                              <li>Chris DiBona, your advice and encouragement meant a lot to me at the
-                              start of this adventure.  Your <a href= http://www.oreilly.com/catalog/opensources/ target=_blank>book</a>
-                              was also a pivotal inspiration.<br><br>
-
-                              <li>Esmond Pitt (a.k.a.)
-                              <a href=http://forum.java.sun.com/profile.jsp?user=52259 target=_blank>ejp</a> on the
-                              Sun Java RMI forum; for patiently answering my, and many others questions
-                              over the years, especially as they became more esoteric. Also for your
-                              outstanding
-                              <a href=http://www.pearsoned.co.uk/Bookshop/detail.asp?item=100000000013468 target=_blank>book</a>,
-                              on my very favorite subject no less!<br><br>
-
-                              <li>Project member Fredrik Larsen, who, with assistance from project member
-                              Li Ma, '<i>changed the rules</i>' of Java Reflection. Now; for the project's
-                              invoke paradigm: subclasses <u>and</u> subinterfaces <u>will</u> be recognised!<br><br>
-
-                              <li>Project member Ekkehard Gentz, who demonstrated that the example
-                              needed a root properties file to work on non-English localised machines, and
-                              also provided the example properties file, translated <i>auf Deutsch</i>!<br><br>
-
-                              <li>Fellow free software developer Jean-Marie Dautelle, for his experienced
-                              feedback to this project. And also for his most generous contribution; an
-                              <u>Ant script</u> to build the project example! Jean-Marie heads two
-                              excellent open source projects; providing classes and packages missing from
-                              core Java, for real-time, scientific, and safety-critical applications. I
-                              highly recommend a visit to learn more about:
-                              <a href=http://jscience.org>jScience</a>. He also provided us with the
-                              example properties file, translated <i>en fran&ccedil;ais</i>!<br><br>
-
-                              <li>Olivier Brizard, for his proposal to include support for HTTP proxy
-                              tunnels, as required by corporate policy. He both made the case, <i>and</i>
-                              validated its operation. He is helping to foster a new era of cooperation
-                              between fiercely firewalled corporations. <i>D&eacute;tente</i>.<br><br>
-
-                              <li>More to come!<br><br>
-
-                           </ul>
-                           <div align="center">
-                              <font size="-2">
-                                 <hr width="80%">
-                                 A special thanks to the entire community... <u><b>T</b></u>ogether
-                                 <u><b>E</b></u>veryone <u><b>A</b></u>chieves <u><b>M</b></u>ore!
-                              </font>
-                           </div>
-<!-- end main.html -->
-
+            <td background="ventro/vert_logobarbg.gif">
+               <table width="100%" height="47"  border="0" cellpadding="4" cellspacing="0">
+                  <tr><br>
+                     <td width="85" valign="bottom">
+                        <div align="right">
+                           <img src="ventro/cajologo.gif" width="61" height="34">
+                           <img src="ventro/blank.gif" width="6" height="8">
+                        </div>
+                     </td>
+                     <td width="10"><img src="ventro/seperatorline.gif" width="1" height="38"></td>
+                     <td>
+                        <span class="style8">
+                           <font size="+1">
+                              <b>Free, simple, powerful: Transparent Distributed Computing</b>
+                           </font>
+                        </span>
+                     </td>
+                  </tr>
+               </table>
             </td>
          </tr>
       </table>
-   </body>
+      <table border="0" cellspacing="0" cellpadding="4">
+         <tr>
+            <td height="331" valign="top" bgcolor="#FFFFFF">
+               <td width="100%" valign="top" bgcolor="#FFFFFF">
+                  <table width="100%" border="0" cellpadding="4" cellspacing="0" bgcolor="#FFFFFF">
+                     <tr>
+                        <td>
+                           <table width="100%" height="35" border="0" cellpadding="0" cellspacing="0">
+                              <tr>
+                                 <td width="2%" background="ventro/bar_bg.gif"><img src="ventro/arrowed.gif" width="30" height="35"></td>
+                                 <td width="100%" background="ventro/bar_bg.gif">
+                                    <table width="100%" height="31" border="0" cellpadding="0" cellspacing="0">
+                                       <tr>
+                                          <td>
+                                             <span class="style8 style12">
+<!-- main page title bar -->                    <div align="left">Some folks who are making a big difference</div>
+                                             </span>
+                                          </td>
+                                       </tr>
+                                    </table>
+                                 </td>
+                                 <td width="3%"><img src="ventro/bar_Right.gif" width="10" height="35"></td>
+                              </tr>
+                           </table>
+                           <table width="95%" height="96" border="0" cellpadding="9" cellspacing="0">
+                              <tr>
+                                 <td valign="top">
+<!-- title bar section -->         <span class="spacing style4 style7 style9">
+                                      <li>Richard M. Stallman and the <a href="http://www.fsf.org" target=_blank>
+                                      Free Software Foundation</a>, for starting it all, and for donating the cajo
+                                      <a href=http://www.gnu.org/software/java/packages.html target=_blank>
+                                      namespace</a>. If you don't know who rms is, you should definitely read this
+                                      excellent <a href=http://www.oreilly.com/catalog/freedom/ target=_blank>
+                                      book</a> about him! OK, well, technically, I've only
+                                      <a href=http://mail.gnu.org/archive/html/javaweb-submit/2003-08/msg00004.html target=_blank>
+                                      requested</a> the namespace.<br><br>
+
+                                      <li>Eric S. Raymond, and Rob Landley, with whom I had the pleasure to confer
+                                      with at length, at <a href="http://www.penguicon.org" target=_blank>Penguicon</a>.
+                                      For encouraging me to open my most precious and personal source code; you
+                                      made the case guys. I did it!  By the way, congratulations Eric on your
+                                      very excellent new
+                                      <a href=http://www.awprofessional.com/isapi/product_id~%7B463E5844-9CE8-4CB6-9DBB-3847C768E000%7D/catalog/product.asp target=_blank>
+                                      book</a>!<br><br>
+
+                                      <li>Chris DiBona, your advice and encouragement meant a lot to me at the
+                                      start of this adventure.  Your <a href= http://www.oreilly.com/catalog/opensources/ target=_blank>book</a>
+                                      was also a pivotal inspiration.<br><br>
+
+                                      <li>Esmond Pitt (a.k.a.)
+                                      <a href=http://forum.java.sun.com/profile.jsp?user=52259 target=_blank>ejp</a> on the
+                                      Sun Java RMI forum; for patiently answering my, and many others questions
+                                      over the years, especially as they became more esoteric. Also for your
+                                      outstanding
+                                      <a href=http://www.pearsoned.co.uk/Bookshop/detail.asp?item=100000000013468 target=_blank>book</a>,
+                                      on my very favorite subject no less!<br><br>
+
+                                      <li>Project member Fredrik Larsen, who, with assistance from project member
+                                      Li Ma, '<i>changed the rules</i>' of Java Reflection. Now; for the project's
+                                      invoke paradigm: subclasses <u>and</u> subinterfaces <u>will</u> be recognised!<br><br>
+
+                                      <li>Project member Ekkehard Gentz, who demonstrated that the example
+                                      needed a root properties file to work on non-English localised machines, and
+                                      also provided the example properties file, translated <i>auf Deutsch</i>!<br><br>
+
+                                      <li>Fellow free software developer Jean-Marie Dautelle, for his experienced
+                                      feedback to this project. And also for his most generous contribution; an
+                                      <u>Ant script</u> to build the project example! Jean-Marie heads two
+                                      excellent open source projects; providing classes and packages missing from
+                                      core Java, for real-time, scientific, and safety-critical applications. I
+                                      highly recommend a visit to learn more about:
+                                      <a href=http://jscience.org>jScience</a>. He also provided us with the
+                                      example properties file, translated <i>en fran&ccedil;ais</i>!<br><br>
+
+                                      <li>Olivier Brizard, for his proposal to include support for HTTP proxy
+                                      tunnels, as required by corporate policy. He both made the case, <i>and</i>
+                                      validated its operation. He is helping to foster a new era of cooperation
+                                      between fiercely firewalled corporations. <i>D&eacute;tente</i>.<br><br>
+
+                                      <li>More to come!
+                                    </span>
+                                 </td>
+                              </tr>
+                           </table></td>
+                        </tr>
+                     </table>
+
+<!-- footer: -->
+   <table width="95%" height="56" border="0" align="center" cellpadding="9" cellspacing="0">
+      <tr>
+         <td valign="top">
+            <div align="center">
+               <hr width=90%">
+               <span class="spacing style4 style7 style9">
+                  A special thanks to the entire community... <u><b>T</b></u>ogether
+                  <u><b>E</b></u>veryone <u><b>A</b></u>chieves <u><b>M</b></u>ore!
+               </span>
+            </div>
+         </td>
+      </tr>
+   </table><br>
+
+   <table width="98%" height="35" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+         <td width="2%" background="ventro/bar_bg.gif"><img src="ventro/arrowed.gif" width="30" height="35"></td>
+         <td width="95%" valign="top" background="ventro/bar_bg.gif">
+            <table width="100%" height="31" border="0" cellpadding="0" cellspacing="0">
+               <tr>
+                  <td width="47%"><span class="style11">&copy; 2004 GNU FDL</span></td>
+                  <td width="53%"><div align="right"></div></td></tr></table></td>
+                  <td width="3%"><img src="ventro/bar_Right.gif" width="10" height="35"></td></tr></table></td>
+               </tr>
+            </table>
+         </td>
+      </tr>
+   </table>
+
+</body>
 </html>
