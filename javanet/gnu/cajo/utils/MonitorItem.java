@@ -50,9 +50,10 @@ import java.io.OutputStream;
  * @version 1.0, 01-Nov-99 Initial release
  * @author John Catherino
  */
-public class MonitorItem implements Invoke {
-   private final Invoke item;
+public final class MonitorItem implements Invoke {
+   private final Object item;
    private final PrintStream ps;
+   private final Class itemClass;
    private transient long oldtime;
    /**
     * This creates the monitor object, to instrument the target item's use.
@@ -62,10 +63,11 @@ public class MonitorItem implements Invoke {
     * @param os The OutputStream to send the formatted log information.  It
     * could be a file or socket stream, or even System.out.
     */
-   public MonitorItem(Invoke item, OutputStream os) {
+   public MonitorItem(Object item, OutputStream os) {
       this.item = item;
       this.ps = os instanceof PrintStream ?
          (PrintStream)os : new PrintStream(os);
+      this.itemClass = item.getClass();
       oldtime = System.currentTimeMillis();
    }
    /**
@@ -106,8 +108,25 @@ public class MonitorItem implements Invoke {
    public Object invoke(String method, Object args) throws Exception {
       long time = System.currentTimeMillis();
       Object arg = args;
-      try { return args = item.invoke(method, args); }
-      catch(Exception x) {
+      try {
+         if (item instanceof Invoke)
+            return args = ((Invoke)item).invoke(method, args);
+         else if (method == null)
+            throw new IllegalArgumentException("Method argument cannot be null");
+         Class types[] = null;
+         if (args instanceof Object[]) {
+            types = new Class[((Object[])args).length];
+            for (int i = 0; i < types.length; i++)
+               types[i] = ((Object[])args)[i] instanceof Invoke ?
+                  Invoke.class : ((Object[])args)[i].getClass();
+         } else if (args != null) {
+            types = new Class[] {
+               args instanceof Invoke ? Invoke.class : args.getClass() };
+            args = new Object[] { args };
+         }
+         return args =
+            itemClass.getMethod(method, types).invoke(item, (Object[])args);
+      } catch(Exception x) {
          args = x;
          throw x;
       } finally {
