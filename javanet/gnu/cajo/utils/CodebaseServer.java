@@ -110,8 +110,8 @@ public final class CodebaseServer {
     * If the browser does not have the correct plug-in this server will cause
     * it to prompt the user to have it installed automatically.
     * <br><br>The format of a browser's proxy request URL one required, and
-    * four optional parameters, utilizing the following format:<p><code>
-    * http://serverHost[:serverPort]/[clientPort][:localPort][-proxyName]
+    * five optional parameters, utilizing the following format:<p><code>
+    * http://serverHost[:serverPort]/[clientPort][:localPort][-proxyName][!]
     * </code><p>
     * Where the parameters have the following meanings:<ul>
     * <li><i>serverHost</i> The domain name, or IP address of the proxy server.
@@ -125,7 +125,9 @@ public final class CodebaseServer {
     * can be reached. This may need to be specified if the client is using NAT
     * Unspecified, it will be selected anonymously by the client at runtime.
     * <li><i>proxyName</i> The registered name of the proxy serving item, by
-    * default "main", however a single server can support multiple items.</ul>
+    * default "main", however a single server can support multiple items.
+    * <li><i>!</i> This operator causes the proxy to be sent using JNLP. This
+    * will launch the proxy as an application on the client.</ul>
     * <p>To unspecify any optional item, simply omit it, from the URL, along
     * with its preceeding delimiter, if any.  The <u>order</u> of the arguments
     * must be maintained however.<p>
