@@ -115,22 +115,6 @@
                            needs one port. The CodebaseServer can also be used to send complex objects
                            to an client, who would in turn require the necessary class definitions.
 
-                           <h3>Accepting Proxies</h3><br>
-
-                           A server can optionally accept proxies, from other servers as well. Generally
-                           it is done by invoking the
-                           <a href=docs/gnu/cajo/utils/ItemServer.html#acceptProxies()>acceptProxies</a>
-                           method of the ItemServer class. A server does not accept proxies by default.
-                           A proxy can be sent to a server either as an argument, or a return value,
-                           though typically it is done using an item's
-                           <a href=docs/gnu/cajo/utils/BaseItem.html#setProxy(gnu.cajo.invoke.Invoke)>
-                           setProxy</a> method. Where the returned value from this invocation will be a
-                           remote reference to the installed proxy, over which the sending item can
-                           communicate with it. The setProxy method is often overridden, to provide the
-                           arriving proxy with additional local resources, on which it may operate.  A
-                           <u>ClassNotFoundException</u> will be automatically thrown by the
-                           remote server, if it is not accepting proxies.
-
                            <h3>Requesting Proxies</h3><br>
 
                            A proxy is typically obtained from an item reference by using a null argument

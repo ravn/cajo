@@ -187,6 +187,26 @@
                            when called by a client. <i>Note:</i> having multiple clients can cause an
                            Item's public methods to be invoked reentrantly.
 
+                           <h3>Accepting Proxies</h3><br>
+
+                           BaseItem also supports a standard method by which remote items may install
+                           proxies in the local VM. A remote client can invoke the BaseItem's
+                           <a href=docs/gnu/cajo/utils/BaseItem.html#setProxy(gnu.cajo.invoke.Invoke)>setProxy</a>
+                           method, passing its proxy, as the argument. The default implementation will
+                           invoke the proxy's init method, passing a reference to the proxy, remoted
+                           within the context of the BaseItem's VM, to start its operation and with
+                           which it may share with other items/proxies. It will then return the same
+                           reference back to the calling VM, on which it may asynchronously communicate
+                           with its proxy. Receiving too many proxies could overload a VM, therefore
+                           acceptance of proxies is disabled by default. It can be enabled by invoking
+                           the
+                           <a href=docs/gnu/cajo/utils/ItemServer.html#acceptProxies()>acceptProxies</a>
+                           method of the ItemServer class. Attempting to send a proxy to an VM that
+                           does not accept them will result in a ClassNotFoundException being
+                           automatically thrown at the caller. BaseItem's setProxy method is often
+                           extended, to provide additional application specific resources to the
+                           arriving proxy.
+
                            <h3>Conclusion</h3><br>
 
                            Ultimately that's all there is to an item. To make an item reference
