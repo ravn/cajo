@@ -66,7 +66,7 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
          return new Socket(this.host, this.port != 0 ? this.port : port);
       }
    }
-   private static Invoke proxy;
+   private static Object proxy;
    private static Registry registry;
    /**
     * A global reference to the remote client socket factory.  This is the
@@ -163,36 +163,37 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
    }
    /**
     * A utility method to reconstitute a zipped marshalled object (zedmob)
-    * into a remote item reference. <i>Note:</i> on completion of reading the
-    * item from the stream, the stream will be automatically closed.
+    * into a remote item reference, proxy object, or local object. <i>Note:</i>
+    * on completion of reading the item from the stream, the stream will be
+    * automatically closed.
     * @param is The input stream containing the zedmob of the item reference.
     * @return A reconstituted reference to the item.
     * @throws IOException if the zedmob format is invalid.
     * @throws ClassNotFoundException if a proxy object was sent, and remote
     * class loading was not enabled in this VM.
     */
-   public static Invoke zedmob(InputStream is)
+   public static Object zedmob(InputStream is)
       throws ClassNotFoundException, IOException {
       GZIPInputStream   gis = new GZIPInputStream(is);
       ObjectInputStream ois = new ObjectInputStream(gis);
       MarshalledObject  mob = (MarshalledObject)ois.readObject();
       ois.close();
-      return (Invoke)mob.get();
+      return mob.get();
    }
    /**
-    * This method will write the local item, or remote item reference, to an
-    * output stream as a zipped marshalled object (zedmob). A zedmob is the
-    * standard serialized format in this paradigm. This can be used to
-    * <i>'freeze-dry'</i> an item, or reference, to a file for later use,
-    * send it over the network, or to an object archival service, for example.
-    * <i>Note:</i> on completion of writing the item, or reference, the stream
-    * will be closed.
+    * This method will write the local item, remote item reference, or proxy,
+    * to an output stream as a zipped marshalled object (zedmob). A zedmob is
+    * the standard serialized format in this paradigm. This can be used to
+    * <i>'freeze-dry'</i> the object to a file for later use, to send it over
+    * the network, or to an object archival service, for example. <i>Note:</i>
+    * on completion of writing the item, or reference, the stream will be
+    * closed.
     * @param os The output stream on which to write the reference.  It may be
     * a file stream, a socket stream, or any other type of stream.
     * @param ref The item or reference to be serialized.
     * @throws IOException For any stream related writing error.
     */
-   public static void zedmob(OutputStream os, Invoke ref) throws IOException {
+   public static void zedmob(OutputStream os, Object ref) throws IOException {
       GZIPOutputStream   zos = new GZIPOutputStream(os);
       ObjectOutputStream oos = new ObjectOutputStream(zos);
       oos.writeObject(new MarshalledObject(ref));
@@ -235,21 +236,21 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
     * and it does not support a no-arg constructor.
     * @throws MalformedURLException if the URL is not in the format explained
     */
-   public static Invoke getItem(String url) throws RemoteException,
+   public static Object getItem(String url) throws RemoteException,
       NotBoundException, IOException, ClassNotFoundException,
       InstantiationException, IllegalAccessException, MalformedURLException {
-      Invoke item = null;
+      Object item = null;
       if (url == null) url = "///main";
       else if (url.startsWith("//") && url.endsWith("/")) url += "main";
       if (url.startsWith("//")) { // if from an rmiregistry
-         item = (Invoke)java.rmi.Naming.lookup(url); // get reference
+         item = java.rmi.Naming.lookup(url); // get reference
       } else if (url.startsWith("/")) { // if from a serialized object file
          InputStream ris = Remote.class.getResourceAsStream(url);
          if (ris == null) ris = new FileInputStream('.' + url);
          item = zedmob(ris);
          ris.close();
       } else if (url.indexOf(':') == -1) { // from a class file
-         item = (Invoke)Class.forName(url).newInstance();
+         item = Class.forName(url).newInstance();
       } else { // otherwise from a real URL, http:// ftp:// file:// etc.
          InputStream uis = new URL(url).openStream();
          item = zedmob(uis);
@@ -429,7 +430,7 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
    public Object send(String url) throws Exception {
       if (url == null) url = "///main";
       else if (url.startsWith("//") && url.endsWith("/")) url += "main";
-      return getItem(url).invoke("send", this);
+      return invoke(getItem(url), "send", this);
    }
    /**
     * This method will write this remote item reference to an output stream
@@ -484,7 +485,7 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
             System.setProperty("java.rmi.server.disableHttp", "true");
          } catch(SecurityException x) {}
          proxy = getItem(args[0]);
-         if (args.length > 5) proxy.invoke("setItem", getItem(args[5]));
+         if (args.length > 5) invoke(proxy, "setItem", getItem(args[5]));
          registry =
             LocateRegistry.createRegistry(getServerPort(), rcsf, rssf);
          registry.bind("main", new Remote(proxy));
