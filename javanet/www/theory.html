@@ -67,22 +67,34 @@
                            meaning it too cannot be a primitive type. However, just as with conventional
                            invocations, both the argument and the return can be of type Object[]
                            indicating multiple objects are being transferred, or they can be null
-                           indicating no object transfer.
+                           indicating no object transfer. Also, it is <i>highly</i> recommended that
+                           rather than using the invoke interface directly, always interact with a
+                           remote reference using the static invoke method of the
+                           <a href=docs/gnu/cajo/invoke/Remote.html>Remote</a> class.  It has the
+                           following signature:
+
+                           <pre>   Object Remote.invoke(Object object, String method, Object args);</pre>
+
+                           It provides all the functionality of the invoke interface, but also works on
+                           <u>both</u> remote objects, and ordinary local objects. This can allow code
+                           to transparently scale from local to remote object use, even at runtime, with
+                           no application source code changes.
+
 
                            <h3>Remoting Items</h3><br>
 
                            The invocation of a method on a remote object using the Invoke interface is
-                           made possible using the
-                           <a href=docs/gnu/cajo/invoke/Remote.html>Remote</a> class.  It combines
-                           Java RMI with another Java feature known as <i>reflection</i>.  The Remote
-                           class takes <i>any</i> object, and places a remotely invokable wrapper
-                           around it. When remote objects execute the invoke method, the wrapper uses
-                           reflection to find the method on its internal object, matching both the
-                           name and the argument types. If it is found, it executes that method, and
-                           returns the result, if any.  If no matching method can be found on the
-                           internal object, a <u>NoSuchMethodException</u> is thrown. This technique effectively
+                           made possible using the Remote class.  It combines Java RMI with another
+                           Java feature known as <i>reflection</i>.  The Remote class takes <i>any</i>
+                           object, and places a remotely invokable wrapper around it. When remote
+                           objects execute the invoke method, Remote uses reflection to find the method
+                           on its internal object, matching both the name and the argument types. If it
+                           is found, it executes that method, and returns the result, if any.  If no
+                           matching method can be found on the internal object, a
+                           <tt>NoSuchMethodException</tt> is thrown. This technique effectively
                            makes all public methods of the internal object remotely callable;
-                           excepting those using primitive types as arguments or returns.
+                           except those using primitive types, such as int and char, in arguments,
+                           or as returns.
 
                            <h3>Mobile Code</h3><br>
 
