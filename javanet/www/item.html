@@ -1,167 +1,320 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN""http://www.w3.org/TR/html4/loose.dtd">
 <html>
-   <head>
-      <title>The CaJo Project</title>
-      <meta name="Keywords" content="cajo, rmi, java, distributed computing, Transparent Distributed Computing">
-      <meta name="Description" content="Cajo Distributed Application Framework">
-      <meta name="Author" content="John Catherino">
-   </head>
-   <body>
-      <div id="projecthome" class="app">
-      <table width="100%" align="center">
+
+<head>
+   <title>cajo - The cajo project</title>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <link href="ventro/css.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+
+<table width="98%" border="0" cellpadding="0" cellspacing="0">
+   <tr>
+      <table width="100%" height="67"  border="0" cellpadding="4" cellspacing="0">
          <tr>
-            <td>
-
-<!-- begin main.html -->
-
-                        <center>
-                           <a href="index.html" title="cajo home page"><b>Welcome</b></a> |
-                           <a href="tutorial.html" title="getting started"><b>Tutorial</b></a> |
-                           <a href="theory.html" title="how it all works"><b>Theory</b></a> | 
-                           <a href="gotcha.html" title="important details"><b>Gotchas</b></a> |
-                           <a href="faq.html" title="common questions"><b>FAQ</b></a> |
-                           <a href="acknowlege.html" title="supporters of the marque"><b>Acknowledgments</b></a> |
-                           <a href="license.html" title="what's the LGPL"><b>License</b></a> |
-                           <a href="docs/overview-summary.html" title="package documentation"><b>Javadocs</b></a><br><br>
-                        </center>
-                        <center>
-                           <b>Item</b> |
-                           <a href="proxy.html" title="interface object"><b>Proxy</b></a> |
-                           <a href="multicast.html" title="broadcast object"><b>Multicast</b></a> |
-                           <a href="client.html" title="host object"><b>Client</b></a> |
-                           <a href="server.html" title="application server"><b>CodebaseServer</b></a> |
-                           <a href="example.html" title="demo objects"><b>Example</b></a> |
-                           <a href="overview.html" title="adding to existing applications"><b>Overview</b></a><br><br>
-                        </center>
-
-                           <font size="4">
-                              <b>Server items are the core of the cajo framework.</b>
-                           </font><br><br>
-
-                           A remotely accessible object is called an <b>item</b> in terms of this
-                           framework. Items can be any type of object, sometimes they derive from the
-                           utility class <a href= docs/gnu/cajo/utils/BaseItem.html>BaseItem</a>.
-                           Remotely accessible items are created from otherwise ordinary objects using
-                           the <a href=docs/gnu/cajo/invoke/Remote.html>Remote</a> class. Remote takes
-                           the object in its constructor, and implements the <a href=docs/gnu/cajo/invoke/Invoke.html>Invoke</a>
-                           interface, which serves to make all of the member object's public methods
-                           remotely callable. The Invoke interface defines only one method:
-
-                              <pre><code>   Object invoke(String method, Object args);</code></pre>
-
-                           Remote objects call the invoke method on a remote reference to the object,
-                           passing it a method name, and an argument that can either be an object, and
-                           object array, or null.  The invoke implementation of the Remote class uses a
-                           Java mechanism called <i>reflection</i>, whereby it finds the public method
-                           of its member object matching the name provided in the remote call, accepting
-                           arguments of the type, and in the order provided by the caller.  If there is
-                           a match, it will invoke that method on the item, and return the result if
-                           any, or the exception, if thrown. If no matching method can be found however,
-                           in both method name <u>and</u> argument order, the invocation will result in
-                           a <code>NoSuchMethodException</code> being thrown at the caller.<br><br>
-
-                           Item objects are free to implement any public, in this case meaning remotely
-                           callable, methods of any type. The only requirement is that the calling
-                           object from a different machine, virtual <i>or</i> physical, must know the
-                           item's method signature. This is no different than for conventional objects,
-                           with two exceptions. First there is no compiletime type checking; all
-                           argument and return typechecking will be done at runtime. Second, primitive
-                           types such as <code>int</code> or <code>char</code> for example, cannot be
-                           sent as arguments, or returned, rather they must be sent in their object
-                           wrappers, in this case <code>Integer</code> or <code>Character</code>. Only
-                           objects are passed between items.
-
-                           <h3>Deploying items</h3><br>
-
-                           An object can be made available for remote access in either, or both, of two
-                           ways:<br><br>
-
-                           The object can be passed to the static <a href=docs/gnu/cajo/utils/ItemServer.html#bind(java.lang.Object,%20java.lang.String)>
-                           bind</a> method of the <a href=docs/gnu/cajo/utils/ItemServer.html>ItemServer</a>
-                           class, along with a name, by which it may be referenced. This allows remote
-                           machines to <i>fetch</i> the reference using the <a href=docs/gnu/cajo/invoke/Remote.html#getItem(java.lang.String)>getItem</a>
-                           method of <a href=docs/gnu/cajo/invoke/Remote.html>Remote</a>,  by providing
-                           the host name and item name. This is called <i>static</i> linking in the
-                           context of this framework. By <i>de facto</i> convention, the primary item
-                           served by a VM is bound under the name <i>"main"</i>.<br><br>
-
-                           The remote object reference can be broadcasted to all listening VMs. This
-                           technique is covered in the <a href=multicast.html>multicast</a> section.
-                           This is called <i>dynamic</i> linking, in the context of this framework.
-
-                           <h3>Remote Transparency</h3><br>
-
-                           By handling objects using the static Remote.invoke method, calling objects
-                           need not know, or even care, if the objects are local or remote. However,
-                           when it is important to know either the remoteness, or locality of an object
-                           reference; it can be tested easily, in the following way:
-<code><pre>
-   if (foo instanceof RemoteInvoke) {
-      // foo is a remote object ...
-   } else {
-      // foo is a local object ...
-   }
-</pre></code>
-                           This is the sole purpose of the
-                           <a href=docs/gnu/cajo/invoke/RemoteInvoke.html>RemoteInvoke</a> interface,
-                           testing locality, as it is otherwise a bodyless interface.
-
-                           <h3>Base Items</h3><br>
-
-                           The utility BaseItem object can optionally define a <a href= docs/gnu/cajo/utils/BaseItem.MainThread.html>MainThread</a>
-                           object, which would be started automatically by the ItemServer, the on the
-                           binding of the item. This allows an item to perform default processing,
-                           independently of its other method invocation threads. Its main thread
-                           instance can be accessed via its public member named <a href=docs/gnu/cajo/utils/BaseItem.html#thread>thread</a>,
-                           on which it can be interrupted. In fact, the item's run method should
-                           periodically monitor, to check if the thread <code>isInterrupted()</code>,
-                           and perform an orderly shutdown. An item can optionally have no main thread.
-                           This would be known as an <i>event-driven</i> item; meaning it executes only
-                           when called by a client. <i>Note:</i> having multiple clients can cause an
-                           Item's public methods to be invoked <u>reentrantly</u>.
-
-                           <h3>Loadable Items</h3><br>
-
-                           There is an additional static bind method in the ItemServer class. It serves
-                           a <i>very</i> powerful purpose. It allows one or more items, their related
-                           classes, and serialized objects, to be stored into <i>separate</i> jar files.
-                           These items can then be loaded, as needed at runtime, by the server VMs. This
-                           <i>greatly</i> reduces complexity and maintenance issues associated with a
-                           large server cluster. Just as remote object transparency allows application
-                           scaling <i>across</i> multiple VMs; loadable items allows additional
-                           scalability <i>between</i> them.
-
-                           <h3>Conclusion</h3><br>
-
-                           Static binding, combined with loadable items, offers application scalability
-                           in <i>two</i> <u>important</u> dimensions:
-
-                           <center><img src=images/distribution.gif></center>
-
-                           Here remotely accessible objects are represented as green and black dots.
-                           Critical application items can be distributed statically between VMs as
-                           needed at server startup. (black dots) All VMs have the option to load
-                           additional items, as needed (green), from a collection of loadable items
-                           (blue), at runtime.<br><br>
-
-                           In the next section, see how an item can use a <a href=proxy.html>proxy</a>
-                           item to send some, or a majority of its functionality, <i>even</i> a
-                           graphical user interface; to run inside remote client Virtual Machines.<br><br>
-                           
-                           <div align="center">
-                              <font size="-2">
-                                 <hr width="80%">
-                                 Items are just objects, which can be invoked by local <i>and</i> remote
-                                 objects.
-                              </font>
-                           </div>
-
-<!-- end main.html -->
-
+            <td background="ventro/vert_logobarbg.gif">
+               <table width="100%" height="47"  border="0" cellpadding="4" cellspacing="0">
+                  <tr><br>
+                     <td width="85" valign="bottom">
+                        <div align="right">
+                           <img src="ventro/cajologo.gif" width="61" height="34">
+                           <img src="ventro/blank.gif" width="6" height="8">
+                        </div>
+                     </td>
+                     <td width="10"><img src="ventro/seperatorline.gif" width="1" height="38"></td>
+                     <td>
+                        <span class="style8">
+                           <font size="+1">
+                              <b>Free, simple, powerful: Transparent Distributed Computing</b>
+                           </font>
+                        </span>
                      </td>
                   </tr>
                </table>
             </td>
          </tr>
       </table>
-   </body>
+      <table border="0" cellspacing="0" cellpadding="4">
+         <tr>
+            <td height="331" valign="top" bgcolor="#FFFFFF">
+               <td width="100%" valign="top" bgcolor="#FFFFFF">
+                  <table width="100%" border="0" cellpadding="4" cellspacing="0" bgcolor="#FFFFFF">
+                     <tr>
+                        <td>
+                           <table width="100%" height="35" border="0" cellpadding="0" cellspacing="0">
+                              <tr>
+                                 <td width="2%" background="ventro/bar_bg.gif"><img src="ventro/arrowed.gif" width="30" height="35"></td>
+                                 <td width="100%" background="ventro/bar_bg.gif">
+                                    <table width="100%" height="31" border="0" cellpadding="0" cellspacing="0">
+                                       <tr>
+                                          <td>
+                                             <span class="style8 style12">
+<!-- main page title bar -->                    <div align="left">Items are the core of cajo functionality</div>
+                                             </span>
+                                          </td>
+                                       </tr>
+                                    </table>
+                                 </td>
+                                 <td width="3%"><img src="ventro/bar_Right.gif" width="10" height="35"></td>
+                              </tr>
+                           </table>
+                           <table width="95%" height="96" border="0" cellpadding="9" cellspacing="0">
+                              <tr>
+                                 <td valign="top">
+<!-- title bar section -->         <span class="spacing style4 style7 style9">
+                                      Any remotely accessible object is called an <tt>item</tt> in terms of this
+                                      framework. Items can be any type of object, often they derive from the
+                                      utility class <a href= docs/gnu/cajo/utils/BaseItem.html>BaseItem</a>.
+                                      Remotely accessible items are created from otherwise ordinary objects using
+                                      the <a href=docs/gnu/cajo/invoke/Remote.html>Remote</a> class. Remote takes
+                                      the object in its constructor, and implements the <a href=docs/gnu/cajo/invoke/Invoke.html>Invoke</a>
+                                      interface, which serves to make all of the member object's public methods
+                                      remotely callable. The Invoke interface defines only one method:
+
+                                         <pre><code>   Object invoke(String method, Object args);</code></pre>
+
+                                      Remote objects call the invoke method on a remote reference to the object,
+                                      passing it a method name, and an argument that can either be an object, and
+                                      object array, or null.  The invoke implementation of the Remote class uses a
+                                      Java mechanism called <i>reflection</i>, whereby it finds the public method
+                                      of its member object matching the name provided in the remote call, accepting
+                                      arguments of the type, and in the order provided by the caller.  If there is
+                                      a match, it will invoke that method on the item, and return the result if
+                                      any, or the exception, if thrown. If no matching method can be found however,
+                                      in both method name <i>and</i> argument order, the invocation will result in
+                                      a <code>NoSuchMethodException</code> being thrown at the caller.<br><br>
+
+                                      Item objects are free to implement any public, in this case meaning remotely
+                                      callable, methods of any type. The only requirement is that the calling
+                                      object from a different machine, virtual <i>or</i> physical, must know the
+                                      item's method signature. This is no different than for local objects, with
+                                      two exceptions. First there is no compile time type checking; all argument
+                                      and return typechecking will be done at runtime. Second, primitive types
+                                      such as <code>int</code> or <code>char</code> for example, cannot be sent
+                                      as arguments, or returned, rather they must be sent in their object wrappers,
+                                      in this case <code>Integer</code> or <code>Character</code>. Essentially,
+                                      only objects can be passed between items.
+                                   </span>
+                                 </td>
+                              </tr>
+                           </table></td>
+                        </tr>
+                     </table>
+
+
+<!-- begin regular section -->
+   <table width="98%" height="35" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+         <td width="2%" background="ventro/bar_bg.gif"><img src="ventro/arrowed.gif" width="30" height="35"></td>
+         <td width="98%" valign="top" background="ventro/bar_bg.gif">
+            <table width="100%" height="31" border="0" cellpadding="0" cellspacing="0">
+               <tr>
+                  <td><span class="style8"><b>Deploying items</b></span></td>
+               </tr>
+            </table>
+         </td>
+         <td width="3%"><img src="ventro/bar_Right.gif" width="10" height="35"></td>
+      </tr>
+   </table>
+   <table width="98%" height="96" border="0" align="center" cellpadding="9" cellspacing="0">
+      <tr>
+         <td valign="top">
+            <span class="spacing style4 style7 style9">
+               An object can be made accessible for remote use in either, or both, of two
+               ways:<br><br>
+
+               The object can be passed to the static <a href=docs/gnu/cajo/utils/ItemServer.html#bind(java.lang.Object,%20java.lang.String)>
+               bind</a> method of the <a href=docs/gnu/cajo/utils/ItemServer.html>ItemServer</a>
+               class, along with a name, by which it may be referenced. This allows remote
+               machines to <i>fetch</i> the reference using the <a href=docs/gnu/cajo/invoke/Remote.html#getItem(java.lang.String)>getItem</a>
+               method of <a href=docs/gnu/cajo/invoke/Remote.html>Remote</a>,  by providing
+               the host name and item name. This is called <i>static</i> linking in the
+               context of this framework. By <i>de facto</i> convention, the primary item
+               served by a VM is bound under the name <i>"main"</i>.<br><br>
+
+               The remote object reference can be broadcasted to all listening VMs. This
+               technique is covered in the <a href=multicast.html>multicast</a> section.
+               This is called <i>dynamic</i> linking, in the context of this framework.<br>
+            </span>
+         </td>
+      </tr>
+   </table>
+<!-- end regular section -->
+
+<!-- begin regular section -->
+   <table width="98%" height="35" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+         <td width="2%" background="ventro/bar_bg.gif"><img src="ventro/arrowed.gif" width="30" height="35"></td>
+         <td width="98%" valign="top" background="ventro/bar_bg.gif">
+            <table width="100%" height="31" border="0" cellpadding="0" cellspacing="0">
+               <tr>
+                  <td><span class="style8"><b>Remote Transparency</b></span></td>
+               </tr>
+            </table>
+         </td>
+         <td width="3%"><img src="ventro/bar_Right.gif" width="10" height="35"></td>
+      </tr>
+   </table>
+   <table width="98%" height="96" border="0" align="center" cellpadding="9" cellspacing="0">
+      <tr>
+         <td valign="top">
+            <span class="spacing style4 style7 style9">
+               By handling objects using the static Remote.invoke method, calling objects
+               need not know, or even care, if the objects are local or remote. However,
+               when it is important to know either the remoteness, or locality of an object
+               reference; it can be tested easily, in the following way:
+
+<blockquote><code><pre>
+   if (foo instanceof RemoteInvoke) {
+      // foo is a remote object ...
+   } else {
+      // foo is a local object ...
+   }</pre></code>
+</blockquote>
+
+               This is the sole purpose of the <a href=docs/gnu/cajo/invoke/RemoteInvoke.html>
+               RemoteInvoke</a> interface, testing locality, as it is otherwise a bodyless
+               interface.<br>
+            </span>
+         </td>
+      </tr>
+   </table>
+<!-- end regular section -->
+
+<!-- begin regular section -->
+   <table width="98%" height="35" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+         <td width="2%" background="ventro/bar_bg.gif"><img src="ventro/arrowed.gif" width="30" height="35"></td>
+         <td width="98%" valign="top" background="ventro/bar_bg.gif">
+            <table width="100%" height="31" border="0" cellpadding="0" cellspacing="0">
+               <tr>
+                  <td><span class="style8"><b>Base Items</b></span></td>
+               </tr>
+            </table>
+         </td>
+         <td width="3%"><img src="ventro/bar_Right.gif" width="10" height="35"></td>
+      </tr>
+   </table>
+   <table width="98%" height="96" border="0" align="center" cellpadding="9" cellspacing="0">
+      <tr>
+         <td valign="top">
+            <span class="spacing style4 style7 style9">
+               The utility BaseItem class can optionally define a <a href= docs/gnu/cajo/utils/BaseItem.MainThread.html>MainThread</a>
+               object, which would be started automatically by the ItemServer, the on the
+               binding of the item. This allows an item to perform default processing,
+               independently of its other method invocation threads. Its main thread
+               instance can be accessed via its public member named <a href=docs/gnu/cajo/utils/BaseItem.html#thread>thread</a>,
+               on which it can be interrupted. In fact, the item's run method should
+               periodically monitor, to check if the thread <code>isInterrupted()</code>,
+               and perform an orderly shutdown. An item can optionally have no main thread.
+               This would be known as an <i>event-driven</i> item; meaning it executes only
+               when called by a client. <i>Note:</i> having multiple clients can cause an
+               Item's public methods to be invoked <u>reentrantly</u>.
+            </span>
+         </td>
+      </tr>
+   </table>
+<!-- end regular section -->
+
+<!-- begin regular section -->
+   <table width="98%" height="35" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+         <td width="2%" background="ventro/bar_bg.gif"><img src="ventro/arrowed.gif" width="30" height="35"></td>
+         <td width="98%" valign="top" background="ventro/bar_bg.gif">
+            <table width="100%" height="31" border="0" cellpadding="0" cellspacing="0">
+               <tr>
+                  <td><span class="style8"><b>Loadable Items</b></span></td>
+               </tr>
+            </table>
+         </td>
+         <td width="3%"><img src="ventro/bar_Right.gif" width="10" height="35"></td>
+      </tr>
+   </table>
+   <table width="98%" height="96" border="0" align="center" cellpadding="9" cellspacing="0">
+      <tr>
+         <td valign="top">
+            <span class="spacing style4 style7 style9">
+               There is an additional static bind method in the ItemServer class. It serves
+               a <i>very</i> powerful purpose. It allows one or more items, their related
+               classes, and serialized objects, to be stored into <i>separate</i> jar files.
+               These items can then be loaded, as needed at runtime, by the server VM. This
+               <i>greatly</i> reduces complexity and maintenance issues associated with a
+               large server design. Just as remote object transparency allows application
+               scaling <i>across</i> multiple VMs; loadable items allows additional
+               scalability <i>between</i> them.
+            </span>
+         </td>
+      </tr>
+   </table>
+<!-- end regular section -->
+
+<!-- begin regular section -->
+   <table width="98%" height="35" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+         <td width="2%" background="ventro/bar_bg.gif"><img src="ventro/arrowed.gif" width="30" height="35"></td>
+         <td width="98%" valign="top" background="ventro/bar_bg.gif">
+            <table width="100%" height="31" border="0" cellpadding="0" cellspacing="0">
+               <tr>
+                  <td><span class="style8"><b>Conclusion</b></span></td>
+               </tr>
+            </table>
+         </td>
+         <td width="3%"><img src="ventro/bar_Right.gif" width="10" height="35"></td>
+      </tr>
+   </table>
+   <table width="98%" height="96" border="0" align="center" cellpadding="9" cellspacing="0">
+      <tr>
+         <td valign="top">
+            <span class="spacing style4 style7 style9">
+               Static binding, combined with loadable items, offers application scalability
+               in <i>two</i> important dimensions:<br><br>
+
+               <center><img src=ventro/diagram_item.jpg></center><br>
+
+               Here remotely accessible objects are represented as red and gray dots.
+               Critical application items can be distributed statically between VMs as
+               needed at server startup. (gray dots) All VMs have the option to load
+               additional items, as needed (red), from a collection of loadable items
+               (blue), at runtime.<br><br>
+
+               In the next section, see how an item can use a <a href=proxy.html>proxy</a>
+               item to send some, or a majority of its functionality, <i>even</i> a
+               graphical user interface; to run inside remote client Virtual Machines!
+            </span>
+         </td>
+      </tr>
+   </table>
+<!-- end regular section -->
+
+<!-- footer: -->
+   <table width="95%" height="56" border="0" align="center" cellpadding="9" cellspacing="0">
+      <tr>
+         <td valign="top">
+            <div align="center">
+               <hr width=90%">
+               <span class="spacing style4 style7 style9">
+                  Items are just objects, which can be invoked by both local <i>and</i> remote objects.
+               </span>
+            </div>
+         </td>
+      </tr>
+   </table><br>
+
+   <table width="98%" height="35" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+         <td width="2%" background="ventro/bar_bg.gif"><img src="ventro/arrowed.gif" width="30" height="35"></td>
+         <td width="95%" valign="top" background="ventro/bar_bg.gif">
+            <table width="100%" height="31" border="0" cellpadding="0" cellspacing="0">
+               <tr>
+                  <td width="47%"><span class="style11">&copy; 2004 GNU FDL</span></td>
+                  <td width="53%"><div align="right"></div></td></tr></table></td>
+                  <td width="3%"><img src="ventro/bar_Right.gif" width="10" height="35"></td></tr></table></td>
+               </tr>
+            </table>
+         </td>
+      </tr>
+   </table>
+
+</body>
 </html>
