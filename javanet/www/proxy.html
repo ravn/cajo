@@ -118,7 +118,7 @@
                            serves its proxy object using the static
                            <a href=docs/gnu/cajo/utils/ItemServer.html#bind(java.lang.Object,%20java.lang.String,%20boolean,%20gnu.cajo.utils.Multicast,%20java.lang.Object)>
                            bind</a> method of the <a href=docs/gnu/cajo/utils/ItemServer.html>ItemServer</a>
-                           class .  It is usually necessary to start up a
+                           class .  It will be necessary to start up a
                            <a href=docs/gnu/cajo/utils/CodebaseServer.html>CodebaseServer</a>, on which
                            the  client can request, and receive, the proxy class files.  If a VM serves
                            proxies, it will require two TCP ports; one for communication with the server
@@ -127,17 +127,18 @@
                            send complex objects to an item, for which would require the necessary class
                            definitions.<br><br>
 
-                           A server item can optionally accept proxies from other items as well. This is
-                           done when invoking the ItemServer bind method. There is a boolean argument
-                           <code>acceptProxies</code> for
-                           this purpose.  Unless it is set, the server will not accept any proxies. A
-                           proxy can be sent to an item either as an argument, or a return value,
-                           typically it is done using the item's
+                           A server can optionally accept proxies, and other mobile code, from other
+                           servers as well. This is typically done by invoking the
+                           <a href=docs/gnu/cajo/utils/ItemServer.html#acceptProxies()>acceptProxies</a>
+                           method of the <a href=docs/gnu/cajo/utils/ItemServer.html>ItemServer</a>
+                           class. A server does not accept proxies by default. A proxy can be sent
+                           to an server either as an argument, or a return value, typically it is
+                           done using the item's
                            <a href=docs/gnu/cajo/utils/BaseItem.html#setProxy(gnu.cajo.invoke.Invoke)>
                            setProxy</a> method. The returned value from this invocation will be a remote
                            reference to the installed proxy, over which the sending item can communicate
-                           with it. A <b><code>ClassNotFoundException</code></b> will result if the
-                           target server does not accept proxies.<br><br>
+                           with it. A <b>ClassNotFoundException</b> will result if the target server
+                           does not accept proxies.<br><br>
 
                            A proxy can be obtained from an item reference by using a null argument
                            <a href=docs/gnu/cajo/utils/BaseItem.html#getProxy()>getProxy</a> invocation.
