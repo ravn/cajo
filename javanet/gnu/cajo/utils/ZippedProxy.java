@@ -1,6 +1,6 @@
 package gnu.cajo.utils;
 
-import gnu.cajo.invoke.Invoke;
+import gnu.cajo.invoke.*;
 import java.rmi.MarshalledObject;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -64,7 +64,7 @@ public class ZippedProxy implements Invoke {
     * after serialization at the server, to allow its unused memory to be
     * garbage collected, since the paylod image can no longer be updated.
     */
-   protected transient Invoke proxy;
+   protected transient Object proxy;
    /**
     * The constructor retains the reference to the proxy, until the server
     * reference is provided by the {@link ItemServer ItemServer}, after that,
@@ -72,7 +72,7 @@ public class ZippedProxy implements Invoke {
     * other references to the proxy, it will be garbage collected.
     * @param proxy The internal proxy item.
     */
-   public ZippedProxy(Invoke proxy) { this.proxy = proxy; }
+   public ZippedProxy(Object proxy) { this.proxy = proxy; }
    /**
     * The interface to the proxy wrapper.  It is only to be called once by
     * the sending VM, to store a remote reference to itself.  Following that,
@@ -87,27 +87,17 @@ public class ZippedProxy implements Invoke {
     */
    public final Object invoke(String method, Object args) throws Exception {
       if (payload == null) {
-         proxy.invoke(method, args);
+         Remote.invoke(proxy, method, args);
          ByteArrayOutputStream baos = new ByteArrayOutputStream();
-         GZIPOutputStream      gzos = new GZIPOutputStream(baos);
-         ObjectOutputStream    toos = new ObjectOutputStream(gzos);
-         toos.writeObject(new MarshalledObject(proxy));
-         toos.close();
-         gzos.close();
-         baos.close();
+         Remote.zedmob(baos, proxy);
          payload = baos.toByteArray();
          proxy = null;
          return null;
       } else if (proxy == null) {
          ByteArrayInputStream bais = new ByteArrayInputStream(payload);
-         GZIPInputStream      gzis = new GZIPInputStream(bais);
-         ObjectInputStream    tois = new ObjectInputStream(gzis);
-         proxy = (Invoke)((MarshalledObject)tois.readObject()).get();
-         tois.close();
-         gzis.close();
-         bais.close();
+         proxy = Remote.zedmob(bais);
          payload = new byte[] {};
       }
-      return proxy.invoke(method, args);
+      return Remote.invoke(proxy, method, args);
    }
 }
