@@ -96,109 +96,111 @@
 
                            A server is a Java Virtual Machine that makes one or more of its objects
                            remotely accessible.  A remotely accessible object is called an <b>item</b>
-                           in terms of this framework. Items generally derive from the class
-                           <a href= docs/gnu/cajo/utils/BaseItem.html>BaseItem</a>,
-                           and always implement the <a href=docs/gnu/cajo/invoke/Invoke.html>Invoke</a>
-                           interface.  The sole Invoke interface method, also named invoke, is
-                           implemented in the base class, and is declared as <u>final</u>.  This is done
-                           to emphasize the fact that an item is otherwise an ordinary object, as will
-                           be explained.<br><br>
+                           in terms of this framework. Items usually derive from the class
+                           <a href= docs/gnu/cajo/utils/BaseItem.html>BaseItem</a>, though they can
+                           actually be any object. Remotely accessible items are created from objects
+                           using the <a href=docs/gnu/cajo/invoke/Remote.html>Remote</a> class.  Remote
+                           takes the item object in its constructor, and finally implements the
+                           <a href=docs/gnu/cajo/invoke/Invoke.html>Invoke</a> interface, which serves
+                           to make the item object's public methods remotely callable. The Invoke
+                           interface defines a single method:
 
-                           The Invoke interface method is an item's primary interfacing method, it
-                           also serves to make it remotely callable. Remote objects call the invoke
-                           method, passing it a method name, and an argument that can be null.  The
-                           invoke implementation of the BaseItem class uses a Java technique called
-                           <i>reflection</i> whereby it finds a public method of its subclass, exactly
-                           matching the name provided in the remote call, accepting arguments of exactly
-                           the type, and in the exact order, provided by the caller.  If there is a
-                           match, it will invoke that method on the item, and return the method result,
-                           if any.  This technique effectively makes <u>all public methods</u> of
-                           subclasses of BaseItem remotely callable.  If no matching method can be found
-                           however, in method name and argument type/order, the invocation will result
-                           in a <code>NoSuchMethodException</code> being thrown.<br><br>
+                              <pre><code>   Object invoke(String method, Object args);</code></pre>
 
-                           Subclasses of BaseItem are free to implement any public (meaning remotely
-                           callable) methods of any type. The only requirement is that another item on
-                           a different (or local) machine (virtual or physical) must know the target
-                           item's method signature. This is no different than for conventional objects,
-                           with one exception, there is no compile time type checking. Also, due to a
-                           restriction in the Java reflection mechanism; primitive types such as
+                           Remote objects call the invoke method, passing it a method name, and an
+                           argument that can either be an object, and object array, or null.  The
+                           invoke implementation of the Remote class uses a Java technique called
+                           <i>reflection</i> whereby it finds the public method of its member object
+                           matching the name provided in the remote call, accepting arguments
+                           of exactly the type, and in the exact order, provided by the caller.  If
+                           there is a match, it will invoke that method on the item, and return the
+                           result if any. If no matching method can be found however, in method name
+                           <u>and</u> argument type/order, the invocation will result in a
+                           <code>NoSuchMethodException</code> being thrown at the caller.<br><br>
+
+                           Item objects are free to implement any public, in this case meaning remotely
+                           callable, methods of any type. The only requirement is that the calling
+                           object from a different machine, virtual or physical, must know the item's
+                           method signature. This is no different than for conventional objects with
+                           two exceptions. First there is no compiletime type checking. Second, due to
+                           a restriction in the Java reflection mechanism; primitive types such as
                            <code>int</code> or <code>char</code> for example, cannot be sent as
-                           arguments, or returned, rather they must be sent in their Object
+                           arguments, or returned, rather they must be sent using their object
                            representations, in this case <code>Integer</code> or <code>Character</code>.
-                           Basically, all argument and return typechecking will be done at runtime.<br><br>
+                           This means all argument and return typechecking will be done at runtime
+                           instead of compiletime.<br><br>
 
-                           If a legacy object already has a class inheritance, and cannot extend
-                           BaseItem, all is not lost.  A BaseItem wrapper can be made, which simply
-                           passes the invocations onto its internal legacy object returning the result,
-                           if any. It can even perform the conversions between primitive types and their
-                           object representations.<br><br>
-
-                           All invocations on an item should be made via its Invoke interface.  While
-                           this technique isn't technically necessary when the item is local (i.e. in
-                           the same Virtual Machine) it allows the called object to be moved to a
-                           remote machine (virtual or physical) with <b>no</b> source code
-                           changes. A useful design pattern is to simply place a wrapper around the item
-                           reference, where the wrapper methods simply pass the invocation onto the
-                           internal reference.<br><br>
+                           All invocations on any item should be made using its Invoke interface.  While
+                           technically this technique isn't necessary when the item is local, i.e. in
+                           the same Virtual Machine, it allows the called object to be moved to a
+                           another machine, whether virtual or physical, with <u><b>no</b></u> source
+                           code changes! A <i>highly recommended</i> design pattern is to simply place
+                           a wrapper object around the item reference, where its traditional methods
+                           simply pass the invocation onto the internal item reference.<br><br>
 
                            Consider for example:
 <code><pre>
    String toString() {
       // no arguments, object return ...
-      return (String)invokeRef.invoke("toString", null);
+      return (String)foo.invoke("toString", null);
    }
    boolean equals(Object o) {
       // single argument, primitive return...
-      return ((Boolean)invokeRef.invoke("equals", o)).booleanValue());
+      return ((Boolean)foo.invoke("equals", o)).booleanValue());
    }
    void someMethod(String a, String b, String c) {
       // multiple arguments, no return...
-      invokeRef.invoke("someMethod", new Object{} { a, b, c });
+      foo.invoke("someMethod", new Object{} { a, b, c });
    }
 </pre></code>
-                           Ultimately that's all there is to an item. To make an item remotely
-                           accessible, it is passed to the
+                           By handling items using their Invoke interface, an object need not know or
+                           even care, if its called items are local or remote. However, should it
+                           be important to know the remoteness or locality of an item; it can be tested
+                           in the following way:
+<code><pre>
+   if (foo instanceof RemoteInvoke) {
+      // foo is a remote item ...
+   } else {
+      // foo is a local item ...
+   }
+</pre></code>
+                           This is the sole purpose of the
+                           <a href=docs/gnu/cajo/invoke/RemoteInvoke.html>RemoteInvoke</a> interface,
+                           testing locality, as it is otherwise a bodyless interface. In general
+                           however, locality testing should be a discouraged practice.<br><br>
+
+                           A BaseItem can optionally define a
+                           <a href= docs/gnu/cajo/utils/BaseItem.MainThread.html>MainThread</a> object,
+                           which would be started automatically by the ItemServer, the on binding of the
+                           item. This allows an item to perform default processing, independently of its
+                           other invocation threads. Its main thread instance can be accessed via its
+                           public member named <a href=docs/gnu/cajo/utils/BaseItem.html#thread>thread</a>,
+                           on which it can be interrupted. In fact, the item's run method should
+                           periodically monitor, to check if the thread <code>isInterrupted()</code>,
+                           and perform an orderly shutdown. An item can optionally have no main thread.
+                           This would be known as an <i>event-driven</i> item, meaning it executes only
+                           when called by a client. <i>Note:</i> having multiple clients can cause an
+                           Item's public methods to be invoked reentrantly.<br><br>
+
+                           Ultimately that's all there is to an item. To make an item reference
+                           <u>statically</u> accessible to other virtual machines, it is passed to the
                            <a href=docs/gnu/cajo/utils/ItemServer>ItemServer</a> static
                            method
                            <a href=docs/gnu/cajo/utils/ItemServer.html#bind(java.lang.Object,%20java.lang.String,%20boolean,%20gnu.cajo.utils.Multicast)>bind</a>.
-                           A single virtual machine can remote as many items as it wants. An application
-                           can obtain a reference to a remote item using the ItemServer static method
+                           A client application can obtain a reference to a remote item using the
+                           ItemServer static method
                            <a href=docs/gnu/cajo/invoke/Remote.html#getItem(java.lang.String)>getItem</a>;
-                           requesting the item by name.  It can also  listen for remote item broadcasts,
-                           using the <a href=multicast.html>Multicast</a> class.<br><br>
-
-                           As a <i>de facto</i> convention; the primary item served by a VM is typically
-                           bound under the name <i>"main"</i>. By handling items using their Invoke
-                           interface, an item need not know, or even care, if its called items are
-                           local or remote. If it should be important to know, either the remoteness or
-                           locality of an item, this can be easily tested in the following way:
-<pre><code>
-   if (foo instanceof RemoteInvoke) {
-      // the reference is to a remote item ...
-   } else {
-      // the reference is to a local item ...
-   }
-</code></pre>
-                           This is the sole purpose of the
-                           <a href=docs/gnu/cajo/invoke/RemoteInvoke.html>RemoteInvoke</a> interface;
-                           testing locality, as it is otherwise a bodyless interface.<br><br>
-
-                           A BaseItem can also optionally define a
-                           <a href= docs/gnu/cajo/utils/BaseItem.MainThread.html>MainThread</a> object,
-                           which would be started automatically by the ItemServer, on binding the
-                           item. This allows an item to perform default processing independently of
-                           other invocation threads. Its main thread can be referenced via its public
-                           member, named <a href=docs/gnu/cajo/utils/BaseItem.html#thread>thread</a>,
-                           on which it can be interrupted, and on which the item's run method should
-                           periodically monitor, to check if the thread <code>isInterrupted</code>, and
-                           perform an orderly shutdown. An item can also have no main thread; this
-                           would be called an <i>event driven</i> item, meaning it executes only when
-                           called by a client.<br><br>
+                           requesting the item by name. As a <i>de facto</i> convention, the primary
+                           item served by a VM is bound under the name <i>"main"</i>. Item
+                           references can also be made <u>dynamically</u> accessible using the
+                           <a href=multicast.html>Multicast</a> class. Client applications can obtain
+                           references to remote items using the Multicast method
+                           <a href=docs/gnu/cajo/utils/Multicast.html#listen(gnu.cajo.invoke.Invoke)>listen</a>.
+                           A virtual machine can remote as many items as it needs.<br><br>
 
                            In the next section, see how an item can use a <a href=proxy.html>proxy</a>
-                           to send some, or a majority, of its functionality, and even an optional user
-                           interface, to the client.<br><br>
+                           item to send some, or a majority of its functionality, and even an optional
+                           graphical user interface, to a client.<br><br>
                            
                            <div align="center">
                               <font face="Verdana, Helvetica" size="-2">
