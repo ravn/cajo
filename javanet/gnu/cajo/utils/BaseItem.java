@@ -184,4 +184,21 @@ public class BaseItem {
       InstantiationException, IllegalAccessException, MalformedURLException {
       return new Remote(Remote.getItem(url));
    }
+   /**
+    * This method is invoked by remote users of this object. It is expected
+    * that subclasses will override this method to provide detailed usage
+    * information. Use of HTML for particularly long descriptions is permitted.
+    * By default this method will return: not defined.
+    * @return A description of the callable methods, their arguments, returns,
+    * and functionality.
+    */
+   public String getDescription() { return "not defined"; }
+   /**
+    * This method is canonically called when an item announces its reference
+    * via the {@link Multicast Multicast} class. It is expected to receive
+    * the URLs of objects that heard the announcement, and wish to be contacted.
+    * @param url A //host:port/name type URL on which the 'first-contact' object
+    * of a remote VM can be reached.
+    */
+   public void contact(String url) {}
 }
