@@ -103,7 +103,11 @@
                            can communicate the broadcasting item. These two functions operate entirely
                            independently of each other; meaning an item can broadcast without
                            listening; and listen without broadcasting; it can even do both.  If it is
-                           listening when it broadcasts, it will even capture its own reference.
+                           listening when it broadcasts, it will even capture its own reference.<br><br>
+
+                           <i>Note:</i> for long-range multicasting to work, the network routers must
+                           be configured to pass UDP multicast packets.  If they are not, the
+                           multicasting will work only within the subnet of origination.
 
                            <h3>Using Multicast</h3><br>
 
@@ -111,15 +115,13 @@
                            can be used to join a group of inter-operating items, or it can be used to
                            announce a particular event.  Essentially, it gives items an opportunity to
                            connect to each other spontaneously, without having to know the host address'
-                           of the listening items beforehand. This is particularly useful in DCHP
-                           environments, where each machine's host address can be randomly assigned.<br><br>
+                           of the listening items beforehand. This is particularly useful in DHCP
+                           environments, where each machine's host address can be randomly assigned
+                           and reassigned.<br><br>
 
-                           <i>Note:</i> for long-range multicasting to work, the network routers must
-                           be configured to pass UDP multicast packets.  If they are not, the
-                           multicasting will work only within the subnet of origination.  There are
-                           two parameters on which the items must agree in order to send and receive
-                           references between each other.  An IP address and port number define a
-                           specific <i>"channel"</i>, to use a radio analogy. Changing either of
+                           There are two parameters on which the items must agree in order to send and
+                           receive references between each other.  An IP address and port number define
+                           a specific <i>"channel"</i>, to use a radio analogy. Changing either of
                            these values effectively switches to an entirely different channel.  The
                            UDP/IP address is different from a traditional TCP/IP address in that it
                            doesn't identify a specific machine and socket, rather it represents all
@@ -144,9 +146,10 @@
                            listen</a> method, passing in a reference to itself.  When the multicast
                            object receives a broadcast of a remote item reference, it will invoke the
                            listener with a string of <i>"multicast"</i>, and a reference to itself, as
-                           an argument. Logically, a listening object would implement the following
-                           method:
-                           <b><pre>   public Object multicast(Multicast m);</pre></b>
+                           an argument. Logically, a listening object would have to implement the
+                           following method:
+
+                           <pre>   public Object multicast(Multicast m);</pre>
 
                            A multicast object has four public members:<br><br>
 
@@ -177,20 +180,20 @@
                            possibility exists for reentrant invocation.<br><br>
 
                            A listening multicast object checks the return value of its listener's
-                           invocation.  If it returns null, it will continue listening; if the listener
-                           returns a non-null value, it will stop listening.  To start the object
-                           listening again, its listen method must be called, with either the same, or
-                           a different listener.
+                           multicast method invocation.  If it returns null, it will continue
+                           listening; if the listener returns a non-null value, it will stop
+                           listening.  To start the object listening again, its listen method must
+                           be called, with either the same, or a different listener.
 
                            <h3>Conclusion</h3><br>
 
                            The multicast mechanism creates the possibility for items to spontaneously,
                            and dynamically connect. This allows items to join confederations of items
                            to accomplish larger tasks. Dynamic confederation can provide resilient,
-                           adaptive, and fault-tolerant application networks, exhibiting "small-world"
-                           and "scale-free" network phenomena, when operating in the context of a group
-                           of developers. A whole new range of "emergent" application functionality
-                           becomes possible.<br><br>
+                           adaptive, and fault-tolerant application networks, exhibiting
+                           <i>"small-world"</i> and <i>"scale-free"</i> network phenomena, when
+                           operating in the context of a group of developers. A whole new range of
+                           <i>"emergent"</i> application functionality becomes possible.<br><br>
 
                            <div align="center">
                               <font face="Verdana, Helvetica" size="-2">
