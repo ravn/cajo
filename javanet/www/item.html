@@ -153,10 +153,26 @@
       foo.invoke("someMethod", new Object{} { a, b, c });
    }
 </pre></code>
-                           By handling items using their Invoke interface, an object need not know or
-                           even care, if its called items are local or remote. However, should it
-                           be important to know the remoteness or locality of an item; it can be tested
-                           in the following way:
+                           Object construction can be abstracted similarly:
+<code><pre>
+   void construct() {
+      // when the item is local:
+      foo = new Foo(...);
+   }
+   void construct() {
+      // when the item is remote:
+      foo = Remote.getItem("//myhost.com/foo");
+   }
+   void construct() {
+      // when the item is a zedmob on disc:
+      foo = Remote.getItem("/beans/foo.ser");
+   }
+</pre></code>
+
+                           By handling items using their Invoke interface, calling objects need not know
+                           or even care, if the items are local or remote. However, should it be
+                           important to know the remoteness or locality of an item; it can be tested in
+                           the following way:
 <code><pre>
    if (foo instanceof RemoteInvoke) {
       // foo is a remote item ...
