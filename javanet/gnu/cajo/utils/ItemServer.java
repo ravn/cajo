@@ -83,7 +83,6 @@ public class ItemServer {
       }
    }
    static {
-      System.setProperty("java.rmi.server.disableHttp", "true");
       if (System.getProperty("java.security.policy") == null)
          System.setProperty("java.security.policy", "server.policy");
       System.setProperty("java.rmi.server.useCodebaseOnly", "true");
