@@ -5,6 +5,9 @@ import java.rmi.registry.*;
 import java.text.DateFormat;
 import java.rmi.RemoteException;
 import java.rmi.MarshalledObject;
+import java.net.URL;
+import java.io.InputStream;
+import java.io.IOException;
 
 /*
  * Standard Item Server Utility
@@ -59,6 +62,26 @@ import java.rmi.MarshalledObject;
  * @author John Catherino
  */
 public class ItemServer {
+   // a small utility ClassLoader, to load server plug-in items from jar files.
+   private static final class JarClassLoader extends ClassLoader {
+      final String path;
+      JarClassLoader(String jarFile) { path = "jar:file:" + jarFile + "!/"; }
+      public Class loadClass(String name) throws ClassNotFoundException {
+         try { return super.findSystemClass(name); }
+         catch(ClassNotFoundException x) {
+            try {
+               String url = path + name.replace('.', '/') + ".class";
+               InputStream is = new URL(url).openConnection().getInputStream();
+               byte bytes[] = new byte[is.available()];
+               is.read(bytes);
+               is.close();
+               Class result = defineClass(name, bytes, 0, bytes.length);
+               resolveClass(result);
+               return result;
+            } catch(IOException y) { return null; }
+         }
+      }
+   }
    static {
       System.setProperty("java.rmi.server.disableHttp", "true");
       if (System.getProperty("java.security.policy") == null)
@@ -189,6 +212,59 @@ public class ItemServer {
       } catch(Exception x) {}
       registry.rebind(name, handle);
       return handle;
+   }
+   /**
+    * This method is used to bind a server item, contained in its own jar file
+    * into this server's VM, for binding at runtime. This <i>plug-in</i>
+    * item's codebase will be loaded into the <i>master</i> server's runtime,
+    * from the the item's jar file. The plug-in item's class will have its
+    * <tt>newInstance</tt> method invoked, to create the item for binding;
+    * therefore the plug-in item is required to have a no-arg constructor. The
+    * instantiated class is handled to the <tt>bind(object, name)</tt> method
+    * of this class, for final processing.<p>
+    * This allows server items to be modularised, into multiple standalone jar
+    * files. This method can be called several times, for items in the same jar
+    * file. It can even be called with the file name of the running master
+    * server jar itself. This is to aid in the creation of server configuration
+    * scripts, containing the names of files, names of classes, and names under
+    * which to bind the server objects. I have left the file parser out, as
+    * there are two predominant approaches for this; .ini files for the Windows
+    * crowd, and XML files for the rest of the world. Feel free to devise
+    * your own format!<p>
+    * Now for an ultra important, <i><u>super cool</u></i> optimisation:<p>
+    * When compiling plug-in modules, make use of the javac <tt>-classpath
+    * yourpath/masterserver.jar</tt> option. This has a really great
+    * advantage:<blockquote>
+    * It will prevent the needless recompilation of utility classes
+    * already contained in the master server. This can <i>significantly</i>
+    * reduce the size of your server plug-in item jars!</blockquote>
+    * <i>Note:</i> plug-in items typically do not support proxies. This
+    * is because the system rmi codebase property is typically set by the
+    * master server, to serve its own proxy jar file, when it has one.
+    * @param name The name to bind the loaded server item in the registry.
+    * @param item The name of the class from which to instantiate the item.
+    * Example: myclass.mypackage.MyServerObject
+    * @param file The absolute/relative path/filename where to find the jar
+    * file.
+    * Example: myitem.jar or plugins/myitem.jar or /usr/local/jar/myitem.jar
+    * @return A remoted reference to the item within the context of this VM's
+    * settings.
+    * @throws NullPointerException If the jar file referenced in the file
+    * argument could not be found in the filesystem.
+    * @throws ClassNotFoundException If the jar file referenced in the file
+    * argument did not contain the class specified in the item argument.
+    * @throws InstantiationException If the class file specified in the item
+    * argument was in an invalid, or in a corrupted format.
+    * @throws IllegalAccessException If the class specified in the item
+    * argument did not have a no-argument constructor.
+    * @throws RemoteException If the registry did not yet exist, and could not
+    * be created.
+    */
+   public static Remote bind(String name, String item, String file) throws
+      ClassNotFoundException, InstantiationException, IllegalAccessException,
+      RemoteException {
+      Class c = new JarClassLoader(file).loadClass(item);
+      return bind(c.newInstance(), name);
    }
    /**
     * The application loads either a zipped marshalled object (zedmob) from a
