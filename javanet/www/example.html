@@ -96,38 +96,43 @@
 
                            The example package is a collection of four short classes demonstrating the
                            use of the framework.  It involves all the classes of the framework, except
-                           one, and that one will be described at the <a href=example.html#Extras>end</a>
+                           one, and that one will be described at the <a href="#Extras">end</a>
                            of the document, as well as why it was not part of the example.<br><br>
                            The four example classes are as follows:
 
                            <ul>
-                              <li><a href=example.html#TestItem>TestItem</a> -- An introductory server item
-                              <li><a href=example.html#TestProxy>TestProxy.java</a> -- An introductory server item proxy
-                              <li><a href=example.html#Builder>Builder.java</a> -- To configure and serialize the example proxy
-                              <li><a href=example.html#Main>Main.java</a> -- To launch the example server application
+                              <li><a href="#TestItem">TestItem</a> -- An introductory server item
+                              <li><a href="#TestProxy">TestProxy</a> -- An introductory server item proxy
+                              <li><a href="#Builder">Builder</a> -- To configure and serialize the example proxy
+                              <li><a href="#Main">Main</a> -- To launch the example server application
                            </ul>
 
                            As mentioned in the <a href=proxy.html>proxy</a> page, a server does not
-                           need to use proxies, one is included in the example, for completely
-                           illustrative purposes.<br><br>
+                           need to use proxies; one is included in the example, for completeness
+                           in illustration.<br><br>
 
-                           The <a href=example.html#TestItem name=TestItem>TestItem</a> class is
-                           demonstrates the basic functionality of a server item.  A server item has two
-                           primary components; a processing thread, and a callable interface.  While the
-                           processing thread is technically optional, a callable interface is logically
-                           essential. The processing thread, if defined, is launched automatically
-                           following construction of the object. If the server item wishes to be purely
-                           <i>event driven</i>; i.e. only operating when its interface methods are being
-                           called, its would not define a <a href=gnu/cajo/utils/BaseItem.MainThread.html>
-                           MainThread</a> object.<br><br>
+                           <a id="TestItem"></a>The <b>TestItem</b> class demonstrates the basic
+                           functionality of a server item.  A server item has two primary components; a
+                           processing thread, and a callable interface.  While the processing thread is
+                           technically optional, a callable interface is logically essential. The
+                           processing thread, if defined, is launched automatically following binding of
+                           the object with the
+                           <ahref=gnu/cajo/utils/ItemServer.html>ItemServer</a>. The server item can
+                           also be purely <i>event driven</i>; i.e. only executing when its interface
+                           methods are being called, its would not define a
+                           <a href=gnu/cajo/utils/BaseItem.MainThread.html>MainThread</a> object. The
+                           callable interface to an item is simply its collection of publicly declared
+                           methods.<br><br>
 
                            The thread in the example item performs the <i>highly recommended</i> practice
                            of looping on its <code>thread.isInterrupted()</code> method. The item itself,
-                           or other parts of parts of the application, can invoke a <code>
+                           or other parts of the application, can invoke a <code>
                            thread.interrupt()</code> on the public thread member.  This does not
                            terminate the thread automatically, rather only flags it. This allows item's
                            processing thread a mechanism to perform a safe and orderly shutdown.  This
-                           is generally done when taking a server item offline.<br><br>
+                           is generally done when taking a server item offline. This technique has the
+                           added benefit that if the item's thread is waiting, it will wake it up via
+                           throwing an <code>InterruptedException</code><br><br>
 
                            Since this is only an example item implementation, the main processing thread
                            has nothing to do.  So it simply puts itself to sleep, to be awoken should
@@ -152,13 +157,13 @@
                            Lastly, the item implements the <code>toString</code> method, inherited from
                            <code>Object</code>.  This is also <i>highly recommended</i>.  In this case,
                            it aids when monitoring the item, covered in the section on
-                           <a href=example.html#Main>Main</a>, and greatly aids in debugging. That's
-                           all there is to the <code>TestItem</code> example.<br><br>
+                           <a href="#Main">Main</a>, and greatly aids in debugging. That's all there is
+                           to the <code>TestItem</code> example.<br><br>
 
-                           The <a href=example.html#TestProxy name=TestProxy>TestProxy</a> class is a
-                           small, proxy, illustrating many features of the framework.  It will be sent
-                           to a client, as returned from the TestItem's <code>getProxy</code> method
-                           inherited from <code>BaseItem</code>.  The proxy inherits a remote reference
+                           <a id="TestProxy"></a>The <b>TestProxy</b> class is a small, proxy,
+                           illustrating many features of the framework.  It will be sent to a client, as
+                           returned from the TestItem's <code>getProxy</code> method inherited from
+                           <code>BaseItem</code>.  The proxy inherits a remote reference
                            to the TestItem, assigned by the ProxyLoader.  It is next initialized at the
                            client, with the assignment of its remoteThis member with a reference to the
                            proxy itself, remoted the context of the client VM.  This initialization,
@@ -188,13 +193,13 @@
                            it will display the incoming text argument, and send back a synchronous
                            text acknowlegement of its own.<br><br>
 
-                           The <a href=example.html#Builder name=Builder>Builder</a> class serves two
-                           purposes.  First it serves to replace the code which would normally go into
-                           the proxy's constructor.  Why do this?  Because all of the construction code,
-                           which can be quite a sizeable amount if the proxy is elaborate, can be left
-                           out of the proxy's jar file.  This reduces the proxy jar size, can and also
-                           add the additional feature that a proxy becomes much more difficult to
-                           reverse-engineer, when such a protection is important.<br><br>
+                           <a id="Builder"></a>The <b>Builder</b> class serves two purposes.  First it
+                           serves to replace the code which would normally go into the proxy's
+                           constructor.  Why do this?  Because all of the construction code, which can
+                           be quite a sizeable amount if the proxy is elaborate, can be left out of the
+                           proxy's jar file.  This reduces the proxy jar size, can and also add the
+                           additional feature that a proxy becomes much more difficult to
+                           reverse-engineer, if such a protection is important.<br><br>
 
                            The second function of the Builder class is to instantiate the proxy, then
                            serialize its image to disc.  This serialized object will be included in the
@@ -215,14 +220,13 @@
                            would suffer a <code>ClassNotFoundException</code> at the host,
                            ProxyLoader would not have been loaded into the proxy jar file.<br><br>
 
-                           The <a href=example.html#Main name=Main>Main</a> class illustrates how to
-                           make a server application.  A server is simply an application which makes
-                           one, or more, items available for remote invocation. The <code>Main</code>
-                           class first configures the network settings, then makes the test item
-                           accessible.  As explained in the <a href=tutorial.html#launching>launching
-                           </a>turorial the application can take up to five parameters, in order,
-                           from most likely to least likely to need changing, and where precedence
-                           matters:
+                           <a id="Main"></a>The <b>Main</b> class illustrates how to make a server
+                           application.  A server is simply an application which makes one, or more,
+                           items available for remote invocation. The <code>Main</code> class first
+                           configures the network settings, then makes the test item accessible.  As
+                           explained in the <a href=tutorial.html#launching>launching</a> turorial the
+                           application can take up to five parameters, in order, from most likely to
+                           least likely to need changing, and where precedence matters:
 
                            <ul>
                               <li> the port number on which to serve the proxy's codebase (default = 80)
@@ -243,12 +247,12 @@
                            ports, the info will contain the port numbers chosen by the system at startup.<br><br>
 
                            
-                           The <a href=docs/gnu/cajo/utils/ZippedProxy.html>ZippedProxy</a> class is the
-                           only utility class <a href=example.html#Extras name=Extras>not used</a> in
-                           the example.  This is bacause the example demonstrates indirectly referencing
-                           a proxy by the serving item.  This is indicated when the server item, does
-                           not need to configure a proxy before sending it.  This can save a lot of
-                           space in the server item's runtime, if the proxy is very large, or if a
+                           <a id="Extras"></a>The <a href=docs/gnu/cajo/utils/ZippedProxy.html>
+                           ZippedProxy</a> class is the only utility class not used in the example.
+                           This is bacause the example demonstrates indirectly referencing a proxy, by
+                           the serving item.  This is indicated when the server item, does not need to
+                           configure a proxy before sending it.  This can save a lot of space in the
+                           server item's runtime, especially if the proxy is very large, or if a
                            single VM is serving many proxies.<br><br>
 
                            In cases, when a proxy <u>must</u> be loaded into the server's VM; presumably
