@@ -27,25 +27,26 @@ package gnu.cajo.invoke;
  * hosting clients.  It allows trusted clients and servers to operate
  * without restriction, and without the need for a security policy file.  It
  * effectively allows both clients and proxies <b>full permissions</b> on the
- * machine.  While convenient for development purposes, this clearly would be
- * very unwise to use in an untrusted environment.  In production, the user
- * better impose his own security policy using the 2 interpreter switces:<p>
- * <code>-Djava.security.manager -Djava.security.policy=someURL</code><p>
- * This URL/file would contain the restrictions governing what both the
- * client code and loaded proxy code are permitted to do. A minimal, but
- * functional policy file would contain at least the following:<p><pre>
+ * machine.  While this is very convenient for development purposes, this
+ * clearly would be <u>very unwise to use in an untrusted environment</u>.  In
+ * production, the user better impose his own security policy, and use the
+ * following two interpreter switces:<p>
+ * <b><code>-Djava.security.manager -Djava.security.policy=someURL</code></b><p>
+ * This URL, or file, would contain the restrictions governing what both the
+ * loaded proxy code, and the client code, are permitted to do. A minimal, but
+ * functional policy file, would contain at least the following:<p><pre>
  * grant {
  *   permission java.net.SocketPermission "*:1024-", "accept";
  *   permission java.net.SocketPermission "*", "connect";
  * };</pre><p>This would allow the client, and its loaded code to open
  * server sockets on port 1024 and higher, and to connect to remote hosts
- * on any port, nothing else.  Slightly more permissive than an applet
- * sandbox, but still very safe for hosting machines.  Any code assigning
- * any SecurityManager should enclose the assignment in a try/catch
- * block, as the operation may be restricted by the user via the technique
- * described above. The assignment would result in the throwing of a
- * SecurityException. <p>If the <i>client</i> code is trusted, then a more
- * flexible policy file could be used such as:<p><pre>
+ * on any port, and <b>nothing else</b>.  It is slightly more permissive than
+ * a standard applet sandbox, but still very safe for hosting machines.  Any
+ * attempt to install a SecurityManager should enclose the operation in a
+ * try/catch block, as the operation may be forbidden by the user via the
+ * technique described above. The assignment would then result in the throwing
+ * of a <b>SecurityException</b>. <p>If the <b>client</b> code is fully trusted,
+ * then a more flexible policy file could be used such as:<p><pre>
  * grant codeBase "file:${java.class.path}" {
  *    permission java.security.AllPermission;
  * };
@@ -55,11 +56,11 @@ package gnu.cajo.invoke;
  * };</pre><p>This will allow classes loaded from the local filesystem full
  * permissions, while only allowing downloaded code to make socket
  * connections in the manner of the first policy file.<p>
- * <i>Note:</i> to allow proxies to run within this VM invites the
+ * <i>Note:</i> either way, to allow proxies to run within this VM invites the
  * possibility of a <b>denial of service attack</b>, i.e. a proxy or, other
  * object, could consume all the VMs memory and compute cycles maliciously,
  * or even accidentially.  Therefore, it is recommended that proxy hosting
- * only be done either on protected networks, or with an expendible VM.
+ * only be done on an expendible VM.
  */
 public final class NoSecurityManager extends SecurityManager {
    /**
@@ -74,8 +75,9 @@ public final class NoSecurityManager extends SecurityManager {
     * returns, to indicate that a requested client operation is permitted.
     * Otherwise it could throw a SecurityException, but it never does.
     * This means, that without an explicitly specified policy file used
-    * in the startup of an application using this security manager, BOTH
-    * the client, <b>and its loaded proxies</b> can do anything they want.
+    * in the startup of an application using this security manager, <i>BOTH</i>
+    * the client, <b>and its loaded proxies</b> have full permissions on this
+    * machine.
     */
    public void checkPermission(java.security.Permission perm) {}
 }

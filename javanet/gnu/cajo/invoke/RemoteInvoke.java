@@ -26,17 +26,17 @@ package gnu.cajo.invoke;
  * The Remote Component Communication Interface, and reason for this package.
  * An empty extension of the Invoke interface, it allows both local, and
  * remote items, i.e. those from another VM, to be handled interchangably in
- * code, through the superclass interface Invoke. When remote access to an item
- * is desired, the local item would be passed to the constructor of the 
- * {@link Remote Remote} class included in this package.
- * The implementation is so trivial, it is included it here:<p>
+ * code, through their superclass interface Invoke. When a VM wishes to allow
+ * remote access to an item, the local item would be passed to the constructor
+ * of the {@link Remote Remote} class included in this package. <p>The
+ * implementation is so trivial, it is included it here:<p>
  * <code>public interface RemoteInvoke extends Invoke, Remote {}</code><p>
- * <i>Note:</i> this interface is not implemented by classes directly, rather,
- * a client would only use this interface to test if an item is remote, in
- * cases where that would be of interest to the application. Doing this would
- * employ the following paradigm:<p>
+ * <i>Note:</i> this interface is nevere implemented by classes directly,
+ * rather, a client only uses this interface to test if an item is remote, in
+ * cases where that would be of interest to the application.<p> To test the
+ * locality of an item reference:<p>
  * <pre>
- * if (x instanceof RemoteInvoke) { // the item is remote
+ * if (foo instanceof RemoteInvoke) { // the item is remote
  *    ...
  * } else { // the item is local
  *   ...

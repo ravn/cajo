@@ -31,14 +31,14 @@ import java.util.zip.GZIPOutputStream;
 
 /**
  * This class is used to create a hosting VM to receive graphical proxy
- * objects from a remote VMs.  The client will require one outbound port, on
- * which to commuinicate with its proxy server. It will also require two
- * inbound ports, the first on which to receive the proxy class files, and the
- * second to receive asynchronous callbacks from the server. If the client is
- * behind a firewall, these will have to be made accessible.<p> Its purpose is
- * to demonstrate the overall functionality of the package, and the invoke
- * package paradigm, in the form of a hopefully useful and potentially standard
- * client.
+ * objects, from remote VMs.  The client will require one outbound port, on
+ * which to commuinicate with its proxy server and one on inbound, on which to
+ * receive asynchronous callbacks from theserver. It will also require one
+ * short-term inbound port on which to receive the proxy class files. If the
+ * client is behind a firewall, these will have to be open.<p> The purpose of
+ * this class is to demonstrate the overall functionality of the package, and
+ * the use of the invoke package paradigm, in the form of a hopefully useful,
+ * and potentially standard client.
  *
  * @version 1.0, 01-Nov-99 Initial release
  * @author John Catherino
@@ -69,9 +69,10 @@ public final class Client extends java.applet.Applet implements Invoke {
     */
    public Client() {}
    /**
-    * The update method is short-circuited to directly execute the paint
-    * method, to reduce flicker from the default background repainting.  It
-    * will require the applet to repaint any opaque background on its own.
+    * The update method is short-circuited to directly execute the applet's
+    * paint method, to reduce flicker from the default background repainting.
+    * This will require the graphical proxy to repaint any opaque background
+    * of its own, however.
     */
    public void update(Graphics g) { paint(g); }
    /**
@@ -83,10 +84,11 @@ public final class Client extends java.applet.Applet implements Invoke {
    }
    /**
     * When running as an applet, this method describes the optional client
-    * applet parameters. There are five such parameters which can be specified:
+    * parameters. There are five such parameters which can be specified:
     * <ul>
     * <li>The <code>proxyName</code> parameter is the name of the proxy server
-    * registered in the server's rmiregistry.  Unspecified it will be "main".
+    * item registered in the server's rmiregistry.  Unspecified it will be
+    * "main".
     * <li>The <code>proxyPort</code> parameter is the outbound port number on
     * which to contact the proxy server.  Unspecified it will be 1099.  If the
     * client is operating behind a firewall, the must be a permitted outbound
@@ -101,12 +103,11 @@ public final class Client extends java.applet.Applet implements Invoke {
     * If a firewall is being used, it must be a permitted inbound port.
     * Unspecified, it will be the same as the local port value below.
     * <li>The <code>localPort</code> parameter is the internal inbound port
-    * number on which the server will callback its proxy. It may need to be
+    * number on which the server can contact its proxy. It may need to be
     * specified if the client is behind NAT, to map to the correct remote port.
-    * If a firewall is being used, it must be a permitted inbound port.
     * Unspecified, it will be anonymous.
     * </ul>
-    * @return The two dimensional parameter and information array.
+    * @return The parameter / information array.
     */
    public String[][] getParameterInfo() {
       return new String[][] {
@@ -119,15 +120,15 @@ public final class Client extends java.applet.Applet implements Invoke {
    }
    /**
     * When running as an applet, this method will connect back to its hosting
-    * server and request its proxy server from its rmiregistry. Next it will
+    * server and request the item from the server's rmiregistry. Next it will
     * invoke a getProxy(null) on the remote reference to request its proxy
-    * item.  If the server returns the proxy as a MarshalledObject, it will be
+    * item.  If the item returns the proxy in a MarshalledObject, it will be
     * extracted automatically. If the proxy supports the Invoke interface, the
-    * client will invoke an init on the returned proxy, with a remote reference
-    * to the proxy as the sole argument, to obtain a graphical representation,
-    * which will then be added into the applet's panel.  The proxy can pass
-    * this remote reference back to hosting server, or to other VMs, on which
-    * they can asynchronously call back the proxy.
+    * client will invoke an init on the returned proxy, passing it a remote
+    * reference itself, to obtain its primary graphical representation, which
+    * will then be added into the applet's panel.  The proxy can pass its
+    * remote reference back to hosting server, or to other VMs, on which
+    * they can asynchronously call it back.
     */
     public void init() {
       try {
@@ -159,22 +160,23 @@ public final class Client extends java.applet.Applet implements Invoke {
    /**
     * A utility method to load a proxy items into this VM.  If the invocation
     * data is a remote item reference, getProxy(null) will be invoked to
-    * request its proxy item. If the proxy is encapsulated in a
+    * request a proxy item. If the retruned proxy is encapsulated in a
     * MarshalledObject, it will be extracted automatically. If the proxy
     * implements the Invoke interface, an init will be called on it with a
     * remote reference to itself as the argument.  If the proxy is graphical
-    * in nature, i.e. returns a java.awt.Component or a javax.swing.JComponent
-    * it will be automatically placed in a Frame/JFrame, and made visible on
+    * in nature; i.e. the initialization invocation returns a
+    * java.awt.Component, or a javax.swing.JComponent, this will be
+    * automatically placed in a Frame/JFrame, created and made visible on
     * the client.
     * @param method Required by the interface, but ignored in this
     * implementation.
     * @param args A remote reference to a proxy server, or a proxy object,
     * potentially encased in a MarshalledObject.
-    * @return A remote reference to the proxy object by which the sending
-    * VM may asynchronously communicate with its proxy. If the proxy sent
-    * does not implement the invoke interface, it will be null.
-    * @throws Exception If the proxy initialization fails for application
-    * specific reasons.
+    * @return A remote reference to the proxy object on which the sending
+    * VM may asynchronously communicate with it. If the proxy sent does not
+    * implement the invoke interface, it will return null.
+    * @throws Exception If the proxy instantiation fails, for its own
+    * application specific reasons.
     */    
    public Object invoke(String method, Object args) throws Exception {
       Invoke proxy = null;
@@ -202,19 +204,26 @@ public final class Client extends java.applet.Applet implements Invoke {
    }
    /**
     * The application creates a remotely accessible proxy hosting VM, bound
-    * in its own rmiregistry under the name "main". It will use the getProxy
-    * method of the Remote class to load the item. <i>Note:</i> by default,
-    * it will load a {@link NoSecurityManager NoSecurityManager} if no external
-    * SecurityManager is specified.
+    * in its own rmiregistry under the name "main". If an initial URL argument
+    * is provided, it will use the static {@link Remote#getItem getItem} method
+    * of the {@link Remote Remote} class to contact the server. It will then
+    * invoke a null-argument getProxy on the resulting reference to request the
+    * primary proxy object of the item. It will then be initialized as explained
+    * in the {@link #invoke invoke} method. <p><i>Note:</i> by
+    * default, it loads a {@link NoSecurityManager NoSecurityManager},
+    * therefore, if no external SecurityManager is specified in the startup
+    * command line options; the arriving proxies will have <b>full permissions
+    * </b> on this machine.
     * <br><br>The startup can take up to five optional configuration parameters,
-    * in this order:<br><br>
-    * @param args[0] The optional external client host name, if using NAT.
-    * @param args[1] The optional external client port number, if using NAT.
-    * @param args[2] The optional internal client host name, if multi home/NIC.
-    * @param args[3] The optional internal client port number, if using NAT.
-    * @param args[4] The optional URL where to get a default proxy item:
+    * in this order:<ul>
+    * <li> args[0] The optional external client host name, if using NAT.
+    * <li> args[1] The optional external client port number, if using NAT.
+    * <li> args[2] The optional internal client host name, if multi home/NIC.
+    * <li> args[3] The optional internal client port number, if using NAT.
+    * <li> args[4] The optional URL where to get a default proxy item:
     * file:// http:// ftp:// ..., //host:port/name (rmiregistry), /path/name
-    * (serialized), or path/name (class).
+    * (serialized), or path/name (class).</ul>
+    * @see NoSecurityManager
     */
    public static void main(String args[]) {
       try {

@@ -25,9 +25,10 @@ package gnu.cajo.invoke;
 /**
  * The generic inter-component communication interface, and foundation for
  * this paradigm. This provides a standard communication interface between
- * components, referred to in this package as items.  It is used to pass
+ * objects, referred to in this package as <b>items</b>.  It is used to pass
  * arguments to, and recieve synchronous responses from, the receiving item.
- * <p>The implementation is so extrmely simple, it's included here:<p><pre>
+ * <p>The implementation is so <i>extrmely simple</i>, it's included here:
+ * <p><pre>
  * public interface Invoke extends Serializable {
  *   Object invoke(String method, Object args[]) throws Exception;
  * }</pre><p>
@@ -37,13 +38,13 @@ package gnu.cajo.invoke;
  */
 public interface Invoke extends java.io.Serializable {
    /**
-    * Used by other items to pass data into this item, and receive synchronous
-    * data responses from it, if any. The invocation may, or may not contain
-    * inbound data.  It may, or may not, return a data object response.  The
-    * functionality of this method is completely application specific. This
-    * interface only serves to define the format of communication between
-    * items.<p>
-    * <i>Note:</i> this method could be called reentrantly, by many items,
+    * Used by other objects to pass data into this item, and receive
+    * synchronous data responses from it, if any. The invocation may, or may
+    * not contain inbound data.  It may, or may not, return a data object
+    * response.  The functionality of this method is completely application
+    * specific. This interface serves only to define the format of
+    * communication between items.<p>
+    * <i>Note:</i> this method could be called reentrantly, by many objects,
     * simultaneously.  If this would cause a problem, the critical sections of
     * this item's method must be synchronized. In general, synchronizing
     * the whole method is <i>strongly</i> discouraged, as it could block
@@ -53,10 +54,10 @@ public interface Invoke extends java.io.Serializable {
     * @param  args The data relevant to the operation. It can be a single
     * object, an array, or even null.
     * @return Any synchronous data defined by a subclass' implementation,
-    * possibly even null
+    * it can be an array of of objects, possibly even null
     * @throws Exception As needed by the application. <i>Note:</i>  subclasses
     * of Exception can be thrown, to allow client items the opportunity to
-    * catch only specific types, these exceptions might also contain
+    * catch only specific types, these exceptions could also contain
     * application specific methods, and fields, to supplement the error
     * information.  If an item does not throw any exceptions, it would be
     * preferable to simply omit the throws clause entirely, in the subclass'

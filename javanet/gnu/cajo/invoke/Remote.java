@@ -30,12 +30,14 @@ import java.rmi.registry.*;
  */
 
 /**
- * This utility class takes a object, and allows it to be called from
+ * This class takes any object, and allows it to be called from
  * remote VMs. This class eliminates the need to maintain multiple
- * specialized rmic interface compilations for interactions between various,
- * application specific objects. It also contains several useful utility
- * methods, to further support the invoke package paradigm. It can also be run
- * as an application, to load an object, and remote it within a VM.
+ * specialized rmic interface compilations for multiple, application specific
+ * objects. It effectively allows any object to become a remotely callable
+ * <b>Item</b>, in terms of this paradigm, and makes all of the object's
+ * public methods remotely callable. It also contains several useful utility
+ * methods, to further support the invoke package paradigm.<p> It can also be run
+ * as an application, to load an object from a URL, and remote it within a VM.
  *
  * @version 1.0, 01-Nov-99 Initial release
  * @author John Catherino
@@ -66,19 +68,19 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
    private static Registry registry;
    /**
     * A global reference to the remote client socket factory.  This is the
-    * factory local items will use to communicate with remote items. It simply
+    * factory remote VMs will use to communicate with local items. It simply
     * returns a standard {@link java.net.Socket socket}, bypassing all of the
     * http fallback mechanisms of the default
-    * {@link java.rmi.server.RMIClientSocketFactory ClientSocketFactory}.
+    * {@link java.rmi.server.RMIClientSocketFactory RMIClientSocketFactory}.
     */
    public static final RCSF rcsf = new RCSF();
    /**
-    * A global reference to the remote client server factory.  This is the
-    * factory the remote items use to receive requests from, and asynchronously
-    * communicate with, other items. It simply returns a standard
+    * A global reference to the remote server socket factory.  This is the
+    * factory the local items use to asynchronously communicate with remote
+    * VMs. It simply returns a standard
     * {@link java.net.ServerSocket ServerSocket}, bypassing all of the http
     * fallback mechanisms of the default
-    * {@link java.rmi.server.RMIServerSocketFactory ServerSocketFactory}.
+    * {@link java.rmi.server.RMIServerSocketFactory RMIServerSocketFactory}.
     */
    public static final RSSF rssf = new RSSF();
    /**
@@ -90,18 +92,17 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
    public static String getServerHost() { return rssf.host; }
    /**
     * This method is provided to obtain the local  server socket port
-    * number. This can be particularly useful if the item was remoted on an
+    * number. This can be particularly useful if the host was remoted on an
     * anonymous port.  If a firewall is in use, this inbound port must be made
     * accessible to outside clients.
     * @return The local ServerSocket port number on which the item is remoted.
     */
    public static int getServerPort() { return rssf.port; }
    /**
-    * This method is provided to obtain the host name remote clients must
+    * This method is provided to obtain the host name remote clients will
     * use to contact this server. This can be different from the local server
-    * name or address for if NAT is being used.
-    * @return The server address clients must use to connect to the
-    * server.
+    * name or address if NAT is being used.
+    * @return The server address clients use to connect to the server.
     */
    public static String getClientHost() { return rcsf.host; }
    /**
@@ -112,15 +113,16 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
     */
    public static int getClientPort() { return rcsf.port; }
    /**
-    * This method configures the class' TCP parameters for RMI.  It allows
+    * This method configures the server's TCP parameters for RMI.  It allows
     * complete specification of client-side and server-side ports and
-    * hostnames.  It used to override default values.  It is necessary
-    * when the VM is either operating behind a firewall, is multi-addressed,
-    * or is using NAT. <p><i>Note:</i> If the class is to be custom configured,
-    * it must be done <b>before</b> any items are remoted. The first two
-    * parameters control how the sockets will be configured locally, the
-    * second two control how a remote object's sockets will be configured
-    * to communicate with this object.<p>
+    * hostnames.  It used to override the default values.  It is necessary
+    * when either VM is either operating behind a firewall, has multiple network
+    * interfaces, is multi-addressed, or is using NAT. The first two parameters
+    * control how the sockets will be configured locally, the second two
+    * control how a remote object's sockets will be configured to communicate
+    * with this server.
+    * <p><i>Note:</i> If this class is to be configured, it must be done
+    * <b>before</b> any items are remoted.
     * @param serverHost The local domain name, or IP address of this host.
     * If null, it will use the default local address.  Typically it is
     * specified when the server has multiple phyisical network interfaces, or
@@ -133,7 +135,7 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
     * @param clientHost The domain name, or IP address the remote client will
     * use to communicate with this server.  If null, it will be the same as
     * serverHost resolution.  This would need to be explicitly specified if
-    * the object is operating behind NAT, that is, when the object's subnet IP
+    * the server is operating behind NAT i.e. when the server's subnet IP
     * address is <i>not</i> the same as its address outside the subnet.
     * @param clientPort Specifies the particular port on which the client
     * will connect to the server.  Typically this is the <i>same</i> number
@@ -185,16 +187,16 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
     * <li>As a class file; in the format path/name
     * <li>As a serialized item; in the format /path/name</ul><p>
     * File loading will first be attempted from within the server's jar file,
-    * if that fails, it will then look in the local filesystem.<i>Note:</i> any
-    * socket connections made by the incoming item cannot be known at compile
-    * time, so proper operation if this VM is behind a firewall could be
-    * blocked. Use behind a firewall would require knowing all the ports that
-    * would be needed in advance, and enabling them before attempting the
-    * loading.
-    * @param url The URL where to get the object: file:// http:// ftp://
-    * /path/name or path/name or //[host][:port]/[name]. The host, port,
+    * if that fails, it will then look in the local filesystem. <i>Note:</i>
+    * any socket connections made by the incoming item cannot be known at
+    * compile time, therefore proper operation if this VM is behind a firewall
+    * could be blocked. Use behind a firewall would require knowing all the
+    * ports that would be needed in advance, and enabling them before
+    * loading the proxy.
+    * @param url The URL where to get the object: file://, http://, ftp://,
+    * /path/name, path/name, or //[host][:port]/[name]. The host, port,
     * and name, are all optional. If missing the host is presumed local, the
-    * port 1099, and the name "main". The internal resource can be
+    * port 1099, and the name "main". The referenced resource can be
     * returned as a MarshalledObject, it will be extracted automatically.
     * If the URL is null, it will be assumed to be ///.
     * @return A reference to the item contained in the URL. It may be either
@@ -210,7 +212,9 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
     * and it does not support a no-arg constructor.
     * @throws MalformedURLException if the URL is not in the format explained
     */
-   public static Invoke getItem(String url) throws Exception {
+   public static Invoke getItem(String url) throws RemoteException,
+      NotBoundException, IOException, ClassNotFoundException,
+      InstantiationException, IllegalAccessException, MalformedURLException {
       Invoke item = null;
       if (url == null) url = "///main";
       else if (url.startsWith("//") && url.endsWith("/")) url += "main";
@@ -232,13 +236,13 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
    }
    private final Object item;
    /**
-    * The constructor takes an object, and allows it to be remotely invoked.
-    * If the object implements the {@link Invoke Invoke} interface, (i.e. it
-    * is an 'item') it will simply route all remote invocations to it.
-    * Otherwise it will use Java reflection to attempt to invoke the remote
-    * calls directly on the object.
+    * The constructor takes <i>any</i> object, and allows it to be remotely
+    * invoked. If the object implements the {@link Invoke Invoke} interface,
+    * (i.e. it is an <b>Item</b>) it will simply route all remote invocations
+    * directly to it. Otherwise it will use Java reflection to attempt to
+    * invoke the remote calls directly on the object's public interface.
     * @param  item The object to make remotely callable.  It may be an
-    * arbitrary object of any type, or an item (either local or remote).
+    * arbitrary object of any type, or an <b>Item</b> (either local or remote).
     * @throws RemoteExcepiton If the remote instance could not be be created.
     */
    public Remote(Object item) throws RemoteException {
@@ -246,22 +250,22 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
       this.item = item;
    }
    /**
-    * This method checks if two wrappers are holding an equavilent inner item.
-    * It short-circuit's the invocation, returning the result of the internal
-    * item's equals invocation.
+    * This method is used to check if two Remote objects are holding an
+    * equavilent inner item. It short-circuit's the invocation, returning the
+    * result of the internal object's equals invocation.
     * @param object A reference to another object to compare for equality.
-    * @return The result of the equals method called on the internal item. 
+    * @return The result of the equals method called on the internal object. 
     */
    public boolean equals(Object object) { return item.equals(object); }
    /**
-    * This method is used to identify the internal item.  It short-circuit's
-    * the invocation, returning the result of the internal item's toString
+    * This method is used to identify the internal object.  It short-circuit's
+    * the invocation, returning the result of the internal object's toString
     * invocation.
-    * @return The result of the toString method called on the internal item. 
+    * @return The internal object's cannonical string identifier. 
     */
    public String toString() { return item.toString(); }
    /**
-    * This method is used to identify the internal item.  It short-circuit's
+    * This method is used to identify the internal object.  It short-circuit's
     * the invocation, returning the result of the internal item's hashCode
     * invocation.
     * @return The semi-unique integer identifier for the internal object.
@@ -269,22 +273,22 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
    public int hashCode() { return item.hashCode(); }
    /**
     * The sole generic, multi-purpose interface for communication between VMs.
-    * This function may be called reentrantly, so the inner item <i>must</i>
-    * synchronize its critical sections as necessary.  If the internal item
+    * This function may be called reentrantly, so the inner object <i>must</i>
+    * synchronize its critical sections as necessary.  If the internal object
     * implements the {@link Invoke Invoke} interface, the call will simply be
     * forwarded to the internal implementation's method.  Otherwise, the
     * method specified will be invoked, with the provided arguments if any,
-    * on the internal object via the Java reflection mechanism, and the
-    * result returned, if any.
+    * on the internal object's public method via the Java reflection mechanism,
+    * and the result returned, if any.
     * <p><i>Note:</i> reflection will only invoke a method whose argument
     * types match exactly.  Unfortunately polymorphism is not recognized.
-    * Therefore as one <b>special case</b>, all arguments implementing the
-    * Invoke interface, will be forcibly cast as being Invoke type. Application
-    * specific methods must therefore declare the argument type as Invoke, but
-    * could easily test its type at runtime if it mattered. In general, this is
-    * a recommended practice for this paradigm, to reinforce local/remote
-    * transparency.
-    * @param  method The method to invoke on the internal item.
+    * Therefore as <b>a special case</b>, all arguments implementing the
+    * Invoke interface, will be forcibly cast as being type Invoke. Therefore
+    * application specific methods must declare the argument type as Invoke;
+    * however they could easily test the actual type at runtime if it matters.
+    * In general, this is a recommended practice for this paradigm, to
+    * reinforce local/remote transparency.
+    * @param  method The method to invoke on the internal object.
     * @param args The arguments to provide to the method for its invocation.
     * It can be a single object, an array of objects, or even null.
     * @return The sychronous data, if any, resulting from the invocation.
@@ -293,8 +297,8 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
     * @throws IllegalArgumentException If reflection is going to be used,
     * and the method argument is null.
     * @throws NoSuchMethodException If no matching method can be found.
-    * @throws Exception If the internal object rejects the request, for any
-    * application specific reason.
+    * @throws Exception If the internal item rejected the invocation, for
+    * application specific reasons.
     */
    public Object invoke(String method, Object args) throws Exception {
       if (item instanceof Invoke) return ((Invoke)item).invoke(method, args);
@@ -319,8 +323,8 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
     * {@link #getItem getItem} method to obtain a reference to the remote
     * item. It will next invoke the received reference's invoke method with
     * a "send" value, and a reference to itself as its sole argument.
-    * @param url The URL where to get the remote host interface: file://
-    * http:// ftp:// /path/name or path/name or //[host][:port]/[name].
+    * @param url The URL where to get the remote host interface: file://,
+    * http://, ftp://, /path/name, path/name, or //[host][:port]/[name].
     * The host, port, and name, are all optional. If missing the host is
     * presumed local, the port 1099, and the name "main".  If the URL is
     * null, it will be assumed to be ///.
@@ -335,12 +339,12 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
       return getItem(url).invoke("send", this);
    }
    /**
-    * This method will write the remote item reference to an output stream
-    * as a zipped marshalled object (zedmob). Zedmob is the standard serialized
-    * format for an item, or remote reference to an item, in this paradigm.
-    * This can be used to 'freeze-dry' the remote reference, to a file for
-    * later use, send it over the network, or to an object archival service,
-    * for example.
+    * This method will write this remote item reference to an output stream
+    * as a zipped marshalled object (zedmob). A zedmob is the standard
+    * serialized format for a remote item reference, in this paradigm.
+    * This can be used to <i>'freeze-dry'</i> the remote reference, to a file
+    * for later use, send it over the network, or to an object archival
+    * service, for example.
     * @param os The output stream on which to write the reference.  It may be
     * a file stream, a socket stream, or any other type of stream.
     * @throws IOException For any stream related writing error.
@@ -362,21 +366,22 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
     * reference to it under the name "main".  This will also allow remote
     * clients to connect to, and interact with it.  <i>Note:</i>It will
     * install a {@link NoSecurityManager NoSecurityManager}, which if not
-    * blocked by a user-specified SecurityManager, will allow the* loaded item,
-    * and all loaded proxies after starting, <b>full permissions</b> on this
-    * machine.
-    * @param args[0] The optional URL where to get the object: file:// http://
+    * blocked by a user-specified SecurityManager, will allow the loaded item,
+    * and all loaded proxies thereafter, <b>full permissions</b> on this
+    * machine. There are six optional configuration parameters:<ul>
+    * <li> args[0] The optional URL where to get the object: file:// http://
     * ftp:// ..., /path/name <serialized>, path/name <class>, or alternatively;
     * //[host][:port]/[name].  If no arguments are provided, the URL will be
     * assumed to be //localhost:1099/main.
-    * @param args[1] The optional external client host name, if using NAT.
-    * @param args[2] The optional external client port number, if using NAT.
-    * @param args[3] The optional internal client host name, if multi home/NIC.
-    * @param args[4] The optional internal client port number, if using NAT.
-    * @param args[5] The optional URL where to get a proxy item: file://
+    * <li> args[1] The optional external client host name, if using NAT.
+    * <li> args[2] The optional external client port number, if using NAT.
+    * <li> args[3] The optional internal client host name, if multi home/NIC.
+    * <li> args[4] The optional internal client port number, if using NAT.
+    * <li> args[5] The optional URL where to get a proxy item: file://
     * http:// ftp:// ..., //host:port/name (rmiregistry), /path/name
     * (serialized), or path/name (class).  It will be passed into the loaded
     * proxy as the sole argument to a setItem method invoked on the loaded item.
+    * </ul>@see NoSecurityManager
     */
    public static void main(String args[]) {
       try {
