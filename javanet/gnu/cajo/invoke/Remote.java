@@ -51,7 +51,9 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
       private int port;
       private String host;
       public ServerSocket createServerSocket(int port) throws IOException {
-         ServerSocket ss =
+         ServerSocket ss = host == null ?
+            RMISocketFactory.getDefaultSocketFactory().
+               createServerSocket(this.port) :
             new ServerSocket(this.port, 50, InetAddress.getByName(host));
          if (this.port == 0) {
             this.port = ss.getLocalPort();
@@ -60,12 +62,13 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
          return ss;
       }
    }
-   private static final class RCSF
+   private static final class RCSF // this class has become unnecessary for now
       implements RMIClientSocketFactory, Serializable {
       private int port;
       private String host;
       public Socket createSocket(String host, int port) throws IOException {
-         return new Socket(this.host, this.port != 0 ? this.port : port);
+         return RMISocketFactory.getDefaultSocketFactory().
+            createSocket(this.host, this.port != 0 ? this.port : port);
       }
    }
    private static Object proxy;
@@ -131,7 +134,7 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
     * If null, it will use the default local address.  Typically it is
     * specified when the server has multiple phyisical network interfaces, or
     * is multi-homed, i.e. having multiple logical network interfaces.
-    * @param serverPort Specifies the local port on which this object is
+    * @param serverPort Specifies the local port on which the server is
     * serving clients. It can be zero, to use an anonymous port.  If firewalls
     * are being used, it must be an accessible port, into this server. If this
     * port is zero, and the ClientPort argument is non-zero, then the
@@ -162,6 +165,71 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
          System.setProperty("java.rmi.server.useLocalHostname", "true");
          System.setProperty("java.rmi.server.hostname", rcsf.host);
       } catch(SecurityException x) {}
+   }
+   /**
+    * This method configures the server's TCP parameters for RMI through HTTP
+    * proxy servers. This is necessary when the client or server, or both are
+    * behind firewalls, and the only method of access to the internet is
+    * through HTTP proxy servers. There will be a fairly significant performance
+    * hit incurred using the HTTP tunnel, but it is better than having no
+    * connectivity at all. Due to an unfortunate oversight in the design of
+    * the standard RMISocketFactory, no server network interface other than
+    * the default can be selected.
+    * <p><i>Note:</i> If this class is to be configured, it must be done
+    * <b>before</b> any items are remoted.
+    * @param serverPort Specifies the local inbound port on which the server is
+    * serving clients. It can be zero, to use an anonymous port.  This must
+    * are being used, it must be an accessible port, into this server. If this
+    * port is zero, and the ClientPort argument is non-zero, then the
+    * ClientPort value will automatically substituted.
+    * @param clientHost The domain name, or IP address the remote client will
+    * use to communicate with this server.  If null, it will be the server's
+    * default host name.  This would need to be explicitly specified if
+    * the server is operating behind NAT i.e. when the server's subnet IP
+    * address is <i>not</i> the same as its address outside the subnet.
+    * @param clientPort Specifies the particular port on which the client
+    * will connect to the server.  Typically this is the <i>same</i> number
+    * as the serverPort argument, but could be different, if port translation
+    * is being used.  If the clientPort field is 0, i.e. anonymous, its port
+    * value will be automatically assigned to match the server, even if the
+    * server port is anonymous.
+    * @param proxyHost The name or address of the proxy server used to gain
+    * HTTP access to the internet.
+    * @param proxyPort The port number of the proxy server used to gain
+    * HTTP access to the internet.
+    * @param username The proxy account user name required for permission, if
+    * non-null.
+    * @param password The proxy account password required for permission, if
+    * required.
+    * @throws java.net.UnknownHostException If the IP address or name of the
+    * local host interface can not be determined.
+    */
+   public static void config(int serverPort, String clientHost, int clientPort,
+      String proxyHost, int proxyPort, final String username,
+      final String password) throws java.net.UnknownHostException {
+      rcsf.host = (clientHost != null) ?
+         clientHost : InetAddress.getLocalHost().getHostName();
+      rssf.port = (serverPort != 0) ?
+         serverPort : ((clientPort != 0) ? clientPort : 0);
+      rcsf.port = (clientPort != 0) ?
+         clientPort : rssf.port;
+      try { // this won't work if running as an applet
+         if (proxyHost != null) {
+            System.setProperty("proxySet", "true");
+            System.setProperty("http.proxyHost", proxyHost);
+            System.setProperty("http.proxyPort", Integer.toString(proxyPort));
+            if (username != null) Authenticator.setDefault(
+               new Authenticator() {
+                  protected PasswordAuthentication getPasswordAuthentication() {
+                     return new PasswordAuthentication(
+                        username, password.toCharArray());
+                  }
+               }
+            );
+         }
+         System.setProperty("java.rmi.server.useLocalHostname", "true");
+         System.setProperty("java.rmi.server.hostname", rcsf.host);
+      } catch (SecurityException x) {}
    }
    /**
     * A utility method to reconstitute a zipped marshalled object (zedmob)
