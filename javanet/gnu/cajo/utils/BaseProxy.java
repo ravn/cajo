@@ -155,6 +155,7 @@ public abstract class BaseProxy implements Invoke {
     */
    public void setItem(Invoke item) {
       if (this.item == null) this.item = (RemoteInvoke)item;
+      else throw new IllegalArgumentException("Item already set");
    }
    /**
     * This function is called by the hosting client on upon the proxy's
@@ -172,9 +173,9 @@ public abstract class BaseProxy implements Invoke {
     * @return The proxy's graphical user interface, if it has one, otherwise
     * null.
     */
-   public Container init(Invoke remoteRef) {
-      if (remoteThis == null && remoteRef instanceof Remote) {
-         remoteThis = (Remote)remoteRef;
+   public Container init(Remote remoteRef) {
+      if (remoteThis == null) {
+         remoteThis = remoteRef;
          if (bundle != null) {
             java.util.ResourceBundle rb =
                java.util.ResourceBundle.getBundle(bundle);
@@ -185,16 +186,21 @@ public abstract class BaseProxy implements Invoke {
                }
             }
          }
-         thread = new Thread(runnable);
-         thread.start();
-      }
+         if (runnable != null) {
+            thread = new Thread(runnable);
+            thread.start();
+         }
+      } else throw new IllegalArgumentException("Item already initialized");
       return container;
    }
    /**
     * The Java reflection based method router.  This method tries to find the
     * public method matching the name, and using the arguments provided, if
     * any, and returns the result, if any. It uses the static invoke utility
-    * of the invoke.Remote class.
+    * of the invoke.Remote class. Strictly speaking, a BaseProxy could be
+    * a regular object, and its Remote wrapper would manage the  remote
+    * invocations. However this method allows for proxy-to-proxy invocation
+    * within the same host VM, without the need for the Remote indirection.
     * @param  method The method to invoke on this object.
     * @param args The arguments to provide to the method for its invocation.
     * It can be a single object, an array of objects, or even null.
@@ -207,6 +213,8 @@ public abstract class BaseProxy implements Invoke {
     * application specific reason.
     */
    public Object invoke(String method, Object args) throws Exception {
-      return Remote.invoke(this, method, args);
+      if (method.equals("invoke")) // prevent infinite recursion!
+         throw new IllegalArgumentException("Invalid proxy invocation");
+      return Remote.invoke(this, method, args); // invoke any method but this
    }
 }
