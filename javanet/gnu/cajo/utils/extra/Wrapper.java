@@ -95,12 +95,17 @@ public class Wrapper implements Invoke {
       object = Remote.zedmob(new FileInputStream(fileName));
    }
    /**
+    * The no-arg constructor does nothing, it is protected for use only by
+    * subclasses.
+    */
+   protected Wrapper() {}
+   /**
     * The constructor loads an object, or a zipped marshalled object (zedmob)
     * from a URL, a file, or from a remote rmiregistry. If the object is in a
     * local file, it can be either inside the application's jar file, or on its
     * local file system.<p>
     * Loading an item from a file can be specified in one of three ways:<p><ul>
-    * <li>As a URL; in the format file://path/name.
+    * <li>As a URL; in the format file://path/name
     * <li>As a class file; in the format path/name
     * <li>As a serialized item; in the format /path/name</ul><p>
     * File loading will first be attempted from within the application's jar
@@ -109,9 +114,7 @@ public class Wrapper implements Invoke {
     * known at compile time, therefore proper operation if this VM is behind a
     * firewall could be blocked. Use behind a firewall would require knowing
     * all the ports that would be needed in advance, and enabling them before
-    * loading the item. Also, it this constructor is called with a null url
-    * argument, its construction will be short-circuited. This is generally
-    * used by subclasses, to perform their application specific construction.
+    * loading the item.
     * @param url The URL where to get the object: file://, http://, ftp://,
     * /path/name, path/name, or //[host][:port]/[name]. The host, port,
     * and name, are all optional. If missing the host is presumed local, the
@@ -132,7 +135,7 @@ public class Wrapper implements Invoke {
    public Wrapper(String url) throws RemoteException,
       NotBoundException, IOException, ClassNotFoundException,
       InstantiationException, IllegalAccessException, MalformedURLException {
-      if (url != null) object = Remote.getItem(url);
+      object = Remote.getItem(url);
    }
    /**
     * This method returns the hashcode of the inner object instead of
@@ -149,7 +152,7 @@ public class Wrapper implements Invoke {
    /**
     * This method returns the toString result of the inner object instead of
     * the wrapper itself. This allows two different wrappers referencing an
-    * equivalent inner object to return the same string.
+    * equivalent inner object to return the equivalent strings.
     */
    public String toString() { return object.toString(); }
    /**
