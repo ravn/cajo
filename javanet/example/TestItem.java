@@ -12,7 +12,7 @@ public class TestItem extends BaseItem {
          public void run() {
             while (!thread.isInterrupted()) try { // excellent practice!
                synchronized(thread) { thread.wait(); }
-               thread.sleep(500);
+               Thread.sleep(500);
                System.out.print("\nProxy async call, result = ");
                System.out.println(
                   Remote.invoke(proxy, "callback", "Goodbye from server!"));
@@ -33,6 +33,13 @@ public class TestItem extends BaseItem {
       System.out.println();
       synchronized(thread) { thread.notify(); }
       return "Server sync acknowledgement!";
+   }
+   // supported for cannonical completeness
+   public String getDescription() {
+      return "This method defines one application specific method:\n\n" +
+      "   String callback(Object proxy, String message);\n\n" +
+      "It is expected to be called by its proxy, following its arrival\n" +
+      "at its remote host.";
    }
    // All items should uniquely identify themselves, but it is not required.
    public String toString() { return "Test Item"; }
