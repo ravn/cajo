@@ -64,7 +64,7 @@ public class ItemServer {
       if (System.getProperty("java.security.policy") == null)
          System.setProperty("java.security.policy", "server.policy");
    }
-   private static Invoke main;
+   private static Object main;
    /**
     * The reference to the sole local rmiregistry of this VM. All binding
     * operations must make use of this instance, as there can be only one
@@ -223,7 +223,8 @@ public class ItemServer {
          int localPort     = args.length > 4 ? Integer.parseInt(args[4]) : 0;
          Remote.config(localHost, localPort, clientHost, clientPort);
          main = Remote.getItem(url);
-         if (args.length > 5) main.invoke("setItem", Remote.getItem(args[5]));
+         if (args.length > 5)
+            Remote.invoke(main, "setItem", Remote.getItem(args[5]));
          main = bind(main, "main");
          new Multicast().announce((Remote)main, 16);
          acceptProxies();
