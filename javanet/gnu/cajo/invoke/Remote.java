@@ -66,7 +66,7 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
       }
       public int hashCode() { return getClass().hashCode(); }
    }
-   private static final class RCSF // this class has become unnecessary for now
+   private static final class RCSF
       implements RMIClientSocketFactory, Serializable {
       private int port;
       private String host;
@@ -135,7 +135,7 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
     * <p><i>Note:</i> If this class is to be configured, it must be done
     * <b>before</b> any items are remoted.
     * @param serverHost The local domain name, or IP address of this host.
-    * If null, it will use the default local address.  Typically it is
+    * If null, it will all network interfaces.  Typically it is only
     * specified when the server has multiple phyisical network interfaces, or
     * is multi-homed, i.e. having multiple logical network interfaces.
     * @param serverPort Specifies the local port on which the server is
@@ -159,12 +159,12 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
     */
    public static void config(String serverHost, int serverPort,
       String clientHost, int clientPort) throws java.net.UnknownHostException {
-      rssf.host = serverHost != null ?
+      rssf.host = serverHost;
+      rcsf.host = clientHost != null ? clientHost : serverHost != null ?
          serverHost : InetAddress.getLocalHost().getHostName();
-      rcsf.host = clientHost != null ? clientHost : rssf.host;
       rssf.port =
          serverPort != 0 ? serverPort : clientPort != 0 ? clientPort : 0;
-      rcsf.port = clientPort != 0 ? clientPort : rssf.port;
+      rcsf.port = clientPort != 0 ? clientPort : serverPort;
       try { // this won't work if running as an applet
          System.setProperty("java.rmi.server.useLocalHostname", "true");
          System.setProperty("java.rmi.server.hostname", rcsf.host);
