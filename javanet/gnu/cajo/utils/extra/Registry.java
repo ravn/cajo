@@ -38,9 +38,9 @@ import java.rmi.server.ServerNotActiveException;
  * subsequent entries overwrite the previous. It also runs a lightwieght task,
  * which periodically runs through the registry, purging object references
  * that have become invalid. To encourage spontaneous internetworking, the
- * registry will first announce its startup, on the cajo hailing frequency,
- * then actively listen on it, for other reference announcements; which it
- * will automatically register.
+ * registry will announce itself hourly, on the cajo hailing frequency,
+ * and listen on it, for other reference announcements; which it will
+ * automatically register.
  *
  * @version 1.0, 11-Oct-04 Initial release
  * @author John Catherino
@@ -86,7 +86,7 @@ public final class Registry {
       "All currently registered references can be requested via the\n" +
       "'get' method. It takes no arguments, and returns a\n" +
       "java.util.Hashtable containing the registered remote item\n" +
-      " references, keyed by their server addresses. Additionally, it\n" +
+      "references, keyed by their server addresses. Additionally, it\n" +
       "automatically purges inactive references periodically.\n\n" +
       "Enjoy!";
    }
@@ -107,10 +107,10 @@ public final class Registry {
          Remote.config(null, 1099, args.length > 0 ? args[0] : null, 0);
          gnu.cajo.utils.ItemServer.bind(registry, "registry");
          multicast = new Multicast();
-         multicast.announce(registry, 200);
          multicast.listen(registry);
          Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
          do { // periodically purge dead references:
+            multicast.announce(registry, 200);
             Thread.currentThread().sleep(3600000L); // wait an hour
             java.util.Enumeration keys = entries.keys();
             while (keys.hasMoreElements()) {
