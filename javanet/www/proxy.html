@@ -40,10 +40,11 @@
                            If you haven't read the page on items yet, you really should first, since
                            a proxy is just another type of an <a href=item.html>Item</a>. In this
                            framework; technically a proxy is <i>any</i> object, sent from one VM to
-                           another. In this page, we will look at proxies that usually derive from
-                           <a href=docs/gnu/cajo/utils/BaseProxy.html>BaseProxy</a>.
-                           These proxies are sent to a client by, and on behalf of, a server item.
-                           BaseProxy subclasses will arrive with a remote link back to its server item,
+                           another, typically as a method argument, or result. (though they can also
+                           be sent in exceptions) In this page, we will look at proxies that usually
+                           derive from <a href=docs/gnu/cajo/utils/BaseProxy.html>BaseProxy</a>.
+                           These proxies are sent to a client by, and on behalf of, a server item. A
+                           BaseProxy subclass will arrive with a remote link back to its server item,
                            on which it can asynchronously communicate with it.  Proxies are often used
                            to pre-process method invocations made by the client, using the computing
                            resources of the client, rather than those of the server.
@@ -53,14 +54,14 @@
                            A proxy can optionally provide a graphical user interface, if it is
                            intended to be more than just a machine-to-machine interface.
                            Architecturally a BaseProxy is very similar to a
-                           <a href=docs/gnu/cajo/utils/BaseItem.html>BaseItem</a>. It has a
+                           <a href=docs/gnu/cajo/utils/BaseItem.html>BaseItem</a>. It has an optional
                            <a href= docs/gnu/cajo/utils/BaseProxy.MainThread.html#BaseProxy.MainThread()>MainThread</a>,
                            which is cannonically launched by the client, on its arrival. It has a
                            final implementation of the <a href=docs/gnu/cajo/invoke/Invoke.html>Invoke</a>
                            interface, used to route local and remote invocations to its public methods,
-                           returning the results, if any. It also has a string table, which can be
+                           returning the results, if any. It also has string tables, which can be
                            automatically loaded with the language appropriate to the locale of the
-                           client, if defined.<br><br>
+                           client, when defined.<br><br>
 
                            Each proxy is served by, and services a specific server item. A server item
                            binds itself and serves its proxy object using the static
@@ -79,10 +80,10 @@
 
                            <h3>Requesting Proxies</h3><br>
 
-                           A proxy is typically obtained from an item reference by using a null argument
-                           <a href=docs/gnu/cajo/utils/BaseItem.html#getProxy()>getProxy</a> invocation.
-                           The returned item will be its default proxy, if it supports one. Once a proxy
-                           item is received, the otrhodox initialization procedure is to:
+                           A proxy is typically obtained from a re,pte item reference by using its null
+                           argument <a href=docs/gnu/cajo/utils/BaseItem.html#getProxy()>getProxy</a>
+                           method. The returned item will be its default proxy, if it supports one. Once
+                           a proxy item is received, the otrhodox initialization procedure is to:
 
                            <pre>   proxy.invoke("init", new Remote(proxy));</pre>
 
@@ -107,16 +108,15 @@
                            <a href=docs/gnu/cajo/utils/BaseItem.html#setProxy(gnu.cajo.invoke.Invoke)>setProxy</a>
                            method, passing its proxy, as the argument. The default implementation will
                            invoke the proxy's init method, passing a reference to the proxy, remoted
-                           within the context of the BaseItem's VM, to start its operation and with
-                           which it may share with other items/proxies. It will then return the same
-                           reference back to the calling VM, on which it may asynchronously communicate
-                           with its proxy. Receiving too many proxies could overload a VM, therefore
-                           acceptance of proxies is disabled by default. It can be enabled by invoking
-                           the
+                           within the context of the BaseItem's VM, to start its operation. It will then
+                           return the same reference back to the calling VM, on which it may
+                           asynchronously communicate with its proxy. Receiving too many proxies could
+                           overload a client VM, therefore acceptance of proxies is disabled by default.
+                           It can be enabled by invoking the
                            <a href=docs/gnu/cajo/utils/ItemServer.html#acceptProxies()>acceptProxies</a>
                            method of the ItemServer class. Attempting to send a proxy to an VM that
                            does not accept them will result in a ClassNotFoundException being
-                           automatically thrown at the caller. BaseItem's setProxy method is often
+                           automatically thrown to the sender. BaseItem's setProxy method is often
                            extended, to provide additional application specific resources to the
                            arriving proxy.
 
@@ -125,10 +125,11 @@
                            One of the most important features of a proxy is to mitigate network latency.
                            This can be of critical importance, if the remote item is very far away, or
                            linked over a slow network. Generally it is a recommended practice for remote
-                           items to support a proxy. At a minimum, it would serve to minimize network
-                           traffic, and pre-fetch objects contextually.  Effectively this type of proxy
-                           would be considered a <i>'smart'</i> remote reference. Clients would then
-                           have the option to use the proxy, or to manipulate the remote object directly
+                           items to support a proxy. At a minimum, it would serve to reduce network
+                           traffic, and possibly pre-fetch needed objects contextually.  Effectively
+                           this type of proxy would be considered a <i>'smart'</i> remote reference.
+                           Clients would then
+                           have the option to use the proxy, or to manipulate the remote object directly,
                            over the network.<br><br>
 
                            Both the proxy, and its serving item, can in turn give their remote
@@ -139,8 +140,8 @@
                            a graphical interface to the item as well.<br><br>
 
                            The next section <a href=multicast.html>multicast</a> will show how items
-                           can send, or receive, remote item references using a method analogous to a
-                           radio broadcast.<br<br>
+                           can send or receive, remote item references, using a method analogous to a
+                           <i>radio</i> broadcast.<br<br>
 
                            <div align="center">
                               <font size="-2">
