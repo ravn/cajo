@@ -136,7 +136,7 @@
                            argument types. If it is found, it executes that method, and returns the
                            result, if any.  If no matching method can be found on the internal object,
                            a <code>NoSuchMethodException</code> is thrown. This technique effectively
-                           makes all public methods of the internal object remotely callable. Excepting
+                           makes all public methods of the internal object remotely callable; excepting
                            those using primitive types as arguments or returns.
 
                            <h3>Contacting Items:</h3><br>
@@ -161,13 +161,13 @@
                            previous method which uses TCP/IP to obtain the reference, this technique
                            uses UDP/IP.  Instead of needing to know the server's TCP address and port
                            number, the client needs to know the server's UDP address and port number.
-                           The advantage is that server can pick their UDP addresses, and they are
+                           The difference is that servers can pick their UDP addresses, and they are
                            independent of their TCP address. Also, a server can use multiple Multicast
                            objects, on multiple UDP addresses, if needed. A server broadcasts a remote
                            reference to an item by calling the
                            <a href=docs/gnu/cajo/utils/Multicast.html#announce(gnu.cajo.invoke.Remote,%20int)>announce</a>
                            method of ItemServer.  This will send the reference to all clients listening
-                           on the UDP address/port pair. Items listen for these announcements using the
+                           on that UDP address/port pair. Items listen for these announcements using the
                            <a href=docs/gnu/cajo/utils/Multicast.html#listen(gnu.cajo.invoke.Invoke)>listen</a>
                            method of Multicast. This allows items to link <u>dynamically</u>, to form item
                            networks of functionality.
