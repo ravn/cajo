@@ -76,19 +76,21 @@ public class BaseItem {
       public abstract void run();
    }
    /**
-    * The constructor does nothing, server item configuration is be done by
+    * The constructor does nothing, server item configuration is to be done by
     * application specific subclasses.
     */
    public BaseItem() {}
    /**
-    * This method is called by remote clients to install their proxies in
-    * this VM. This invocation will only succeed if acceptProxies was true
-    * when it, or any of this application's items, were bound. The received
-    * proxy's init method will be invoked with a reference to itself, remoted
-    * in the context of this VM.  This is to initialize the proxy, and provide
-    * it with a handle to pass to other remote items, on which they can
-    * contact this item.  This remote reference will also be returned to the 
-    * caller, providing an interface on which to asynchronously call its proxy.
+    * This remotely invokable method is called by remote clients to install
+    * their proxies in this VM. This invocation will only succeed if
+    * the boolean acceptProxies argument was true when it, or any of the
+    * server's items, were bound with the {@link ItemServer ItemServer}.
+    * The received proxy's init method will be invoked with a reference to
+    * itself, remoted in the context of this VM.  This is done to initialize
+    * the proxy, and provide it with a handle to pass to other remote items,
+    * on which they can contact this proxy.  This remote reference will also be
+    * returned to the caller, providing an interface on which to asynchronously
+    * call its proxy.
     * @param proxy The proxy to run in this VM.
     * @return A reference to the proxy remoted within this context.
     * @throws ClassNotFoundException If the item does not accept proxies.
@@ -104,19 +106,18 @@ public class BaseItem {
       return ref;
    }
    /**
-    * This method is called by the remote clients, to request the item's
-    * proxy, if it supports one. If it does not, it will a remote reference
-    * to itself.
+    * This remotely invokable method is called by the remote clients, to
+    * request the server item's default proxy, if it supports one. If it does
+    * not, it will return a remote reference to itself.
     * @return A the proxy serving this item, or a remote reference to the
-    * item, encased in a
-    * {@link java.rmi.MarshalledObject MarshalledObject}.
+    * item, encased in a {@link java.rmi.MarshalledObject MarshalledObject}.
     */
    public MarshalledObject getProxy() { return mob; }
    /**
     * This method is called by the {@link ItemServer ItemServer} during a
-    * bind operation, if the item has a proxy interface.
+    * bind operation to set the {@link #mob mob} member.
     * @param mob The item's proxy object, if it supports one, otherwise a
-    * remote reference to itself, either way, encased in a
+    * remote reference to the item itself, either way, encased in a
     * {@link java.rmi.MarshalledObject MarshalledObject}
     */
    public void setProxy(MarshalledObject mob) {
@@ -125,13 +126,14 @@ public class BaseItem {
    /**
     * This method is called by the {@link ItemServer ItemServer} during a
     * bind operation. If the item has a processing thread, meaning its
-    * runnable member is not null, the thread will be started, and its
-    * reference stored in the thread member.
+    * {@link #runnable runnable} member is not null, the thread will be
+    * started, and its reference stored in the {@link #thread thread} member.
     */
    public void startThread() {
       if (thread == null && runnable != null) {
          thread = new Thread(runnable);
          thread.start();
+         runnable = null;
       }
    }
 }

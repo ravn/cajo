@@ -56,7 +56,7 @@ public abstract class BaseProxy implements Invoke {
    protected MainThread runnable;
    /**
     * The processing thread of the proxy object, it will be started
-    * automatically upon arrival at the host when the init method is invoked.
+    * automatically upon arrival at the client when the init method is invoked.
     */
    public transient Thread thread;
    /**
@@ -65,18 +65,19 @@ public abstract class BaseProxy implements Invoke {
     */
    public Container container;
    /**
-    * The path/filename of the resource bundle in the proxy's jar file.
-    * It will be used to localize any displayed strings to the language of
-    * the proxy recipient, as necessary, and when supplied.  It is public
-    * since its value is typically assigned by a builder program.
+    * The path/filename of the resource bundle in the proxy's codebase jar
+    * file. It will be used to localize any displayed strings, to the language
+    * of the proxy recipient, as close as possible, if supplied.  It is
+    * declared public since its value is typically assigned by a <i>builder</i>
+    * application.
     */
    public String bundle;
    /**
     * The collection of strings to be displayed at the host VM.  On
     * instantiation at the host, the array will be loaded with localized
     * strings from the most appropriate resource bundle for the locale of
-    * the receiving VM, as necessary.  It is public since its value is
-    * typically assigned by a builder program.
+    * the receiving VM, if provided.  It is public since its value is
+    * typically assigned by a <i>builder</i> program.
     */
    public String strings[];
    /**
@@ -117,7 +118,7 @@ public abstract class BaseProxy implements Invoke {
    public class Panel extends Container {
       /**
        * Nothing is performed in the constructor. Construction and
-       * configuration are generally performed by a builder application.
+       * configuration are generally performed by a <i>builder</i> application.
        */
       public Panel() {}
       /**
@@ -148,19 +149,23 @@ public abstract class BaseProxy implements Invoke {
    /**
     * This function is called by the {@link ItemServer ItemServer} during its
     * bind operation.
-    * @param  server A remote reference to the server, on which the proxy may
-    * asynchronously call back to it.
+    * @param  item A remote reference to the server item, on which the proxy
+    * may asynchronously call back to it.
     */
    public void setItem(Invoke item) {
       if (this.item == null) this.item = (RemoteInvoke)item;
    }
    /**
-    * This function is called by the hosting client on its arrival.  The client
-    * will provide a reference to the proxy, remoted in the context of the
-    * client's VM.  This value will be saved in the remoteThis member, and
-    * can be provided to remote objects on which they can contact the proxy.
-    * If the proxy has a localized string bundle, the localized strings most
-    * closely matching the local of the receiving host will be loaded.
+    * This function is called by the hosting client on upon the proxy's
+    * arrival.  The client will provide a reference to the proxy, remoted in
+    * the context of the client's VM.  This value will be saved in the
+    * {@link #remoteThis remoteThis} member, and can be provided to other
+    * remote items, on which they can contact the proxy.
+    * If the proxy has a string bundle, the localized strings most
+    * closely matching the locale of the receiving host will be loaded. If the
+    * proxy is graphical in nature, i.e. provides a graphical user interface,
+    * this method will return it to the host, so that it may display it, if it
+    * wishes.
     * @param  remoteRef A reference to the proxy, remoted in the context of the
     * client's VM.
     * @return The proxy's graphical user interface, if it has one, otherwise
@@ -185,9 +190,9 @@ public abstract class BaseProxy implements Invoke {
       return container;
    }
    /**
-    * The reflection based method router.  This method finds the public method
-    * matching the name, and using the arguments provided, if any, and returns
-    * the result.
+    * The Java reflection based method router.  This method tries to find the
+    * public method exactly matching the name, and using the arguments provided,
+    * if any, in the exact type and order, and returns the result, again if any.
     * @param  method The method to invoke on this object.
     * @param args The arguments to provide to the method for its invocation.
     * It can be a single object, an array of objects, or even null.
@@ -196,7 +201,7 @@ public abstract class BaseProxy implements Invoke {
     * reasons.
     * @throws IllegalArgumentException If the method argument is null.
     * @throws NoSuchMethodException If no matching method can be found.
-    * @throws Exception If the method rejects the request, for any
+    * @throws Exception If the proxy method rejects the request, for any
     * application specific reason.
     */
    public final Object invoke(String method, Object args) throws Exception {

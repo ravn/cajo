@@ -32,7 +32,7 @@ import java.rmi.registry.*;
  * as to send out UDP announcements.  The mechanism is <i>rigged</i> to send a
  * reference to a remote object as a zipped MarshalledObject (zedmob).  It also
  * allows a listening item to receive announced item referencess via a callback
- * mechanism.<p>
+ * mechanism. A single VM can use as many Multicast objects as it wishes.<p>
  * <i>Note:</i> this class requires that the network routers be configured
  * to pass IP multicast packets, at least for the multicast address used.  If
  * not, the packets will will only exist within the subnet of origination.
@@ -77,7 +77,7 @@ public final class Multicast implements Runnable {
     * be set to 244.0.1.84, which is the one officially registered with IANA
     * for Jini announcements.  The UDP port number on which this object will
     * announce and listen is set to 1099, which is a play on the default TCP
-    * port number of Sun's rmiregistry.  It listens on the network
+    * port number of Sun's rmiregistry.  It listens on the same network
     * interface being used for the server's RMI communication.
     * @throws java.net.UnknownHostException If the default network interface
     * could not be resolved, <i>not very likely</i>.
@@ -85,17 +85,17 @@ public final class Multicast implements Runnable {
    public Multicast() throws UnknownHostException { this("224.0.1.84", 1099); }
    /**
     * The full constructor allows creation of Multicast objects on any
-    * appropriate address, and port number. It will use the network interface
+    * appropriate address, and port number. It uses the same network interface
     * being used for the server's RMI communication.
     * @param address The multicast socket domain name, or address, on which
     * this object will listen.  It can be any address in the range 224.0.0.1
     * through 239.255.255.255.
-    * @param port The multicast UDP port number on which this object will
-    * announce and listen, its value can be 0 - 65535, and is completely
-    * independent of all TCP port numbers. Application specific
-    * meaning can be assigned to port numbers, to identify broadcast types.
-    * @throws java.net.UnknownHostException If the specified network interface
-    * could not be resolved.
+    * @param port The UDP port number on which this object will announce and
+    * listen, its value can be 0 - 65535. It is completely independent of all
+    * TCP port numbers. Application specific meaning could be assigned to port
+    * numbers, to identify broadcast types.
+    * @throws java.net.UnknownHostException If the specified host address
+    * could not be resolved, or is invalid.
     */
    public Multicast(String address, int port)
       throws UnknownHostException {
@@ -104,7 +104,7 @@ public final class Multicast implements Runnable {
       this.port = port;
    }
    /**
-    * This method is used to make announcements on the network.
+    * This method is used to make UDP announcements on the network.
     * @param item The remote item reference to be sent in the announcement
     * packet.
     * @param ttl The time-to-live of the broadcast packet. This roughly
@@ -130,14 +130,15 @@ public final class Multicast implements Runnable {
       } finally { ms.close(); }
    }
    /**
-    * This method starts a thead to listen on the construction address on the
-    * construction port.  Listening will continue until the callback item's
-    * multicast method retruns a non-null value.  If it does, this method must
-    * be called again to restart listening. The listening item will be called
-    * with a reference to the calling Multicast object.  This is to allow the
-    * possibility for a single listener, to monitor multiple multicast objects.
-    * If a listener is used to monitor multiple multicast objects, it may be
-    * invoked reentrantly, otherwise it cannot.
+    * This method starts a thead to listen on the construction {@link #address
+    * address} and {@link #port port}. The listening item will be called on
+    * its public multicast method, with a reference to the calling Multicast
+    * object.  This is to allow the possibility for a single listener, to
+    * monitor multiple multicast objects. If a listener is used to monitor
+    * multiple multicast objects, it may be invoked reentrantly, otherwise it
+    * cannot. Listening will continue until the callback item's multicast
+    * method retruns a non-null value.  If it does, this method would havt to
+    * be called again to restart listening.
     * @param callback An item, presumably local to this VM, which is to receive
     * notifications about announcements.
     * @throws IllegalArgumentException If the object is actively listening, at
@@ -160,7 +161,8 @@ public final class Multicast implements Runnable {
     * reference to this object. The multicast reference is used to access its
     * public member variables; the remote announcer's reference and IP address,
     * as well as the multicast address and port on which it was received.  The
-    * second two are of interest in the case where the same object is listening
+    * second two members are of interest in the case where the same object is
+    * listening
     * on multiple multicast objects. If the invocation returns null, the
     * multicast listening will continue, otherwise it will be stopped. Once
     * stopped it can be restarted by the application as necessary, by invoking
@@ -191,29 +193,33 @@ public final class Multicast implements Runnable {
     * The application method loads a zipped marshalled object (zedmob) to a
     * proxy from a URL, or a file, and allows it run in this virtual machine.
     * It will load an RMISecurityManager to protect the hosting
-    * machine from potentially or accidentally dangerous proxies. It uses
-    * the {@link gnu.cajo.invoke.Remote#getItem getitem} method to load the
-    * item. Following loading of the proxy, it will also create an
-    * rmiregistry, and bind a remote reference to it under the name "main".
-    * This will also allow remote clients to connect to, and interact with, the
-    * proxy. It will announce its startup on a default Multicast object, and
-    * then begin listening on it for further announcements, which will be
-    * passed to the loaded proxy item.
-    * @param args[0] The optional URL where to get the object: file:// http://
+    * machine from potentially or accidentally dangerous proxies, if not
+    * prohibited by the user at startup. It uses the {@link
+    * gnu.cajo.invoke.Remote#getItem getitem} method of the {@link
+    * gnu.cajo.invoke.Remote Remote} class to load the item. Following loading,
+    * it will also create an rmiregistry, and bind a remote reference to it
+    * under the name "main". This can allow remote clients to connect to, and
+    * interact with, the item. It will announce its startup on a default
+    * Multicast object, and then begin listening on it for further
+    * announcements, which will be  passed to the loaded proxy item. It can
+    * be configured using the following arguments, all arguments subsequent to
+    * the ones specified in the command line can be omitted:<br><ul>
+    * <li> args[0] The optional URL where to get the item: file:// http://
     * ftp:// ..., /path/name <serialized>, path/name <class>, or alternatively;
     * //[host][:port]/[name], where the object will be requested from a remote
     * rmiregistry and the returned reference cast to the Lookup interface and
     * invoked with a null reference, to return its proxy object.  If no
     * arguments are provided, the URL will be assumed to be
     * //localhost:1099/main.
-    * @param args[1] The optional external client host name, if using NAT.
-    * @param args[2] The optional external client port number, if using NAT.
-    * @param args[3] The optional internal client host name, if multi home/NIC.
-    * @param args[4] The optional internal client port number, if using NAT.
-    * @param args[5] The optional URL where to get a proxy item: file://
+    * <li> args[1] The optional external client host name, if using NAT.
+    * <li> args[2] The optional external client port number, if using NAT.
+    * <li> args[3] The optional internal client host name, if multi home/NIC.
+    * <li> args[4] The optional internal client port number, if using NAT.
+    * <li> args[5] The optional URL where to get a proxy item: file://
     * http:// ftp:// ..., //host:port/name (rmiregistry), /path/name
     * (serialized), or path/name (class).  It will be passed into the loaded
-    * proxy as the sole argument to a setItem method invoked on the loaded item.
+    * item as the sole argument to a setItem method.
+    * </ul>
     */
    public static void main(String args[]) {
       try {
@@ -224,8 +230,7 @@ public final class Multicast implements Runnable {
          int localPort     = args.length > 4 ? Integer.parseInt(args[4]) : 0;
          Remote.config(localHost, localPort, clientHost, clientPort);
          try {
-            System.setSecurityManager(
-               new java.rmi.RMISecurityManager());
+            System.setSecurityManager(new java.rmi.RMISecurityManager());
             System.setProperty("java.rmi.server.disableHttp", "true");
          } catch(SecurityException x) {}
          Invoke proxy = Remote.getItem(args[0]);

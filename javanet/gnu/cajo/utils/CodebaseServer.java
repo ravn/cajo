@@ -30,16 +30,12 @@ import gnu.cajo.invoke.Remote;
  * The standard mechanism to send proxies, and other complex objects to remote
  * VMs. It requires one outbound port. The port can be anonymous, i.e. selected
  * from any available free port at runtime, or it can be explicitly specified,
- * usually to operate through a firewall.  It may also need one outbound port,
- * on which to asynchronously callback its proxies, if needed. The callback
- * port number is generally be chosen by the client, to get through his
- * firewall. A given VM instance can can bind as multiple proxy server items.
- * A given VM instance can only server one codebase, therefore construction of
- * a second instance will result in an IllegalArgumentException being thrown
- * by its constructor.<br><br>
+ * usually to operate through a firewall. A given VM instance can only have one
+ * codebase, therefore construction of a second instance will result in an
+ * IllegalStateException being thrown by its constructor.<br><br>
  * <i>Note:</i> if  the Remote class needs
  * {@link gnu.cajo.invoke.Remote#config configuration}, this must be done
- * <b>before</b> binding a proxy serving item, since construction will use the
+ * <b>before</b> binding any proxy serving item, since the binding will use the
  * server's name and port number.
  * 
  * @version 1.0, 01-Nov-99 Initial release
@@ -94,14 +90,13 @@ public final class CodebaseServer {
    private static ServerSocket ss;
    private static Thread thread;
    /**
-    * This is the local inbound {@link java.net.ServerSocket ServerSocket}
-    * port number providing the http data and codebase jar service.  If the
-    * server is behind a firewall, this port, or the translated one, must be
-    * made accessible from outside.  It can be zero, to use an anonymous port,
-    * selected by the OS from any available at runtime.  In that case, the
-    * port offered by the operating system will be stored here automatically
-    * following the binding of the first proxy server item. By default, its
-    * value is zero.
+    * This is the inbound {@link java.net.ServerSocket ServerSocket}
+    * port number providing both the HTTP client tag and codebase jar service.
+    * If the server is behind a firewall, this port, or its translated one,
+    * must be made accessible from outside.  It can be zero, to use an
+    * anonymous port; i.e. one selected by the OS from any ports available at
+    * runtime. In that case, the port actually offered by the operating system
+    * will be stored here automatically, following construction.
     */
    public static int port;
    /**
@@ -110,8 +105,8 @@ public final class CodebaseServer {
     * {@link gnu.cajo.invoke.Client Client} in a Java-enabled browser.
     * If the browser does not have the correct plug-in this server will cause
     * it to prompt the user to have it installed automatically.
-    * <br><br>The format of a browser's proxy request URL one required and has
-    * three optional parameters, utilizing the following format:<p><code>
+    * <br><br>The format of a browser's proxy request URL one required, and
+    * four optional parameters, utilizing the following format:<p><code>
     * http://serverHost[:serverPort]/[clientPort][:localPort][-proxyName]
     * </code><p>
     * Where the parameters have the following meanings:<ul>
@@ -120,26 +115,27 @@ public final class CodebaseServer {
     * unspecified it will be 80.
     * <li><i>clientPort</i> The client's external port number on which the
     * remote proxy can be reached. It is often explicitly specified when the
-    * client is behind a firewall.  Unspecified, it will be an anonymous port
-    * selection, made by the client's operating system at runtime.
-    * <li><i>localPort</i> The port number the proxy must use to callback the
-    * server.  This may need to be specified if the client is behind a
-    * firewall.  Unspecified, it will be selected anonymously by the client
-    * at runtime.
-    * <li><i>proxyName</i> The registered name of the proxy item, by default
-    * "proxy", however a server can support multiple proxies.</ul>
-    * <p>To unspecify any item, simply omit it, from the URL, along with its
-    * preceeding delimiter, if any.  The order of the arguments must be
-    * maintained however.<p>
+    * client is behind a firewall.  Unspecified, it will be the same as the
+    * localPort value, described next.
+    * <li><i>localPort</i> The client's internal port number the remote proxy
+    * can be reached. This may need to be specified if the client is using NAT
+    * Unspecified, it will be selected anonymously by the client at runtime.
+    * <li><i>proxyName</i> The registered name of the proxy serving item, by
+    * default "main", however a single server can support multiple items.</ul>
+    * <p>To unspecify any optional item, simply omit it, from the URL, along
+    * with its preceeding delimiter, if any.  The <u>order</u> of the arguments
+    * must be maintained however.<p>
     * @param base The path and name of the file containing the codebase jar
-    * file.  The server will search first for it in its own executable jar
-    * file, and if that fails, it will check the local filesystem.
+    * file.  The server will first search for it in its own executable jar
+    * file, if that fails, then it will check the local filesystem.
     * @param port The TCP port on which to serve the codebase, and client
-    * applet. It can be zero, to use an anonymous port.
-    * @throws IOException If the http server providing the codebase and applet
+    * applet. It can be zero, to use an anonymous port. If zero, the actual
+    * port selected by the OS at runtime will be stored in the
+    * {@link #port port} member.
+    * @throws IOException If the HTTP socket providing the codebase and applet
     * tag service could not be created.
     * @throws IllegalStateException If a second instance of this class is
-    * constructed.  Each VM can have only one codebase.
+    * constructed, since each VM can have only one codebase server.
     */
    public CodebaseServer(String base, int port) throws IOException {
       if (ss == null) {

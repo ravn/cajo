@@ -35,9 +35,9 @@ import java.util.zip.GZIPOutputStream;
  * server's VM, to represent a proxy item of arbitrary size.  Upon its arrival
  * at the hosting VM, it will reconstruct the internally referenced proxy item,
  * either by construction or deserialization, and initialize it such that any
- * standard proxy can be handled via this class.  The proxy items can either
- * This will conserve bandwidth, as proxies in the codebase jar file are
- * compressed. <i>Note:</i> the proxy is assumed to implement the
+ * standard {@link BaseProxy proxy} can be handled via this class. This will
+ * also conserve bandwidth, as proxies in the codebase jar file are compressed.
+ * <i>Note:</i> the proxy object is assumed to implement the
  * {@link gnu.cajo.invoke.Invoke Invoke} interface.
  * <p>
  * Typical serialized proxy names:  /test.ser /objects/test.ser
@@ -53,29 +53,31 @@ public final class ProxyLoader implements Invoke {
    private transient Invoke proxy;
    /**
     * The constructor creates a small wrapper object referencing a proxy item
-    * solely by name, but not loading it into the server's VM runtime.  It is
-    * simply a server-side representation of the proxy, but not the proxy
-    * itself.
+    * solely by name, but not loading its object into the server's VM runtime.
+    *  It is simply a server-side representation of the proxy, but not the
+    * proxy itself.
     * @param handle The path of either the proxy class file, or the file
-    * containing serialized instance of the proxy, inside the proxy's codebase
-    * jar file.
+    * containing serialized instance of the proxy, to be found inside the
+    * proxy's codebase jar file.
     */
    public ProxyLoader(String handle) { this.handle = handle; }
    /**
     * This function may be called reentrantly, so the inner item <i>must</i>
-    * synchronize its critical sections as necessary.  It simply forwards the
-    * call to the proxy's invoke method.  The first is invocation is by the
-    * server, to provide a remote reference for proxy callbacks.  The second
-    * is by the client, to provide a remoted reference to the proxy to give
-    * out for asynchronous callbacks.  All subsequent calls are routed directly
-    * to the created proxy itself.
+    * synchronize its critical sections as necessary. Its first invocation is
+    * performed by the {@link ItemServer ItemServer}, to provide a remote
+    * reference to itself, for proxy callbacks.  The second invocation
+    * is by the client, to provide a remoted reference to the ProxyLoader, to
+    * allow the proxy a handle on which to receive asynchronous callbacks. At
+    * this point the ProxyLoader will reconstitute the proxy object, and pass
+    * it the two previous arguments, respectively. All subsequent invocations
+    * are routed directly to the created proxy itself.
     * @param  method The method to invoke on the internal item.
     * @param args The arguments to provide to the method for its invocation.
     * It can be a single object, an array of objects, or null.
     * @return The sychronous data, if any, resulting from the invocation.
     * @throws java.rmi.RemoteException For network communication related
     * reasons.
-    * @throws NullPointerException If no matching method can be found.
+    * @throws NoSuchMethodException If no matching method can be found.
     * @throws Exception If the internal item rejects the request, for any
     * application specific reason.
     */

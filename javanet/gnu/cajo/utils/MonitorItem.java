@@ -33,19 +33,19 @@ import java.io.OutputStream;
  */
 
 /**
- * This class is used to instrument an item for invocation logging
+ * This class is used to instrument an object for invocation logging
  * purposes. It is intended as a replacement for standard RMI logging, in that
  * this logger is aware of the Invoke package methodology, and can decode it
  * properly.  Specifically, it will gather information about the calling
  * client, the method called, the inbound and outbound data. It will also
  * record the approximate time between client invocations, the time used to
  * service the invocation, and the approximate percentage of free memory
- * available at the completion of the operation.  Subclassing is allowed,
- * primarily to create self-monitoring classes, not to change the data
- * being monitored.
+ * available at the completion of the operation.  Subclassing of MonitorItem
+ * is allowed; primarily to create self-monitoring classes, not to change the
+ * data being monitored.
  * <p><i>Note:</i> monitoring an item can be expensive in runtime efficiency.
  * It is best used for debug and performance analysis, during development, or
- * in production for items that would not be called highly frequently.
+ * in production, for items that would not be called very frequently.
  *
  * @version 1.0, 01-Nov-99 Initial release
  * @author John Catherino
@@ -55,12 +55,11 @@ public final class MonitorItem implements Invoke {
    private final PrintStream ps;
    private long oldtime;
    /**
-    * This creates the monitor object, to instrument the target item's use.
+    * This creates the monitor object, to instrument the target object's use.
     * The the logging information is passed to the OutputStream, where it can
-    * be logged to a file, or simply sent to the console.
-    * @param item The item to receive the client invocation.
-    * @param os The OutputStream to send the formatted log information.  It
-    * could be a file or socket stream, or even System.out.
+    * be logged to a file, a socket, or simply sent to the console (System.out).
+    * @param item The object to receive the client invocation.
+    * @param os The OutputStream to send the formatted log information.
     */
    public MonitorItem(Object item, OutputStream os) {
       this.item = item;
@@ -83,7 +82,7 @@ public final class MonitorItem implements Invoke {
    public boolean equals(Object obj) { return item.equals(obj); }
    /**
     * This method is overridden here to provide the name of the internal
-    * object, rather than the name of this object.
+    * object, rather than the name of the Monitor object.
     * @return The string returned by the internal item's toString method.
     */
    public String toString() { return item.toString(); }
@@ -98,10 +97,13 @@ public final class MonitorItem implements Invoke {
     * <li> The idle time between invocations, in milliseconds.
     * <li> The run time of the invocation time, in milliseconds
     * <li> The free memory percentage, following the invocation</ul>
-    * @param  data The to pass to the internal data item
-    * @return The sychronous data, if any, resulting from the invocation
+    * @param method The internal object's public method being called.
+    * @param  args The arguments to pass to the internal object's method.
+    * @return The sychronous data, if any, resulting from the invocation.
     * @throws RemoteException For a network related failure.
-    * @throws Exception If the internal item rejects the request
+    * @throws NoSuchMethodException If the method/agruments signature cannot
+    * be matched to the internal object's public method interface.
+    * @throws Exception If the internal object's method rejects the invocation.
     */
    public Object invoke(String method, Object args) throws Exception {
       long time = System.currentTimeMillis();
