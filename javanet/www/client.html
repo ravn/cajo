@@ -38,23 +38,23 @@
 
                            The client class is a generic, general purpose graphical proxy host. It can
                            be used to display and interact with any graphical proxy, without need for
-                           any customication. It can operate in two fundamentally different, but
-                           functionally complementary ways; as an applet, or as an application.<br><br>
+                           any customization. It can operate in two fundamentally different, but
+                           functionally complementary ways; as an applet or as an application.<br><br>
 
                            As an applet, on loading by a Java enabled browser, it will connect back to
                            its host and request either the default proxy, or one specified in the
-                           applet tag. Next it will initialize the proxy, by calling its init method,
+                           browser URL. Next it will initialize the proxy, by calling its init method,
                            providing a reference to the proxy remoted within the context of the plug-in's
                            VM.  Finally, the return of this proxy invocation, cannonically a descendant
                            of java.awt.Container, is added to the applet's panel. This allows a single
                            client to host an unlimited variety of graphical application proxies, using
-                           only one client applet. All of the code is provided by the server.
+                           only one applet class. Best yes, all of the code is provided by the server.
 
                            <h3>Applet Configuration</h3><br>
 
                            The server fully configures the applet using the parameters specified in
                            its tag.  The client can provide three of the optional configuration
-                           parameters however:<br><br>
+                           parameters however via its URL when requesting the applet:<br><br>
 
                            <table>
                               <tr>
@@ -79,7 +79,9 @@
                            <pre><code>   http://host[:port]/[clientPort][:localPort][-proxyName]</code></pre>
 
                            The parameters in brackets can be selectively omitted, but the order of
-                           arguments is required.<br><br>
+                           arguments is required. Unspecified, the port value will be 80, the
+                           clientPort 0 = anonymous (chosen form those free at startup), localPort will
+                           be same as clientPort, and proxyName will be "main".<br><br>
 
                            <b>*<u>New feature</u>:</b> you can now web start the client application!
                            Simply append an exclamation point (!) to the end of the URL!  It's very
@@ -138,7 +140,7 @@
                            file, no security policy file is even needed.<br><br>
 
                            However, to protect the host in untrusted environments, it is
-                           <b>critical</b> to start this application with a proper security manager
+                           <u>critical</u> to start this application with a proper security manager
                            installed. This would require an invocation such as the following:
 
                            <pre><code>   java -jar -Djava.security.manager -Djava.security.policy=someURL client.jar ...</b></pre></code>
@@ -176,21 +178,6 @@ grant {
                            tool to interface to computer networks. The best part is that for now you
                            can very accurately model, and develop for, these future devices using standard
                            desktop and laptop computers.<br><br>
-
-                           <!--
-                           Keep in mind, any client VM is vulnerable to a <i>denial of service attack</i>.
-                           Though unlikely, a malicious server could flood the client's Virtual Machine
-                           with so many proxies that it crashes.  However with proper security installed,
-                           no real harm would come to the host machine. It's an inherent risk of hosting
-                           mobile code... just so you know.<br><br>
-
-                           Lastly, all classes in the <a href=docs/gnu/cajo/invoke/package-summary.html>
-                           invoke</a> package have no knowlege of the existence of the
-                           <a href=docs/gnu/cajo/utils/package-summary.html>utils</a> package. All that
-                           is required to build a client of your own, is the invoke package, and your
-                           application specific classes.  The utils package exists solely for the purpose
-                           of creating server and proxy items, and server applications.<br><br>
-                           -->
 
                            <div align="center">
                               <font size="-2">
