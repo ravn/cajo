@@ -30,18 +30,18 @@ import java.io.*;
 
 /**
  * This class is used to transfer a zipped marshalled object (zedmob) of its
- * internal proxy item. Decompressing the proxy on arrival at the client. This
- * will involve a small runtime hit, however, if the proxy is large and highly
- * compressable, or the data link is slow, or the cost per byte to transmit
- * data is high, this can become very advantageous.  The proxy is serialized
- * and compressed once the server reference is provided to it, after that it
- * can no longer be modified at the server.<p>
- * <b>If the server loads proxies into its runtime, i.e. it is not using a
+ * internal proxy item. It will decompress the proxy automatically on arrival
+ * at the client. This will incur a small runtime penalty, however, if the
+ * proxy is large and highly compressable, or the data link is slow, or the
+ * cost per byte to transmit data is high, this can become highly advantageous.
+ *  The proxy is serialized and compressed once the server reference is
+ * provided to it, after that it can no longer be modified at the server.<p>
+ * If the server loads proxies into its runtime, i.e. it is not using a
  * ProxyLoader, it is <i>highly recommended</i>  to use a zipped proxies, since
  * processor horsepower increases steadily, but long-haul network bandwidth is
  * not.<p>
- * The class is not final, to allow subclasses to automatically construct
- * with a proxy of their choosing.  Also, a subclass could optionally
+ * The class is not final; this allows subclasses to have no-arg constructors,
+ * using a proxy of their choosing.  Also, a subclass could optionally
  * encrypt the payload before sending, and decrypt it on arrival.
  *
  * @version 1.0, 01-Nov-99 Initial release
