@@ -13,33 +13,12 @@
 
 <!-- begin main.html -->
 
-                        <center>
-                           <a href="index.html" title="cajo home page"><b>Welcome</b></a> |
-                           <b>Tutorial</b> |
-                           <a href="theory.html" title="how it all works"><b>Theory</b></a> | 
-                           <a href="gotcha.html" title="important details"><b>Gotchas</b></a> |
-                           <a href="faq.html" title="common questions"><b>FAQ</b></a> |
-                           <a href="acknowlege.html" title="supporters of the marque"><b>Acknowledgments</b></a> |
-                           <a href="license.html" title="what's the LGPL"><b>License</b></a> |
-                           <a href="docs/overview-summary.html" title="package documentation"><b>Javadocs</b></a> <br><br>
-                        </center>
-
-                        <center>
-                           <a href="item.html" title="Remote object"><b>Item</b></a> |
-                           <a href="proxy.html" title="interface object"><b>Proxy</b></a> |
-                           <a href="multicast.html" title="broadcast object"><b>Multicast</b></a> |
-                           <a href="client.html" title="host object"><b>Client</b></a> |
-                           <a href="server.html" title="application server"><b>CodebaseServer</b></a> |
-                           <a href="example.html" title="demo objects"><b>Example</b></a> |
-                           <a href="overview.html" title="adding to existing applications"><b>Overview</b></a><br><br>
-                        </center>
-
                            <font size="4">
                               <b>Getting started with the cajo framework.</b>
                               <br><br>
                            </font>
                            Hopefully his page will help to get you up and running as quickly as
-                           possible.  Once you can build it, and understand its basic components, then
+                           possible.  Once you can build it, and understand its basic components,
                            the possibilities become truly limitless.<br><br>
 
                            The tutorial will start by describing the <a href="#directory">directory</a>
@@ -49,31 +28,19 @@
                            the ways of <a href=#connecting>connecting</a> to the server. This should
                            provide a fairly complete introduction to the use of the framework.<br><br>
 
-                           The purpose of the example is to illustrate the structure of building servers,
-                           and the feature set of the architecture.  It should provide you with enough
-                           insight to build and deploy your own servers, without any additional research
-                           on your part. However, if you are curious, you might want to visit the
-                           <a href=theory.html>theory</a> page. Its purpose is to explain how the
-                           framework actually performs its functions.
-
                            <a id="directory"></a><h3>Directory Structure</h3><br>
 
                            The project is organized into the following directories;<b><tt><pre>
-/root                // this is the project directory
-    /example         // this is the example of the project
-        /include     // this is the proxy's resources repository
-        /gui         // this is the proxy's graphical widgets
-    /gnu             // this is the project's root directory
-        /cajo        // this is the project's Java namespace
-            /invoke  // this is the architecture's core
-            /utils   // this is the framework's collection of tools
-    /docs            // this is the documentation collection</pre>
+/root                // the project directory
+    /example         // the example of the project
+        /include     // the proxy's resources repository
+        /gui         // the proxy's graphical widgets
+    /gnu             // the project's root directory
+        /cajo        // the project's Java namespace
+            /invoke  // the architecture's core
+            /utils   // the framework's collection of tools
+    /docs            // the documentation collection</pre>
                            </tt></b>
-
-                           You will need to download the source code into the structure outlined above,
-                           in a working directory. (you don't have to name it root though) <i>Note:</i> there
-                           is also a www directory, but you don't need to download this. It's just the
-                           HTML for this site, but you can if you really want to :-)<br><br>
 
                            In the <b>root directory</b>, you will find several files, all of these will be
                            covered in the course of this tutorial.  For now, the most important file is
@@ -82,22 +49,20 @@
                            detailed javadoc hypertext documents in the docs subdirectory.  This will be
                            a <u>very</u> valuable resource in your development activities. Nearly half of
                            the source code is documentation comments! You can view this helpful
-                           resource by opening the file docs/index.html with your favorite browser. (My
-                           <i><u>highly recommended</u></i> favorite is
-                           <a href=http://mozilla.org/products/firefox/ target=_blank>firefox</a>).<br><br>
+                           resource by opening the file docs/index.html with your favorite browser.
 
                            The <b>example directory</b> contains the four Java classes comprising the
                            example server.  The file Main.java is the server application itself. The
-                           file TestItem is an item, meaning a small server-side functional module,
+                           file TestItem is an item, meaning a server-side resource object,
                            which is accessible to remote applications.  The file TestProxy is a proxy,
-                           meaning a mobile functional module, which is sent to remote clients, and
-                           communicates back to its item.  Servers can be made that do not use proxies,
-                           it is simply here to demonstrate how to make one, and what it does. Finally
-                           there is the file Builder.java.  Strictly speaking the example could have
-                           been made without this class also, but it is here to demonstrate the process
-                           of configuring proxies at compile time, rather than runtime.  It's a little
-                           extra work, but it can make the proxies a lot smaller, simpler, and more
-                           secure.<br><br>
+                           meaning a mobile functional object, which is sent to remote clients, and
+                           communicates back to its item.  Server objects can be made that do not use
+                           proxies, it is simply here to demonstrate how to make one, and what it does.
+                           Finally there is the file Builder.java.  Strictly speaking the example could
+                           have been made without this class also, but it is here to demonstrate the
+                           process of configuring proxies at compile time, rather than runtime.  It's a
+                           little extra work, but it can make the proxies a lot smaller, simpler, and
+                           more secure.<br><br>
 
                            The <b>include directory</b> contains miscellaneous data resources used by
                            the proxy. This includes things like properties tables for multiple language
@@ -108,15 +73,14 @@
                            The <b>gui directory</b> contains a small collection of graphical widgets
                            used by the proxy to create its user interface on hosting clients. They are
                            outside the scope of this project as a proxy is free to use the AWT, or
-                           Swing, in any manner. <i>By all means</i>, please don't think this is the
-                           graphical toolkit you'll have to use, it is here only for the purposes of
-                           this example, and doesn't even merit detailed examination. (unless you really
-                           want to)<br><br>
+                           Swing, or anything else. <i>By all means</i>, please don't think this is the
+                           graphical toolkit you have to use, it is here only for the purposes of
+                           this example, and doesn't even merit detailed examination.<br><br>
 
                            The <b>gnu/cajo/invoke</b> directory houses the core paradigm of this
                            framework.  Its files are described at length in the javadoc pages.
                            For now suffice it to say that it defines the single standard interface,
-                           between which all items communicate.<br><br>
+                           between which all cajo objects communicate.<br><br>
 
                            The <b>gnu/cajo/utils</b> directory applies the invoke package to create
                            the core framework. Likewise, these files are covered in detail in
@@ -124,11 +88,11 @@
                            of classes used in the creation of clients, servers, and proxies.<br><br>
 
                            The <b>docs</b> directory, as mentioned previously, is where the
-                           auto-generated documentation goes.  Initially it is empty, in fact <u>it
-                           does not even exist</u> in the source repository.  You have to make this
-                           directory yourself. Then when you run the documentation generating batch
-                           file, it will create the files on your drive. (Don't worry, the documentation
-                           is not huge, about 370kB.)
+                           auto-generated documentation goes.  Initially it is empty, in fact it does
+                           not even exist in the source repository.  You may have to make this directory
+                           yourself. You could then run the documentation generating batch file, it
+                           would create the files on your drive. (Don't worry, the documentation is not
+                           huge, about 400kB.)
 
                            <a id="building"></a><h3>Building the example</h3><br>
 
@@ -345,16 +309,12 @@
                            <img src=images/console.gif><br><br>
 
                            This is the proverbial tip of the iceberg, but it should get you started.
-                           If you have further questions, there are
-                           <a href=https://cajo.dev.java.net/servlets/ProjectForumView>forums</a>
-                           for this project, also there is a  more general RMI
-                           <a href=http://forum.java.sun.com/forum.jsp?forum=58 target=_blank>forum</a>
-                           at the Java Developers website.  Before posting however, please do your
-                           <a href=http://catb.org/~esr/faqs/smart-questions.html target=_blank>homework</a>.
-                           (<i>Disclaimer:</i> the previously cited link is <u>not</u> affiliated with
-                           this project, rather provided merely for insight.) Often the answer you are
-                           seeking can can be found in the source documentation, or on this site, and
-                           typically <i>much</i> faster.<br><br>
+                           If you have further questions, there are <a href=https://cajo.dev.java.net/servlets/ProjectForumView>
+                           forums</a> for this project. However, before posting, please do your <a href=http://catb.org/~esr/faqs/smart-questions.html target=_blank>
+                           homework</a>! (<i>Disclaimer:</i> the previously cited link is <u>not</u>
+                           part of this project, rather it is provided purely for insight.) Often the
+                           answer you are seeking can can be found in the source documentation, or on
+                           this site, and typically <i>much</i> faster.<br><br>
 
                            <div align="center">
                               <font size="-2">
