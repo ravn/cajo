@@ -115,6 +115,24 @@
                            local, remote, or proxy item reference, a method signature must declare
                            the argument to be of type Invoke.<br><br>
 
+                           <b><u>Long delays:</u></b> When a remote invocation takes a really long time
+                           for everything, there is a common problem.  RMI attempts to do a reverse-DNS
+                           lookup before each invocation. In theory, this is for security purposes. When
+                           trying to match IP addresses to host names, a DNS timeout can add up to
+                           several minutes to each invocation. If you do not have a DNS server to
+                           resolve the addresses to names, it is necessary to revert back to the <i>'old
+                           way'</i>, i.e. the hosts file.  This is a text file containing address/host
+                           name pairs, which the system will check first, before attempting a DNS lookup
+                           over the network.<br><br>
+
+                           On *nix boxes (Solaris/Unix/Linux/BSD) the file is typically located at:
+                           <pre>/etc/hosts</pre>
+                           On Windows boxes, it is usually:
+                           <pre>\WINNT\system32\drivers\etc\hosts</pre>
+
+                           Here you would put the IP address/host name pairs for the machines involved,
+                           which do not have a DNS support.<br><br>
+
                            <div align="center">
                               <font face="Verdana, Helvetica" size="-2">
                                  <hr width="80%">
