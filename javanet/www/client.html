@@ -178,25 +178,25 @@
 
                            <h3>Important Details</h3><br>
 
-                           This client, when run as an application, is intended for testing and
+                           This client, when run as an application, is excellent for testing and
                            development purposes in a trusted enviornment. To make its use for
                            development purposes simpler, the client application employs a
                            <a href=docs/gnu/cajo/invoke/NoSecurityManager.html>NoSecurityManager</a>.
                            As its name implies, this allows any loaded proxy to do anything it wants, on
                            the host's physical machine. Under some circumstances granting proxy
-                           items full permissions may be exactly what is needed; on kiosks, or thin client
-                           machines, on a protected newtork for example.  It has an advantage it that
-                           it allows the client to run simply as a single jar file, no security policy
-                           file is even needed.<br><br>
+                           items full permissions may be <i>exactly</i> what is needed; on kiosks, or
+                           thin client machines, on a protected newtork for example.  It has a
+                           convenience it that it allows the client to run simply as a single jar
+                           file, no security policy file is even needed.<br><br>
 
-                           To protect the host in untrusted environments, it is <b>necessary</b> to
-                           start this application with a proper security manager installed. This would
-                           require an invocation such as the following:
+                           However, to protect the host in untrusted environments, it is
+                           <b>critical</b> to start this application with a proper security manager
+                           installed. This would require an invocation such as the following:
 
                            <pre><code>   java -jar -Djava.security.manager -Djava.security.policy=someURL client.jar ...</b></pre></code>
 
-                           The file referenced by the URL (or simply [path/]filename) would clearly define
-                           what permissions the downloaded proxies would have.<br><br>
+                           The policy file referenced by the URL (or simply [path/]filename) would
+                           clearly define what permissions the downloaded proxies would have.<br><br>
 
                            For example; the following policy file is highly restrictive, but suitable
                            for most proxies:<code><pre>
@@ -206,9 +206,9 @@ grant {
 };</code></pre>
                            This only allows loaded proxies to create server sockets on any unused
                            port over 1023, and connect to any server on any port.  It's a little
-                           more generous than an Applet sandbox, but still safe for untrusted code.
-                           <i>Note:</i> be very sure to use the first -D argument, you don't want to
-                           make the same
+                           more generous than an Applet sandbox, but still very safe for untrusted
+                           code. <i>Note:</i> be very sure to use the first -D argument, you don't
+                           want to make the same
                            <a href=http://developer.java.sun.com/developer/bugParade/bugs/4915879.html target=_blank>
                            mistake</a> I did. (Essentially, omission of the first argument, completely
                            negates the second.)
