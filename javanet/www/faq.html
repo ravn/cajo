@@ -113,15 +113,16 @@
                            read from a stream, using the static zedmob methods of the
                            <a href=docs/gnu/cajo/invoke/Remote.html>Remote</a> class.<br><br>
 
-                           <b><u>4. Can I forcibly disconnect a client?</u></b> The answer is yes; but
-                           it will take some work. In RMI it is possible to terminate an object's
+                           <b><u>4. Can I forcibly disconnect a client?</u></b> The answer is yes, but,
+                           it will take a little effort. In RMI it is possible to terminate an object's
                            remoteness, but it will mean for <u>all</u> remote VMs connected to it. If
-                           you want to disconnect a <i>specific</i> client, you need to specifically
-                           remote the object using the <a href=docs/gnu/cajo/invoke/Remote.html>Remote</a>
-                           class. Then you can invoke the remote wrapper's inherited <tt>unexportObject()</tt>
-                           method. This can be used to forcibly terminate all remote connections to that
-                           wrapper, and even to check if any remote invocations were in progress or
-                           pending on it. <br><br>
+                           you want to disconnect a <i>specific</i> client, you need to uniquely
+                           remote the object reference given to that client using the
+                           <a href=docs/gnu/cajo/invoke/Remote.html>Remote</a> class. Then you can
+                           invoke the remote wrapper's <tt>unexportObject()</tt> method, inherited from
+                           java.rmi.server.UnicastRemoteObject. This can be used to forcibly terminate
+                           all remote connections to that wrapper, and even to check if any remote
+                           invocations were in progress (or pending) on it. <br><br>
 
                            <div align="center">
                               <font face="Verdana, Helvetica" size="-2">
