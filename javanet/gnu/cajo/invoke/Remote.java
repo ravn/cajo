@@ -292,8 +292,7 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
             }
          }
          return m_selected;
-      }
-      return match_list.size() == 1 ? (Method)match_list.get(0) : null;
+      } else return match_list.size() > 0 ? (Method)match_list.get(0) : null;
    }
    /**
     * This function may be called reentrantly, so the item object <i>must</i>
