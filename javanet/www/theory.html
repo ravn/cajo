@@ -122,7 +122,7 @@
                            return type must be of type Object or a derived type.  This means an
                            invocation cannot return a primitive type, such as <tt>int</tt> or
                            <tt>char</tt>. Second, the argument type must also be of type Object,
-                           meaning it too cannot be a primitive type. However, just as with local
+                           meaning it too cannot be a primitive type. However, just as with conventional
                            invocations, both the argument and the return can be of type Object[]
                            indicating multiple objects are being transferred, or they can be null
                            indicating no object transfer.
@@ -133,8 +133,8 @@
                            made possible using the
                            <a href=docs/gnu/cajo/invoke/Remote.html>Remote</a> class.  It combines
                            Java RMI with another Java feature known as <i>reflection</i>.  The Remote
-                           class can take <i>any</i> object, and place a remotely invokable wrapper
-                           around it. When remote objects execute its invoke method, the wrapper uses
+                           class takes <i>any</i> object, and places a remotely invokable wrapper
+                           around it. When remote objects execute the invoke method, the wrapper uses
                            reflection to find the method on its internal object, matching both the
                            name and the argument types. If it is found, it executes that method, and
                            returns the result, if any.  If no matching method can be found on the
@@ -142,57 +142,66 @@
                            makes all public methods of the internal object remotely callable;
                            excepting those using primitive types as arguments or returns.
 
-                           <h3>Contacting Items:</h3><br>
-
-                           Items, i.e. objects wrapped by a Remote object, are made remotely
-                           accessible in two distinct ways.<br><br>
-
-                           First, it is generally useful to bind the item with the
-                           <a href=docs/gnu/cajo/utils/ItemServer.html>ItemServer</a>
-                           class. ItemServer will automatically create an rmiregistry and bind the item
-                           under the name provided. Other clients can now contact the registry, and
-                           obtain a remote reference to the item by name.  The rmiregistry, and the
-                           item communication use the same TCP port, therefore all that is required for
-                           a client to obtain a reference to the item is the host name and port of the
-                           item server, and the name under which the item is bound in the rmiregistry.
-                           Cannonically, the default item for any server is bound under the name
-                           "<i>main</i>". Obtaining a reference to this type of <i>statically</i> bound
-                           remote item is accomplished using the static
-                           <a href=docs/gnu/cajo/invoke/Remote.html#getItem(java.lang.String)>getItem</a>
-                           method of the Remote class.<br><br>
-
-                           The second method to obtain a reference to a remote item is done using the
-                           <a href=docs/gnu/cajo/utils/Multicast.html>Multicast</a> class. Unlike the
-                           previous method which uses TCP/IP to obtain the reference, this technique
-                           uses UDP/IP.  Instead of needing to know the server's TCP address and port
-                           number, the client needs to know the UDP address and port number the server
-                           will be using. The difference is that servers can pick their UDP addresses,
-                           and they are independent of their TCP address. Also, a server can use multiple Multicast
-                           objects, on multiple UDP addresses, if needed, and servers can even share the
-                           same address. A server broadcasts a remote reference to an item by calling the
-                           <a href=docs/gnu/cajo/utils/Multicast.html#announce(gnu.cajo.invoke.Remote,%20int)>announce</a>
-                           method of ItemServer.  This will send the reference to all clients listening
-                           on that UDP address/port pair. Items listen for these announcements using the
-                           <a href=docs/gnu/cajo/utils/Multicast.html#listen(gnu.cajo.invoke.Invoke)>listen</a>
-                           method of Multicast. This approach allows items to link <i>dynamically</i>,
-                           to form item networks of functionality.
-
                            <h3>Mobile Code:</h3><br>
 
                            An item can send mobile code, i.e. proxy items and complex object arguments
                            to clients using the <a href=docs/gnu/cajo/utils/CodebaseServer.html>CodebaseServer</a>
                            class.  CodebaseServer will create a specialized http server on the designated
-                           TCP port, and serve the specified jar file containing the class definitions
+                           TCP port. It serves the specified jar file containing the class definitions
                            needed by the client, along with any other resources needed by the proxies.
-                           The resource items are typically, images and string tables.  By default a
-                           client <u>will not</u> accept mobile code. This is typically enabled by
+                           These resources are typically, images and string tables.  By default, a
+                           client VM <u>will not</u> accept mobile code. This is typically enabled by
                            calling the
                            <a href=docs/gnu/cajo/utils/ItemServer.html#acceptProxies()>acceptProxies</a>
                            method of the ItemServer class.  This will install an RMISecurityManager to
-                           accept the code, and protect the client hardware and files, effectively
-                           creating an applet-like sandbox around the incoming code.  Mobile code means
-                           the client's VM is using objects from a codebase provided to it by the client,
-                           over the network.<br><br>
+                           accept the code, and protect the client hardware and files, it effectively
+                           creates an applet-like sandbox around the incoming code.  In essence,
+                           <i>mobile code</i> means the client's VM is using objects from a codebase
+                           provided to it by the server, over the network.
+
+                           <h3>Obtaining References:</h3><br>
+
+                           References to remote items can be easily passed to other items,
+                           as a method argument, or return. They can even be written to disc, and
+                           read back at some later time. However, obtaining initial references
+                           is done via two standard mechanisms:<br><br>
+
+                           First, it is generally useful to
+                           <a href=docs/gnu/cajo/utils/ItemServer.html#bind(java.lang.Object,%20java.lang.String)>bind</a>
+                           each item with the
+                           <a href=docs/gnu/cajo/utils/ItemServer.html>ItemServer</a>
+                           class. ItemServer will automatically create an rmiregistry, and bind the item
+                           under the name provided. Other clients can now contact the registry, and
+                           obtain a remote reference to the item by name.  The rmiregistry, and the
+                           item communicate use the same TCP port. Therefore, all that is required for
+                           a client to obtain a reference to an item is the server host name, or
+                           address, port number, and the name under which the item is bound.
+                           Cannonically, the default item for any server is bound
+                           under the name "<i>main</i>". Obtaining a reference to a bound remote item
+                           is accomplished using the static
+                           <a href=docs/gnu/cajo/invoke/Remote.html#getItem(java.lang.String)>getItem</a>
+                           method of the Remote class. This technique is known as linking
+                           <i>statically</i>. <br><br>
+
+                           The second method to obtain a reference to a remote item is using the
+                           <a href=docs/gnu/cajo/utils/Multicast.html>Multicast</a> class. Unlike the
+                           previous method which uses TCP/IP to obtain the reference, this technique
+                           uses UDP/IP.  Instead of needing to know the server's TCP address and port
+                           number, the client needs to know the UDP address and port number the server
+                           will be using. The difference is that servers can pick their UDP addresses,
+                           and they are independent of their TCP address. Also, a server can use
+                           multiple multiple UDP addresses if needed. Multiple servers will share the
+                           same address, to form <i>groups</i>. A server <i>broadcasts</i> a remote
+                           reference to an item by calling the
+                           <a href=docs/gnu/cajo/utils/Multicast.html#announce(gnu.cajo.invoke.Remote,%20int)>announce</a>
+                           method of Multicast.  This will send the reference to all clients listening
+                           in the <i>group</i>. Items listen for these announcements using the
+                           <a href=docs/gnu/cajo/utils/Multicast.html#listen(gnu.cajo.invoke.Invoke)>listen</a>
+                           method of Multicast. Use of UDP/IP, and multicasting, has proven to be
+                           unfamiliar to a lot of developers, so an entire tutorial
+                           <a href=multicast.html>page</a> has been dedicated to the use of the
+                           Multicast class. This technique allows items to spontaneously form
+                           networks of functionality by linking <i>dynamically</i>.<br><br>
 
                            <div align="center">
                               <font face="Verdana, Helvetica" size="-2">
