@@ -146,27 +146,32 @@
 
                            <pre><code>   java -jar -Djava.security.manager -Djava.security.policy=someURL client.jar ...</b></pre></code>
 
-                           The policy file referenced by the URL (or simply [path/]filename) would
-                           clearly define what permissions the downloaded proxies would have.<br><br>
+                           The first -D argument places the entire VM, and therefore all its loaded
+                           proxies, in an Applet sandbox. The second -D argument could be to a policy
+                           file, referenced by a URL (or simply [path/]filename). If needed, it would
+                           clearly define what permissions the downloaded proxies would get.<br><br>
 
                            For example; the following policy file is highly restrictive, but suitable
-                           for most proxies:<code><pre>
+                           for many proxies: (although spammers could abuse it)<code><pre>
 grant {
    permission java.net.SocketPermission "*:1024-", "accept;
    permission java.net.SocketPermission "*", connect;
 };</code></pre>
-                           This only allows loaded proxies to create server sockets on any unused
-                           port over 1023, and connect to any server on any port.  It's a little
-                           more generous than an Applet sandbox, but still very safe for untrusted
-                           code. <i>Note:</i> be very sure to use the first -D argument, you don't
-                           want to make the same
-                           <a href=http://developer.java.sun.com/developer/bugParade/bugs/4915879.html target=_blank>
-                           mistake</a> I did. (Essentially, omission of the first argument, completely
-                           negates the second.)<br><br>
+                           This allows loaded proxies to create server sockets on any unused
+                           port over 1023, and connect to <u>any</u> server on any port.  It's a little
+                           more generous than an Applet sandbox, but still fairly safe for untrusted
+                           code. Further clarification on this topic can be found in the answer to
+                           question #9 in the <a href=faq.html#9>FAQ section</a>.<br><br>
 
-                           <i>Note:</i> when web started, the client requires no policy file, as it runs
-                           in an Applet sandbox, meaning is has no access to the hosting machine's hard
-                           disc, and can communicate only back to the host from which it was sent.
+                           Be <i>very</i> sure to use the first -D argument, you don't want to make the same
+                           same <a href=http://developer.java.sun.com/developer/bugParade/bugs/4915879.html target=_blank>
+                           mistake</a> I did. (Essentially, omission of the first argument,
+                           <i>completely</i> negates the effect of the second.)<br><br>
+
+                           <i>Note:</i> when web started, the client requires no policy file, as it
+                           already runs in an Applet sandbox, meaning it has no access to the hosting
+                           machine's hard disc, and can communicate only back to the host from which it
+                           was sent.
 
                            <h3>Conclusion</h3><br>
 
