@@ -48,6 +48,7 @@
                            <li><a href=#2>Long Delays</a>
                            <li><a href=#3>Network Realities</a>
                            <li><a href=#4>Firewalled Clients</a>
+                           <li><a href=#5>Marshalling Objects</a>
                            </ol>
 
                            
@@ -127,6 +128,19 @@
                            listener with this object, and will receive the asynchronous callbacks made
                            by the server. This allows application level object design without regard for
                            the firewall issue.<br><br>
+
+                           <a id="5"></a><b><u>4. Marshalling Objects:</u></b> Sometimes, when sending
+                           large objects, particularly those which are large graphs of objects,
+                           exceptions can randomly occur during transport. While this is not a defect
+                           in the framework, it can be very annoying. One particularly helpful technique
+                           is for the sender to encapsulate the object in a
+                           <a href=http://java.sun.com/j2se/1.4.2/docs/api/java/rmi/MarshalledObject.html>java.rmi.MarshalledObject</a>.
+                           Then the receiver can retrieve the original object using its
+                           <a href=http://java.sun.com/j2se/1.4.2/docs/api/java/rmi/MarshalledObject.html#get()>get()</a>
+                           method. Encapsulating objects this way seems to make them far less prone to
+                           failure during transmission. The reason why this failure occurs, and even why
+                           this technique helps to fix it, is still a mystery.<br><br>
+
 
                            <div align="center">
                               <font size="-2">
