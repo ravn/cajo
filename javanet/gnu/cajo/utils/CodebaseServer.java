@@ -180,8 +180,9 @@ public final class CodebaseServer extends Thread {
                      }
                   }
                }
-               if (itemName == null) os.write(bye);  // invalid request
-               else if (itemName.endsWith(".jar")) { // code request
+               if (itemName == null) os.write(bye);   // invalid request
+               else if (itemName.endsWith(".jar") &&  // code request
+                  !itemName.endsWith("server.jar")) { // safety measure
                   try {
                      InputStream ris =
                         getClass().getResourceAsStream(itemName);
