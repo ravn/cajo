@@ -61,6 +61,10 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
          } else if (rcsf.port == 0) rcsf.port = this.port;
          return ss;
       }
+      public boolean equals(Object o) {
+         return o != null && o.getClass().equals(getClass());
+      }
+      public int hashCode() { return getClass().hashCode(); }
    }
    private static final class RCSF // this class has become unnecessary for now
       implements RMIClientSocketFactory, Serializable {
@@ -70,6 +74,12 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
          return RMISocketFactory.getDefaultSocketFactory().
             createSocket(this.host, this.port != 0 ? this.port : port);
       }
+      public boolean equals(Object o) {
+         return o != null && o instanceof RCSF &&
+            ((RCSF)o).host.equals(host) &&
+               ((RCSF)o).port == port;
+      }
+      public int hashCode() { return getClass().hashCode() + port; }
    }
    private static Object proxy;
    private static Registry registry;
