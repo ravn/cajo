@@ -47,6 +47,7 @@ import java.io.*;
  * @author John Catherino
  */
 public final class ProxyLoader implements Invoke {
+   private static final long serialVersionUID = 0x8675309L; // ;-)
    private final String handle;
    private RemoteInvoke server;
    private transient Object proxy;

@@ -48,6 +48,7 @@ import java.io.*;
  * @author John Catherino
  */
 public class ZippedProxy implements Invoke {
+   private static final long serialVersionUID = 0xC0DEF00DL;
    /**
     * The compressed serialized proxy object.  It is created on server
     * assignment when binding at the hosting VM.  This is to save time

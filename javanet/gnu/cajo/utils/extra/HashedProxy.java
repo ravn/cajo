@@ -47,6 +47,7 @@ import java.io.*;
  * @author John Catherino
  */
 public class HashedProxy extends gnu.cajo.utils.ZippedProxy {
+   private static final long serialVersionUID = 0xABCDEF240305L;
    private void writeObject(ObjectOutputStream out) throws IOException {
       if (!hashed) {
          hashPayload();
