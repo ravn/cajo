@@ -96,7 +96,8 @@
                            The cajo project is a small, free library, enabling powerful, dynamic
                            multi-machine interaction both within, and between, Java applications. It
                            provides an easy-to-use, yet completely understandable framework, to simplify
-                           the use of RMI while at the same time harnessing its full potential.<br><br>
+                           the use of RMI while at the same time harnessing its full potential. It has
+                           been successfully tested an deployed on J2ME, J2SE, and J2EE platforms.<br><br>
 
                            <b>Goals of the project:</b><br>
 
@@ -104,29 +105,30 @@
                               <li>Establish a standard distributed paradigm, which becomes increasingly
                               valuable with greater use.<br><br>
                               <li>Encourage increased distributed inter-operation between
-                              components and applications.<br><br>
-                              <li>Foster development of scale-free application networks, where
-                              functionality can be flexible, resilient, and adaptive.<br><br>
+                              applications and components.<br><br>
+                              <li>Foster development of scale-free component networks, to create
+                              flexible, resilient, and adaptive applications.<br>
                            </ol>
 
                            1. This framework allows an unlimited number of Java Virtual Machines to
                            work together as one.  The application code makes absolutely no distinction
                            between local and remote  invocations. Applications can evolve from all
                            objects being on a single Virtual Machine, to all objects being on separate
-                           Virtual Machines, to all objects being on separate Physical Machines. This
-                           scalability comes through the framework, requiring <i>no changes</i> to the
-                           application's source code!<br><br>
+                           Virtual Machines, to all objects being on separate Physical Machines. The
+                           scalability comes with the framework, requiring <i>no changes</i> to the
+                           application's source code.<br><br>
 
                            2. Unsigned applets, indistinguishable from applications in terms of
-                           interactivity, can be easily created.  Transfer an application's user
-                           interface to any Java capable browser; clearly separate the computational
-                           requirements of the model, view, and controller portions of the application,
+                           interactivity, can be easily created.  Transfer an application's entire user
+                           interface to any Java capable browser.  Clearly separate the computational
+                           requirements of the model, view, and controller portions of an application,
                            between different Virtual Machines.<br><br>
 
-                           3. The framework also allows developers to collaborate dynamically; linking
-                           their objects at will. This architecture can fulfill the real promise of
-                           Java: to make the network into one seamless computer. Soon applications can
-                           be built using optimized components of other distributed applicaitons.<br><br>
+                           3. The framework allows developers and applications to collaborate
+                           dynamically; linking their objects at will. This architecture can fulfill the
+                           real promise of Java: to make the network into one seamless computer. Soon
+                           applications can be built using optimized components of other distributed
+                           applications.<br><br>
 
                            <b>Getting started:</b><br><br>
 
@@ -136,23 +138,23 @@
                            and <a href=docs/gnu/cajo/utils/package-summary.html>gnu.cajo.utils</a>
                            (8 classes) extending and applying the foundation to create the framework.<br><br>
 
-                           1. For those who want to learn the architecture of the framework's design,
-                           first review the invoke package, it's surprisingly small. Then move on to
-                           the utils package. This will make the provided
+                           1. For those who want to understand the architecture of the framework first,
+                           review the invoke package, it's surprisingly small. Next move on to the utils
+                           package. This will make the provided
                            <a href=example.html>example</a> both readily understandable, and completely
                            extensible.<br><br>
 
-                           2. For those who want to jump right in, and learn by doing, there is an
+                           2. For those who want to jump right in and learn by doing, there is an
                            example <a href=source/browse/cajo/example>package</a>, consisting of just
-                           four small classes, yet fully exercising the framework. The project's
+                           four small classes, completely exercising the framework. The project's
                            <a href=source/browse/cajo/#dirlist>root</a> directory has batch scripts
-                           illustrating three fundamentally different ways to build an application.<br><br>
+                           illustrating three fundamentally different ways to build the application.<br><br>
 
                            Either way, after downloading all the
                            <a href=https://cajo.dev.java.net/source/browse/cajo/>source code</a>, the
                            next best step would
-                           be to check out the component articles listed on the right bar, then proceed
-                           onto the <a href=tutorial.html>tutorial</a>.<br><br>
+                           be to check out the component articles on the right bar, then proceed on to
+                           the <a href=tutorial.html>tutorial</a>.<br><br>
 
                            <b>Special Announcements:</b><br><br>
 
@@ -160,17 +162,17 @@
 
                            <u>All links defined</u>: 15-Oct-03.<br><br>
 
-                           The links are being actively updated, and the code is under active
-                           refinement as well.  Please check back soon.<br><br>
-
                            So as not to clutter up the home page, please check the
                            <a href=https://cajo.dev.java.net/servlets/ProjectNewsList>news</a> link for
                            most updates, about this site's documentation progress, as well as for news
                            about the project in general.<br><br>
 
-                           Finally, I'd love to hear your thoughts and suggestions regarding this
-                           project. Please consider leaving me a message in the
+                           Your thoughts and suggestions regarding this project would be much
+                           appreciated, please consider leaving a message in the
                            <a href=https://cajo.dev.java.net/servlets/ProjectForumView>forum</a>.<br><br>
+
+                           These links are being actively updated, and the code is under active
+                           refinement.  Please check back soon.<br><br>
 
                            <div align="center">
                               <font face="Verdana, Helvetica" size="-2">
@@ -230,9 +232,8 @@
                            <tr>
                               <td bgcolor="#C69C6D">
                                  <font face="Verdana,Geneva,Arial,Helvetica,sans-serif" size="-2">
-                                    Learn how to <b><a href=multicast.html>multicast</a></b> remote item
-                                    references over the network, as well as how to listen and capture these
-                                    references.
+                                    Learn how to <b><a href=multicast.html>multicast</a></b> item references
+                                    over the network, and how to receive these broadcasted references.
                                  </font>
                               </td>
                            </tr>
