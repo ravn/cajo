@@ -72,9 +72,8 @@
                <table width="100%" cellpadding="5" border="0">
                   <tr>
                      <td>
-                        <font face="Verdana, Helvetica" size="-1">
 <!-- begin main.html -->
-                           <font face="Verdana, Helvetica" size="4">
+                           <font size="4">
                               <b>Frequently Asked Questions.</b><br><br>
                            </font>
 
@@ -83,7 +82,7 @@
                            disproportionately often.  These deserve their own space, as they have the
                            highest statistical probability of being very helpful.<br><br>
 
-                           <b><u>Why doesn't the example work in Appletviewer?</u></b> The
+                           <b><u>1. Why doesn't the example work in Appletviewer?</u></b> The
                            <a href=docs/gnu/cajo/utils/CodebaseServer.html>CodebaseServer</a> tells the
                            browser to make the applet 100% of the width and height of its window.  While
                            this has been legal HTML since 1.0, the Appletviewer doesn't know what to make
@@ -92,7 +91,7 @@
                            CodebaseServer to use a fixed width and height value.  Then you will be
                            able to use the tool.<br><br>
 
-                           <b><u>What if someone forks this code?</u></b> A fork, i.e. an alternative
+                           <b><u>2. What if someone forks this code?</u></b> A fork, i.e. an alternative
                            development, is something I would not like to see happen, as it could divide
                            the community. I am completely open to new ideas, and I could not envision
                            any useful reason to do it. Most importantly, the gnu.cajo packages belong to
@@ -100,7 +99,7 @@
                            specifically. Besides, in this type of project, there is so much greater
                            capability gained through cooperation.<br><br>
 
-                           <b><u>What is a zedmob?</u></b> A zedmob first off, is a contraction of the
+                           <b><u>3. What is a zedmob?</u></b> A zedmob first off, is a contraction of the
                            two words <b><u>Z</u></b>ipp<b><u>ed</u></b>
                            <b><u>M</u></b>arshalled<b><u>Ob</u></b>ject. It is the standard mechanism for
                            encapsulating remote item references, serialized objects, and item proxies;
@@ -113,6 +112,16 @@
                            location information is lost. A zedmob is typically written to a stream, and
                            read from a stream, using the static zedmob methods of the
                            <a href=docs/gnu/cajo/invoke/Remote.html>Remote</a> class.<br><br>
+
+                           <b><u>4. Can I forcibly disconnect a client?</u></b> The answer is yes; but
+                           it will take some work. In RMI it is possible to terminate an object's
+                           remoteness, but it will mean for <u>all</u> remote VMs connected to it. If
+                           you want to disconnect a <i>specific</i> client, you need to specifically
+                           remote the object using the <a href=docs/gnu/cajo/invoke/Remote.html>Remote</a>
+                           class. Then you can invoke the remote wrapper's inherited <tt>unexportObject()</tt>
+                           method. This can be used to forcibly terminate all remote connections to that
+                           wrapper, and even to check if any remote invocations were in progress or
+                           pending on it. <br><br>
 
                            <div align="center">
                               <font face="Verdana, Helvetica" size="-2">
