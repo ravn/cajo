@@ -135,10 +135,10 @@
                            multiple multiple UDP addresses if needed. Multiple servers will share the
                            same address, to form <i>groups</i>. A server <i>broadcasts</i> a remote
                            reference to an item by calling the
-                           <a href=docs/gnu/cajo/utils/Multicast.html#announce(gnu.cajo.invoke.Remote,%20int)>announce</a>
+                           <a href=docs/gnu/cajo/utils/Multicast.html#announce(java.lang.Object,%20int)>announce</a>
                            method of Multicast.  This will send the reference to all clients listening
                            in the <i>group</i>. Items listen for these announcements using the
-                           <a href=docs/gnu/cajo/utils/Multicast.html#listen(gnu.cajo.invoke.Invoke)>listen</a>
+                           <a href=docs/gnu/cajo/utils/Multicast.html#listen(java.lang.Object)>listen</a>
                            method of Multicast. Use of UDP/IP, and multicasting, has proven to be
                            unfamiliar to a lot of developers, so an entire tutorial
                            <a href=multicast.html>page</a> has been dedicated to the use of the
