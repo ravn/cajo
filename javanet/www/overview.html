@@ -13,36 +13,16 @@
 
 <!-- begin main.html -->
 
-                        <center>
-                           <a href="index.html" title="cajo home page"><b>Welcome</b></a> |
-                           <a href="tutorial.html" title="getting started"><b>Tutorial</b></a> |
-                           <a href="theory.html" title="how it all works"><b>Theory</b></a> | 
-                           <a href="gotcha.html" title="important details"><b>Gotchas</b></a> |
-                           <a href="faq.html" title="common questions"><b>FAQ</b></a> |
-                           <a href="acknowlege.html" title="supporters of the marque"><b>Acknowledgments</b></a> |
-                           <a href="license.html" title="what's the LGPL"><b>License</b></a> |
-                           <a href="docs/overview-summary.html" title="package documentation"><b>Javadocs</b></a> <br><br>
-                        </center>
-                        <center>
-                           <a href="item.html" title="Remote object"><b>Item</b></a> |
-                           <a href="proxy.html" title="interface object"><b>Proxy</b></a> |
-                           <a href="multicast.html" title="broadcast object"><b>Multicast</b></a> |
-                           <a href="client.html" title="host object"><b>Client</b></a> |
-                           <a href="server.html" title="application server"><b>CodebaseServer</b></a> |
-                           <a href="example.html" title="demo objects"><b>Example</b></a> |
-                           <b>Overview</b><br><br>
-                        </center>
-
                            <font size="4">
                               <b>Adding cajo to existing applications...</b><br><br>
                            </font>
 
-It is very easy to incorporate the cajo framework into any existing
-application. Hopefully this overview will simplify the process. As you will
-see shortly; making <i>any</i> object remotely accessible, can be done with
-as little as <u>one</u> additional line of code!<br><br>
+It is very easy to incorporate the cajo framework into existing applications.
+Hopefully this overview will simplify the process. As you will see very
+shortly; making <i>any</i> object remotely accessible, can be done with as
+little as <u>one</u> additional line of code!<br><br>
 
-Let us start with an example object:<br>
+Let us start with a trivial example object:<br>
 
 <tt><pre>public class SomeObject {
    protected String string;
@@ -54,29 +34,29 @@ Let us start with an example object:<br>
    }
    public String baz(String string) {
       try { return this.string; }
-      finally { this.string = string; } // tricky :)
+      finally { this.string = string; } // fun (:
    }
 }</pre></tt>
 
 One of the most important aspects of the cajo framework is that it does not
-require any changes to your objects in order to use them remotely. Even if
-your application is already using another distributed object framework;
-it is very easy to <i>drop in</i> cajo support, to increase your distributed
-user base. To make an object remotely accessible, the framework provides two
-options; these are known collectively as static, and dynamic binding. Both
-may even be used on the same object.<br><br>
+require any changes to <i>your</i> objects, in order to use them
+remotely. Even if your application is already using another distributed
+object framework; it is very easy to <i>drop in</i> cajo support, and
+increase your distributed user base. To make an object remotely accessible,
+the framework provides <u>two</u> distinct options; these are known
+collectively as <i>static</i>, and <i>dynamic</i> binding. Even <u>both</u>
+may be used on the <i>same</i> object.<br><br>
 
-Static binding is accomplished via a call to the static
-<a href=docs/gnu/cajo/utils/ItemServer.html#bind(java.lang.Object,%20java.lang.String)>bind</a>
-method of the
-<a href=docs/gnu/cajo/utils/ItemServer.html>ItemServer</a>
-class. This type of binding will require the client to know the address
-of the server, in order to obtain a reference to the object. Clients
- statically bind to a remote object using the static
-<a href=docs/gnu/cajo/invoke/Remote.html#getItem(java.lang.String)>getItem</a>
-method of the <a href=docs/gnu/cajo/invoke/Remote.html>Remote</a> class.<br><br>
+Static binding is accomplished simply via a call to the static
+<a href=docs/gnu/cajo/utils/ItemServer.html#bind(java.lang.Object,%20java.lang.String)>
+bind</a> method, of the <a href=docs/gnu/cajo/utils/ItemServer.html>
+ItemServer</a> class. This type of binding will require the client to know
+the address of the server, in order to obtain a reference to the object.
+Clients statically bind to a remote object using the static <a href=docs/gnu/cajo/invoke/Remote.html#getItem(java.lang.String)>
+getItem</a> method of the <a href=docs/gnu/cajo/invoke/Remote.html>Remote</a>
+class.<br><br>
 
-It could be done something like this:
+It would look something like this:
 
 <tt><pre>
    Itemserver.bind(someObject, "someName");
@@ -84,17 +64,14 @@ It could be done something like this:
    Object someObject = Remote.getItem("//serverName/someName");
 </pre></tt>
 
-Dynamic binding is accomplished via a call to the static
-<a href=docs/gnu/cajo/utils/Multicast.html#announce(java.lang.Object,%20int)>announce</a>
-method of the
-<a href=docs/gnu/cajo/utils/Multicast.html>Multicast</a>
-class. This will broadcast the remote object reference to all
-listening Virtual Machines. Clients dynamically bind using the static
-<a href=docs/gnu/cajo/utils/Multicast.html#listen(java.lang.Object)>listen</a>
-method of the Multicast class. It will callback the object provided
-by the client, when any remote server makes an announcement.<br><br>
+Dynamic binding is accomplished simply via a call to the static <a href=docs/gnu/cajo/utils/Multicast.html#announce(java.lang.Object,%20int)>
+announce</a> method, of the <a href=docs/gnu/cajo/utils/Multicast.html>
+Multicast</a> class. This will <i>'broadcast'</i> the remote object reference
+to <u>all</u> listening Virtual Machines. Clients dynamically bind to a
+remote objects using the static <a href=docs/gnu/cajo/utils/Multicast.html#listen(java.lang.Object)>
+listen</a> method of the Multicast class.<br><br>
 
-It could be done something like this:
+It would look something like this:
 
 <tt><pre>
    Multicast.announce(someObject, 16);
@@ -104,44 +81,43 @@ It could be done something like this:
 
 In either case; once a remote reference to an object is obtained, it can be
 used to invoke its public methods. The reference can also be passed to other
-objects, including remote ones; as either a method argument, or a return
-value. It could also be thrown in an Exception, and even to a remote caller.
-Any object receiving this reference can also invoke its remote methods. The
-reference can even be written to a file; typically using the static
-<a href=docs/gnu/cajo/invoke/Remote.html#zedmob(java.io.OutputStream,%20java.lang.Object)>zedmob</a>
-method of the Remote class, for later use, even by another program.  The key
-to all this power; is the static
-<a href=docs/gnu/cajo/invoke/Remote.html#invoke(java.lang.Object,%20java.lang.String,%20java.lang.Object)>invoke</a>
-method of the Remote class.<br><br>
+objects, including remote ones; as either an argument, or a return. It could
+<i>even</i> be thrown in an Exception. Any object receiving this reference,
+can <i>also</i> invoke its remote methods. The reference can even be written
+to a file; using the static <a href=docs/gnu/cajo/invoke/Remote.html#zedmob(java.io.OutputStream,%20java.lang.Object)>
+zedmob</a> method of the Remote class, for later use, even by <i>another</i>
+program.  The key to all this power; is the static <a href=docs/gnu/cajo/invoke/Remote.html#invoke(java.lang.Object,%20java.lang.String,%20java.lang.Object)>
+invoke</a> method, of the Remote class.<br><br>
 
-Invoke is the cajo architecture approach to dynamic method invocation; it is
-supplemented by use of Java Reflection. It is the foundation of the
-framework. It can be used to invoke any public method, on <i>any</i> object;
-including <u>local</u> ones.<br><br>
+Invoke is the cajo architecture approach to dynamic method invocation,
+supplemented by use of Java reflection. It is a foundation of the
+framework. It can be used to invoke <i>any</i> public method, on <i>any</i>
+object; including <u>local</u> objects.<br><br>
 
 The method has the following signature:
 
 <code><pre>  Object Remote.invoke(Object object, String method, Object args) throws Exception;</pre></code>
 
-The <tt>object</tt> argument is the object upon which to be operated. The
+The <tt>object</tt> argument is the object on which to be operated. The
 <tt>method</tt> argument is the name of the public method to be invoked.
-The <tt>args</tt> argument represents the argument[s] to be provided to the
+The <tt>args</tt> argument represents the argument(s) to be provided to the
 method; if any. Multiple arguments are represented when <tt>args</tt> is an
-Object array. The <tt>args</tt> value can even be null. The method's result
-is the object returned from the method invocation; if any. The method
+Object array. A null <tt>args</tt> value indicates no arguments. The method's
+result is the object returned from the method invocation, if any. The method
 declares that it throws <tt>Exception</tt>, to allow the called method the
-freedom to throw any type of Exception; including none at all. It is also
-used to cover network related failures, for invocations on remote objects.<br><br>
+freedom to throw any type of Exception; <u>including</u> none at all. It is
+<i>also</i> used to cover network related failures, for invocations on remote
+objects.<br><br>
 
-Now it might appear that all typesafety has been completely abandoned,
-looking somewhat like a return to the C language. However, what has <i>really</i>
+This might appear as all typesafety has been completely abandoned;
+looking somewhat like a return to the C language. However, what has really
 happened, is that strong typechecking has moved, necessarily from compile
-time to runtime. There is however, a <u>very</u> useful technique to restore
-compile time typechecking; it is called a
-<a href=docs/gnu/cajo/utils/extra/Wrapper.html>wrapper</a> class.<br><br>
+time, to runtime. There is however, a <u>very</u> useful technique, to
+restore compile time typechecking; it is called a <a href=docs/gnu/cajo/utils/extra/Wrapper.html>
+wrapper</a> class.<br><br>
 
-If a client already knows the interface to a remote object; it would define a
-wrapper class to take the remote reference, and provide a compile time
+If a client already knows the interface to a remote object; it would define
+a wrapper class, to take the remote reference, and provide a compile time
 typesafe interface to it.<br><br>
 
 Wrapping our previous example:<br>
@@ -152,7 +128,7 @@ Wrapping our previous example:<br>
       // obj = new SomeObject(); // when local, or...
 
       try { obj = Remote.getItem("//serverName/someName"); }
-      catch(Exception x) { /* server object not available */ }
+      catch(Exception x) { /* remote object not available */ }
    }
    public String foo() {
       try { return (String)Remote.invoke(obj, "foo", null); }
@@ -168,13 +144,13 @@ Wrapping our previous example:<br>
    }
 }</pre></tt>
 
-Remember that since the <tt>Remote.invoke</tt> method works on both local
-<u>and</u> remote objects; the wrapper paradigm provides the ability to
-<i>transparently</i> scale; from local object interaction, to remote, without
-affecting the remaining source code. It provides the <i>ultimate</i>
-flexibility: the wrapped object can be changed, from local to remote; even to
-a different server, at runtime!<br><br>
-
+It is very important to remember that since the <tt>Remote.invoke</tt>
+method works on <i>both</i>, local <u>and</u> remote objects; the wrapper
+paradigm provides the ability to <i>transparently</i> scale; from local
+object interaction, to remote, <u>without</u> affecting the remaining source
+code. It provides the <i>ultimate</i> flexibility: The wrapped object can
+easily be changed, from local to remote, even to a different server;
+<u>at</u> runtime!<br><br>
 
                            <div align="center">
                               <font size="-2">
