@@ -94,67 +94,79 @@
                               <b>Inside the cajo framework.</b><br><br>
                            </font>
 
-                           Every object in the cajo framework is known as an <a href=item.html>Item</a>.
-                           An item exists within a Virtual Machine, and call other items (local or
-                           remote). An item can also be called by other items. (local or remote) An item
-                           can also be a <a href=proxy.html>Proxy</a>, meaning an item sent from one
-                           machine (virtual or physical), to execute in the runtime of another.  This
-                           means that an application can be originally designed with all of its items
-                           local to the virtual machine, then evolve until each item is in a separate
-                           virtual, or even physical, machine with no changes to the source code.<br><br>
+                           Every remotely accessible object in the framework is known as an
+                           <a href=item.html>Item</a>. An application can host one, or more, items
+                           within its virtual machine. Items can call other items (local or remote)
+                           and an item can also be called by other items (local or remote). A special
+                           type of item is known as a <a href=proxy.html>Proxy</a>. Proxies are items
+                           sent from one virtual machine, to execute in the context of another.  This
+                           allows an application to be originally designed with all of its items
+                           local to its virtual machine, then evolve until each item exists
+                           in a separate virtual, or even physical machine; <u>with no changes to
+                           the source code</u>.<br><br>
 
                            In the standard RMI framework, each remote object must have a unique <i>"stub"</i>
-                           compiled for it. This can quickly become burdensome, if the interaction
-                           between objects becomes highly diverse, and is completely impossible when
-                           the method signatures vary at runtime. To address this problem, the cajo
-                           framework defines only one functional interface.<br><br>
+                           compiled for it. This can quickly become burdensome, especially if the
+                           interaction between objects becomes highly diverse; it is completely
+                           <u>impossible</u> when method signatures are unknown at compile time. To
+                           address these problems, the framework defines only one functional interface;
+                           every item inherits the <a href=docs/gnu/cajo/invoke/Invoke.html>Invoke</a>
+                           interface, i.e.:
 
-                           Every item inherits the <a href=docs/gnu/cajo/invoke/Invoke.html>Invoke</a>
-                           interface:
-
-                              <code><pre>   Object invoke(String method, Object args);</pre></code>
+                              <pre><tt>   Object invoke(String method, Object args);</tt></pre>
 
                            The interface defines a single method, in which a method name is provided,
-                           is given an argument, and returns a result. This signature operates slightly
-                           differently from a local Java method invocation in two distinct ways.  First
-                           the return type must be of type Object, or a derived type.  This means an
-                           invocation cannot return a primitive type, such as int or char.  Second, the
-                           argument type must also be of type Object, meaning it too cannot be a
+                           is given an argument, and returns a result. This signature operates
+                           <i>slightly</i> differently from local Java method invocation in two distinct
+                           ways.  First the return type must be of type Object or a derived type.  This
+                           means an invocation cannot return a primitive type, such as int or char.
+                           Second, the argument type must also be of type Object, meaning it too cannot be a
                            primitive type.  However, just as with local invocations, both the argument
-                           and return can be of type Object[], indicating more than one object is
-                           being transferred, they can also be null indicating no object transfer.<br><br>
+                           and the return, can be of type Object[] indicating more than one object is
+                           being transferred, they can even be null, indicating no object transfer.<br><br>
 
                            Aside from these minor differences, object and item interaction behave
-                           identically. Typically a small wrapper is placed around an item reference,
+                           identically. Typically, a small wrapper is placed around an item reference
                            to give it the identical semantics, and type-safety, of a local method
-                           invocation.<br><br>
+                           invocation; consider these examples:<code><pre>
 
-                           <u>Consider these examples:</u><code><pre>
+   void baker() {
+      someItem.invoke("baker", null);
+      // no argument or return
+   }
 
-   void baker() { someItem.invoke("baker", null); }
+   int baker(int charlie) {
+      return ((Integer)someItem.invoke("baker", new Integer(charlie))).intValue();
+      // primitive argument and return
+   }
 
    Able baker(Charlie c) {
       return (Able)someItem.invoke("baker", c);
+      // object argument and return
    }
 
    Able[] baker(Charlie c, Delta d) {
       return (Able[])someItem.invoke("baker", new Object[] { c, d });
+      // multiple object argument and return
    } </pre></code>
-                           Now, when an object is invoking a method directly, or through the Invoke
-                           interface; to a local or remote object, or even to a proxy; it is
-                           completely abstracted, and ultimately irrelevant to the invoking object.<br><br>
+                           Now when one object is invoking a method directly, or through an Invoke
+                           interface, to an item (local or remote) it is completely abstracted, and
+                           ultimately irrelevant to the invoking object.<br><br>
 
-                           The invocation of a method on a remote item, or proxy, is made possible
-                           using the <a href=docs/gnu/cajo/invoke/Remote.html>Remote</a> class.  It
-                           makes use of a Java feature known as reflection.  The Remote class takes any
-                           Object, and places a remotely invokable wrapper around it, thereby making it
-                           an item.  When other objects execute the Invoke interface, the wrapper uses
-                           reflection to lookup the method on its internal object, matching both the
-                           name and the argument types. When it is found it executes that method, and
-                           returns the result, if any.  If no matching method can be found on the
-                           internal object, a <b>NoSuchMethodException</b> is thrown. This technique
-                           effectively makes <b>all public methods</b> of the internal object remotely
-                           callable.<br><br>
+                           The invocation of a method on a remote item using the Invoke interface is
+                           made possible using the
+                           <a href=docs/gnu/cajo/invoke/Remote.html>Remote</a> class.  It utilizes
+                           a Java feature known as <i>reflection</i>.  The Remote class can take
+                           <i>any</i>
+                           object, and place a remotely invokable wrapper around it. When other objects
+                           execute its invoke method, the wrapper uses reflection to find the method
+                           on its internal object, matching both the name and the argument types. If
+                           it is found, it executes that method, and returns the result, if any.  If no
+                           matching method can be found on the internal object, a
+                           <i>NoSuchMethodException</i> is thrown.<br><br>
+
+                           This technique makes <u><b>all public methods</b></u> of the internal object
+                           remotely callable!<br><br>
 
                            <div align="center">
                               <font face="Verdana, Helvetica" size="-2">
