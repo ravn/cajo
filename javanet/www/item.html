@@ -136,17 +136,17 @@
 
                            <h3>Using items</h3><br>
 
-                           All invocations on any item should be made using its Invoke interface.  While
-                           technically this technique isn't necessary when the item is local, i.e. in
-                           the same Virtual Machine, it allows the called object to be moved to a
-                           another machine, whether virtual or physical, with <u><b>no</b></u> source
-                           code changes! A <i>highly recommended</i> design pattern is to simply place
-                           a wrapper object around the item reference, where its traditional methods
-                           simply pass the invocation onto the internal item reference.<br><br>
+                           All invocations on any service object should be made using the Remote.invoke
+                           method.  While technically this technique isn't necessary when the item is
+                           local, i.e. in the same Virtual Machine, it allows the called object to be
+                           moved to a another machine, whether virtual or physical, with <u><b>no</b></u>
+                           source code changes! A <i>highly recommended</i> design pattern is to simply
+                           place a wrapper object around the item reference, where its traditional
+                           methods simply pass the invocation onto the internal item reference.<br><br>
 
                            Consider for example:
 <code><pre>
-   // assume member Object foo either local, remote, or a proxy...
+   // assume member Object foo either local or remote...
 
    String toString() {
       // no arguments, object return ...
@@ -176,23 +176,26 @@
       foo = Remote.getItem("/beans/foo.ser");
    }
 </pre></code>
+
+                           Note: changing foo from local to remote will have no effect on the syntax of
+                           the remaining source code.
+
                            <h3>Remote Transparency</h3><br>
 
-                           By handling items using their Invoke interface, calling objects need not know
-                           or even care, if the items are local or remote. However, should it be
-                           important to know the remoteness or locality of an item; it can be tested in
-                           the following way:
+                           By handling objects using the Remote.invoke method, calling objects need not
+                           know or even care, if the objects are local or remote. However, should it be
+                           important to know the remoteness or locality of an object; it can be tested
+                           in the following way:
 <code><pre>
    if (foo instanceof RemoteInvoke) {
-      // foo is a remote item ...
+      // foo is a remote object ...
    } else {
-      // foo is a local object or proxy ...
+      // foo is a local object ...
    }
 </pre></code>
                            This is the sole purpose of the
                            <a href=docs/gnu/cajo/invoke/RemoteInvoke.html>RemoteInvoke</a> interface,
-                           testing locality, as it is otherwise a bodyless interface. In general
-                           however, locality testing should be a discouraged practice.
+                           testing locality, as it is otherwise a bodyless interface.
 
                            <h3>Base Items</h3><br>
 
