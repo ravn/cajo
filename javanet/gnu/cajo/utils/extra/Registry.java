@@ -111,15 +111,15 @@ public final class Registry {
          multicast.listen(registry);
          Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
          do { // periodically purge dead references:
+            Thread.currentThread().sleep(3600000L); // wait an hour
             java.util.Enumeration keys = entries.keys();
             while (keys.hasMoreElements()) {
                Object key = keys.nextElement();
                Object o = entries.get(key);
-               try { gnu.cajo.invoke.Remote.invoke(o, "toString", null); }
+               try { Remote.invoke(o, "toString", null); }
                catch(Exception x) { entries.remove(key); }
                Thread.currentThread().sleep(300000L); // take five
             }
-            Thread.currentThread().sleep(3600000L); // wait an hour
          } while(true);
       } catch(Exception x) { x.printStackTrace(); }
    }
