@@ -1,0 +1,343 @@
+<html>
+   <head>
+      <title>The CaJo Project</title>
+      <meta name="Keywords" content="cajo, rmi, java, distributed computing">
+      <meta name="Description" content="Cajo Distributed Application Framework">
+      <meta name="Author" content="John Catherino">
+   </head>
+   <body bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800000" alink="#FF0000">
+      <table width="100%" cellspacing="0" cellpadding="0" border="0">
+         <tr>
+            <td><img src="images/topl.gif" width="17" height="17" border="0"></td>
+            <td width="100%" bgcolor="#8C6239"><img src="images/dot.gif" width="1" height="1" border="0"></td>
+            <td><img src="images/topr.gif" width="17" height="17" border="0"></td>
+         </tr>
+      </table>
+      <table width="100%" cellspacing="0" cellpadding="0" border="0">
+         <tr>
+            <td width="100%" height="15" bgcolor="#8C6239">
+               <img src="images/dot.gif" width="1" height="1" border="0">
+            </td>
+         </tr>
+      </table>
+      <table width="100%" cellspacing="0" cellpadding="0" border="0">
+         <tr>
+            <td width="120" valign="top">
+               <table width="120" border="0" cellspacing="2" cellpadding="2" align="left">
+<!-- begin table.html -->
+                  <tr>
+                     <td bgcolor="#C0C08D">
+                        <font face="Verdana,Geneva,Arial,Helvetica,sans-serif" size="-2">
+                           <a href="index.html" title="cajo home page"><b>Welcome</b></a><br>
+                        </font>
+                     </td>
+                  </tr>
+                  <tr>
+                     <td bgcolor="#C0C08D">
+                        <font face="Verdana,Geneva,Arial,Helvetica,sans-serif" size="-2">
+                           <a href="tutorial.html" title="getting started"><b>Tutorial</b></a>
+                        </font>
+                     </td>
+                  </tr>
+                  <tr>
+                     <td bgcolor="#C0C08D">
+                        <font face="Verdana,Geneva,Arial,Helvetica,sans-serif" size="-2">
+                           <a href="theory.html" title="how it all works"><b>Theory</b></a>
+                        </font>
+                     </td>
+                  </tr>
+                  <tr>
+                     <td bgcolor="#C0C08D">
+                        <font face="Verdana,Geneva,Arial,Helvetica,sans-serif" size="-2">
+                           <a href="gotcha.html" title="important details"><b>Gotchas</b></a>
+                        </font>
+                     </td>
+                  </tr>
+                  <tr>
+                     <td bgcolor="#C0C08D">
+                        <font face="Verdana,Geneva,Arial,Helvetica,sans-serif" size="-2">
+                           <a href="faq.html" title="common questions"><b>FAQ</b></a>
+                        </font>
+                     </td>
+                  </tr>
+                  <tr>
+                     <td bgcolor="#C0C08D">
+                        <font face="Verdana,Geneva,Arial,Helvetica,sans-serif" size="-2">
+                           <a href="docs/index.html" title="official documentation"><b>Javadocs</b></a>
+                        </font>
+                     </td>
+                  </tr>
+                  <tr>
+                     <td bgcolor="#C0C08D">
+                        <font face="Verdana,Geneva,Arial,Helvetica,sans-serif" size="-2">
+                           <a href="acknowlege.html" title="supporters of the marque"><b>Acknowlegements</b></a>
+                        </font>
+                     </td>
+                  </tr>
+                  <tr>
+                     <td bgcolor="#C0C08D">
+                        <font face="Verdana,Geneva,Arial,Helvetica,sans-serif" size="-2">
+                           <a href="license.html" title="what's the LGPL"><b>License</b></a>
+                        </font>
+                     </td>
+                  </tr>
+<!-- end table.html -->
+               </table>
+            </td>
+            <td width="100%" valign="top">
+               <table width="100%" cellpadding="5" border="0">
+                  <tr>
+                     <td>
+                        <font face="Verdana, Helvetica" size="-1">
+<!-- begin main.html -->
+                           <font face="Verdana, Helvetica" size="3">
+                              <b>Getting started with the cajo framework.</b>
+                              <br><br>
+                           </font>
+                           Hopefully his page will help to get you up and running, as quickly as
+                           possible.  Once you can build it, and understand its basic components, then
+                           the possibilities really begin.<br><br>
+
+                           The tutorial will start with describing the
+                           <a href=tutorial.html#directory>directory</a> structure and its components.
+                           Next it will move on to
+                           <a href=tutorial.html#building>building</a> and
+                           <a href=tutorial.html#launching>launching</a> the example server,
+                           and the related options.  It will conclude by describing the ways to
+                           <a href=tutorial.html#connecting>connect</a> to the server, which should
+                           provide a fairly complete introduction to the use of the project.<br><br>
+                           The purpose of the example is to illustrate the structure of builing servers,
+                           and to the feature set of the architecture.  It should provide you with enough
+                           insight to build and deploy your own servers, without any additional research
+                           on your part. However, if you are curious, you might want to visit the
+                           <a href=theory.html>theory</a> page. Its purpose is to explain how the
+                           example actually uses the framework to perform its functions.<br><br>
+
+                           <b><a href=tutorial.html#directory name=directory>Directory Structure:</a></b><br><br>
+                           The project is organized into the following directories;<b><code><pre>
+/root                // this is the project directory of your choosing
+    /example         // this is the example, not part of the project
+        /include     // this is the proxy's resources repository
+        /gui         // this is the proxy's simple set of graphical widgets
+    /gnu             // this is the project's root directory
+        /cajo        // this is the project's Java namespace
+            /invoke  // this is the architecture's core
+            /utils   // this is the framework's collection of tools
+    /docs            // this is the documentation collection</pre>
+                           </code></b>
+
+                           You will need to download the source code into the structure outlined above,
+                           in a working directory. (you don't have to name it root though)<br><br>
+
+                           In the <b>root directory</b>, you will find several files, all of these will be
+                           covered in the course of this tutorial.  For now, an important file is the
+                           <a href=https://cajo.dev.java.net/source/browse/cajo/doc.bat>doc</a>
+                           batch.  Invoking it will scan the project source, and create a highly
+                           detailed javadoc hypertext document in the docs subdirectory.  This will be
+                           a very valuable resource in your development activities.  You can view this
+                           resource by opening the file /docs/index.html in your favorite browser.
+                           Nearly half of the source code is documentation!<br><br>
+
+                           The <b>example directory</b> contains the four Java classes comprising the
+                           example server.  The file
+                           <a href=https://cajo.dev.java.net/source/browse/cajo/example/Main.java>
+                           Main.java</a> is the server application itself. The file
+                           <a href=https://cajo.dev.java.net/source/browse/cajo/example/TestItem.java>
+                           TestItem</a> is a item, meaning a small server-side functional module, which
+                           is asseccible to remote applications.  The file
+                           <a href=https://cajo.dev.java.net/source/browse/cajo/example/TestProxy.java>
+                           TestProxy</a> is a proxy, meaning a mobile functional module, which is
+                           sent to remote clients, and communicates back to an item.  Servers can be
+                           made that do not use proxies, it is simply here to demonstrate how
+                           to make one, and what it does. Finally there is the file
+                           <a href=https://cajo.dev.java.net/source/browse/cajo/example/Builder.java>
+                           Builder.java</a>.  Strictly speaking the example could have been made without
+                           this file also, but it is here do demonstrate the process of configuring
+                           proxies at compile time, rather than runtime.  It's a little extra work, but
+                           it can make the proxies a lot smaller, simpler, and even more secure.<br><br>
+
+                           The <b>gui directory</b> contains a small collection of graphical widgets
+                           used by the proxy to create its user interface on hosting clients. They are
+                           outside the scope of this project, as a proxy is free to use the AWT or
+                           Swing in any manner. By all means, please don't think this is the graphical
+                           toolkit you need to use, it is only used for the purposes of this example,
+                           and doesn't even require any detailed examination.<br><br>
+
+                           The <b>gnu/cajo/invoke</b> directory houses the core paradigm of this
+                           framework.  Its files are described at length in the <a href=theory.html>
+                           theory</a> page.  For now suffice it to say that it defines the single
+                           standard interface between which clients and servers communicate.<br><br>
+
+                           The <b>gnu/cajo/utils</b> directory applies the invoke paradigm to create
+                           several useful utilities. Likewise, these files are covered in detail in
+                           the <a href=theory.html>theory</a> page. For now it can be summarized as
+                           providing a collection of classes used in the creation of clients, servers,
+                           and proxies.<br><br>
+
+                           The <b>docs</b> directory, as mentioned previously, is where the
+                           auto-generated documentation goes.  Initially it is empty, it does not even
+                           exist in the source repository.  You have to make this directory yourself.
+                           Then when you run the documentation generating batch file, it will create
+                           the files on your drive. (don't worry, the documentation is not huge)<br><br>
+
+                           <b><a href=tutorial.html#building name=building>Building the example:</a></b><br><br>
+                           There are three fundamental ways to build the example, represented by the
+                           three batch files; 
+                           <a href=https://cajo.dev.java.net/source/browse/cajo/make1.bat>make1.bat</a>,
+                           <a href=https://cajo.dev.java.net/source/browse/cajo/make2.bat>make2.bat</a>,
+                           and
+                           <a href=https://cajo.dev.java.net/source/browse/cajo/make3.bat>make3.bat</a>.
+                           Each builds the server, with identical functionality, simply packaged in
+                           different ways.<br><br>
+
+                           The <b>make1</b> batch creates the server in a single monolithic jar file.
+                           Everything is contained inside it, the server itself, the test item, the test
+                           proxy, and even a client applet, which allows browsers to host the proxy!
+                           This file, and the security.policy file are all that is needed to deploy
+                           the server.  All servers use the same policy file by default, so a deployment
+                           directory could logically consist of many server jars, and a single policy
+                           file.  If you really need separate policy files for each server, each
+                           server jar and its policy file must be in separate directories.<br><br>
+
+                           The <b>make2</b> batch creates two files, server.jar and client.jar. The
+                           client.jar is a stand-alone standard client application, in addition to
+                           being a an applet used by the browser to host the proxy. Deployment now
+                           consists of the server jar, the client jar (because the server references
+                           it), and the policy file. All servers built this way need reference only one
+                           client jar, in much the same way they all reference the same policy file. A
+                           stand-alone client not only reduces the server jar file size, which can be
+                           helpful if there are many servers in a directory, but it is also very useful
+                           in its own right. Using the standard client is a topic of its own, and can
+                           be found <a href=client.html>here</a>.<br><br>
+
+                           The <b>make3</b> batch creates the server as three files, server.jar
+                           client.jar, and proxy.jar. Now deployment consists of four files, the three
+                           jars, and the policy file. The reason to use make3, is if you want to take
+                           advantage of the <i>"hot plugging"</i> capability of the framework.  This
+                           means you can change the proxy, or proxies, recompile their jar file, and
+                           overwrite the proxy.jar file where the server is running.  All subsequent
+                           clients will automatically receive the updated functionality, and the server
+                           need not ever be shut down!<br><br>
+                           
+                           <b><a href=tutorial.html#launching name=launching>Launching the example:</a></b><br><br>
+                           Once you have built the example, launching it can be as simple as executing
+                           the following command:<br>
+                           <pre>    <code>java -jar server.jar</code></pre>
+                           This will start the server using its default settings:<ul>
+                              <li>client and proxy code delivery on TCP port 80
+                              <li>server item communication on port TCP 1099
+                              <li>hostname is identical both inside and outside subnet (no NAT)
+                              <li>default network interface is used
+                              <li>the server port is the same both inside and outside the subnet
+                           </ul>This could suffice for many users. The options progress from most likely
+                           to need overriding, to least likely.<br><br>
+
+                           Typically the first problem hit by most users is that port 80 is not
+                           available. This can be for a variety of reasons, there is already an http
+                           server running on the box, you are using a *nix system and you are not root,
+                           in any case, you are forced to select another port.  Fortunately this is
+                           the first command argument. In this case, you will have to do something like
+                           this:
+                           <pre>    <code>java -jar server.jar 8080</code></pre>
+                           This will start the http service for the client and proxy code on port 8080.
+                           The only real impact is that the port must now be explicitly specified by
+                           the client when connecting to the server, as it is no longer default. This
+                           issue will be covered in the next section,
+                           <a href=tutorial.html#connecting>connecting</a>.<br><br>
+
+                           Often the next problem hit is that port 1099 is not available, typically
+                           this is because a central rmiregistry is running on the machine.  By default,
+                           each cajo server uses its own rmiregistry, operating on the same port as the
+                           interface to its items.  In any case, another port must be selected:
+                           <pre>    <code>java -jar server.jar 8080 1234</code></pre>
+                           This means that clients connect to this server on port 1234. <i>Note:</i>
+                           the order and precedance of the arguments is required, meaning that if you
+                           want to specify the server port, you must also specify the http port. (yes,
+                           arguments could be handled in a more sophisticated fashion, but this is an
+                           example program)<br><br>
+
+                           The next most common problem is that your server is behind a NAT router.
+                           This happens for example when you want to share a single connection to the
+                           network.  Essentially, the NAT router is giving you a 'fake' IP address
+                           valid only inside the subnet, and translating it for you and everyone else
+                           sharing the connection, to the actual network address.  This means you need
+                           to know your outside IP address.  There are simple programs to tell you your
+                           actual IP address, for example a nice one can be found at
+                           <a href=www.ipmonster.com>ipmonster</a>. Another highly recommended option
+                           if you are going to be serving a lot, is to get a domain name.  This is not
+                           nearly as difficult as it sounds, if you are willing to share one, it is
+                           easy to get one free.  One handy place to do this is <a href=dyndns.org>
+                           dyndns</a>.  There you can register a name, something like
+                           yourhost.dyndns.com and they even have a collection of utilities you can run
+                           to make sure the name resolves to your address, even if your network provider
+                           is constantly changing it!  If you want to get <u><i>really</i></u> fancy you
+                           would buy a domain name. So, now you will have a command line that looks
+                           something like this:
+                           <pre>    <code>java -jar server.jar 8080 1234 host.dyndns.com</code></pre>
+                           -or-
+                           <pre>    <code>java -jar server.jar 8080 1234 123.123.123.123</code></pre>
+                           Now clients will connect to you on your actual address, not the one that the
+                           NAT router is giving you.<br><br>
+
+                           Next, lets assume your computer has two network interfaces; a wired
+                           connection to your LAN, and a wireless connection to the internet.  You may
+                           need to specify which IP address, meaning network interface, on which you
+                           want to run.  In this case you are specifying the local machine address, even
+                           if you are running behind NAT.  This would be your command line now:
+                           <pre>    <code>java -jar server.jar 8080 1234 123.123.123.123 100.100.100.100</code></pre>
+                           This allows you to put your server on the correct network interface.  This is
+                           also required if your box is multi-homed, meaning having multiple logical
+                           network interfaces.  Multihoming is guru magic. Generally speaking, if you
+                           don't know what that term means, it probably doesn't apply to you.<br><br>
+
+                           The final, most obscure option, is to cover port translation.  Essentially,
+                           this means that a router is taking connections on your behalf on one port,
+                           and routing it to your machine on a another one.  For example, port 80 is
+                           often translated in a *nix environment.  Here you would specify the outside
+                           port. PT is advanced guru magic. If you are doing this, you already know
+                           what the command line would look like, so I won't waste everyone's time
+                           going into it. Suffice it to say that it's supported.<br><br>
+
+                           <b><a href=tutorial.html#connecting name=connecting>Connecting to the server:</a></b><br><br>
+                           Connecting to this example is generally done using a browser.  You'll need to
+                           have the java plug-in installed, if you don't the server will cause your
+                           browser ask you if it can install it. This is done to make connections easy
+                           for client users, who may be technically unsophisticated.  As with launching
+                           the application, it could be done as simply as pointing your browser to:
+                           <pre>    <code>http://yourserver</code></pre>
+                           The proxy, which is graphical in this case, should load and appear inside
+                           your browser.  If you were not able to use port 80, you will need to specify
+                           the port on which your server is serving up code, using the example from the
+                           previous section, you would use:
+                           <pre>    <code>http://yourserver:8080</code></pre>
+                           Where 8080 was the port on which http service was started.  The server
+                           will even correctly configure communications if the client is using NAT!<br><br>
+
+                           <u><b>Conclusion:</b></u><br><br>
+                           This is the proverbial tip of the iceberg, but should get you started.  If
+                           you have further questions, there is a project forum
+                           <a href=https://cajo.dev.java.set/servlets/ProjectForumView>here</a>, also
+                           there is a  more general RMI forum
+                           <a href=http://forum.java.sun.com/forum.jsp?forum=58>here</a>.  Before
+                           posting however, please do your homework. Often the answer you are looking
+                           for can be found in the documentation, or on this site, and often much faster.<br><br>
+
+                           but by all means, enjoy...
+
+                           <br><br>
+                           <div align="center">
+                              <font face="Verdana, Helvetica" size="-2">
+                                 <hr width="80%">
+                                 The deeper you look, the more the framework's power will reveal itself to you.
+                              </font>
+                           </div>
+<!-- end main.html -->
+                        </font>
+                     </td>
+                  </tr>
+               </table>
+            </td>
+         </tr>
+      </table>
+   </body>
+</html>
