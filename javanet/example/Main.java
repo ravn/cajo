@@ -32,7 +32,8 @@ public class Main { // General purpose server startup pattern
 // here's the crux:
          item = ItemServer.bind(item, "main", pl);
 // multicast our startup, just for fun:
-         mc.announce((Remote)item, 16);
+//         mc.announce(item, 16);
+// The monitor would log a startThread exception, but that would be normal.
 // accept proxies, just for fun:
          ItemServer.acceptProxies();
 // listen for announcements, just for fun:
