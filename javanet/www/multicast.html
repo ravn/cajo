@@ -6,6 +6,7 @@
       <meta name="Author" content="John Catherino">
    </head>
    <body bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800000" alink="#FF0000">
+<div id="projecthome" class="app">
       <table width="100%" cellspacing="0" cellpadding="0" border="0">
          <tr>
             <td><img src="images/topl.gif" width="17" height="17" border="0"></td>
@@ -102,7 +103,9 @@
                            can communicate the broadcasting item. These two functions operate entirely
                            independently of each other; meaning an item can broadcast without
                            listening; and listen without broadcasting; it can even do both.  If it is
-                           listening when it broadcasts, it will even capture its own reference.<br><br>
+                           listening when it broadcasts, it will even capture its own reference.
+
+                           <h3>Using Multicast</h3><br>
 
                            The use of multicasting is completely application specific; for example, it
                            can be used to join a group of inter-operating items, or it can be used to
@@ -131,7 +134,9 @@
                            unknown items.  An item performs a broadcast by passing a remoted reference
                            to itself to the multicast's
                            <a href=docs/gnu/cajo/utils/Multicast.html#announce(gnu.cajo.invoke.Remote,%20int)>
-                           announce</a> method.<br><br>
+                           announce</a> method.
+
+                           <h3>Receiving Multicasts</h3><br>
 
                            An item can register itself with a multicast object to listen for these
                            reference broadcasts.  It does this by invoking the multicast's
@@ -175,7 +180,17 @@
                            invocation.  If it returns null, it will continue listening; if the listener
                            returns a non-null value, it will stop listening.  To start the object
                            listening again, its listen method must be called, with either the same, or
-                           a different listener.<br><br>
+                           a different listener.
+
+                           <h3>Conclusion</h3><br>
+
+                           The multicast mechanism creates the possibility for items to spontaneously,
+                           and dynamically connect. This allows items to join confederations of items
+                           to accomplish larger tasks. Dynamic confederation can provide resilient,
+                           adaptive, and fault-tolerant application networks, exhibiting "small-world"
+                           and "scale-free" network phenomena, when operating in the context of a group
+                           of developers. A whole new range of "emergent" application functionality
+                           becomes possible.<br><br>
 
                            <div align="center">
                               <font face="Verdana, Helvetica" size="-2">
