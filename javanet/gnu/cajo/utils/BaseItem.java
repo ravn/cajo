@@ -105,7 +105,7 @@ public class BaseItem {
     * reference.
     * @throws Exception If the proxy rejected the initialization invocation.
     */
-   public Remote setProxy(Object proxy) throws Exception {
+   public Remote installProxy(Object proxy) throws Exception {
       if (proxy instanceof MarshalledObject)
          proxy = ((MarshalledObject)proxy).get();
       if (proxy instanceof RemoteInvoke)
