@@ -91,27 +91,27 @@
                         <font face="Verdana, Helvetica" size="-1">
 <!-- begin main.html -->
                            <font face="Verdana, Helvetica" size="4">
-                              <b>Inside the cajo framework.</b><br><br>
+                              <b>Inside the cajo framework.</b><br>
                            </font>
 
-                           <b>Introduction:</b><br><br>
+                           <h3>Introduction:</h3><br>
 
                            Every remotely accessible object in the framework is known as an
                            <a href=item.html>Item</a>. An application can host one or more items
-                           within its virtual machine. Items can call other items (local or remote)
+                           within its Virtual Machine. Items can call other items (local or remote)
                            and an item can also be called by other items (local or remote). A special
                            type of item is known as a <a href=proxy.html>Proxy</a>. Proxies are items
                            sent from one virtual machine, to execute in the context of another. Proxies
-                           can also be called by other items, or proxies, either local, or remote.<br><br>
+                           can also be called by other items, or proxies, either local or remote.<br><br>
 
                            In the standard RMI framework, each remote object must have a unique <i>"stub"</i>
                            compiled for it. This can quickly become burdensome, especially if the
-                           interaction between objects becomes highly diverse; it is completely
+                           interaction between objects becomes highly diverse; and is completely
                            impossible when method signatures are unknown at compile time. To address
                            these problems, the framework defines only one functional interface;
                            every item inherits the <a href=docs/gnu/cajo/invoke/Invoke.html>Invoke</a>
                            interface. It defines a single method to represent the method name, the
-                           arguments provided to it and the returned data, i.e.:
+                           arguments provided to it and the data returned, i.e.:
 
                               <pre><tt>   Object invoke(String method, Object args);</tt></pre>
 
@@ -122,9 +122,9 @@
                            type must also be of type Object, meaning it too cannot be a primitive type.
                            However, just as with local invocations, both the argument and the return,
                            can be of type Object[] indicating more than one object is being transferred,
-                           they can even be null, indicating no object transfer.<br><br>
+                           they can even be null, indicating no object transfer.
 
-                           <b>Remoting Items:</b><br><br>
+                           <h3>Remoting Items:</h3><br>
 
                            The invocation of a method on a remote object using the Invoke interface is
                            made possible using the
@@ -136,15 +136,15 @@
                            argument types. If it is found, it executes that method, and returns the
                            result, if any.  If no matching method can be found on the internal object,
                            a <code>NoSuchMethodException</code> is thrown. This technique effectively
-                           makes all public methods of the internal object remotely callable. Naturally,
-                           excepting those using primitive types.<br><br>
+                           makes all public methods of the internal object remotely callable. Excepting
+                           those using primitive types as arguments or returns.
 
-                           <b>Contacting Items:</b><br><br>
+                           <h3>Contacting Items:</h3><br>
 
                            Items, i.e. objects wrapped by a Remote object, are made remotely
                            accessible in two distinct ways. First, it is generally useful to bind the
-                           object with the <a href=docs/gnu/cajo/utils/ItemServer.html>ItemServer</a>
-                           class. ItemServer will create an rmiregistry and bind the object under the
+                           item with the <a href=docs/gnu/cajo/utils/ItemServer.html>ItemServer</a>
+                           class. ItemServer will create an rmiregistry and bind the item under the
                            name provided. Other clients can now contact this registry, and obtain a
                            remote reference to the item.  The rmiregistry, and the item communication
                            use the same TCP port, therefore all that is required for a client to obtain
@@ -158,13 +158,14 @@
                            UDP.  Instead of needing to know the server's TCP/IP address and port number,
                            the client needs to know the server's UDP/IP address and port number.  The
                            advantage is that the server can pick its UDP address, and it is independent
-                           of its TCP address.  A server broadcasts a remote reference to an item by
-                           calling the announce method of ItemServer.  This will send the reference to
-                           all clients listening on the address/port pair.  Items listen for these
-                           announcements using the listen method of Multicast.  This allows items to
-                           dynamically link to form item networks of functionality.<br><br>
+                           of its TCP address. Also, a server can use multiple Multicast objects on
+                           multiple UDP/IP addresses, if needed. A server broadcasts a remote reference
+                           to an item by calling the announce method of ItemServer.  This will send the
+                           reference to all clients listening on the UDP address/port pair. Items listen
+                           for these announcements using the listen method of Multicast. This allows
+                           items to dynamically link, to form item networks of functionality.
 
-                           <b>Mobile Code:</b><br><br>
+                           <h3>Mobile Code:</h3><br>
 
                            An item can send mobile code, complex objects, and proxy items to clients
                            using the <a href=docs/gnu/cajo/utils/CodebaseServer.html>CodebaseServer</a>
@@ -173,15 +174,16 @@
                            needed by the client, along with any other resources needed by proxy items.
                            These resource items are typically, images and string tables.  By default a
                            client will not accept mobile code. This is typically enabled by calling the
-                           acceptProxies method of the ItemServer class.  This will install an
-                           RMISecurityManager, to protect the client hardware and files, effectively
-                           creating a applet-like sandbox around the incoming code.<br><br>
+                           <a href=docs/gnu/cajo/utils/ItemServer.html#acceptProxies()>acceptProxies</a>
+                           method of the ItemServer class.  This will install an RMISecurityManager, to
+                           protect the client hardware and files, effectively creating a applet-like
+                           sandbox around the incoming code.<br><br>
 
                            <div align="center">
                               <font face="Verdana, Helvetica" size="-2">
                                  <hr width="80%">
-                                 All objects are local: machine boundaries, whether virtual or
-                                 physical, are only conceptual.
+                                 All objects are <u>local</u>: machine boundaries, whether virtual or
+                                 physical, are merely conceptual.
                               </font>
                            </div>
 <!-- end main.html -->
