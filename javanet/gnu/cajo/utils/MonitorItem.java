@@ -53,8 +53,7 @@ import java.io.OutputStream;
 public final class MonitorItem implements Invoke {
    private final Object item;
    private final PrintStream ps;
-   private final Class itemClass;
-   private transient long oldtime;
+   private long oldtime;
    /**
     * This creates the monitor object, to instrument the target item's use.
     * The the logging information is passed to the OutputStream, where it can
@@ -67,7 +66,6 @@ public final class MonitorItem implements Invoke {
       this.item = item;
       this.ps = os instanceof PrintStream ?
          (PrintStream)os : new PrintStream(os);
-      this.itemClass = item.getClass();
       oldtime = System.currentTimeMillis();
    }
    /**
@@ -124,8 +122,8 @@ public final class MonitorItem implements Invoke {
                args instanceof Invoke ? Invoke.class : args.getClass() };
             args = new Object[] { args };
          }
-         return args =
-            itemClass.getMethod(method, types).invoke(item, (Object[])args);
+         return args = item.getClass().getMethod(method, types).
+            invoke(item, (Object[])args);
       } catch(Exception x) {
          args = x;
          throw x;

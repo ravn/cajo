@@ -231,7 +231,6 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
       return item;
    }
    private final Object item;
-   private final Class itemClass;
    /**
     * The constructor takes an object, and allows it to be remotely invoked.
     * If the object implements the {@link Invoke Invoke} interface, (i.e. it
@@ -245,7 +244,6 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
    public Remote(Object item) throws RemoteException {
       super(rssf.port, rcsf, rssf);
       this.item = item;
-      this.itemClass = item.getClass();
    }
    /**
     * This method checks if two wrappers holding an equavilent inner item.
@@ -312,7 +310,7 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
             args instanceof Invoke ? Invoke.class : args.getClass() };
          args = new Object[] { args };
       }
-      return itemClass.getMethod(method, types).invoke(item, (Object[])args);
+      return item.getClass().getMethod(method, types).invoke(item, (Object[])args);
    }
    /**
     * This method sends its remote reference to another item, either from a
