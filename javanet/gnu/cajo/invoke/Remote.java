@@ -238,12 +238,13 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
    }
    /**
     * This method attempts to resolve the polymorphism blindness in Java
-    * reflection. It has been most graceously submitted by <b>Fredrik
-    * Larsen</b>, with help from <b>Li Ma</b>! If more than one matching
-    * method is found on the internal item, based on polymorphism, it will
-    * try to determine the most applicable one to call. It works quite well,
-    * if the inheritence tree for the argument is small, it does not extend
-    * deem interface trees.
+    * reflection. It has been most graceously submitted by project member
+    * <b>Fredrik Larsen</b>, with help from project member <b>Li Ma</b>. If
+    * more than one matching method is found on the internal item, based on
+    * polymorphism, it will try to select the most applicable one to call. It
+    * works quite well, if the inheritence trees for the arguments are small.
+    * It <i>may not</i> always pick the very best method if the arguments have
+    * very deep inheritance trees.
     * @param item The object on which to find the most applicable public
     * method.
     * @param method The name of the method, which is to be invoked.
@@ -305,7 +306,7 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
     * @param item The object on which to invoke the method.
     * @param method The method name to be invoked.
     * @param args The arguments to provide to the method for its invocation.
-    * @return The sychronous data, if any, resulting from the invocation.
+    * @return The resulting data, if any, from the invocation.
     * @throws IllegalArgumentException If the method argument is null.
     * @throws NoSuchMethodException If no matching method can be found.
     * @throws Exception If the item rejected the invocation, for application
