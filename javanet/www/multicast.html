@@ -95,47 +95,50 @@
                            </font><br><br>
 
                            The
-                           <a href=docs/gnu/cajo/utils/Multicast.html>gnu.cajo.utils.Multicast</a>
-                           class performs two complimentary functions. First, it allows an item to
-                           "broadcast" a remote reference to itself over the network. Second, it allows
-                           items to listen for, and capture, these reference broadcasts. Once captured,
-                           a remote item can contact the broadcasting item, if it wishes. The functions
-                           operate entirely separately of each other; meaning an item can broadcast
-                           without listening, and listen without broadcasting, it can even do both.  If
-                           it is listening when it broadcasts, it will even capture its own reference.<br><br>
+                           <a href=docs/gnu/cajo/utils/Multicast.html>Multicast</a> class performs
+                           two complimentary functions. First, it allows an item to <i>"broadcast"</i>
+                           a remote reference to itself over the network. Second, it allows items to
+                           listen for; and capture, these reference broadcasts. Once captured, an item
+                           can contact the broadcasting item, if it wishes. These functions operate
+                           entirely independently of each other; meaning an item can broadcast without
+                           listening; and listen without broadcasting; it can even do both.  If it is
+                           listening while it broadcasts, it will even capture its own reference.<br><br>
 
                            The use of multicasting is application specific; it can be used to join a
                            group of inter-operating items, or it can be used to announce a particular
-                           event.  Essentially, it gives items an opportunity to connect to each other,
-                           without having to know the IP address' of the listening items beforehand.<br><br>
+                           event.  Essentially, it gives items an opportunity to connect to each other
+                           spontaneously, without having to know the IP address' of the listening items
+                           beforehand.<br><br>
 
-                           It must be noted that in order for multicasting to work, the network
-                           routers must be configured to pass IP multicast packets.  If they are not,
-                           the multicasting will work only within the subnet of origination.  There are
+                           <i>Note:</i> for long-range multicasting to work, the network routers must
+                           be configured to pass UDP multicast packets.  If they are not, the
+                           multicasting will work only within the subnet of origination.  There are
                            two parameters on which the items must agree in order to send and receive
                            references between each other.  An IP address and port number define a
-                           specific "channel" changing either of which is effectively an entirely
-                           different channel.  The UDP/IP address is different from a traditional TCP/IP
-                           address in that it doesn't identify a machine (and socket) rather it
-                           indicates the machine is a member of a "group".<br><br>
+                           specific <i>"channel"</i>. Changing either of these, switches to an
+                           entirely different channel.  The UDP/IP address is different from a
+                           traditional TCP/IP address in that it doesn't identify a machine (and socket)
+                           rather it signals all machines that are a member of a <i>"group"</i>.<br><br>
 
                            An item can listen and broadcast on as many channels as it wants.
-                           Implementations could range from performing all multicasts on a single
+                           Applications could range from performing all multicasts on a single
                            channel, to using separate channels for each specific meaning.  The
                            framework defines a default channel, which can be a useful method for
-                           spontaneous inter-networking.  To use a <i>Star Trek</i> metaphor; it could
-                           be likened to the <i>'hailing frequency'</i> for contacting new and unknown
-                           items.  An item broadcasts by passing a remoted reference to itself, or some
-                           other item, to the multicast's
-                           <a href=docs/gnu/cajo/utils/Multicast.html>announce</a> method.<br><br>
+                           spontaneous inter-networking.  To use a <b><i>Star Trek</i></b> metaphor; it
+                           could be likened to the <i>'hailing frequency'</i> for contacting new and
+                           unknown items.  An item broadcasts by passing a remoted reference to itself,
+                           or some other item, to the multicast's
+                           <a href=docs/gnu/cajo/utils/Multicast.html#announce(gnu.cajo.invoke.Remote,%20int)>
+                           announce</a> method.<br><br>
 
                            An item can register itself with a multicast object to listen for these
                            reference broadcasts.  It does this by invoking multicast's
-                           <a href=docs/gnu/cajo/utils/Multicast.html>listen</a> method, passing in a
-                           reference to itself.  When the multicast object receives a broadcast of a
-                           remote item reference, it will invoke the listener with a string of
-                           "multicast", and a reference to itself, as an argument. Logically, a
-                           listening object would either implement the following function:
+                           <a href=docs/gnu/cajo/utils/Multicast.html#listen(gnu.cajo.invoke.Invoke)>
+                           listen</a> method, passing in a reference to itself.  When the multicast
+                           object receives a broadcast of a remote item reference, it will invoke the
+                           listener with a string of <i>"multicast"</i>, and a reference to itself, as
+                           an argument. Logically, a listening object would either implement the
+                           following function:
                            <b><pre>   public Object multicast(Multicast m);</pre></b>
                            if it derived from BaseItem, otherwise it would test for the callback in its
                            Invoke method implementation.<br><br>
@@ -155,11 +158,12 @@
                            A listening multicast object checks the return value of its listener's
                            invocation.  If it returns a null, it will continue listening; if the method
                            returns a non-null value, it will stop listening.  To start the object
-                           listening again, its <a href=docs/gnu/cajo/utils/Multicast.html>listen</a>
-                           method must be called, either with the same, or a different listener. The
-                           multicast's listen method can only monitor using one listening object at a
-                           time.  This means that if the multicast object is actively listening, and its
-                           listen method is invoked again, it will throw an <b><code>
+                           listening again, its <a href=docs/gnu/cajo/utils/Multicast.html#listen(gnu.cajo.invoke.Invoke)>
+                           listen</a> method must be called, either with the same, or a different
+                           listener. The multicast's listen method can only monitor using one listening
+                           object at a time.  This means that if the multicast object is actively
+                           listening, and its <a href=docs/gnu/cajo/utils/Multicast.html#listen(gnu.cajo.invoke.Invoke)>
+                           listen</a> method is invoked again, it will throw an <b><code>
                            IllegalArgumentException</code></b>.<br><br>
 
                            <br>
