@@ -91,7 +91,7 @@
                         <font face="Verdana, Helvetica" size="-1">
 <!-- begin main.html -->
                            <font face="Verdana, Helvetica" size="4">
-                              <b>Connecting to cajo items independently of their IP address.</b>
+                              <b>Connecting to cajo items independently of their server's host address.</b>
                            </font><br><br>
 
                            The
@@ -107,10 +107,9 @@
                            The use of multicasting is completely application specific; for example, it
                            can be used to join a group of inter-operating items, or it can be used to
                            announce a particular event.  Essentially, it gives items an opportunity to
-                           connect to each other spontaneously, without having to know the IP address'
+                           connect to each other spontaneously, without having to know the host address'
                            of the listening items beforehand. This is particularly useful in DCHP
-                           environments, where each machine's IP address is randomly assigned, and
-                           later reassigned.<br><br>
+                           environments, where each machine's host address can be randomly assigned.<br><br>
 
                            <i>Note:</i> for long-range multicasting to work, the network routers must
                            be configured to pass UDP multicast packets.  If they are not, the
@@ -120,7 +119,7 @@
                            specific <i>"channel"</i>, to use a radio analogy. Changing either of
                            these values effectively switches to an entirely different channel.  The
                            UDP/IP address is different from a traditional TCP/IP address in that it
-                           doesn't identify a specific machine (and socket), rather it represents all
+                           doesn't identify a specific machine and socket, rather it represents all
                            machines that are a members of a <i>"group"</i>.<br><br>
 
                            A single item can listen and broadcast on as many channels as it wants.
@@ -145,14 +144,14 @@
                            <b><pre>   public Object multicast(Multicast m);</pre></b>
 
                            A multicast object has four public members:<ul>
-                              <li><code>iaddr   </code> The IP address of the broadcasting item.
-                              <li><code>item    </code> The remote reference to the broadcasting item.
-                              <li><code>address </code> The address on which this reference was received.
-                              <li><code>port    </code> The port on which this reference was received.
+                              <li><code>item    </code> The remote reference to the broadcasted item.
+                              <li><code>iaddr   </code> The TCP address of the broadcasting server.
+                              <li><code>address </code> The UDP address on which this reference was received.
+                              <li><code>port    </code> The UDP port on which this reference was received.
                            </ul>
 
                            The reason for calling a listener with a reference to the multicast
-                           object is to allow for the possibility of a single item to listen, with
+                           object is to allow for the possibility of a single item to listen with
                            multiple multicast objects.  If the listener is listening with only one
                            Multicast object, there is no chance of its multicast method being invoked
                            reentrantly. However, if a listener is listening on more than one, the
@@ -162,9 +161,7 @@
                            invocation.  If it returns null, it will continue listening; if the listener
                            returns a non-null value, it will stop listening.  To start the object
                            listening again, its listen method must be called, with either the same, or
-                           a different listener. A multicast object listens with only one listener item
-                           at a time.  If the object is actively listening, and its listen method is
-                           invoked again, it will throw an <code>IllegalArgumentException</code>.<br><br>
+                           a different listener.<br><br>
 
                            <div align="center">
                               <font face="Verdana, Helvetica" size="-2">
