@@ -98,11 +98,11 @@
                            a proxy is just another type of an <a href=item.html>Item</a>. Proxies can
                            be any object, though they generally derive from
                            <a href=docs/gnu/cajo/utils/BaseProxy.html>BaseProxy</a>.
-                           Proxies are sent by a server item, BaseProxy subclasses will arrive with a
-                           remote link back to its server item, on which it can asynchronously
-                           communicate.  Proxies are often used to pre-process method invocations made
-                           by the client, using the computing resources of the client, rather than
-                           those of the server.<br><br>
+                           Proxies are sent to a client by a server item. BaseProxy subclasses will
+                           arrive with a remote link back to its server item, on which it can
+                           asynchronously communicate with it.  Proxies are often used to pre-process
+                           method invocations made by the client, using the computing resources of the
+                           client, rather than those of the server.<br><br>
 
                            A proxy can optionally provide a graphical user interface, if it is
                            intended to be more than just a machine-to-machine interface.
@@ -116,21 +116,21 @@
                            automatically loaded with the language appropriate to the locale of the
                            client.<br><br>
 
-                           Each proxy is served by, and services, a specific server item. A server item
+                           Each proxy is served by, and services a specific server item. A server item
                            binds itself and serves its proxy object using the static
                            <a href=docs/gnu/cajo/utils/ItemServer.html#bind(java.lang.Object,%20java.lang.String,%20boolean,%20gnu.cajo.utils.Multicast,%20java.lang.Object)>
                            bind</a> method of the <a href=docs/gnu/cajo/utils/ItemServer.html>ItemServer</a>
                            class .  It is generally necessary to start up a
                            <a href=docs/gnu/cajo/utils/CodebaseServer.html>CodebaseServer</a>, on which
-                           the  client can request, and receive, the proxy class files.  If a VM serves
-                           proxies, it will require two TCP ports; one for communication with the server
-                           item itself, and another for sending the proxy codebase.  If a server does not
-                           use proxies, it only needs one port. The CodebaseServer can also be used to
-                           send complex objects to an item, which would require the necessary class
-                           definitions.<br><br>
+                           the  client will automatically request, and receive the proxy class files.
+                           When a VM serves proxies, it will require two TCP ports; one for
+                           communication with the server item itself, and another for sending the proxy
+                           codebase via the CodebaseServer.  If a server does not use proxies, it only
+                           needs one port. The CodebaseServer can also be used to send complex objects
+                           to an item, which would require the necessary class definitions.<br><br>
 
-                           A server can optionally accept proxies, from other servers as well. This is
-                           typically done by invoking the
+                           A server can optionally accept proxies, from other servers as well. Often it
+                           is done by invoking the
                            <a href=docs/gnu/cajo/utils/ItemServer.html#acceptProxies()>acceptProxies</a>
                            method of the ItemServer class. A server does not accept proxies by default.
                            A proxy can be sent to a server either as an argument, or a return value,
@@ -138,8 +138,8 @@
                            <a href=docs/gnu/cajo/utils/BaseItem.html#setProxy(gnu.cajo.invoke.Invoke)>
                            setProxy</a> method. Where the returned value from this invocation will be a
                            remote reference to the installed proxy, over which the sending item can
-                           communicate with it. A <code>ClassNotFoundException</code> will be thrown if
-                           the target server does not accept proxies.<br><br>
+                           communicate with it. A <code>ClassNotFoundException</code> will be
+                           automatically thrown by the remote server, if it is not accepting proxies.<br><br>
 
                            A proxy it typically obtained from an item reference by using a null argument
                            <a href=docs/gnu/cajo/utils/BaseItem.html#getProxy()>getProxy</a> invocation.
