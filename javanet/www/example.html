@@ -240,20 +240,23 @@
                            information.  This can be helpful if the server is told to use anonymous
                            ports, the info will contain the port numbers chosen by the system at startup.<br><br>
 
-                           The <a href=example.html#Extras name=Extras>ZippedProxy</a> class is the
-                           only utility class not used in the example.  This is bacause the example
-                           demonstrated indirectly referencing a proxy by the serving item.  This is
-                           recommended when the server item, does not need to configure a proxy before
-                           sending it.  This can save a lot of space in the server item's runtime, if
-                           the proxy is very large, or if a single VM is serving many proxies.<br><br>
+                           
+                           The <a href=docs/gnu/cajo/utils/ZippedProxy.html>ZippedProxy</a> class is the
+                           only utility class <a href=example.html#Extras name=Extras>not used</a> in
+                           the example.  This is bacause the example demonstrates indirectly referencing
+                           a proxy by the serving item.  This is indicated when the server item, does
+                           not need to configure a proxy before sending it.  This can save a lot of
+                           space in the server item's runtime, if the proxy is very large, or if a
+                           single VM is serving many proxies.<br><br>
 
-                           In cases, when a proxy <i>must</i> be loaded into the server's VM; presumably
-                           for some runtime dependent configuration, then it is <i>strongly recommended</i>
-                           to use a <code>ZippedProxy</code>.  It compresses the serialized image of the
-                           proxy as it is sent to the hosting VM.  This is done to reduce the amount of
-                           data, and transmission time, required to send the proxy.  If the network link is
-                           slow, or the cost per bit is high, this approach makes tremendous sense.  It
-                           is recommended to use it under all circumstances as a general paradigm.<br><br>
+                           In cases, when a proxy <u>must</u> be loaded into the server's VM; presumably
+                           for some runtime dependent configuration, then it is <u>strongly recommended</u>
+                           to use a ZippedProxy.  It compresses the serialized image of the proxy as it
+                           is sent to the hosting VM. This is done to reduce the amount of data, and
+                           transmission time, required to send the proxy.  If the proxy image is large,
+                           the network link is slow, or the cost per bit sent is high, this approach
+                           makes tremendous sense.  It is recommended to use it under all circumstances
+                           as a general paradigm.<br><br>
 
                            <br>
                            <div align="center">
