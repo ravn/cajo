@@ -27,56 +27,62 @@ import gnu.cajo.invoke.*;
  */
 
 /**
- * This class is used to receive server item callbacks to a firewalled client.
- * A client whose firewall settings prohibit incoming socket connections is a
- * common problem. The server item creates an ItemProxy to represent itself in
- * the context of the client. A client item invokes the setClient method, on
- * which it will receive server callbacks. This object periodically polls the
- * server item for invocations. When found, it will pass the invocation data on
- * to the client item, and return any resulting data, or exception. Its
- * development was championed by project member Fredrik Larsen.
+ * This class is used to receive server item callbacks by a firewalled
+ * client. A client whose firewall settings prohibit incoming socket
+ * connections is a common problem. To solve this, a client would request
+ * a remote reference to a {@link ClientProxy ClientProxy} from the server.
+ * It would then use an ItemProxy to link the remote item to the local client
+ * item. This class is a special purpose thread, which will make an outgoing
+ * call to the remote ClientProxy. This outgoing call will be blocked until
+ * the server has some data for it, at which point it will wake this thread,
+ * causing it to return with the callback method to be invoked on the local
+ * client object, and the data to be provided it. This object will call its
+ * local client, and return the resulting data, or exception to the server.
+ * This will result in this thread being put back to sleep again, until there
+ * is another callback. This lets local client objects be designed without
+ * regard for whether they will be behind a firewall or not. This technique
+ * enables asynchronous server callbacks using the client's <i>outgoing</i>
+ * socket, thereby solving the firewall issue. The development of this
+ * process was originally championed by project member Fredrik Larsen.<p>
  *
  * @version 1.0, 28-Mar-04 Initial release
  */
-public final class ItemProxy implements java.io.Serializable {
-   private transient Thread thread;
-   private final long interval;
-   private Object item;
-   ItemProxy(Remote item, long interval) {
-      this.item = item;
-      this.interval = interval;
+public final class ItemProxy extends Thread {
+   private final Object item, client;
+   /**
+    * The constructor links the remote object to the firewalled client.
+    * It will automatically start the thread, which will call the remote
+    * {@link ClientProxy ClientProxy}, blocking until there is a callback
+    * method to be invoked.
+    * @param item A remote reference to a ClientProxy, from which the remote
+    * object will invoke asynchronous callbacks
+    * @param client The firewalled local object that wishes to receive
+    * asynchronous callbacks
+    */
+   public ItemProxy(Remote item, Object client) {
+      this.item   = item;
+      this.client = client;
+      start();
    }
    /**
-    * This method is used to assign the local client item which is expecting
-    * server callbacks, from behind a firewall. It can only be called once.
-    * @param client An object whose public interface will become callable from
-    * the remote item which sent this object.
-    * an array of arguments.
-    * @throws IllegalStateException If this method was called more than once,
-    * as it applies only to a single client item.
+    * The processing thread, and the crux of this technique. This thread
+    * starts out by calling the remote {@link ClientProxy ClientProxy}, to
+    * enter a blocking wait. The ClientProxy will wake the thread, providing
+    * it an object array containing two things; the name of the method to be
+    * called on the local object, and the data to be provided it. This thread
+    * will invoke the local object's method, and return the result, or
+    * exception, to the ClientProxy, beginning the cycle again.
     */
-   public void setClient(final Object client) {
-      if (thread == null) throw new IllegalStateException("Client already set");
-      thread = new Thread(new Runnable() {
-         public void run() {
-            try { 
-               while(true) {
-                  Object args = Remote.invoke(item, "getData", null);
-                  if (args != null) {
-                     String method = (String)((Object[])args)[0];
-                     args = (Object)((Object[])args)[1];
-                     try { args = Remote.invoke(client, method, args); }
-                     catch(Exception x) { args = x; }
-                     Remote.invoke(item, "setData", args);
-                     Thread.sleep(interval / 2);
-                  } else Thread.sleep(interval);
-               }
-            } catch(Exception x) {
-               thread = null;
-               item = null;
-            }
+   public void run() {
+      try {
+         Object args = null;
+         while(true) {
+            args = Remote.invoke(item, null, args);
+            String method = (String)((Object[])args)[0];
+            args = ((Object[])args)[1];
+            try { args = Remote.invoke(client, method, args); }
+            catch(Exception x) { args = x; }
          }
-      });
-      thread.start();
+      } catch(Exception x) { x.printStackTrace(); }
    }
 }

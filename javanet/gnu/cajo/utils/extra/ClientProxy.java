@@ -29,92 +29,60 @@ import gnu.cajo.invoke.*;
 /**
  * This class is used to send server item callbacks to a firewalled client.
  * A client whose firewall settings prohibit incoming socket connections is a
- * common problem. The server item creates a ClientProxy to represent the
- * remote client, and on which it may invoke callbacks. It calls the
- * getItemProxy method once, to create an object, given to the client, on which
- * it can can receive the server callbacks. Its development was championed by
- * project member Fredrik Larsen.
+ * common problem. This class is called ClientProxy, as it is a stand-in
+ * representation of a remote reference to a client, behind a firewall. This
+ * allows server objects to be designed without regard to client firewall
+ * issues. An intermediary process would give the server item a real remote
+ * reference to the client object when there is no client firewall, or a
+ * ClientProxy when there is. The client links the remote reference to this
+ * ClientProxy, to the locally firewalled client, using an {@link ItemProxy
+ * ItemProxy} object. The server item invokes methods on this client proxy
+ * which result in an immediate callback invocation on the client. <p>
+ * <i>Note:</i> this paradigm is <u>not</u> threadsafe! It is expected that
+ * callbacks to the remote client will <i>not</i> be invoked reentrantly.
+ * Correspondingly, a unique instance of this object must be given to each
+ * remote client object.
  *
  * @version 1.0, 28-Mar-04 Initial release
  */
 public final class ClientProxy implements Invoke {
-   private final long interval;
-   private ItemProxy item;
-   private boolean responded;
    private String method;
    private Object args;
    /**
-    * The constructor creates an object on which the server item may invoke
-    * proxy callbacks.
-    * @param interval The time to wait, in milliseconds, for a response from
-    * the proxy item. The proxy will have approximately half of this time in
-    * which to respond. A value less than 100 is not likely to work correctly.
+    * A server creates this object, then provides a remote reference to it
+    * to the client. This creates the first half of the bridge, the {@link
+    * ItemProxy ItemProxy} class completes the second half.
     */
-   public  ClientProxy(long interval) throws java.rmi.RemoteException {
-      this.interval = interval;
-      item = new ItemProxy(new Remote(this), interval / 2);
-   }
+   public ClientProxy() {}
    /**
-    * This method is used to return an object on which the remote item may
-    * receive callbacks from the server. It can be called only once, as this
-    * object is unique between each item and its client. The returned item
-    * proxy will have a polling interval approximately half this object's
-    * timeout interval.
-    * @return A proxy on which the client may install a listener for the server
-    * item's callback invocations.
-    * @throws IllegalStateException If the method is called more than once, as
-    * its existence is unique to a specific remote client.
-    */
-   public synchronized Object getItemProxy() {
-      if (item == null) throw new IllegalStateException("Item already used");
-      Object o = item;
-      item = null;
-      return o;
-   }
-   /**
-    * This method is used by the server to callback a firewalled item. It will
-    * store the method and args arguments, then wait up to its timeout interval
-    * for a response from the remote client. The client item, upon processing
-    * of this method will return the result, and wake the calling thread.
-    * @return The result of the proxy callback.
+    * This method serves two fundamentally different, but symmetrical
+    * purposes. Initially a remote {@link ItemProxy ItemProxy} calls this
+    * method to have its calling thread blocked until the server item needs
+    * to make an asynchronous callback. Secondly, the server item will also
+    * invoke this method, and will have its thread blocked, until the
+    * resulting data, or exception, is returned from the firewalled client,
+    * via its ItemProxy.
+    * @param method The name of the method on the firewalled remote client
+    * to be invoked asynchronously.
+    * @param args The data to be provided the method of the callback method,
+    * <i>or</i> data resulting from the client callback.
+    * @return The result of the client object callback.
     * @throws Exception For any client specific reasons.
-    * @throws InterruptedException If the operation timed out.
     */
    public synchronized Object invoke(String method, Object args)
       throws Exception {
-      this.method = method;
-      this.args = args;
-      responded = false;
-      wait(interval);
-      if (!responded) throw new InterruptedException("Invocation Timeout");
-      if (args instanceof Exception) throw (Exception)args;
-      return args;
-      
-   }
-   /**
-    * This method is polled by the client proxy item at approximately half the
-    * maximum waiting interval, to see if the item is invoking a callbak on the
-    * proxy.
-    * @return A two-element array containing the method name string, and the
-    * argument object. Otherwise null, if the item has made no callback.
-    */
-   public synchronized Object getData() {
-      if (method != null) {
-         args = new Object[] { method, args };
-         method = null;
-         return args;
-      } else return null;
-   }
-   /**
-    * This method is called by the client item proxy, to provide the resulting
-    * data from the item callback invocation. It will wake the waiting item
-    * callback thread.
-    * @param data The data resulting from the client callback, or the
-    * exception, as applicable.
-    */
-   public synchronized void setData(Object data) {
-      responded = true;
-      args = data;
-      notify();
+      if (method == null) {     // client callback response thread
+         this.args = args;      // save the callback result
+         notify();              // wake the server item thread
+         wait();                // suspend the client callback thread
+         return new Object[] { this.method, this.args };
+      } else {                  // server callback invocation thread
+         this.method = method;  // save the client method to be invoked
+         this.args   = args;    // save the data to provide the invocation
+         notify();              // wake the client callback thread
+         wait();                // suspend the server item thread
+         if (this.args instanceof Exception) throw (Exception)this.args;
+         return this.args;      // return the callback result
+      }
    }
 }
