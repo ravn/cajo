@@ -6,7 +6,7 @@ import java.rmi.*;
 import java.util.zip.*;
 import java.rmi.server.*;
 import java.rmi.registry.*;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.lang.reflect.Method;
 
 /*
@@ -337,25 +337,26 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
       return item;
    }
    /**
-    * This method attempts to resolve the polymorphism blindness in Java
-    * reflection. It has been most graceously submitted by project member
-    * <b>Fredrik Larsen</b>, with help from project member <b>Li Ma</b>. If
-    * more than one matching method is found on the internal item, based on
-    * polymorphism, it will try to select the most applicable one to call. It
-    * works quite well, if the inheritence trees for the arguments are small.
-    * It <i>may not</i> always pick the very best method if the arguments have
-    * very deep inheritance trees.
+    * This method attempts to resolve the argument inheritance blindness in
+    * Java reflection-based method selection. It has been most graceously
+    * championed by project member <b>Fredrik Larsen</b>, with help from
+    * project member <b>Li Ma</b>. If more than one matching method is found,
+    * based on argument polymorphism, it will try to select the most
+    * applicable one. It works very well if the inheritence trees for the
+    * arguments are short. However, it will <i>not</i> always pick the best
+    * method, if the arguments have deep inheritance trees. Fortunately it
+    * works for <i>both</i> classes <u>and</u> interfaces.
     * @param item The object on which to find the most applicable public
     * method.
     * @param method The name of the method, which is to be invoked.
     * @param args The class representations of the arguments to be
     * provided to the argument.
     * @return The most applicable method, which will accept all of these
-    * arguments.
+    * arguments, or null, if none match.
     */
    public static Method findBestMethod(
       Object item, String method, Class[] args) {
-      ArrayList match_list = new ArrayList();
+      LinkedList matchList = new LinkedList();
       Method[] ms = item.getClass().getMethods();
       // Find any matching methods in the item and put them in a list:
       list: for(int i = 0; i < ms.length; i++) {
@@ -364,35 +365,25 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
             for (int j = 0; j < args.length; j++)
                if (!ms[i].getParameterTypes()[j].isAssignableFrom(args[j]))
                   continue list;
-               match_list.add(ms[i]);
+            matchList.add(ms[i]);
          }
       }
-      if(match_list.size() > 1) { // if more than one method matches:
-         int goodness = 0;
-         Method m_selected = (Method)match_list.get(0);
-         for (int i = 1; i < match_list.size(); i++) {
+      if (matchList.size() > 1) {
+         Method best  = null;
+         int goodness = -1;
+         for (int i = 0; i < matchList.size(); i++) {
             int closeness = 0;
-            Method m = (Method)match_list.get(i);
-            for (int j = 0; j < args.length; j++) {
-               // If next method argument is a subclass of the
-               // corresponding argument in the current "best match
-               // method"    -> Increase closeness count. If it is a
-               // superclass -> Decrease closeness count. If it is a
-               // peer       -> Leave closeness count unchanged. This
-               // will handle implemented interfaces in addition to
-               // extended classes of the argument
-               Class best = m_selected.getParameterTypes()[j];
-               Class next = m.getParameterTypes()[j];
-               if (!next.isAssignableFrom(best))closeness++; else
-               if (!best.isAssignableFrom(next))closeness--;
-            }
+            Method m = (Method)matchList.get(i);
+            for (int j = 0; j < args.length; j++)
+               if (args[j].isAssignableFrom(m.getParameterTypes()[j]))
+                  closeness++;
             if (closeness > goodness) {
-               m_selected = m;
+               best = m;
                goodness = closeness;
             }
          }
-         return m_selected;
-      } else return match_list.size() > 0 ? (Method)match_list.get(0) : null;
+         return best;
+      } else return matchList.size() > 0 ? (Method)matchList.get(0) : null;
    }
    /**
     * This function may be called reentrantly, so the item object <i>must</i>
