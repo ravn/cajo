@@ -181,7 +181,7 @@
                            serialize its image to disc.  This serialized object will be included in the
                            proxy jar file, and referenced through a
                            <a href=docs/gnu/cajo/utils/ProxyLoader.html>ProxyLoader</a> in the TestItem's
-                           runtime.  The is the <i>most elaborate</i> way to use a ProxyLoader. They can
+                           runtime.  This is the <i>most elaborate</i> way to use a ProxyLoader. They can
                            also be used to invoke a proxy's no-arg constructor, to create a new instance
                            of the proxy, on its arrival at the host VM. In that case, all of the
                            construction code would have to be passed to the client VM. Use of a
@@ -204,7 +204,7 @@
                            <a id="Main"></a><h3>Main</h3><br>
 
                            The Main class illustrates how to make a server application.  A server is
-                           simply an application which makes one, or more items available for remote
+                           simply an application which makes one or more items available for remote
                            invocation. The Main class first configures its network settings, then makes
                            the test item accessible.  As explained in the
                            <a href=tutorial.html#launching>launching</a> turorial, the application can
