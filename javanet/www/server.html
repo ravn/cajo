@@ -80,10 +80,9 @@
 
                            The
                            <a href=docs/gnu/cajo/utils/CodebaseServer.html>CodebaseServer</a> could be
-                           considered one of the world's smallest application servers. It is completely
+                           considered one of the world's smallest application server. It is completely
                            customized to support the cajo framework. The entire server consists of
-                           a <u>single</u> class, yet it serves (no pun intended) two <i>major</i>
-                           purposes.
+                           a single class, yet it serves (no pun intended) two <i>major</i> purposes.
 
                            <h3>Codebase Service</h3><br>
 
@@ -112,7 +111,7 @@
 
                            <h3>Client Service</h3><br>
 
-                           If the previous topic on the <a href=client.html>client</a> loading seemed
+                           If the previous topic on <a href=client.html>client</a> loading seemed
                            almost magical, this is the function of an application server. The previous
                            discussion on codebase service could be provided by <u>any</u> general
                            purpose webserver. What makes an application server special is knowing what
@@ -120,13 +119,13 @@
 
                            As explained previously, the CodebaseServer first checks if simply a jar file
                            is being requested, if so, it fulfills the request, very generic. However,
-                           when the request is <u>not</u> for a jar file, here is where things get
+                           when the request is <i>not</i> for a jar file; here is where things get
                            interesting.<br><br>
 
                            The CodebaseServer will parse the URL to extract additional meaning from the
                            request. Based on its content, one of three things will happen. First, and
                            trivially, it may not understand the request, in this case, the request is
-                           rejected. However, if the request is understood, now one of two things will
+                           rejected. However, if the request is understood; now one of two things will
                            happen.<br><br>
 
                            If no exclamation point is terminates the request, the CodebaseServer will
@@ -152,31 +151,31 @@
                            </ol>An elaborate process, to be sure, but all handled transparently behind
                            the scenes. The code is all there, for the curious, but truth be told, like
                            the Java API source, you need not read it, in order to use it effectively.
-                           This is only a high-level overview, the <i>mind-numbing</i> technical
-                           details were intentionally omitted. If this already has your head spinning,
-                           don't worry about it; especially don't worry about the next section, simply
-                           go on to the conclusion.
+                           This was only a high-level overview, for your edification, the
+                           <i>mind-numbing</i> technical details were intentionally omitted. If this
+                           already has your head spinning, don't worry about it; especially don't worry
+                           about the next section, simply go on to the conclusion.
 
                            <h3>CodebaseServer Sharing</h3><br>
 
                            OK, for you <i>hot-shots</i> who want to squeeze out every last ounce of
                            performance, you probably already thought of this, but here it is anyway.
                            Because the CodebaseServer performs the functionality of a generic http
-                           server, if you do not require the client application service functinality,
-                           you can share another item's CodebaseServer. <i>Simply</i> place your proxy jar
-                           file in the working directory of another CodebaseServer, and use the
+                           server, if you do not require the client application service functionality,
+                           you can share another item's CodebaseServer. <i>Simply</i> place your proxy
+                           jar file in the working directory of another CodebaseServer, and use the
                            fully-qualified constructor of the ItemServer, to tell clients where to
                            find the file. <i>Note:</i> The CodebaseServer need not even be in the same
-                           physical box as the server item. Ponder the implications of that :-)
+                           physical box as the server item. Just ponder the implications of that :-)
                                                       
                            <h3>Conclusion</h3><br>
 
                            The CodebaseServer handles the low-level protocol details to make the cajo
                            framework run transparently. It allows a single client application to be
                            able to display any graphical proxy. Typically it is used in its application
-                           server capacity, used exclusively by a single VM, to support its shared items.
-                           Its purpose is to bring the power of proxy items, and graphical proxy viewing
-                           to everybody, not just the <i>rocket-scientists</i>.
+                           server capacity, solely by a single VM, to support its shared items. Its
+                           purpose is to bring the power of proxy items, and graphical proxy viewing to
+                           everybody, not just the <i>rocket-scientists</i>.
 
                            <br><br>
 
