@@ -125,10 +125,12 @@ public final class CodebaseServer extends Thread {
     */
    public CodebaseServer(String base, int port) throws IOException {
       if (ss == null) {
-         String classId = CodebaseServer.class.getName().replace('.', '/') + ".class";
-         thisJar = CodebaseServer.class.getClassLoader().getResource(classId).toString();
-         thisJar = thisJar.substring(thisJar.lastIndexOf(':'), thisJar.lastIndexOf('!'));
-         thisJar = thisJar.substring(thisJar.lastIndexOf('/') + 1);
+         thisJar = CodebaseServer.class.getName().replace('.', '/') + ".class";
+         thisJar = CodebaseServer.class.getClassLoader().getResource(thisJar).toString();
+         if (thisJar.indexOf('!') != -1) {
+            thisJar = thisJar.substring(thisJar.lastIndexOf(':'), thisJar.lastIndexOf('!'));
+            thisJar = thisJar.substring(thisJar.lastIndexOf('/') + 1);
+         } else thisJar = "x"; // server not in a jar file
          ss = Remote.getServerHost() == null ? new ServerSocket(port) :
             new ServerSocket(port, 50, InetAddress.getByName(Remote.getServerHost()));
          CodebaseServer.port = port == 0 ? ss.getLocalPort() : port;
