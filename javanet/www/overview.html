@@ -149,7 +149,9 @@ Wrapping our previous example:<br>
 <tt><pre>public class WrapperObject {
    protected Object obj;
    public WrapperObject() {
-      try { this.obj = Remote.getItem("//serverName/someName"); }
+      // obj = new SomeObject(); // when local, or...
+
+      try { obj = Remote.getItem("//serverName/someName"); }
       catch(Exception x) { /* server object not available */ }
    }
    public String foo() {
