@@ -155,12 +155,9 @@
                               <li> <b>file://</b> to load it from the local disc
                               <li> <b>path/name</b> to instantiate it from a local class file
                               <li> <b>/path/name</b> to load it as a serialized proxy from disc
-                              <li> <b>//host[:port]/[name]</b> to load it from a cajo proxy server
+                              <li> <b>//host[:port]/[name]</b> to load it from a
+                                      <a href=docs/gnu/cajo/utils/ItemServer.html>ItemServer</a>
                            </ul>
-                           As a sepcial case, the client can request the default proxy of a
-                           <a href=docs/gnu/cajo/utils/ProxyServer.html>ProxyServer</a> in a more
-                           streamlined fashion, bypassing the rmiregistry, via the following:
-                           <pre><tt><b>   http://host[:port]//</b></tt></pre>
 
                            <b><u>Very Important:</u></b> This class, when run as an application, is
                            intended for testing and development purposes. In an untrusted environment

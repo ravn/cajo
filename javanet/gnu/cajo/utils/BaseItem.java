@@ -41,7 +41,7 @@ public class BaseItem implements Invoke {
    protected Runnable runnable;
    /**
     * A reference to the proxy served by this item.  It is assigned by the
-    * ProxyServer during its {@link ProxyServer#bind bind} operation. It is
+    * {@link ItemServer ItemServer} during its bind operation. It is
     * otherwise it will contain a remote reference to the item itself.
     */
    public MarshalledObject mob;
@@ -124,7 +124,11 @@ public class BaseItem implements Invoke {
     * subclasses to define methods and signatures of their own liking.  This
     * method will connect to that method based on its name, and argument types.
     * However, the argument types unfortunately must match exactly, as the
-    * reflection mechansim does not recognize polymorphism.
+    * reflection mechansim does not recognize polymorphism. It is called the
+    * first time by by the {@link ItemServer ItemServer}, to signal the item
+    * to start its processing thread.  If the item has a {@link BaseProxy Proxy}
+    * object, it will be invoked a second time, with a the proxy object
+    * encased in a MarshalledObject.
     * @param  method The method to invoke in this item.
     * @param args The arguments to provide to the method for its invocation.
     * @return The sychronous data, if any, resulting from the invocation.

@@ -87,10 +87,10 @@ public class ItemServer {
     * {@link gnu.cajo.invoke.Invoke Invoke} it will be invoked with the method
     * name "startProxy", and a null argument, to signal it to start its main
     * processing thread.
-    * <i>Note:</i> if  the {@link gnu.cajo.invoke.Remote Remote} class needs
-    * configuration, it must be done <b>before</b> binding a proxy serving item,
-    * since this will use the server's name and port number. This is accomplished
-    * by calling its {@link gnu.cajo.invoke.Remote#config config} static method.
+    * <i>Note:</i> if the Remote class needs configuration, it must be done
+    * <b>before</b> binding a proxy serving item, since this will use the
+    * server's name and port number. This is accomplished by calling its
+    * {@link gnu.cajo.invoke.Remote#config config} static method.
     * @param item The item to be bound.  It may be either local to the machine,
     * or remote, it can even be a proxy for a remote server, that is, if a
     * suitable SecurityManager was already installed.
@@ -122,6 +122,50 @@ public class ItemServer {
       registry.rebind(name, handle);
       if (mcast != null) mcast.announce(handle, 16);
       return handle;
+   }
+   /**
+    * The generic bind method is used to serve the provided proxy item by the
+    * provided server item.  It will remote a reference to the server item, and
+    * bind in it the local rmiregistry under the name provided. If the item
+    * implements {@link gnu.cajo.invoke.Invoke Invoke} it will be called with a
+    * method string of "setProxy" and a {@link java.rmi.MarshalledObject
+    * MarshalledObject} containing the proxy item.
+    * @param item The item to be bound.  It may be either local to the machine,
+    * or remote, it can even be a proxy for a remote server, that is, if a
+    * suitable SecurityManager was already installed.
+    * @param name The name under which to bind the server in the local
+    * rmiregistry.
+    * @param acceptProxies If true, an {@link java.rmi.RMISecurityManager
+    * RMISecurityManager} will be installed, that is, only if no other
+    * SecurityManager is currently installed for the VM.  This would allow
+    * client proxies to run inside this VM.<br>
+    * <i>Note:</i> Allowing client proxies to run inside this VM invites the
+    * possibility of a denial of service attack.  Proxy hosting generally
+    * should be provided only on a mission-expendible VM.
+    * @param proxy The proxy item to be sent to requesting clients. If it
+    * implements the Invoke interface, it will be called with a null argument,
+    * and a remote reference to its server item.
+    * @param mcast If non-null, a reference to a Multicast object on which to
+    * announce the startup of this server to the listening community.
+    * @return A remoted reference to the item within the context of this VM's
+    * settings.
+    * @throws IOException If the http server providing the codebase and applet
+    * tag service could not be created, or the multicast announcement failed
+    * to occur.
+    * @throws java.rmi.RemoteException If the remote server reference could not
+    * be created.
+    * @throws RemoteException If the binding operation to the rmiregistry
+    * failed, <i>very unlikely</i>, since it runs inside this VM.
+    * @throws Exception if either the item or the proxy implements the
+    * Invoke interface, and rejects the initialization invocation.
+    */
+   public static Remote bind(Object item, String name, boolean acceptProxies,
+      Multicast mcast, Object proxy) throws Exception {
+      Remote ref = bind(item, name, acceptProxies, mcast);
+      if (proxy instanceof Invoke) ((Invoke)proxy).invoke(null, ref);
+      if (item instanceof Invoke)
+         ((Invoke)item).invoke("setProxy", new MarshalledObject(proxy));
+      return ref;
    }
    /**
     * The application loads either a zipped marshalled object (zedmob) from a

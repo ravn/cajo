@@ -118,7 +118,8 @@
                            essential. The processing thread, if defined, is launched automatically
                            following construction of the object. If the server item wishes to be purely
                            <i>event driven</i>; i.e. only operating when its interface methods are being
-                           called, its would not define a <code>MainThread</code> object.<br><br>
+                           called, its would not define a <a href=gnu/cajo/utils/BaseItem.MainThread.html>
+                           MainThread</a> object.<br><br>
 
                            The thread in the example item performs the <i>highly recommended</i> practice
                            of looping on its <code>thread.isInterrupted()</code> method. The item itself,
@@ -138,24 +139,25 @@
                            loops back up into sleep. That's all it does, until interrupted, if ever.<br><br>
 
                            The interesting part happens in its callback method.  It is appropriately
-                           named, though it could be named anything.  When it is invoked, it saves
-                           the reference to the, presumably remote, item and wakes the item's main
+                           named, though it actually could be named anything.  When it is invoked, it
+                           saves the reference to the presumably remote item, and wakes its own main
                            thread. It prints the message provided by the invoking item, and returns a
-                           string indicating synchronous acknowlegement.  Every public method this
-                           item declares will be invokable from remote items, no differently than if
-                           it was interfaced  by local objects. <i>Note:</i> this implementation also
-                           illustrates the importance of <u>reentrancy</u> concerns.  If many items
-                           invoke this method simultaneously, only the last caller will be called back.<br><br>
+                           string indicating synchronous acknowlegement.  The critical point is; every
+                           public method this item declares will be invokable from remote items, no
+                           differently than if it was interfaced  by local objects. <i>Note:</i> this
+                           implementation also illustrates the importance of reentrancy concerns.
+                           If many items invoke this method simultaneously, only the last caller will be
+                           called back.<br><br>
 
                            Lastly, the item implements the <code>toString</code> method, inherited from
                            <code>Object</code>.  This is also <i>highly recommended</i>.  In this case,
                            it aids when monitoring the item, covered in the section on
-                           <a href=example.html#Main>Main.java</a>, and greatly aids in debugging. That's
+                           <a href=example.html#Main>Main</a>, and greatly aids in debugging. That's
                            all there is to the <code>TestItem</code> example.<br><br>
 
                            The <a href=example.html#TestProxy name=TestProxy>TestProxy</a> class is a
                            small, proxy, illustrating many features of the framework.  It will be sent
-                           to a client, on invocation of the TestItem's <code>getProxy</code> method it
+                           to a client, as returned from the TestItem's <code>getProxy</code> method
                            inherited from <code>BaseItem</code>.  The proxy inherits a remote reference
                            to the TestItem, assigned by the ProxyLoader.  It is next initialized at the
                            client, with the assignment of its remoteThis member with a reference to the
@@ -164,7 +166,7 @@
                            items, a proxy need not define a main thread, i.e. it can also be purely
                            event driven.<br><br>
 
-                           The example demonstrates the Internationalization feature of the framework.
+                           The example demonstrates the Internationalization feature of proxies.
                            When the proxy is initialized, it will load its string table from a
                            properties file most closely matching the locale of the receiving VM.  This
                            allows the proxy's user interface to be in German on an Austrian machine, and

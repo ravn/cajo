@@ -44,8 +44,8 @@ public abstract class BaseProxy implements Invoke {
    protected transient Remote remoteThis;
    /**
     * The reference to the sending server, on which the proxy may
-    * asynchronously callback.  It is set by the ProxyServer during the
-    * {@link ProxyServer#bind bind} operation.
+    * asynchronously callback.  It is set by the {@link ItemServer ItemServer}
+    * during the bind operation.
     */
    protected RemoteInvoke server;
    /**

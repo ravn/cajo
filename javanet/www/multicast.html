@@ -158,13 +158,11 @@
                            A listening multicast object checks the return value of its listener's
                            invocation.  If it returns a null, it will continue listening; if the method
                            returns a non-null value, it will stop listening.  To start the object
-                           listening again, its <a href=docs/gnu/cajo/utils/Multicast.html#listen(gnu.cajo.invoke.Invoke)>
-                           listen</a> method must be called, either with the same, or a different
-                           listener. The multicast's listen method can only monitor using one listening
-                           object at a time.  This means that if the multicast object is actively
-                           listening, and its <a href=docs/gnu/cajo/utils/Multicast.html#listen(gnu.cajo.invoke.Invoke)>
-                           listen</a> method is invoked again, it will throw an <b><code>
-                           IllegalArgumentException</code></b>.<br><br>
+                           listening again, its listen method must be called, either with the same, or
+                           a different listener. The multicast's listen method can only monitor using
+                           one listening object at a time.  This means that if the multicast object is
+                           actively listening, and its listen method is invoked again, it will throw an
+                           IllegalArgumentException.<br><br>
 
                            <br>
                            <div align="center">
