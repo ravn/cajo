@@ -283,13 +283,15 @@
 
                            <b>4.</b> Next, lets assume your computer has two network adapters; a wired
                            connection to your LAN, and a wireless connection to the internet.  You will
-                           need to specify on which IP address, in this case network adapter, you want
-                           to run.  This time you would specify the local machine address, even if
-                           you are running behind NAT.  This would be your command line now:
+                           need to specify on which IP address, in this case <i>physical</i> network
+                           interface, you want to run.  In this case you would specify the local
+                           interface address, even if it is running behind NAT.  This would be your
+                           command line now:
                            <pre>    <code>java -jar server.jar 8080 1234 123.123.123.123 100.100.100.100</code></pre>
                            This would also be required if your machine is multi-homed, i.e. has multiple
-                           logical network interfaces.  Generally speaking, multi-homing is guru magic,
-                           if you don't know what that term means, it most likely doesn't apply to you.<br><br>
+                           <i>logical</i> network interfaces.  Generally speaking, multi-homing is guru
+                           magic, if you don't know what the term means, it most likely doesn't apply to
+                           you.<br><br>
 
                            <b>5.</b> The final, and most <i>obscure</i> option, is used to support port translation.
                            Essentially, this means that a router is taking connections, on your behalf
@@ -312,7 +314,7 @@
                            Just as with launching the application, connecting could be as simple as
                            pointing your browser to:
                            <pre>    <code>http://yourserver</code></pre>
-                           This proxy, which is graphical, should load and appear inside your browser,
+                           The proxy, which is graphical, should load and appear inside your browser,
                            full screen. If you were not able to use port 80 for your server, you will
                            need to specify the port on which your server is providing the proxy code.
                            Following the example from the previous section, you would use:
@@ -322,13 +324,13 @@
                            is operating behind a NAT router.<br><br>
 
                            <u><b>Conclusion:</b></u><br><br>
-                           This is the proverbial tip of the iceberg, but it should get you started.
-                           If you have further questions, there are forums for
-                           <a href=https://cajo.dev.java.net/servlets/ProjectForumView>this</a>
-                           project, also there is a  more general
+                           This is just the proverbial tip of the iceberg, but it should get you started.
+                           If you have further questions, there are forums at this
+                           <a href=https://cajo.dev.java.net/servlets/ProjectForumView>project</a>,
+                           also there is a  more general
                            <a href=http://forum.java.sun.com/forum.jsp?forum=58 target=_blank>RMI</a>
-                           forum at Sun Microsystems Java website.  Before posting however, please do
-                           your
+                           forum at Sun Microsystems Java Developers website.  Before posting however,
+                           please do your
                            <a href=http://catb.org/~esr/faqs/smart-questions.html target=_blank>homework</a>.
                            (<i>Disclaimer:</i> the previously cited link is <u>not</u> affiliated with
                            this project, rather provided merely for insight.) Often the answer you are
