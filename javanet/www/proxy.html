@@ -92,40 +92,43 @@
                            object, sent to a hosting VM to execute in its runtime. It is sent by an
                            Item, and arrives with a link to the item's remote interface, on which it
                            can invoke its methods.  Its purpose is to pre-process invocations made
-                           by the client, using its resources, as opposed to those of the server.<br><br>
+                           by the client, using the resources of the client, as opposed to those of
+                           the server.<br><br>
 
                            A proxy generally extends one of two possible classes,
-                           gnu.cajo.utils.BaseProxy or gnu.cajo.utils.PanelProxy.  Which is used depends
-                           on the primary function of the proxy.  If the proxy is purely a programmatic
-                           interface to remote item, it should extend BaseProxy.  If the proxy is also
-                           provides a graphical user interface to  display at the hosting VM, it should
-                           extend PanelProxy.<br><br>
+                           gnu.cajo.utils.BaseProxy or gnu.cajo.utils.PanelProxy.  Which one is used
+                           depends on the primary function of the proxy.  If the proxy is purely a
+                           programmatic interface to remote item, it should extend BaseProxy.  If the
+                           proxy also supports a graphical user interface to  display at the hosting
+                           VM, it should extend PanelProxy.<br><br>
 
                            Architecturally a BaseProxy (or PanelProxy) is very similar to a BaseItem,
                            it has a thread, which is cannonically launched by the client, upon its
                            arrival. It also has a final implementation of the invoke interface, which
                            is used to route remote invocations, to the appropriate local method,
-                           returning the result, if any.  It has a few differences from an Item however. It has a string table,
-                           which can be loaded with the language appropriate to the hosting VM. It has
-                           the link back to its remote server, as mentioned above.<br><br>
+                           returning the result, if any.  It has a few differences from a BaseItem
+                           however. It has a string table, which can be loaded with the language
+                           appropriate to the hosting VM. It has the link back to its remote server,
+                           as mentioned above.<br><br>
 
                            Each proxy is served by an Item. An item binds itself and provides proxy
                            service using the static gnu.cajo.utils.ProxyServer.bind method.  This also
-                           starts up the proxy codebase server, on which the client will request, and
+                           starts up the proxy codebase server, on which the client will request and
                            receive the proxy class files.  If a VM serves proxies it requires two TCP
                            ports, one for communication with the server item, and one for sending the
-                           proxy codebase.  If an item server does not send proxies, it requires only
-                           one port.<br><br>
+                           proxy codebase.  If a server does not send proxies, it requires only one
+                           port.<br><br>
 
-                           A item can also accept proxies from other items, this is done when invoking
-                           its gnu.cajo.invoke.ItemServer.bind or gnu.cajo.invoke.ProxyServer.bind
+                           A server item can also accept proxies from other items, this is done when
+                           invoking
+                           the gnu.cajo.invoke.ItemServer.bind or gnu.cajo.invoke.ProxyServer.bind
                            methods. There is a boolean argument <code>acceptProxies</code> for this
-                           purpose.  Unless it is set, the item will not accept, or run the proxy.
-                           A proxy can be sent to an item, using a "setProxy" invocation with the proxy
-                           object as the argument.  This call will with a ClassNotFoundException, if
-                           the called item does not accept proxies.  If the invocation is successful,
-                           the returned value from the invocation will be a remote reference to the
-                           installed proxy, over which communication can take place.<br><br>
+                           purpose.  Unless it is set, the item will not accept the proxy. A proxy can
+                           be sent to an item, using a "setProxy" invocation with the proxy object as
+                           the argument.  This call will with a ClassNotFoundException, if the called
+                           item does not accept proxies.  If the invocation is successful, the returned
+                           value from the invocation will be a remote reference to the installed proxy,
+                           over which communication can take place.<br><br>
 
                            A proxy can be obtained from an item reference by using a null argument
                            "getProxy" invocation. The returned item, if non-null, will be its default
@@ -134,22 +137,28 @@
                            This will cause the proxy to load its string table, create its main thread,
                            and begin operating.  It uses the remote reference to itself, to pass back
                            to its calling server, or to other items, on which they may asynchronously
-                           communicate with the proxy, as necessary.<br><br>
+                           communicate with the proxy, as necessary. Only the method to obtain the
+                           default proxy, if an item serves multiple proxies, which should be rare,
+                           the method to obtain them is application specific.  A recommendation would
+                           be to use a string argument in a getProxy invocation, to specify the
+                           desired proxy.<br><br>
 
                            Both the proxy and its serving item can, in turn, give their remote
                            references to other items.  A item calling another item does not know if it
-                           is invoking it on a local item, a remote item, or a remote proxy.<br>br>
+                           is invoking it on a local item, a remote item, a local proxy, or a remote
+                           proxy.<br><br>
 
                            The framework can allow a collection of objects to start on a single machine,
                            and scale until each of its items are not only on separate virtual machines,
                            but separate <i>physical</i> machines!  This creates the potential for using
                            the internet as one giant computer, or the worlds largest supercomputing
-                           cluster, depending on your point of view.  Of course, the machines may be
-                           PCs, Macs, Workstations... everything from Mainframes, to Pocket PCs.<br><br>
+                           cluster, depending on your point of view.  The machines can be PCs, Macs,
+                           Workstations... everything from Mainframes, to Mobile Phones. The
+                           architecture is compatible with all Java platforms; J2ME / J2SE / J2EE<br><br>
 
                            The next section <a href=multicast.html>multicast</a> will show how items
-                           can send, or receive, remote references to other items, or proxies, using
-                           a method similar to a radio broadcast.<br<br>
+                           can send, or receive, their own, and other remote references, using a method
+                           similar to a radio broadcast.<br<br>
 
                            <br><br>
                            <div align="center">
