@@ -90,7 +90,10 @@ public class BaseItem {
     * the proxy, and provide it with a handle to pass to other remote items,
     * on which they can contact this proxy.  This remote reference will also be
     * returned to the caller, providing an interface on which to asynchronously
-    * call its proxy.
+    * call its proxy. Internally it will invoke the proxy's init method,
+    * passing in the remote reference to itself, to prepare it for operation.
+    * If the initialization returns an AWT component, it will be displayed at
+    * automatically.
     * @param proxy The proxy to run in this VM.
     * @return A reference to the proxy remoted within this context.
     * @throws ClassNotFoundException If the item does not accept proxies.
@@ -102,7 +105,9 @@ public class BaseItem {
       if (proxy instanceof RemoteInvoke)
          throw new IllegalArgumentException("Proxy must be local");
       Remote ref = new Remote(proxy);
-      proxy.invoke("init", ref);
+      Object result = proxy.invoke("init", ref);
+      if (result instanceof java.awt.Component)
+         Client.frame((java.awt.Component)result);
       return ref;
    }
    /**
