@@ -33,10 +33,9 @@ import gnu.cajo.invoke.Remote;
  * usually to operate through a firewall. A given VM instance can only have one
  * codebase, therefore construction of a second instance will result in an
  * IllegalStateException being thrown by its constructor.<br><br>
- * <i>Note:</i> if  the Remote class needs
- * {@link gnu.cajo.invoke.Remote#config configuration}, this must be done
- * <b>before</b> binding any proxy serving item, since the binding will use the
- * server's name and port number.
+ * <i>Note:</i> if the Remote class needs {@link gnu.cajo.invoke.Remote#config
+ * configuration}, this must be done <b>before</b> binding any proxy serving item,
+ * since the binding will use the server's name and port number.
  * 
  * @version 1.0, 01-Nov-99 Initial release
  * @author John Catherino
@@ -60,9 +59,16 @@ public final class CodebaseServer {
          "Connection: close\r\n" +
          "Content-length: "
       ).getBytes(),
+      jws = (
+         "HTTP/1.0 200 OK\r\n"   +
+         "Content-type: application/x-java-jnlp-file\r\n" +
+         "Cache-control: no-store\r\n" +
+         "Connection: close\r\n" +
+         "Content-length: "
+      ).getBytes(),
       top = (
          "<HTML><HEAD><TITLE>CaJo Proxy Viewer</TITLE>\r\n" +
-         "<META NAME=\"description\" content=\"Lookup Proxy Client\"/>\r\n" +
+         "<META NAME=\"description\" content=\"Graphical cajo proxy client\"/>\r\n" +
          "<META NAME=\"copyright\" content=\"Copyright ©1999 by John Catherino\"/>\r\n" +
          "<META NAME=\"author\" content=\"John Catherino\"/>\r\n" +
          "<META NAME=\"generator\" content=\"ProxyServer&#153\"/>\r\n" +
@@ -184,44 +190,78 @@ public final class CodebaseServer {
                         } else if (itemName.indexOf('/', 1) == -1) { // URL request
                            try { // parse request arguments
                               int proxyPort = Remote.getClientPort();
-                              int ia = itemName.indexOf(':') != -1 ?
-                                 itemName.indexOf(':') :
-                                 itemName.indexOf('-') != -1 ?
-                                 itemName.indexOf('-') : itemName.length();
-                              int ib = itemName.indexOf('-') != -1 ?
-                                 itemName.indexOf('-') : itemName.length();
-                              int ic = itemName.length() > ib ?
-                                 itemName.length() : ib;
-                              String clientPort = ia >  1 ?
-                                 itemName.substring(     1, ia) : null;
-                              String localPort = ib > ia ?
-                                 itemName.substring(ia + 1, ib) : null;
-                              String proxyName = ic > ib ?
-                                 itemName.substring(ib + 1, ic) : "main";
-                              String clientHost =
-                                 s.getInetAddress().getHostAddress();
-                              byte iex[] = ( // used by Internet Explorer:
-                                 "<PARAM NAME = \"clientHost\" VALUE = \"" + clientHost + "\">\r\n" +
-           (clientPort != null ? "<PARAM NAME = \"clientPort\" VALUE = \"" + clientPort + "\">\r\n" : "") +
-           (localPort  != null ? "<PARAM NAME = \"localPort\"  VALUE = \"" + localPort  + "\">\r\n" : "") +
-                                 "<PARAM NAME = \"proxyPort\"  VALUE = \"" + proxyPort  + "\">\r\n" +
-                                 "<PARAM NAME = \"proxyName\"  VALUE = \"" + proxyName  + "\">\r\n"
-                              ).getBytes();
-                              byte nav[] = ( // used by Navigator and Appletviewer:
-                                 "clientHost = " + clientHost + "\r\n" +
-           (clientPort != null ? "clientPort = " + clientPort + "\r\n" : "") +
-           (localPort  != null ? "localPort  = " + localPort  + "\r\n" : "") +
-                                 "proxyPort  = " + proxyPort  + "\r\n" +
-                                 "proxyName  = " + proxyName  + "\r\n"
-                              ).getBytes();
-                              byte len[] = (fixlen + iex.length + nav.length + "\r\n\r\n").getBytes();
-                              os.write(tag);
-                              os.write(len);
-                              os.write(top);
-                              os.write(iex);
-                              os.write(mid);
-                              os.write(nav);
-                              os.write(end);
+                              int ia =
+                                 itemName.indexOf(':') != -1 ? itemName.indexOf(':') :
+                                 itemName.indexOf('-') != -1 ? itemName.indexOf('-') :
+                                 itemName.indexOf('!') != -1 ? itemName.indexOf('!') :
+                                 itemName.length();
+                              int ib =
+                                 itemName.indexOf('-') != -1 ? itemName.indexOf('-') :
+                                 itemName.indexOf('!') != -1 ? itemName.indexOf('!') :
+                                 itemName.length();
+                              int ic =
+                                 itemName.indexOf('!') != -1 ? itemName.indexOf('!') :
+                                 itemName.length();
+                              String clientPort =
+                                 ia >  1 ? itemName.substring(     1, ia) : "0";
+                              String localPort =
+                                 ib > ia ? itemName.substring(ia + 1, ib) : "0";
+                              String proxyName =
+                                 ic > ib ? itemName.substring(ib + 1, ic) : "main";
+                              String clientHost = s.getInetAddress().getHostAddress();
+                              if (itemName.indexOf('!') == -1) { // applet request
+                                 byte iex[] = ( // used by Exploder:
+                                    "<PARAM NAME = \"clientHost\" VALUE = \"" + clientHost + "\">\r\n" +
+                                    "<PARAM NAME = \"clientPort\" VALUE = \"" + clientPort + "\">\r\n" +
+                                    "<PARAM NAME = \"localPort\"  VALUE = \"" + localPort  + "\">\r\n" +
+                                    "<PARAM NAME = \"proxyPort\"  VALUE = \"" + proxyPort  + "\">\r\n" +
+                                    "<PARAM NAME = \"proxyName\"  VALUE = \"" + proxyName  + "\">\r\n"
+                                 ).getBytes();
+                                 byte nav[] = ( // used by Navigator and Appletviewer:
+                                    "clientHost = " + clientHost + "\r\n" +
+                                    "clientPort = " + clientPort + "\r\n" +
+                                    "localPort  = " + localPort  + "\r\n" +
+                                    "proxyPort  = " + proxyPort  + "\r\n" +
+                                    "proxyName  = " + proxyName  + "\r\n"
+                                 ).getBytes();
+                                 byte len[] = (fixlen + iex.length + nav.length + "\r\n\r\n").getBytes();
+                                 os.write(tag);
+                                 os.write(len);
+                                 os.write(top);
+                                 os.write(iex);
+                                 os.write(mid);
+                                 os.write(nav);
+                                 os.write(end);
+                              } else { // JNLP application request
+                                 String title = Remote.getClientHost() + ':' + Remote.getClientPort() + '/' + proxyName;
+                                 byte xml[] = (
+                                    "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n" +
+                                    "<jnlp spec=\"1.0+\"\r\n" +
+                                    "  codebase=" + "\"http://" + Remote.getClientHost() + ':' + CodebaseServer.this.port + "\"\r\n" +
+                                    "  href=\"" + clientPort + ':' + localPort + '-'+ proxyName + "!\">\r\n" +
+                                    "  <information>\r\n" +
+                                    "    <title>CajoViewer - " + title + "</title>\r\n" +
+                                    "    <vendor>John Catherino</vendor>\r\n" +
+                                    "    <homepage href=\"https://cajo.dev.java.net\"/>\r\n" +
+                                    "    <description>Graphical cajo proxy client</description>\r\n" +
+                                    "  </information>\r\n" +
+                                    "  <resources>\r\n" +
+                                    "    <j2se version=\"1.2+\"/>\r\n" +
+                                    "    <jar href=\"client.jar\"/>\r\n" +
+                                    "  </resources>\r\n" +
+                                    "  <application-desc main-class=\"gnu.cajo.invoke.Client\">\r\n" +
+                                    "    <argument>//" + title + "</argument>\r\n" +
+                                    "    <argument>" + clientPort + "</argument>\r\n" +
+                                    "    <argument>" + clientHost + "</argument>\r\n" +
+                                    "    <argument>" + localPort  + "</argument>\r\n" +
+                                    "  </application-desc>\r\n" +
+                                    "</jnlp>"
+                                 ).getBytes();
+                                 byte len[] = (xml.length + "\r\n\r\n").getBytes();
+                                 os.write(jws);
+                                 os.write(len);
+                                 os.write(xml);
+                              }
                            } catch(Exception x) { os.write(bye); }
                         } else os.write(bye); // unsupported request
                         os.flush();

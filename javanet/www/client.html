@@ -121,7 +121,11 @@
                            <pre><code>   http://host[:port]/[clientPort][:localPort][-proxyName]</code></pre>
 
                            The parameters in brackets can be selectively omitted, but the order of
-                           arguments is required.
+                           arguments is required.<br><br>
+
+                           <b>*<u>New feature</u>:</b> you can now web start the client application!
+                           Simply append an exclamation point (!) to the end of the URL!  It's very
+                           cool, try it! I call it; <i>starting the application with a bang!</i>
 
                            <h3>Application configuration</h3><br>
 
@@ -143,13 +147,13 @@
 
                            Here are the options:
                            <ul>
-                              <li> The client's external host name, if it's using NAT
-                              <li> The client's external port number, if it's behind a firewall
-                              <li> The client's internal host name, if it has multiple interfaces
-                              <li> The client's internal port number, if it's using translation
                               <li> The URL where to load the intial proxy item
+                              <li> The client's external port number, if it's behind a firewall
+                              <li> The client's external host name, if it's using NAT
+                              <li> The client's internal port number, if it's using translation
+                              <li> The client's internal host name, if it has multiple interfaces
                            </ul>
-                           The last option has six possibilities to load a proxy:
+                           The first option has six possibilities to load a proxy:
                            <ul>
                               <li> http:// to load it from a web server
                               <li> ftp:// to load it from an ftp server
@@ -161,7 +165,7 @@
 
                            The <i>most common</i> client startup invocation looks something like this:
 
-                           <pre><code>   java -jar client.jar yourHost 0 yourHost 0 //someHost/</code></pre>
+                           <pre><code>   java -jar client.jar //someHost/</code></pre>
 
                            This will connect from yourHost, to someHost, and get the item "main", using
                            any available port, not currently in use.
@@ -201,7 +205,11 @@ grant {
                            want to make the same
                            <a href=http://developer.java.sun.com/developer/bugParade/bugs/4915879.html target=_blank>
                            mistake</a> I did. (Essentially, omission of the first argument, completely
-                           negates the second.)
+                           negates the second.)<br><br>
+
+                           <i>Note:</i> when web started, the client requires no policy file, as it runs
+                           in an Applet sandbox, meaning is has no access to the hosting machine's hard
+                           disc, and can only communicate back to the host from which it was sent.
 
                            <h3>Conclusion</h3><br>
 
