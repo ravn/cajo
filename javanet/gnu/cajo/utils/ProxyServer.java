@@ -142,9 +142,13 @@ public final class ProxyServer implements Runnable {
     * provided server item.  It will remote a reference to the server item, and
     * bind in it the local rmiregistry under the name provided. Since it
     * calls the {@link ItemServer#bind bind} operation of the ItemServer class,
-    * strictly speaking it is performing a rebind operation on the rmiregistry
-    *.<p>The format of a browser's proxy request URL one required and has six optional
-    * parameters, utilizing the following format:<p><code>
+    * strictly speaking it is performing a rebind operation on the rmiregistry.
+    * If the item implements {@link gnu.cajo.invoke.Invoke Invoke} it will be
+    * called with a method string of "setProxy" and a
+    * {@link java.rmi.MarshalledObject MarshalledObject} containing the proxy
+    * item.
+    * <br><br>The format of a browser's proxy request URL one required and has
+    * six optional parameters, utilizing the following format:<p><code>
     * http://serverHost[:serverPort]/[clientHost][;clientPort][@localHost][:localPort][-proxyName]
     * </code><p>
     * Where the parameters have the following meanings:<ul>
@@ -227,8 +231,8 @@ public final class ProxyServer implements Runnable {
       Remote ref = ItemServer.bind(item, name, acceptProxies, mcast);
       if (defaultServer == null) defaultServer = ref;
       if (proxy instanceof Invoke) ((Invoke)proxy).invoke(null, ref);
-      if (item  instanceof Invoke)
-         ((Invoke)item).invoke(null, new MarshalledObject(proxy));
+      if (item instanceof Invoke)
+         ((Invoke)item).invoke("setProxy", new MarshalledObject(proxy));
    }
    /**       
     * The run method is invoked in a separate thread.  It will provide a

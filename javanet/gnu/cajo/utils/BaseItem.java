@@ -34,11 +34,17 @@ import java.rmi.MarshalledObject;
  */
 public class BaseItem implements Invoke {
    /**
+    * A reference to the item's processing code.  If non-null, it will be
+    * started automatically binding in the rmiregistry.  Its thread can be
+    * accessed through the thread member.
+    */
+   protected Runnable runnable;
+   /**
     * A reference to the proxy served by this item.  It is assigned by the
     * ProxyServer during its {@link ProxyServer#bind bind} operation. It is
-    * null if the item does not have a proxy interface.
+    * otherwise it will contain a remote reference to the item itself.
     */
-   protected MarshalledObject mob;
+   public MarshalledObject mob;
    /**
     * A reference to the item's processing thread. It can be
     * {@link java.lang.Thread#interrupted interrupted}, to signal the item to
@@ -104,10 +110,11 @@ public class BaseItem implements Invoke {
    }
    /**
     * This method is called by the remote clients, to request the item's
-    * proxy item, if it supports one.
+    * proxy item, if it supports one. If it does not, it will receive a
+    * remote reference to the item itself.
     * @return A reference to the proxy serving this item, encased in a
-    * {@link java.rmi.MarshalledObject MarshalledObject}, or null, if the
-    * item does not have a proxy interface.
+    * {@link java.rmi.MarshalledObject MarshalledObject}, if the item
+    * has a proxy interface, otherwise a remote self-reference.
     */
    public final MarshalledObject getProxy() { return mob; }
    /**
@@ -131,9 +138,17 @@ public class BaseItem implements Invoke {
     * {@link java.rmi.MarshalledObject MarshalledObject} of its proxy.
     */
    public final Object invoke(String method, Object args) throws Exception {
-      if (mob == null) {
-         mob = (MarshalledObject)args;
+      if (runnable != null) {
+         thread = new Thread(runnable);
+         thread.start();
+         runnable = null;
          return null;
+      }
+      if (mob == null) {
+         if (args instanceof MarshalledObject){
+            mob = (MarshalledObject)args;
+            return null;
+         } else mob = new MarshalledObject(new Remote(this));
       }
       if (method == null)
          throw new IllegalArgumentException("Method cannot be null");

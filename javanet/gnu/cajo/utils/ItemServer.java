@@ -83,7 +83,10 @@ public class ItemServer {
     * The generic bind operation remotes an item in the local rmiregistry.
     * strictly speaking, it performs a rebind operation on the rmiregistry.
     * Since the registry is not shared with other applications, checking
-    * for already bound items is unnecessary.
+    * for already bound items is unnecessary.  If the server item implements
+    * {@link gnu.cajo.invoke.Invoke Invoke} it will be invoked with the method
+    * name "startProxy", and a null argument, to signal it to start its main
+    * processing thread.
     * <i>Note:</i> if  the {@link gnu.cajo.invoke.Remote Remote} class needs
     * configuration, it must be done <b>before</b> binding a proxy serving item,
     * since this will use the server's name and port number. This is accomplished
@@ -106,16 +109,15 @@ public class ItemServer {
     * @throws RemoteException If the registry could not be contacted,
     * technically <i>unlikely</i> since the registry is always local.
     * @throws IOException If the UDP multicast announcement attempt failed.
+    * @throws Exception, if the item rejects the startThread invocation.
     */
    public static Remote bind(Object item, String name, boolean acceptProxies,
-      Multicast mcast) throws java.rmi.RemoteException,
-      java.rmi.AlreadyBoundException, java.io.IOException {
+      Multicast mcast) throws Exception {
       if (registry == null) {
          registry = LocateRegistry.
             createRegistry(Remote.getServerPort(), Remote.rcsf, Remote.rssf);
       }
-      if (acceptProxies && System.getSecurityManager() == null)
-         System.setSecurityManager(new java.rmi.RMISecurityManager());
+      if (item instanceof Invoke) ((Invoke)item).invoke("startThread", null);
       Remote handle = item instanceof Remote ? (Remote)item : new Remote(item);
       registry.rebind(name, handle);
       if (mcast != null) mcast.announce(handle, 16);
