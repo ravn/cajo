@@ -226,13 +226,13 @@
                               <li>client and proxy code delivery on TCP port 80
                               <li>server item communication on TCP port 1099
                               <li>hostname is identical both inside and outside subnet
-                              <li>default network interface is used
+                              <li>default server network interface is being used
                               <li>the server port is the same both inside and outside the subnet
-                           </ul>This should suffice for many users, however these options can be
-                           overridden. The options above progress from most likely to need overriding,
-                           to least.<br><br>
+                           </ul>This should suffice for many users, however these five assumptions can
+                           be overridden, as command line arguments. The options above progress from
+                           most likely to need overriding, to least.<br><br>
 
-                           Typically the first problem hit by most users is that port 80 is not
+                           <b>1.</b> Typically the first problem hit by most users is that port 80 is not
                            available. This can be for a variety of reasons; there is already an http
                            server running on the box, you are using a *nix system and you are not root,
                            in any case, you are forced to select another port.  Fortunately this is
@@ -245,7 +245,7 @@
                            detail will be covered in the next section,
                            <a href=tutorial.html#connecting>connecting</a>.<br><br>
 
-                           Often the next problem hit is that port 1099 is not available. Typically
+                           <b>2.</b> Often the next problem hit is that port 1099 is not available. Typically
                            this is because a central rmiregistry is running on the machine.  By default,
                            each cajo server uses its own rmiregistry, operating on the same port as the
                            interface to its items.  In any case, another port must be selected:
@@ -256,7 +256,7 @@
                            arguments could be handled in a more sophisticated fashion, but this is only
                            an <i>example</i> program)<br><br>
 
-                           The next most common problem is that your server is behind a NAT router.
+                           <b>3.</b> The next most common problem is that your server is behind a NAT router.
                            This happens, for example, when you want to share a single connection to the
                            network.  Essentially, the NAT router is giving you a <i>'fake'</i> IP
                            address valid only inside the subnet. It translates the addresses for you,
@@ -279,7 +279,7 @@
                            Now clients will correctly connect to you on your actual address, and not use
                            the phony one that the NAT router gave your host.<br><br>
 
-                           Next, lets assume your computer has two network adapters; a wired
+                           <b>4.</b> Next, lets assume your computer has two network adapters; a wired
                            connection to your LAN, and a wireless connection to the internet.  You are
                            going to want to specify which IP address, in this case network adapter, on
                            which you want to run.  This time you would specify the local machine
@@ -290,11 +290,11 @@
                            logical network interfaces.  Multi-homing is guru magic. Generally speaking,
                            if you don't know what that term means, it probably doesn't apply to you.<br><br>
 
-                           The final, and most <i>obscure</i> option, is used to support port translation.
+                           <b>5.</b> The final, and most <i>obscure</i> option, is used to support port translation.
                            Essentially, this means that a router is taking connections, on your behalf
                            on one port, and routing it to your machine, on a another one. In this case
                            you would specify the outside port. As the last option, you have probably
-                           guessed it, PT is <i>advanced</i> guru magic. If you are doing this, you
+                           already guessed, PT is <i>advanced</i> guru magic. If you are doing this, you
                            already know what the command line would look like, but just for the rest of
                            us, here it is:
                            <pre>    <code>java -jar server.jar 8080 1234 guru.org 100.100.100.100 4321</code></pre>
@@ -323,14 +323,14 @@
                            <u><b>Conclusion:</b></u><br><br>
                            This is the proverbial tip of the iceberg, but should get you started.  If
                            you have further questions, there is a forum for this
-                           <a href=https://cajo.dev.java.set/servlets/ProjectForumView>project</a>,
+                           <a href=https://cajo.dev.java.net/servlets/ProjectForumView>project</a>,
                            also there is a  more general
                            <a href=http://forum.java.sun.com/forum.jsp?forum=58>RMI</a> forum at Sun
                            Microsystems Java website.  Before
                            posting however, please do your
                            <a href=http://catb.org/~esr/faqs/smart-questions.html>homework</a>.
-                           (<i>Disclaimer:</i> the previously cited link is not affiliated with
-                           this project, provided simply for insight.) Often the answer you are
+                           (<i>Disclaimer:</i> the previously cited link is <u>not</u> affiliated with
+                           this project, rather simply provided for insight.) Often the answer you are
                            seeking can can be found in the source documentation, or on this site, and
                            typically much faster.<br><br>
 
