@@ -1,13 +1,13 @@
 package example;
 
-import gnu.cajo.invoke.*;
+import gnu.cajo.invoke.Remote;
 import gnu.cajo.utils.*;
 import java.text.DateFormat;
 
 public class Main { // General purpose server startup pattern
    static ProxyLoader pl;
    static Multicast mc;
-   static Invoke item;  // prevent the server from garbage collection?
+   static Object item;  // prevent the server from garbage collection?
    // optional arguments; previous must be declared, but not successive:
    // - http port for codebase service (default = 80)
    // - port for server communication (default = 1099)
