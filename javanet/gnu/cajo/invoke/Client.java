@@ -189,11 +189,12 @@ public final class Client extends java.applet.Applet {
     * load a NoSecurityManager, therefore, if no external SecurityManager is
     * specified in the startup command line options; the arriving proxies will
     * have <u><b>full permissions</b></u> on this machine.<br><br>
-    * The startup requires one, and can take up to four additional optional
-    * configuration parameters, in this order:<ul>
-    * <li> args[0] The required URL where to get the graphical proxy item:<br>
+    * The startup can take up to five additional optional configuration
+    * parameters, in this order:<ul>
+    * <li> args[0] The URL where to get the graphical proxy item:<br>
     * file:// http:// ftp:// ..., //host:port/name (rmiregistry), /path/name
-    * (serialized), or path/name (class).
+    * (serialized), or path/name (class). Unspecified, the server will be
+    * considered local, bound in an rmiregistry, under the name "main".
     * <li> args[1] The optional external client port number, if using NAT.
     * <li> args[2] The optional external client host name,   if using NAT.
     * <li> args[3] The optional internal client port number, if using NAT.
@@ -201,16 +202,14 @@ public final class Client extends java.applet.Applet {
     */
    public static void main(String args[]) {
       try {
-         try {
+         if (System.getSecurityManager() == null)
             System.setSecurityManager(new NoSecurityManager());
-            System.setProperty("java.rmi.server.disableHttp", "true");
-         } catch(SecurityException x) {}
          int clientPort    = args.length > 1 ? Integer.parseInt(args[1]) : 0;
          String clientHost = args.length > 2 ? args[2] : null;
          int localPort     = args.length > 3 ? Integer.parseInt(args[3]) : 0;
          String localHost  = args.length > 4 ? args[4] : null;
          Remote.config(localHost, localPort, clientHost, clientPort);
-         proxy = Remote.getItem(args[0]);
+         proxy = Remote.getItem(args.length > 0 ? args[0] : null);
          proxy = Remote.invoke(proxy, "getProxy", null);
          if (proxy instanceof MarshalledObject)
             proxy = ((MarshalledObject)proxy).get();
@@ -218,6 +217,6 @@ public final class Client extends java.applet.Applet {
             proxy = Remote.invoke(proxy, "init", new Remote(proxy));
          } catch(Exception x) {}
          if (proxy instanceof Component) frame = frame((Component)proxy);
-      } catch (Exception x) { x.printStackTrace(System.err); }
+      } catch (Exception x) { x.printStackTrace(); }
    }
 }
