@@ -127,9 +127,11 @@
                            <a href=docs/gnu/cajo/utils/ItemServer.html>gnu.cajo.utils.ItemServer.bind</a>
                            or the
                            <a href=docs/gnu/cajo/utils/ProxyServer.html>gnu.cajo.utils.ProxyServer.bind</a>
-                           methods. There is a boolean argument <b><code>acceptProxies</code></b>
+                           methods. There is a boolean argument
+                           <a href=docs/gnu/cajo/utils/ItemServer.html>acceptProxies</a>
                            for this purpose.  Unless it is set, the item will not accept the proxy.
-                           A proxy can be sent to an item, using the <b><code>setProxy</code></b>
+                           A proxy can be sent to an item, using the
+                           <a href=docs/gnu/cajo/utils/BaseItem.html>setProxy</a>
                            invocation with the proxy object as the argument.  This call will result
                            in a <b><code>ClassNotFoundException</code></b>, if the called item does
                            not accept proxies.  If the invocation is successful, the returned value
@@ -137,9 +139,9 @@
                            over which the sending item can communicate with it.<br><br>
 
                            A proxy can be obtained from an item reference by using a null argument
-                           <b><code>getProxy</code></b> invocation. The returned item, if non-null,
-                           will be its default proxy.  Once a proxy item is received, the required
-                           installation procedure is to:
+                           <a href=docs/gnu/cajo/utils/BaseItem.html>getProxy</a> invocation. The
+                           returned item, if non-null, will be its default proxy.  Once a proxy item is
+                           received, the required installation procedure is to:
 
                            <pre><b><code>   proxy.invoke("init", new Remote(proxy));</code></b></pre>
 
@@ -163,8 +165,8 @@
                            creates the potential for using the network as one giant computer, or a
                            giant supercomputing cluster; depending on your point of view.  The machines
                            can be PCs, Macs, Workstations... everything from Mainframes, to Mobile
-                           Phones. This architecture is compatible with all Java platforms; J2ME / J2SE
-                           / J2EE<br><br>
+                           Phones. This architecture is compatible with all Java platforms; <b>J2ME /
+                           J2SE / J2EE</b><br><br>
 
                            The next section <a href=multicast.html>multicast</a> will show how items
                            can send, or receive, their own and other remote references, using a method
