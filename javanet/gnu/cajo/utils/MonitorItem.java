@@ -41,8 +41,7 @@ import java.lang.reflect.Method;
  * record the approximate time between client invocations, the time used to
  * service the invocation, and the approximate percentage of free memory
  * available at the completion of the operation.  Subclassing of MonitorItem
- * is allowed; primarily to create self-monitoring classes, not to change the
- * data being monitored.
+ * is allowed; primarily to create self-monitoring classes.
  * <p><i>Note:</i> monitoring an item can be expensive in runtime efficiency.
  * It is best used for debug and performance analysis, during development, or
  * in production, for items that would not be called very frequently.
@@ -107,13 +106,10 @@ public final class MonitorItem implements Invoke {
     */
    public Object invoke(String method, Object args) throws Exception {
       long time = System.currentTimeMillis();
-      Object arg = args;
-      try {
-         return args = (item instanceof Invoke) ?
-            ((Invoke)item).invoke(method, args) :
-               Remote.invoke(item, method, args);
-      } catch(Exception x) {
-         args = x;
+      Object result = null;
+      try { return result = Remote.invoke(item, method, args); }
+      catch(Exception x) {
+         result = x;
          throw x;
       } finally {
          try {
@@ -127,20 +123,8 @@ public final class MonitorItem implements Invoke {
                ps.print("\nMethod call =\t");
                ps.print(method);
                ps.print("\nMethod args =\t");
-               if (arg instanceof Object[]) {
+               if (args instanceof Object[]) {
                   ps.print("<array>");
-                  for (int i = 0; i < ((Object[])arg).length; i++) {
-                     ps.print("\n\t[");
-                     ps.print(i);
-                     ps.print("] =\t");
-                     ps.print(((Object[])arg)[i].toString());
-                  }
-               } else ps.print(arg != null ? arg.toString() : "null");
-               ps.print("\nResult data =\t");
-               if (args instanceof Exception) {
-                  ((Exception)args).printStackTrace(ps);
-               } else if (args instanceof Object[]) {
-                  ps.print("array");
                   for (int i = 0; i < ((Object[])args).length; i++) {
                      ps.print("\n\t[");
                      ps.print(i);
@@ -148,6 +132,18 @@ public final class MonitorItem implements Invoke {
                      ps.print(((Object[])args)[i].toString());
                   }
                } else ps.print(args != null ? args.toString() : "null");
+               ps.print("\nResult data =\t");
+               if (result instanceof Exception) {
+                  ((Exception)result).printStackTrace(ps);
+               } else if (result instanceof Object[]) {
+                  ps.print("array");
+                  for (int i = 0; i < ((Object[])result).length; i++) {
+                     ps.print("\n\t[");
+                     ps.print(i);
+                     ps.print("] =\t");
+                     ps.print(((Object[])result)[i].toString());
+                  }
+               } else ps.print(result != null ? result.toString() : "null");
                ps.print("\nIdle time   =\t");
                ps.print(time - oldtime);
                ps.print(" ms");
