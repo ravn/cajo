@@ -124,15 +124,22 @@
                            machines that are a members of a <i>"group"</i>.<br><br>
 
                            A single item can listen and broadcast on as many channels as it wants.
-                           Applications can range from performing all multicasts on a single
-                           channel, to using separate channels for each specific meaning.  The
-                           framework defines a default channel, which can be useful for spontaneous
-                           inter-networking.  To use a <b><i>Star Trek</i></b> metaphor; it
-                           could be likened to the <i>'hailing frequency'</i> for contacting new and
-                           unknown items.  An item performs a broadcast by passing a remoted reference
-                           to itself to the multicast's
+                           Applications can range from performing all multicasts on a single channel,
+                           to using separate channels for each specific meaning. A server performs a
+                           broadcast by passing a remoted reference to one of its items to a multicast's
                            <a href=docs/gnu/cajo/utils/Multicast.html#announce(gnu.cajo.invoke.Remote,%20int)>
-                           announce</a> method.
+                           announce</a> method.<br><br>
+
+                           The framework defines a default channel, which can be useful for spontaneous
+                           inter-networking.  To use a <b><i>Star Trek</i></b> metaphor; it could be
+                           likened to the <i>'hailing frequency'</i> for contacting new and unknown
+                           items. Extracting interface information from spontaneously discovered items
+                           is currently outside the scope of this project; unless there is community
+                           interest for its standardization. For now, a <i>suggestion</i> would be to
+                           implement a <tt>getDescription()</tt> method which would return a string,
+                           describing the features and use of the object in detail, with HTML markup
+                           allowed.
+
 
                            <h3>Receiving Multicasts</h3><br>
 
