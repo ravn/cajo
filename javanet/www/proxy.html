@@ -100,6 +100,9 @@
                            an item to support both a proxy interface to itself, and for that proxy to
                            support a graphical interface. Minimally, an item should at least support a
                            <code>String getDescription()</code> method to describe its use and features.
+                           <i>Note:</i> you can save proxies to disc for later use, possibly in a
+                           diffent VM session; however, you will need to reinitialize the proxy, each
+                           time it is deserialized.
 
                            <h3>Sending Proxies</h3><br>
 
