@@ -80,9 +80,17 @@
                            This page will stand as a living document, based on the feedback of
                            developers.  In any project, a certain collection of questions are asked
                            disproportionately often.  These deserve their own space, as they have the
-                           highest statistical probability of being very helpful.<br><br>
+                           highest statistical probability of being very helpful.<br>
 
-                           <b><u>1. Why doesn't the example work in Appletviewer?</u></b> The
+                           <ol>
+                           <li><a href=#1>Why doesn't the example work in Appletviewer?</a>
+                           <li><a href=#2>What if someone forks this code?</a>
+                           <li><a href=#3>What is a zedmob?</a>
+                           <li><a href=#4>Can I forcibly disconnect a client?</a>
+                           <li><a href=#5>Can I restrict my server only to local clients?</a>
+                           </ol>
+
+                           <a id="1"><b><u>1. Why doesn't the example work in Appletviewer?</u></b> The
                            <a href=docs/gnu/cajo/utils/CodebaseServer.html>CodebaseServer</a> tells the
                            browser to make the applet 100% of the width and height of its window.  While
                            this has been legal HTML since 1.0, the Appletviewer doesn't know what to make
@@ -91,16 +99,16 @@
                            CodebaseServer to use a fixed width and height value.  Then you will be
                            able to use the tool.<br><br>
 
-                           <b><u>2. What if someone forks this code?</u></b> A fork, i.e. an alternative
-                           development, is something I would not like to see happen, as it could divide
-                           the community. I am completely open to new ideas, and I could not envision
-                           any useful reason to do it. Most importantly, the gnu.cajo packages belong to
-                           this project, and for cajo objects to link, they must use these packages
-                           specifically. Besides, in this type of project, there is so much greater
-                           capability gained through cooperation.<br><br>
+                           <a id="2"><b><u>2. What if someone forks this code?</u></b> A fork, i.e. an
+                           alternative development, is something I would not like to see happen, as it
+                           could divide the community. I am completely open to new ideas, and I could
+                           not envision any useful reason to do it. Most importantly, the gnu.cajo
+                           packages belong to this project, and for cajo objects to link, they must use
+                           these packages specifically. Besides, in this type of project, there is so
+                           much greater capability gained through cooperation.<br><br>
 
-                           <b><u>3. What is a zedmob?</u></b> A zedmob first off, is a contraction of the
-                           two words <b><u>Z</u></b>ipp<b><u>ed</u></b>
+                           <a id="3"><b><u>3. What is a zedmob?</u></b> A zedmob first off, is a
+                           contraction of the two words <b><u>Z</u></b>ipp<b><u>ed</u></b>
                            <b><u>M</u></b>arshalled<b><u>Ob</u></b>ject. It is the standard mechanism for
                            encapsulating remote item references, serialized objects, and item proxies;
                            for transmission over the network, or storage on disc. A zedmob is
@@ -113,16 +121,37 @@
                            read from a stream, using the static zedmob methods of the
                            <a href=docs/gnu/cajo/invoke/Remote.html>Remote</a> class.<br><br>
 
-                           <b><u>4. Can I forcibly disconnect a client?</u></b> The answer is yes, but,
-                           it will take a little effort. In RMI it is possible to terminate an object's
-                           remoteness, but it will mean for <u>all</u> remote VMs connected to it. If
-                           you want to disconnect a <i>specific</i> client, you need to uniquely
+                           <a id="4"><b><u>4. Can I forcibly disconnect a client?</u></b> The answer is
+                           yes, but, it will take a little effort. In RMI it is possible to terminate an
+                           object's remoteness, but it will mean for <u>all</u> remote VMs connected to
+                           it. If you want to disconnect a <i>specific</i> client, you need to uniquely
                            remote the object reference given to that client using the
                            <a href=docs/gnu/cajo/invoke/Remote.html>Remote</a> class. Then you can
                            invoke the remote wrapper's <tt>unexportObject()</tt> method, inherited from
                            java.rmi.server.UnicastRemoteObject. This can be used to forcibly terminate
                            all remote connections to that wrapper, and even to check if any remote
-                           invocations were in progress (or pending) on it. <br><br>
+                           invocations were in progress (or pending) on it.<br><br>
+
+                           <a id="5"><b><u>5. Can I restrict my server only to local clients?</u></b>
+                           This is an intiguing question; fortunately the answer is <u>yes</u>! To make
+                           the <a href=tutorial.html#launching>example</a> server solely accessible
+                           locally, use the following startup:<br><br>
+
+                           &nbsp&nbsp&nbsp&nbsp java -jar server.jar 1111 2222 localhost localhost<br><br>
+
+                           The two port numbers, for http and rmiregistry service respectively, can be
+                           anything, even zero, to be chosen randomly at runtime. What the localhost
+                           arguments will do is require the <a href=tutorial.html#connecting>client</a>
+                           to connect specifically to the host name <i>localhost</i>, or to
+                           <i>127.0.0.1</i>. For example:<br><br>
+
+                           java -jar client.jar
+                           <u>//localhost:2222/</u> &nbsp <b>-or-</b> &nbsp <u>//127.0.0.1:2222/</u><br><br>
+
+                           This effectively restricts access to this server only to clients running
+                           locally on the machine.
+
+                           <br><br>
 
                            <div align="center">
                               <font face="Verdana, Helvetica" size="-2">
