@@ -17,7 +17,7 @@ public class Main { // General purpose server startup pattern
    public static void main(String args[]) {
       try {
 // configure the application:
-         ProxyServer.port  = args.length > 0 ? Integer.parseInt(args[0]) : 80; 
+         int httpPort      = args.length > 0 ? Integer.parseInt(args[0]) : 80; 
          int serverPort    = args.length > 1 ? Integer.parseInt(args[1]) : 1099; 
          String clientHost = args.length > 2 ? args[2] : null;
          String serverHost = args.length > 3 ? args[3] : null;
@@ -27,10 +27,12 @@ public class Main { // General purpose server startup pattern
          Multicast mc = new Multicast();
 // monitor the item, just for fun:
          item = new MonitorItem(new TestItem(), System.out);
+// start up the codebase and applet service:
+         new CodebaseServer("proxy.jar", httpPort);
 // here's the crux:
-         ProxyServer.bind(item, "main", true, mc, pl);
+         item = ItemServer.bind(item, "main", true, mc, pl);
 // multicast our startup, just for fun:
-         mc.announce(ProxyServer.defaultServer, 16);
+         mc.announce((Remote)item, 16);
 // listen for announcements, just for fun:
          mc.listen(new Invoke() {  // any announcers will receive a proxy
             public Object invoke(String method, Object args) {
@@ -44,7 +46,7 @@ public class Main { // General purpose server startup pattern
             DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL).
                format(new java.util.Date()));
          System.out.print("http on internal port\t");
-         System.out.println(ProxyServer.port);
+         System.out.println(CodebaseServer.port);
          System.out.print("internally operating on\t");
          System.out.print(Remote.getServerHost());
          System.out.print(" port ");
