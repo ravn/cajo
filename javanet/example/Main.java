@@ -34,9 +34,9 @@ public class Main { // General purpose server startup pattern
 // listen for announcements, just for fun:
          mc.listen(new Invoke() {  // any announcers will receive a proxy
             public Object invoke(String method, Object args) {
-               try { ((Multicast)args).item.invoke("proxyItem", pl); }
-               catch(Exception x) {}
-               return null;
+               try { ((Multicast)args).item.invoke("setProxy", pl); }
+               catch(Exception x) {} // if it supports the method
+               return null; // continue listening forever...
             }
          });
 // lots of info, just for fun:

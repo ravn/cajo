@@ -8,20 +8,17 @@ import gnu.cajo.utils.BaseItem;
 public class TestItem extends BaseItem {
    Invoke proxy;
    public TestItem() {
-      thread = new Thread( // the item's main processing thread
-         new MainThread() {
-            public void run() {
-               while (!thread.isInterrupted()) try { // excellent practice!
-                  synchronized(thread) { thread.wait(); }
-                  thread.sleep(500);
-                  System.out.print("\nProxy async call, result = ");
-                  System.out.println(
-                     proxy.invoke("callback", "Goodbye from server!"));
-               } catch(Exception x) { x.printStackTrace(System.err); }
-            }
+      runnable = new MainThread() { // the item's main processing thread
+         public void run() {
+            while (!thread.isInterrupted()) try { // excellent practice!
+               synchronized(thread) { thread.wait(); }
+               thread.sleep(500);
+               System.out.print("\nProxy async call, result = ");
+               System.out.println(
+                  proxy.invoke("callback", "Goodbye from server!"));
+            } catch(Exception x) { x.printStackTrace(System.err); }
          }
-      );
-      thread.start(); // it does nothing until started.
+      };
    }
    // All of the item's public methods are remotely callable, just as if the
    // object were local.  Below is the interface created by this object:
