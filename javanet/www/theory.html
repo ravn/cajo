@@ -150,34 +150,41 @@
                            use the same TCP port, therefore all that is required for a client to obtain
                            a reference to the item is the host name and port of the item server, and
                            the name under which the item is bound in the rmiregistry. Cannonically,
-                           the default item for any server is bound under the name "<i>main</i>".<br><br>
+                           the default item for any server is bound under the name "<i>main</i>".
+                           Obtaining a reference to a <u>statically</u> bound remote item is typically
+                           accomplished using the static
+                           <a href=docs/gnu/cajo/invoke/Remote.html#getItem(java.lang.String)>getItem</a>
+                           method of the Remote class.<br><br>
 
                            The second method to obtain a reference to a remote item is done using the
                            <a href=docs/gnu/cajo/utils/Multicast.html>Multicast</a> class. Unlike the
-                           previous method which uses TCP to obtain the reference, this technique uses
-                           UDP.  Instead of needing to know the server's TCP/IP address and port number,
-                           the client needs to know the server's UDP/IP address and port number.  The
-                           advantage is that the server can pick its UDP address, and it is independent
-                           of its TCP address. Also, a server can use multiple Multicast objects on
-                           multiple UDP/IP addresses, if needed. A server broadcasts a remote reference
-                           to an item by calling the announce method of ItemServer.  This will send the
-                           reference to all clients listening on the UDP address/port pair. Items listen
-                           for these announcements using the listen method of Multicast. This allows
-                           items to dynamically link, to form item networks of functionality.
+                           previous method which uses TCP/IP to obtain the reference, this technique
+                           uses UDP/IP.  Instead of needing to know the server's TCP address and port
+                           number, the client needs to know the server's UDP address and port number.
+                           The advantage is that server can pick their UDP addresses, and they are
+                           independent of their TCP address. Also, a server can use multiple Multicast
+                           objects, on multiple UDP addresses, if needed. A server broadcasts a remote
+                           reference to an item by calling the
+                           <a href=docs/gnu/cajo/utils/Multicast.html#announce(gnu.cajo.invoke.Remote,%20int)>announce</a>
+                           method of ItemServer.  This will send the reference to all clients listening
+                           on the UDP address/port pair. Items listen for these announcements using the
+                           <a href=docs/gnu/cajo/utils/Multicast.html#listen(gnu.cajo.invoke.Invoke)>listen</a>
+                           method of Multicast. This allows items to link <u>dynamically</u>, to form item
+                           networks of functionality.
 
                            <h3>Mobile Code:</h3><br>
 
-                           An item can send mobile code, complex objects, and proxy items to clients
+                           An item can send mobile code, i.e. complex objects, and proxy items to clients
                            using the <a href=docs/gnu/cajo/utils/CodebaseServer.html>CodebaseServer</a>
-                           class.  CodebaseServer will create a specialized http server on the specified
+                           class.  CodebaseServer will create a specialized http server on the designated
                            TCP port, and serve the specified jar file containing the class definitions
-                           needed by the client, along with any other resources needed by proxy items.
+                           needed by the client, along with any other resources needed by the proxies.
                            These resource items are typically, images and string tables.  By default a
-                           client will not accept mobile code. This is typically enabled by calling the
+                           client <u>will not</u> accept mobile code. This is typically enabled by calling the
                            <a href=docs/gnu/cajo/utils/ItemServer.html#acceptProxies()>acceptProxies</a>
-                           method of the ItemServer class.  This will install an RMISecurityManager, to
-                           protect the client hardware and files, effectively creating a applet-like
-                           sandbox around the incoming code.<br><br>
+                           method of the ItemServer class.  This will install an RMISecurityManager to
+                           accept the code, and protect the client hardware and files, effectively
+                           creating an applet-like sandbox around the incoming code.<br><br>
 
                            <div align="center">
                               <font face="Verdana, Helvetica" size="-2">
