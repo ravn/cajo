@@ -103,18 +103,19 @@
                            Next it will move on to
                            <a href=#building>building</a> and
                            <a href=#launching>launching</a> the example server,
-                           and their related options.  It will conclude by describing the ways to
-                           <a href=#connecting>connect</a> to the server, which should
-                           provide a fairly complete introduction to the use of the project.<br><br>
+                           and their related options.  It will conclude by describing the ways of
+                           <a href=#connecting>connecting</a> to the server. This should hopefully
+                           provide a fairly complete introduction to the use of the framework.<br><br>
 
                            The purpose of the example is to illustrate the structure of building servers,
                            and the feature set of the architecture.  It should provide you with enough
                            insight to build and deploy your own servers, without any additional research
                            on your part. However, if you are curious, you might want to visit the
                            <a href=theory.html>theory</a> page. Its purpose is to explain how the
-                           example actually uses the framework to perform its functions.<br><br>
+                           example actually uses the framework to perform its functions.
 
-                           <a id="directory"></a><b>Directory Structure:</b><br><br>
+                           <a id="directory"></a><h3>Directory Structure:</h3><br>
+
                            The project is organized into the following directories;<b><tt><pre>
 /root                // this is the project directory
     /example         // this is the example of the project
@@ -178,9 +179,9 @@
                            does not even exist</u> in the source repository.  You have to make this
                            directory yourself. Then when you run the documentation generating batch
                            file, it will create the files on your drive. (Don't worry, the documentation
-                           is not huge, about 370kB)<br><br>
+                           is not huge, about 370kB.)
 
-                           <a id="building"></a><b>Building the example:</b><br><br>
+                           <a id="building"></a><h3>Building the example:</h3><br>
 
                            There are three fundamental ways to build the example, represented by the
                            three batch files; make1.bat, make2.bat, and make3.bat. Each builds the
@@ -217,9 +218,10 @@
                            means you can modify the proxy, or proxies, recompile their jar file, and
                            overwrite the proxy.jar file, all while the server is still running.  All
                            subsequent clients will automatically receive the updated functionality, and
-                           the server need never be shut down!<br><br>
+                           the server need never be shut down!
                            
-                           <a id="launching"></a><b>Launching the example:</b><br><br>
+                           <a id="launching"></a><h3>Launching the example:</h3><br>
+
                            Once you have built the example, launching it can be as simple as executing
                            the following command:<br>
                            <pre>    <code>java -jar server.jar</code></pre>
@@ -304,9 +306,10 @@
                            Here a client connecting on port 4321 of the public address guru.org actually
                            connects to some internal machine at 100.100.100.100 on its port 1234. In this
                            case, if none of this makes any sense, it <u>definitely</u> doesn't apply to
-                           you.<br><br>
+                           you.
 
-                           <a id="connecting"></a><b>Connecting to the server:</b><br><br>
+                           <a id="connecting"></a><h3>Connecting to the server:</h3><br>
+
                            Connecting to this example is generally done using a browser.  You will need
                            to have the Java Plug-In installed, if you don't, the server will cause your
                            browser prompt you if it can install it automatically. This is done to make
@@ -321,9 +324,10 @@
                            <pre>    <code>http://yourserver:8080</code></pre>
                            Where 8080 was the port on which http service was started.  The server
                            will correctly configure proxy communications settings even when the client
-                           is operating behind a NAT router.<br><br>
+                           is operating behind a NAT router.
 
-                           <u><b>Conclusion:</b></u><br><br>
+                           <h3>Conclusion:</h3><br>
+
                            This is just the proverbial tip of the iceberg, but it should get you started.
                            If you have further questions, there are forums at this
                            <a href=https://cajo.dev.java.net/servlets/ProjectForumView>project</a>,
