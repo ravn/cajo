@@ -68,8 +68,8 @@ public final class ItemProxy implements java.io.Serializable {
                      try { args = Remote.invoke(client, method, args); }
                      catch(Exception x) { args = x; }
                      Remote.invoke(item, "setData", args);
-                  }
-                  Thread.sleep(interval);
+                     Thread.sleep(interval / 2);
+                  } else Thread.sleep(interval);
                }
             } catch(Exception x) {
                thread = null;
