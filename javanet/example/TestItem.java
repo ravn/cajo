@@ -1,12 +1,12 @@
 package example;
 
-import gnu.cajo.invoke.Invoke;
+import gnu.cajo.invoke.Remote;
 import gnu.cajo.utils.BaseItem;
 
 // Example server item.  It doesn't do much, except illustrate one way to
 // construct them.
 public class TestItem extends BaseItem {
-   Invoke proxy;
+   Object proxy;
    public TestItem() {
       runnable = new MainThread() { // the item's main processing thread
          public void run() {
@@ -15,14 +15,14 @@ public class TestItem extends BaseItem {
                thread.sleep(500);
                System.out.print("\nProxy async call, result = ");
                System.out.println(
-                  proxy.invoke("callback", "Goodbye from server!"));
+                  Remote.invoke(proxy, "callback", "Goodbye from server!"));
             } catch(Exception x) { x.printStackTrace(System.err); }
          }
       };
    }
    // All of the item's public methods are remotely callable, just as if the
    // object were local.  Below is the interface created by this object:
-   public String callback(Invoke proxy, String message) {
+   public String callback(Object proxy, String message) {
       this.proxy = proxy;
       System.out.print("\nProxy async callback from ");
       try { System.out.print(java.rmi.server.RemoteServer.getClientHost()); }
