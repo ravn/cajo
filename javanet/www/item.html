@@ -146,23 +146,25 @@
 
                            Consider for example:
 <code><pre>
+   // assume member Object foo either local, remote, or a proxy...
+
    String toString() {
       // no arguments, object return ...
-      return (String)foo.invoke("toString", null);
+      return (String)Remote.invoke(foo, "toString", null);
    }
    boolean equals(Object o) {
       // single argument, primitive return...
-      return ((Boolean)foo.invoke("equals", o)).booleanValue());
+      return ((Boolean)Remote.invoke(foo, "equals", o)).booleanValue());
    }
    void someMethod(String a, String b, String c) {
       // multiple arguments, no return...
-      foo.invoke("someMethod", new Object{} { a, b, c });
+      Remote.invoke(foo, "someMethod", new Object[] { a, b, c });
    }
 </pre></code>
                            Object construction can be abstracted similarly:
 <code><pre>
    void construct() {
-      // when the item is local:
+      // when the object is local:
       foo = new Foo(...);
    }
    void construct() {
@@ -184,7 +186,7 @@
    if (foo instanceof RemoteInvoke) {
       // foo is a remote item ...
    } else {
-      // foo is a local item ...
+      // foo is a local object or proxy ...
    }
 </pre></code>
                            This is the sole purpose of the
