@@ -78,9 +78,11 @@
                            items. Extracting interface information from spontaneously discovered items
                            is currently application specific; unless there is a strong community
                            interest for its standardization. An official <i>suggestion</i> would be
-                           to implement a <code>getDescription()</code> method, which would return a
-                           string, describing the features and use of the object in detail, with HTML
-                           markup allowed.
+                           for items to implement a <code>String getDescription()</code> method, which
+                           would return a description of the features and use of the object in detail,
+                           with HTML markup allowed. Ideally, items would also implement the
+                           <code>getProxy()</code> method, to provide a local interface, which would in
+                           turn provide a graphical user interface to the object.
 
 
                            <h3>Receiving Multicasts</h3><br>
