@@ -36,9 +36,9 @@ public class Main { // General purpose server startup pattern
 // accept proxies, just for fun:
          ItemServer.acceptProxies();
 // listen for announcements, just for fun:
-         mc.listen(new Invoke() {  // any announcers will receive a proxy
-            public Object invoke(String method, Object args) {
-               try { ((Multicast)args).item.invoke("setProxy", pl); }
+         mc.listen(new Object() {  // any announcers will receive a proxy
+            public Object multicast(Multicast m) {
+               try { m.item.invoke("setProxy", pl); }
                catch(Exception x) {} // if it supports the method
                return null; // continue listening forever...
             }
