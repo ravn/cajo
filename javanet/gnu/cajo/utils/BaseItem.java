@@ -83,17 +83,15 @@ public class BaseItem {
    /**
     * This remotely invokable method is called by remote clients to install
     * their proxies in this VM. This invocation will only succeed if
-    * the boolean acceptProxies argument was true when it, or any of the
-    * server's items, were bound with the {@link ItemServer ItemServer}.
-    * The received proxy's init method will be invoked with a reference to
-    * itself, remoted in the context of this VM.  This is done to initialize
+    * the acceptProxies method of the {@link ItemServer ItemServer} has been
+    * called. The received proxy's init method will be invoked with a reference
+    * to itself, remoted in the context of this VM.  This is done to initialize
     * the proxy, and provide it with a handle to pass to other remote items,
-    * on which they can contact this proxy.  This remote reference will also be
-    * returned to the caller, providing an interface on which to asynchronously
-    * call its proxy. Internally it will invoke the proxy's init method,
-    * passing in the remote reference to itself, to prepare it for operation.
-    * If the initialization returns an AWT component, it will be displayed at
-    * automatically.
+    * on which they can contact this proxy. If the initialization returns an
+    * AWT component, it will be displayed automatically. The remote proxy
+    * reference will also be returned to the caller, providing an interface on
+    * which to asynchronously call its proxy.
+    * 
     * @param proxy The proxy to run in this VM.
     * @return A reference to the proxy remoted within this context.
     * @throws ClassNotFoundException If the item does not accept proxies.
