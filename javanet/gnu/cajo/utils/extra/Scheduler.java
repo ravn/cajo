@@ -100,9 +100,6 @@ import gnu.cajo.invoke.Remote;
 
 public final class Scheduler implements Serializable {
    private transient Thread thread;
-   private static final IllegalArgumentException
-      NOPE = new IllegalArgumentException("task table index too large"),
-      FULL = new IllegalArgumentException("task table currently full");
    private int syncFlags, soonFlags, wakeFlags;
    private Object list[] = new Object[32];
    private void readObject(ObjectInputStream in)
@@ -202,7 +199,7 @@ public final class Scheduler implements Serializable {
             return new Integer(slot);
          }
       }
-      throw FULL;
+      throw new IllegalArgumentException("task table currently full");
    }
    /**
     * This method sets the synchronous execution flag for a task. The flag
@@ -220,7 +217,7 @@ public final class Scheduler implements Serializable {
             setEnabled(true);
             return Boolean.TRUE;
          } else return Boolean.FALSE;
-      } else throw NOPE;
+      } else throw new IllegalArgumentException("task table index too large");
    }
    /**
     * This method sets the triggered execution flag for a task.  It will be
@@ -237,7 +234,7 @@ public final class Scheduler implements Serializable {
             setEnabled(true);
             return Boolean.TRUE;
          } else return Boolean.FALSE;
-      } else throw NOPE;
+      } else throw new IllegalArgumentException("task table index too large");
    }
    /**
     * This method sets the asynchronous execution flag for a task. It will
@@ -256,7 +253,7 @@ public final class Scheduler implements Serializable {
             setEnabled(true);
             return Boolean.TRUE;
          } else return Boolean.FALSE;
-      } else throw NOPE;
+      } else throw new IllegalArgumentException("task table index too large");
    }
    /**
     * This method clears all scheduling flags for indicated task.  The task
@@ -272,7 +269,7 @@ public final class Scheduler implements Serializable {
          syncFlags &= mask;
          soonFlags &= mask;
          wakeFlags &= mask;
-      } else throw NOPE;
+      } else throw new IllegalArgumentException("task table index too large");
    }
    /**
     * This method clears all scheduling flags for the indicated task, and
@@ -284,7 +281,7 @@ public final class Scheduler implements Serializable {
       if (task.intValue() < 32) {
          stop(task);
          list[task.intValue()] = null;
-      } else throw NOPE;
+      } else throw new IllegalArgumentException("task table index too large");
    }
    /**
     * The purpose of this function is to reduce event-driven task latency by
