@@ -133,7 +133,9 @@
                            Both the proxy, and its serving item, can in turn give their remote
                            references to other items.  As a result, an item calling another item does
                            not know, or need even care, if it is invoking a local item, a remote item,
-                           a local proxy, or a remote proxy.<br><br>
+                           a local proxy, or a remote proxy. Ideally, every remote object should support
+                           an optional proxy interface, to optimize performance, preferably supporting
+                           a graphical interface to the item as well.<br><br>
 
                            The next section <a href=multicast.html>multicast</a> will show how items
                            can send, or receive, remote item references using a method analogous to a
