@@ -1,6 +1,8 @@
 package gnu.cajo.utils;
 
+import java.awt.*;
 import gnu.cajo.invoke.*;
+import java.io.Serializable;
 
 /*
  * Abstract Proxy Item Base Class
@@ -26,23 +28,15 @@ import gnu.cajo.invoke.*;
 
 /**
  * A standard abstract base class for proxy objects.  Proxies are remote
- * interfaces to server items.  They are intended to offload routine
+ * object interfaces to server items.  They are intended to offload routine
  * processing.  They differ from server items in that they are sent to remote
  * VMs to operate, and are often not even instantiated in the runtime of the
- * host VM.
+ * server's VM.
  * 
  * @version 1.0, 01-Nov-99 Initial release
  * @author John Catherino
  */
-public abstract class BaseProxy implements Invoke, Runnable {
-   /**
-    * The processing thread of the proxy object, it will be started
-    * automatically upon arrival at the host when the init method is invoked.
-    * Subclasses should periodically check, or loop on its
-    * {@link java.lang.Thread#isInterrupted isInterrupted} method, and
-    * perform an orderly shutdown if it becomes true.
-    */
-   protected transient Thread thread;
+public abstract class BaseProxy implements Invoke {
    /**
     * A remote reference to the proxy itself, which it can send to its server,
     * or other remote VMs on which they can asynchronously callback.
@@ -55,7 +49,23 @@ public abstract class BaseProxy implements Invoke, Runnable {
     */
    protected RemoteInvoke server;
    /**
-    * The path & file name of the resource bundle in the proxy's jar file.
+    * A reference to the proxy's processing code.  If non-null, it will be
+    * started automatically upon arrival at the host.  Its thread can be
+    * accessed through the thread member.
+    */
+   protected Runnable runnable;
+   /**
+    * The processing thread of the proxy object, it will be started
+    * automatically upon arrival at the host when the init method is invoked.
+    */
+   public transient Thread thread;
+   /**
+    * A reference to the proxy's graphical user interface, if any.  It will be
+    * returned to the client as a result of its initialization invocation.
+    */
+   public Container container;
+   /**
+    * The path/filename of the resource bundle in the proxy's jar file.
     * It will be used to localize any displayed strings to the language of
     * the proxy recipient, as necessary, and when supplied.  It is public
     * since its value is typically assigned by a builder program.
@@ -70,24 +80,100 @@ public abstract class BaseProxy implements Invoke, Runnable {
     */
    public String strings[];
    /**
-    * Nothing is performed in the constructor, as construction code is
-    * typically performed by a builder application.
+    * The main processing thread of this Item.  An item can be either entirely,
+    * event driven, i.e. executing only when its methods are being invoked,
+    * or can also have a thread of its own. If non-null, it will be started
+    * upon its arrival at the host via the client's proxy inialization
+    * invocation.<br><br>
+    * This is an an inner class of BaseProxy, to allow its implementations
+    * access to the item's private and protected members and methods.
+    * This is critical because <b>all</b> public methods of BaseProxy can be
+    * invoked by remote objects, just like local objects.
+    */
+   public abstract class MainThread implements Runnable, Serializable {
+      /**
+       * Nothing is performed in the constructor. Construction and
+       * configuration are generally performed by a builder application.
+       */
+      public MainThread() {}
+      /**
+       * The run method is exectued by the thread created for the BaseProxy
+       * at its initialization at the client, and runs until it returns.
+       */
+      public abstract void run();
+   }
+   /**
+    * A standard base class for graphical proxy objects. A graphical proxy
+    * provides a user interface to itself which can be displayed at the
+    * receiving VM. It is implemented as an inner class of BaseProxy, to allow
+    * its subclass implementations access to its outer item's private and
+    * protected members and methods. This is critical because <b>all</b> public
+    * methods of BaseProxy can be invoked by remote objects, just like with
+    * local objects.
+    * 
+    * @version 1.0, 01-Nov-99 Initial release
+    * @author John Catherino
+    */
+   public class Panel extends Container {
+      /**
+       * Nothing is performed in the constructor. Construction and
+       * configuration are generally performed by a builder application.
+       */
+      public Panel() {}
+      /**
+       * The update method is overridden to directly invoke the paint method.
+       * It makes drawing faster, and cleaner, but also means that the panel
+       * background will not be cleared on a size change.
+       */
+      public final void update(Graphics g) { paint(g); }
+      /**
+       * The paint method is overridden to directly paint its components.
+       * It makes drawing faster, and cleaner, but also means that the panel
+       * has no default appearance.
+       */
+      public final void paint(Graphics  g) { paintComponents(g); }
+      /**
+       * This method simply returns the actual size of the component.  This
+       * method returns the result of the getSize() method meaning that
+       * subclasses should set the panel size <i>before</i> sending it to the
+       * host.
+       */
+      public final Dimension getPreferredSize() { return getSize(); }
+   }
+   /**
+    * Nothing is performed in the constructor. Construction and configuration
+    * of the proxy are generally performed by a builder application.
     */
    public BaseProxy() {}
    /**
-    * The init method is invoked by the hosting VM on arrival.  It will first
-    * load the localized strings based on the locale of the receiving host.
-    * Next it will start the processing thread of the proxy.
-    * @param remoteRef A reference to this proxy remoted within the context
-    * of the receiving host, on its preferred ports and network interface.
-    * @throws IllegalStateException If the init method is called more than
-    * once.
-    * @throws ClassCastException If the reference provided is not of type
-    * {@link gnu.cajo.invoke.Remote Remote}.
+    * This function may be called reentrantly, so critical methods <i>must</i>
+    * be synchronized. It will invoke the specified method with the
+    * provided arguments, if any, using the Java reflection mechanism.<br><br>
+    * It is expected to be invoked the first time from the proxy server, to
+    * install a remote reference to itself.  Next it is expected to be invoked
+    * by the receiving host VM. That invocation will first load all of the
+    * localized strings, based on the locale of the receiving host, when
+    * available. Next it will start the processing thread of the proxy. Finally
+    * invocation will return the proxy's graphical component, if any.<br><br>
+    * After this, all subsequent invocations are directed to the proxy's public
+    * method collection.
+    * @param  method The method to invoke in this item.
+    * @param args The arguments to provide to the method for its invocation.
+    * @return The sychronous data, if any, resulting from the invocation.
+    * @throws java.rmi.RemoteException For network communication related
+    * reasons.
+    * @throws IllegalArgumentException If the method argument is null.
+    * @throws NoSuchMethodException If no matching method can be found.
+    * @throws Exception If the method rejects the invocation, for any
+    * application specific reason.
     */
-   public final void init(Invoke remoteRef) {
+   public final Object invoke(String method, Object args) throws Exception {
+      if (server == null) {
+         server = (RemoteInvoke)args;
+         return null;
+      }
       if (remoteThis == null) {
-         remoteThis = (Remote)remoteRef;
+         remoteThis = (Remote)args;
          if (bundle != null) {
             java.util.ResourceBundle rb =
                java.util.ResourceBundle.getBundle(bundle);
@@ -98,30 +184,11 @@ public abstract class BaseProxy implements Invoke, Runnable {
                }
             }
          }
-      } else throw new IllegalStateException("Can't reinitialize proxy");
-      thread = new Thread(this);
-      thread.start();
-   }
-   /**
-    * This function may be called reentrantly, so critical methods <i>must</i>
-    * be synchronized. It will invoke the specified method with the
-    * provided arguments, if any, using the Java reflection mechanism.
-    * @param  method The method to invoke in this item.
-    * @param args The arguments to provide to the method for its invocation.
-    * @return The sychronous data, if any, resulting from the invocation.
-    * @throws java.rmi.RemoteException For network communication related
-    * reasons.
-    * @throws IllegalArgumentException If the method argument is null.
-    * @throws NoSuchMethodException If no matching method can be found.
-    * @throws Exception If the method rejects the invocation, for any
-    * application specific reason.
-    * @throws ClassCastException If the first invocation is not with a
-    * remote reference to the proxy's server item.
-    */
-   public final Object invoke(String method, Object args) throws Exception {
-      if (server == null) {
-         server = (RemoteInvoke)args;
-         return null;
+         if (runnable != null) {
+            thread = new java.lang.Thread(runnable);
+            thread.start();
+         }
+         return container;
       }
       if (method == null)
          throw new IllegalArgumentException("Method cannot be null");
@@ -138,11 +205,4 @@ public abstract class BaseProxy implements Invoke, Runnable {
       }
       return getClass().getMethod(method, types).invoke(this, (Object[])args);
    }
-   /**
-    * The processing thread of the proxy.  It will be started automatically
-    * upon arrival of the proxy at the hosting VM. Subclasses should monitor
-    * its {@link java.lang.Thread#isInterrupted isInterrupted} method, and
-    * perform an orderly shutdown if it becomes true.
-    */
-   public abstract void run();
-}
+}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           

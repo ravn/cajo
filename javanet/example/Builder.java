@@ -10,8 +10,9 @@ import java.awt.*;
 // You don't HAVE TO use a ProxyLoader, you could instantiate in the server.
 // You don't HAVE TO use Internationalization, Strings could be hard-coded.
 // Also note:
-// If you do instantiate the proxy in the server, wrap it in a ZippedProxy.
-// You can also use a ProxyLoader to construct the proxy at the client.
+// If you do instantiate the proxy in the server, you should wrap it in a
+// ZippedProxy. On the other hand, you can also use a ProxyLoader to construct
+// the proxy at the client, as opposed to deserializing it.
 
 public class Builder {
    // This class is NOT included in the proxy.jar file.
@@ -31,9 +32,9 @@ public class Builder {
          // instantiate a proxy object:
          TestProxy proxy = new TestProxy();
          // layout components realtive to each other:
-         proxy.setLayout(new TileLayout());
-         // configure the proxy:
-         proxy.setSize(640, 480);
+         proxy.container.setLayout(new TileLayout());
+         // set a default gui window size:
+         proxy.container.setSize(640, 480);
 
          proxy.strings = new String[] {
             "proxy_arrived", "proxy_started", "call_server",
@@ -76,65 +77,44 @@ public class Builder {
          proxy.d.setBackground(Color.green);
          proxy.d.border = true;
                
-/*  An interesting diversion, in moveable, resizable gadgets ...
-         TextBox t = new TextBox();
-         t.indent = 3;
-         t.border = true;
-         Gadget g = new Gadget();
-         g.moveable = true;
-         g.resizeable = true;
-         g.setLayout(new BorderLayout());
-         g.addMouseListener(g);
-         g.addMouseMotionListener(g);
-         g.setBounds(20, 20, 100, 25);
-         g.add(t);
-         t.object = g;
-         proxy.add(g, new Object[] {
-            new Integer(
-               TileLayout.NOINDENT  + TileLayout.NOOFFSET +
-               TileLayout.FULLWIDTH + TileLayout.FULLHEIGHT
-            ), g
-         });
-//*/         
-         
          // load up the panel, front to back z-order:
-         proxy.add(s, new Object[] {
+         proxy.container.add(s, new Object[] {
             new Integer(
                TileLayout.CENTERINDENT  + TileLayout.CENTEROFFSET +
                TileLayout.PREFWIDTH + TileLayout.PREFHEIGHT
             ), proxy.d
          });
-         proxy.add(proxy.a, new Object[] {
+         proxy.container.add(proxy.a, new Object[] {
             new Integer( 
                TileLayout.NOINDENT  + TileLayout.TOPOFFSET +
                TileLayout.PREFWIDTH + TileLayout.PREFHEIGHT
             ), proxy.e
          });
-         proxy.add(proxy.b, new Object[] {
+         proxy.container.add(proxy.b, new Object[] {
             new Integer( 
                TileLayout.NOINDENT  + TileLayout.BOTTOMOFFSET +
                TileLayout.PROPWIDTH + TileLayout.PREFHEIGHT
             ), proxy.e, new Rectangle(0, 0, 4000, 0)
          });
-         proxy.add(proxy.c, new Object[] {
+         proxy.container.add(proxy.c, new Object[] {
             new Integer( 
                TileLayout.RIGHTINDENT + TileLayout.NOOFFSET +
                TileLayout.PREFWIDTH   + TileLayout.PREFHEIGHT
             ), proxy.d
          });
-         proxy.add(proxy.e, new Object[] {
+         proxy.container.add(proxy.e, new Object[] {
             new Integer( 
                TileLayout.LEFTINDENT + TileLayout.NOOFFSET +
                TileLayout.PREFWIDTH  + TileLayout.PREFHEIGHT
             ), proxy.d
          });
-         proxy.add(proxy.d, new Object[] {
+         proxy.container.add(proxy.d, new Object[] {
             new Integer(
                TileLayout.CENTERINDENT + TileLayout.CENTEROFFSET +
                TileLayout.PREFWIDTH    + TileLayout.PREFHEIGHT
             )
          });
-         proxy.add(w, new Object[] {
+         proxy.container.add(w, new Object[] {
             new Integer( 
                TileLayout.NOINDENT  + TileLayout.NOOFFSET +
                TileLayout.FULLWIDTH + TileLayout.FULLHEIGHT

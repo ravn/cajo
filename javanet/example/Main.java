@@ -32,7 +32,7 @@ public class Main { // General purpose server startup pattern
 // multicast our startup, just for fun:
          mc.announce(ProxyServer.defaultServer, 16);
 // listen for announcements, just for fun:
-         mc.listen(new Invoke() {  // any announcers can have a proxy too
+         mc.listen(new Invoke() {  // any announcers will receive a proxy
             public Object invoke(String method, Object args) {
                try { ((Multicast)args).item.invoke("proxyItem", pl); }
                catch(Exception x) {}

@@ -64,9 +64,9 @@ public final class ProxyLoader implements Invoke {
    /**
     * This function may be called reentrantly, so the inner item <i>must</i>
     * synchronize its critical sections as necessary.  It simply forwards the
-    * call to the proxy's invoke method.  The first is done by the server to
-    * provide a remote reference for proxy callbacks.  The second invocation
-    * is by the client to provide a remoted reference to the proxy to give
+    * call to the proxy's invoke method.  The first is invocation is by the
+    * server, to provide a remote reference for proxy callbacks.  The second
+    * is by the client, to provide a remoted reference to the proxy to give
     * out for asynchronous callbacks.  All subsequent calls are routed directly
     * to the created proxy itself.
     * @param  method The method to invoke on the internal item.
@@ -92,8 +92,7 @@ public final class ProxyLoader implements Invoke {
             is.close();
          } else proxy = (Invoke)Class.forName(handle).newInstance();
          proxy.invoke(null, server);
-         proxy.invoke(method, args);
-         return proxy;
+         return proxy.invoke(method, args);
       } else return ((Invoke)proxy).invoke(method, args);
    }
    /**

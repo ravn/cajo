@@ -4,7 +4,7 @@ import gnu.cajo.invoke.*;
 import java.rmi.MarshalledObject;
 
 /*
- * Abstract Server Item Base Class
+ * Server Item Base Class
  *
  * For issues or suggestions mailto:cajo@dev.java.net
  *
@@ -26,32 +26,64 @@ import java.rmi.MarshalledObject;
  */
 
 /**
- * A potentially standard abstract base class for server objects.  Server
- * objects differ from proxy objects in that they never leave their host
- * VM, only remote references to them.
+ * A standard base class for server items.  Server items differ from proxy
+ * items in that they never leave their host VM.
  * 
  * @version 1.0, 01-Nov-99 Initial release
  * @author John Catherino
  */
-public abstract class BaseItem implements Invoke, Runnable {
+public class BaseItem implements Invoke {
    /**
     * A reference to the proxy served by this item.  It is assigned by the
-    * ProxyServer during its {@link ProxyServer#bind bind} operation.
+    * ProxyServer during its {@link ProxyServer#bind bind} operation. It is
+    * null if the item does not have a proxy interface.
     */
    protected MarshalledObject mob;
    /**
-    * A reference to the item's processing thread.  It is started automatically
-    * on construction.  It can be interrupted, to signal the item for an
-    * orderly shutdown.
+    * A reference to the item's processing thread. It can be
+    * {@link java.lang.Thread#interrupted interrupted}, to signal the item to
+    * perform an orderly shutdown.
     */
    public Thread thread;
    /**
-    * The constructor simply starts up the item's processing thread.
+    * The main processing thread of this Item.  An item can be either entirely,
+    * event driven, i.e. executing only when its methods are being invoked,
+    * or can have a thread of its own.  When the BaseItem is constructed,
+    * if its <code>thread</code> argument is non-null, the thread will be
+    * instantiated and started.  It is highly recommended that it loop on the
+    * BaseItem's thread member's {@link java.lang.Thread#isInterrupted
+    * isInterrupted} method.  Either the item, or its hosting application would
+    * invoke {@link java.lang.Thread#interrupt interrupt} on the reference, to
+    * signal that the item should perform an orderly shutdown.<br><br>
+    * This is an an inner class of BaseItem, to allow its implementations
+    * access to its item's private and protected members and methods.
+    * This is critical because <b>all</b> public methods of BaseItem can be
+    * invoked by remote objects, just as for local objects.
     */
-   public BaseItem() {
-      thread = new Thread(this);
-      thread.start();
+   public abstract class MainThread implements Runnable {
+      /**
+       * The constructor performs no function, as the class is abstract.
+       * These details are left to application specific subclasses.
+       */
+      public MainThread() {}
+      /**
+       * The run method is exectued by the Thread created for the BaseItem,
+       * and runs until it returns.  It typically loops, and should use the
+       * BaseItem's thread member, which represents this thread, to see if
+       * its {@link java.lang.Thread#isInterrupted isInterrupted} method
+       * returns true.  If so, this indicates that the item is being taken
+       * offline, and should close out any of its critical resources in an
+       * orderly fashion, and exit the loop. This would be done by the server,
+       * calling {@link java.lang.Thread#interrupt interrupt} on the item's
+       * public thread member.
+       */
+      public abstract void run();
    }
+   /**
+    * The constructor does nothing, server item configuration is be done by
+    * application specific subclasses.
+    */
+   public BaseItem() {}
    /**
     * This method is called by remote clients to install a proxy in this VM.
     * This invocation will only succeed if acceptProxies was true when it
@@ -71,10 +103,11 @@ public abstract class BaseItem implements Invoke, Runnable {
       return ref;
    }
    /**
-    * This method is called by the remote clients, to request the proxy
-    * object through which to interface to this item.
+    * This method is called by the remote clients, to request the item's
+    * proxy item, if it supports one.
     * @return A reference to the proxy serving this item, encased in a
-    * {@link java.rmi.MarshalledObject MarshalledObject}
+    * {@link java.rmi.MarshalledObject MarshalledObject}, or null, if the
+    * item does not have a proxy interface.
     */
    public final MarshalledObject getProxy() { return mob; }
    /**
@@ -117,11 +150,4 @@ public abstract class BaseItem implements Invoke, Runnable {
       }
       return getClass().getMethod(method, types).invoke(this, (Object[])args);
    }
-   /**
-    * The processing thread of the item.  It will be started automatically
-    * construction of the object.  Subclasses should monitor its
-    * {@link java.lang.Thread#isInterrupted isInterrupted} method, and
-    * perform an orderly shutdown if it becomes true.
-    */
-   public abstract void run();
 }
