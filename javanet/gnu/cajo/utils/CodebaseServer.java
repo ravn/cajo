@@ -66,8 +66,6 @@ public final class CodebaseServer {
          "<META NAME=\"copyright\" content=\"Copyright ©1999 by John Catherino\"/>\r\n" +
          "<META NAME=\"author\" content=\"John Catherino\"/>\r\n" +
          "<META NAME=\"generator\" content=\"ProxyServer&#153\"/>\r\n" +
-         "<LINK REL=\"shortcut icon\" HREF=\"http://www.java.com/favicon.ico\" TYPE=\"image/x-icon\"/>\r\n" +
-         "<LINK REL=\"icon\" HREF=\"http://www.java.com/favicon.ico\" TYPE=\"image/x-icon\"/>\r\n" +
          "</HEAD><BODY leftmargin=0 topmargin=0 marginheight=0 marginwidth=0 rightmargin=0>\r\n" +
          "<CENTER><OBJECT classid = \"clsid:8AD9C840-044E-11D1-B3E9-00805F499D93\"\r\n" +
          "WIDTH = 100% HEIGHT = 100%\r\n" +
