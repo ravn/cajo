@@ -113,11 +113,11 @@
                            invoke implementation of the Remote class uses a Java technique called
                            <i>reflection</i> whereby it finds the public method of its member object
                            matching the name provided in the remote call, accepting arguments
-                           of exactly the type, and in the exact order, provided by the caller.  If
-                           there is a match, it will invoke that method on the item, and return the
-                           result if any. If no matching method can be found however, in method name
-                           <u>and</u> argument type/order, the invocation will result in a
-                           <code>NoSuchMethodException</code> being thrown at the caller.<br><br>
+                           of the type, and in the order, provided by the caller.  If there is a match,
+                           it will invoke that method on the item, and return the result if any. If no
+                           matching method can be found however, in method name <u>and</u> argument
+                           order, the invocation will result in a <code>NoSuchMethodException</code>
+                           being thrown at the caller.<br><br>
 
                            Item objects are free to implement any public, in this case meaning remotely
                            callable, methods of any type. The only requirement is that the calling
