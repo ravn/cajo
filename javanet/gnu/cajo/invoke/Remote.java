@@ -55,6 +55,7 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
             RMISocketFactory.getDefaultSocketFactory().
                createServerSocket(this.port) :
             new ServerSocket(this.port, 50, InetAddress.getByName(host));
+         if (host == null) host = ss.getInetAddress().getHostName();
          if (this.port == 0) {
             this.port = ss.getLocalPort();
             rcsf.port = this.port;
@@ -62,12 +63,15 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
          return ss;
       }
       public boolean equals(Object o) {
-         return o != null && o.getClass().equals(getClass());
+         return o instanceof RSSF &&
+            ((RSSF)o).host.equals(host) &&
+               ((RSSF)o).port == port;
       }
-      public int hashCode() { return getClass().hashCode(); }
+      public int hashCode() { return getClass().hashCode() + port; }
    }
    private static final class RCSF
       implements RMIClientSocketFactory, Serializable {
+      static final long serialVersionUID = 0x6060842L; // ;-) B-52s
       private int port;
       private String host;
       public Socket createSocket(String host, int port) throws IOException {
@@ -77,7 +81,7 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
          return s;
       }
       public boolean equals(Object o) {
-         return o != null && o instanceof RCSF &&
+         return o instanceof RCSF &&
             ((RCSF)o).host.equals(host) &&
                ((RCSF)o).port == port;
       }
