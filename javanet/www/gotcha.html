@@ -87,7 +87,7 @@
                            <br><br>In that spirit, I'll do the honor of the first one...<br><br>
 
                            
-                           <b><u>Argument Types:</u>
+                           <b><u>1. Argument Types:</u>
                            <strike></b> When executing an inovke method on an item,
                            Java reflection requires the argument types to match exactly.  Unfortunately
                            reflection does not recognize inheritance trees.  For example, if class B
@@ -109,7 +109,7 @@
                            improvement, and removes the <u>most common problem</u> encountered by users.
                            <b>Well done!</b><br><br>
 
-                           <b><u>Long delays:</u></b> When a remote invocation takes a really long time
+                           <b><u>2. Long delays:</u></b> When a remote invocation takes a really long time
                            for everything, there is a common problem.  RMI attempts to do a reverse-DNS
                            lookup before each invocation. In theory, this is for security purposes. When
                            trying to match IP addresses to host names, a DNS timeout can add up to
@@ -126,7 +126,7 @@
                            Here you would put the IP address/host name pairs for the machines involved,
                            which do not have a DNS support.<br><br>
 
-                           <b><u>Nework Reality:</u></b> While it is very simple to write code without
+                           <b><u>3. Nework Reality:</u></b> While it is very simple to write code without
                            regard to locality or remoteness of objects, it is very important to remember
                            that any remote invocation can fail, or block for a very long time, if there
                            is a problem with the network, or the target machine is unresponsive. The
@@ -146,6 +146,22 @@
                            somewhere near your monitor, the eight
                            <a href=http://web.archive.org/web/20030208015752/http://java.sun.com/people/jag/Fallacies.html>fallacies</a>
                            of distributed computing.<br><br>
+
+                           <b><u>4. Firewalled Clients:</u></b> Very often a client item is operating
+                           behind a firewall that prohibits inbound socket connections. If server
+                           callbacks are necessary for the design, this posed a real problem. Project
+                           member Fredrik Larsen proposed a method whereby the client would periodically
+                           check for server callbacks, thus allowing both inbound and outbound
+                           asynchronous calls on a single outbound client socket. To accomplish this, a
+                           server would create a
+                           <a href=https:files/documents/974/3597/ClientProxy.java>ClientProxy</a>
+                           object, to locally represent a callable reference to the client item. Next it
+                           would extract an
+                           <a href=https:files/documents/974/3598/ItemProxy.java>ItemProxy</a> from the
+                           ClientProxy, to give to the client. The client registers itself as a listener
+                           with this object, and will receive the asynchronous callbacks made by the
+                           server through its ClientProxy object. It allows object design without regard
+                           for the firewall issue.<br><br>
 
                            <div align="center">
                               <font size="-2">
