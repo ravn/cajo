@@ -120,16 +120,18 @@
                            server callbacks are necessary for the design, this posed a real problem.
                            Project member Fredrik Larsen proposed a method whereby the client would
                            periodically check for server callbacks, thus allowing both inbound and
-                           outbound asynchronous calls on a single outbound client socket. To accomplish
-                           this, a server would create a
+                           outbound asynchronous calls on a single outbound client socket. This
+                           functionality has been realised using a
                            <a href=docs/gnu/cajo/utils/extra/ClientProxy.html>ClientProxy</a> object, to
-                           locally represent a callable reference to the client item. Next it would
-                           extract an
-                           <a href=docs/gnu/cajo/utils/extra/ItemProxy.html>ItemProxy</a> from the
-                           ClientProxy, to give to the client. The client then registers itself as a
-                           listener with this object, and will receive the asynchronous callbacks made
-                           by the server. This allows application level object design without regard for
-                           the firewall issue.<br><br>
+                           locally represent a callable reference to the client item in the server
+                           address space. A server would instantiate a ClientProxy, and pass a remote
+                           reference to it to the client. The client would then combine that reference,
+                           with a reference to the local item in a
+                           <a href=docs/gnu/cajo/utils/extra/ItemProxy.html>ItemProxy</a> object.
+                           In the latest release, server callbacks are invoked on the local client
+                           immediately, over the client's outbound socket, and no longer involves
+                           polling. This architecture allows object design for both servers and
+                           clients, without regard for the firewall issue.<br><br>
 
                            <a id="5"></a><b><u>5. Marshalling Objects:</u></b> Sometimes, when sending
                            large objects, particularly those which are a large graph of objects,
