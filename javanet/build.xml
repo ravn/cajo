@@ -1,0 +1,104 @@
+<!-- ANT BUILD FILE (Ref. http://jakarta.apache.org/ant ) -->
+<project name="cajo" default="server" basedir=".">
+    <description>
+        Simple powerful distributed computing.
+    </description>
+    <target name="client">
+        <javac srcdir="." includes="gnu/cajo/invoke/Client.java"/> 
+        <rmic stubversion="1.2" classname="gnu.cajo.invoke.Remote" base="."/>
+        <jar basedir="."
+             jarfile="client.jar"
+             manifest="client.mft"
+             includes="
+                 gnu/cajo/invoke/*.class
+             "/>
+        <delete>
+            <fileset dir="." includes="
+                 gnu/cajo/invoke/*.class
+             "/>
+         </delete>
+    </target>
+    <target name="proxy">
+        <javac srcdir="." includes="example/Builder.java"/> 
+        <javac srcdir="." includes="gnu/cajo/utils/ProxyLoader.java"/> 
+        <java fork="true" classname="example.Builder"/> 
+        <jar basedir="."
+             jarfile="proxy.jar"
+             includes="
+                 example/*.class
+                 example/include/*.*
+                 example/gui/*.class
+                 gnu/cajo/utils/*.class
+             "/>
+        <delete>
+            <fileset dir="." includes="
+                 example/*.class
+                 example/gui/*.class
+                 example/include/proxy.ser
+                 gnu/cajo/invoke/*.class
+                 gnu/cajo/utils/*.class
+             "/>
+        </delete>
+    </target>
+    <target name="server" depends="client, proxy">
+        <javac srcdir="." includes="example/Main.java"/> 
+        <rmic stubversion="1.2" classname="gnu.cajo.invoke.Remote" base="."/>
+    </target>
+    <target name="make1" depends="client, proxy, server">
+        <jar basedir="."
+             jarfile="server.jar"
+             manifest="example/example.mft"
+             includes="
+                 example/*.class
+                 gnu/cajo/invoke/*.class
+                 gnu/cajo/utils/*.class
+                 proxy.jar
+                 client.jar
+             "/>
+        <delete>
+            <fileset dir="." includes="
+                 example/*.class
+                 gnu/cajo/invoke/*.class
+                 gnu/cajo/utils/*.class
+                 proxy.jar
+                 client.jar
+             "/>
+        </delete>
+    </target>
+    <target name="make2" depends="client, proxy, server">
+        <jar basedir="."
+             jarfile="server.jar"
+             manifest="example/example.mft"
+             includes="
+                 example/*.class
+                 gnu/cajo/invoke/*.class
+                 gnu/cajo/utils/*.class
+                 proxy.jar
+             "/>
+        <delete>
+            <fileset dir="." includes="
+                 example/*.class
+                 gnu/cajo/invoke/*.class
+                 gnu/cajo/utils/*.class
+                 proxy.jar
+             "/>
+        </delete>
+    </target>
+    <target name="make3" depends="client, proxy, server">
+        <jar basedir="."
+             jarfile="server.jar"
+             manifest="example/example.mft"
+             includes="
+                 example/*.class
+                 gnu/cajo/invoke/*.class
+                 gnu/cajo/utils/*.class
+             "/>
+        <delete>
+            <fileset dir="." includes="
+                 example/*.class
+                 gnu/cajo/invoke/*.class
+                 gnu/cajo/utils/*.class
+             "/>
+        </delete>
+    </target>
+</project>
