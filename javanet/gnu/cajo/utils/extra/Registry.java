@@ -112,7 +112,7 @@ public final class Registry {
          Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
          do { // periodically purge dead references:
             multicast.announce(ref, 200);
-            Thread.currentThread().sleep(3600000L); // wait an hour
+            Thread.sleep(3600000L); // wait an hour
             java.util.Enumeration keys = registry.entries.keys();
             while (keys.hasMoreElements()) {
                Object key = keys.nextElement();

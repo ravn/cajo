@@ -111,7 +111,7 @@ public final class Scheduler implements Serializable {
       public void run() {
          try {
             int next = 0;
-            while (!thread.interrupted()) {
+            while (!thread.isInterrupted()) {
                int slot = 0;
                synchronized(Scheduler.this) {
                   if (syncFlags != 0) {
