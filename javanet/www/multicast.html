@@ -77,13 +77,18 @@
                            likened to the <i>'hailing frequency'</i> for contacting new and unknown
                            items. Extracting interface information from spontaneously discovered items
                            is currently application specific; unless there is a strong community
-                           interest for its standardization. An official <i>suggestion</i> would be
+                           interest for its standardization. The official <i>suggestion</i> would be
                            for items to implement a <code>String getDescription()</code> method, which
                            would return a description of the features and use of the object in detail,
-                           with HTML markup allowed. Ideally, items would also implement the
+                           with HTML markup allowed. Ideally, items should also implement the
                            <code>getProxy()</code> method, to provide a local interface, which would in
-                           turn provide a graphical user interface to the object.
-
+                           turn provide a graphical user interface to the object, as described in the
+                           <a href=proxy.html>proxy</a> tutorial, and demonstrated in the
+                           <a href=example.html>example</a>. When an item announces its reference
+                           on the hailing frequency, the suggestion would be for remote VMs to invoke a
+                           method called <code>contact</code> on the received reference, passing a
+                           string of the URL (//host[:port]/[itemName]) on which its main item can be
+                           statically contacted, as the sole argument.
 
                            <h3>Receiving Multicasts</h3><br>
 
@@ -120,7 +125,7 @@
                            </table><br>
 
                            The reason for calling a listener with a reference to the multicast
-                           object is to allow for the possibility of a single objtct to listen with
+                           object is to allow for the possibility of a single object to listen with
                            multiple multicast objects.  If the listener is listening with only one
                            Multicast object, there is no chance of its multicast method being invoked
                            reentrantly. However, if a listener is listening on more than one, the
@@ -134,16 +139,18 @@
 
                            <h3>Conclusion</h3><br>
 
+                           Just as an <i>orthodox</i> item would support both the <code>getDescription</code>
+                           and <code>getProxy</code> interface methods; an <i>orthodox</i> server would
+                           also be listening on the hailing frequency, and giving its primary contact URL
+                           to announcing items.<br><br>
+
                            The multicast mechanism creates the possibility for items to spontaneously,
                            and dynamically connect. This allows items to join confederations of items
                            to accomplish larger tasks. Dynamic confederation can provide resilient,
-                           adaptive, and fault-tolerant application networks, exhibiting
-                           <a href=http://www.wwnorton.com/catalog/fall02/004142.htm target=_blank>small-world</a>
-                           and
-                           <a href=http://us.penguingroup.com/Book/BookFrame/0,1007,,00.html?id=0452284392 target=_blank>scale-free</a>
+                           adaptive, and fault-tolerant application networks, exhibiting <a href=http://www.wwnorton.com/catalog/fall02/004142.htm target=_blank>small-world</a>
+                           and <a href=http://us.penguingroup.com/Book/BookFrame/0,1007,,00.html?id=0452284392 target=_blank>scale-free</a>
                            network phenomena. When operating in the context of a group of developers,
-                           it can enable a whole range of
-                           <a href=http://www.simonsays.com/book/default_book.cfm?isbn=0684868768&areaid=33 target=_blank>emergent</a>
+                           it can enable a whole range of <a href=http://www.simonsays.com/book/default_book.cfm?isbn=0684868768&areaid=33 target=_blank>emergent</a>
                            applications to form.<br><br>
 
                            <div align="center">
