@@ -117,7 +117,7 @@ public final class Registry {
                Object o = entries.get(key);
                try { gnu.cajo.invoke.Remote.invoke(o, "toString", null); }
                catch(Exception x) { entries.remove(key); }
-               Thread.currentThread().sleep(30000L); // take five
+               Thread.currentThread().sleep(300000L); // take five
             }
             Thread.currentThread().sleep(3600000L); // wait an hour
          } while(true);
