@@ -132,7 +132,7 @@ public class SomeObject {
                         bind</a></tt> method, of the <tt><a href=docs/gnu/cajo/utils/ItemServer.html>
                         ItemServer</a></tt> class. This type of binding will require the client to
                         know the address of the server, in order to obtain a reference to the object.
-                        Clients statically bind to a remote object using the static <tt><a href=docs/gnu/cajo/invoke/Remote.html#getItem(java.lang.String)>
+                        Clients statically link to a remote object using the static <tt><a href=docs/gnu/cajo/invoke/Remote.html#getItem(java.lang.String)>
                         getItem</a></tt> method of the <tt><a href=docs/gnu/cajo/invoke/Remote.html>Remote</a>
                         class</tt>.<br><br>
 
@@ -144,11 +144,11 @@ public class SomeObject {
                            Object someObject = Remote.getItem("//serverName/someName");
                         </blockquote></tt><br>
 
-                        Dynamic binding is accomplished simply by calling the static <tt><a href=docs/gnu/cajo/utils/Multicast.html#announce(java.lang.Object,%20int)>
+                        Dynamic binding is accomplished simply by calling the <tt><a href=docs/gnu/cajo/utils/Multicast.html#announce(java.lang.Object,%20int)>
                         announce</a></tt> method, of the <tt><a href=docs/gnu/cajo/utils/Multicast.html>
                         Multicast</a></tt> class. This will <i>'broadcast'</i> the remote object reference
-                        to <u>all</u> listening Virtual Machines. Clients dynamically bind to a
-                        remote objects using the static <tt><a href=docs/gnu/cajo/utils/Multicast.html#listen(java.lang.Object)>
+                        to <u>all</u> listening Virtual Machines. Clients dynamically link to a
+                        remote object using the <tt><a href=docs/gnu/cajo/utils/Multicast.html#listen(java.lang.Object)>
                         listen</a></tt> method of the Multicast class.<br><br>
 
                         Dynamic binding and linking would look something like this:
@@ -160,14 +160,14 @@ public class SomeObject {
                         </blockquote></tt><br>
 
                         In either case; once a remote reference to an object is obtained, it can be
-                        used to invoke its <u>public</u> methods. The reference can also be passed to other
-                        objects, including remote ones; as either an argument, or a return. It could
+                        used to invoke its <i>public</i> methods. The reference can also be passed to other
+                        objects, including remote ones, as either an argument, or a return. It could
                         even be thrown in an Exception. Any object receiving this reference, can also
                         invoke its public methods. The reference can even be written to a file, using
                         the static <tt><a href=docs/gnu/cajo/invoke/Remote.html#zedmob(java.io.OutputStream,%20java.lang.Object)>
                         zedmob</a></tt> method of the Remote class, for later use, even by a
-                        different program.  The key to all this power; is the static <tt><a href=docs/gnu/cajo/invoke/Remote.html#invoke(java.lang.Object,%20java.lang.String,%20java.lang.Object)>
-                        invoke</a></tt> method, of the Remote class.<br>
+                        different program.  The key to all this power is the static <tt><a href=docs/gnu/cajo/invoke/Remote.html#invoke(java.lang.Object,%20java.lang.String,%20java.lang.Object)>
+                        invoke</a></tt> method of the Remote class, described next.<br>
 
                      </span>
                   </td>
@@ -243,13 +243,13 @@ public class SomeObject {
                   <td valign="top">
                      <span class="spacing style4 style7 style9">
                         It might appear that all type safety has been completely abandoned; looking
-                        somewhat like a return to the C language. However, what has <i>really</i>
-                        happened is that strong typechecking had to move, necessarily, from compile
-                        time, to run time. If there is no mappable signature, the invocation will
-                        result in a NoSuchMethodException.<br><br>
+                        somewhat like a return to the C language. However, what has really happened,
+                        is that strong typechecking had to move, necessarily, from compile time, to
+                        run time. If there is no mappable signature, the invocation will result in
+                        a <tt>NoSuchMethodException</tt>.<br><br>
 
-                        There is however, a <u>very</u> useful technique, to
-                        restore compile time typechecking; it is called a <tt><a href=docs/gnu/cajo/utils/extra/Wrapper.html>
+                        There is however, an <u>extremely</u> useful technique, to restore compile
+                        time typechecking; it is called a <tt><a href=docs/gnu/cajo/utils/extra/Wrapper.html>
                         wrapper</a></tt> class.<br><br>
 
                         If a client already knows the interface to a remote object; it can define
