@@ -94,24 +94,26 @@
                               <b>Common mistakes to be avoided.</b><br><br>
                            </font>
 
-                           This page will stand as a living document, based on the feedback of
+                           This page will stand as a living document, fueled by the feedback of
                            developers.  It's easy to become highly proficient at this libarary, and
-                           completly forget all the initial frustrations in getting it to work the
+                           completely forget all the initial frustrations in getting it to work the
                            first time.  Therefore, I would like to ask the community to please send
-                           in reports of odd things that have gone wrong.  Often these pearls can be
-                           as useful for learning, as the source documentation itself. In that spririt,
-                           I'll do the honor of the first one...<br><br>
+                           in reports of odd things that have gone wrong.  Often these <i>'pearls from
+                           tears'</i> can be as useful for learning, as the source documentation itself.
+
+                           <br><br>In that spririt, I'll do the honor of the first one...<br><br>
 
                            <b><u>Argument Types:</u></b> When executing an inovke method on an item,
                            Java reflection requires the types to match exactly.  Reflection does not
-                           regognize intheritance trees.  For example, if class B extends class A, and
+                           regognize inheritance trees.  For example, if class B extends class A, and
                            an item method declares an argument of type A, you cannot send it an object
-                           of type B and have it work!  This results in the much dreaded
-                           NoSuchMethodException, if you haven't got one yet, you soon will.  This
-                           gotcha is so inconvienient that the framework has a special fix for Invoke
-                           extending Objects.  They will always be typecast into Invoke. Therefore, to
-                           receive a local or remote item reference, a method signature must always
-                           declare the argument type as Invoke.<br><br>
+                           of type B and have it work!-(  This results in the much dreaded
+                           <b><code>NoSuchMethodException</code></b>, if you haven't got one yet, you
+                           probably will soon.  This gotcha can be so inconvienient that the framework
+                           makes a special fix for Objects extending the Invoke interface.  They will
+                           always be typecast into Invoke. Therefore, to receive a local, remote, or
+                           proxy item reference, the method signature must declare the argument to be
+                           of type Invoke.<br><br>
 
                            <div align="center">
                               <font face="Verdana, Helvetica" size="-2">
