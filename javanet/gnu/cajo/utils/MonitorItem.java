@@ -122,6 +122,8 @@ public final class MonitorItem implements Invoke {
                ps.print("\nMethod call =\t");
                ps.print(method);
                ps.print("\nMethod args =\t");
+               if (args instanceof java.rmi.MarshalledObject)
+                  args = ((java.rmi.MarshalledObject)args).get();
                if (args instanceof Object[]) {
                   ps.print("<array>");
                   for (int i = 0; i < ((Object[])args).length; i++) {
@@ -132,6 +134,8 @@ public final class MonitorItem implements Invoke {
                   }
                } else ps.print(args != null ? args.toString() : "null");
                ps.print("\nResult data =\t");
+               if (result instanceof java.rmi.MarshalledObject)
+                  result = ((java.rmi.MarshalledObject)result).get();
                if (result instanceof Exception) {
                   ((Exception)result).printStackTrace(ps);
                } else if (result instanceof Object[]) {
