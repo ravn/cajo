@@ -119,9 +119,12 @@ public class BaseItem {
     * @param mob The item's proxy object, if it supports one, otherwise a
     * remote reference to the item itself, either way, encased in a
     * {@link java.rmi.MarshalledObject MarshalledObject}
+    * @throws IllegalArgumentException If the method is called more than
+    * once, presumably by a remote item.
     */
    public void setProxy(MarshalledObject mob) {
       if (this.mob ==  null) this.mob = mob;
+      else throw new IllegalArgumentException("Proxy already set");
    }
    /**
     * This method is called by the {@link ItemServer ItemServer} during a
