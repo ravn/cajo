@@ -103,7 +103,9 @@
 
                            <br><br>In that spirit, I'll do the honor of the first one...<br><br>
 
-                           <b><u>Argument Types:</u></b> When executing an inovke method on an item,
+                           
+                           <b><u>Argument Types:</u>
+                           <strike></b> When executing an inovke method on an item,
                            Java reflection requires the argument types to match exactly.  Unfortunately
                            reflection does not recognize inheritance trees.  For example, if class B
                            extends class A, and an item method declares an argument of type A, you
@@ -111,9 +113,18 @@
                            much dreaded <b><code>NoSuchMethodException</code></b>; if you haven't got
                            one yet, you probably will soon.  This gotcha can be so inconvienient that
                            the framework makes a special case for Objects extending the Invoke
-                           interface.  They are always typecast into Invoke.<br>Therefore: to receive a
+                           interface.  They are always typecast into Invoke. Therefore: to receive a
                            local, remote, or proxy item reference, a method signature must declare
-                           the argument to be of type Invoke.<br><br>
+                           the argument to be of type Invoke.</strike><br><br>
+
+                           <u><b>*What wonderful news!</b></u> Today (08-Jan-04) a <i>significant</i>
+                           improvement to the project codebase was uploaded, which completely
+                           <u>eliminates</u> this <i>"gotcha"</i>. It was most generously provided by
+                           project member <b>frelars</b> (aka Fredrik Larsen), with assistance by
+                           project member <b>li_ma</b> (aka Li Ma). It will traverse argument
+                           inheritance trees to find the best fitting method. It is a 'stunning'
+                           improvement, and removes the <u>most common problem</u> encountered by users.
+                           <b>Well done!</b><br><br>
 
                            <b><u>Long delays:</u></b> When a remote invocation takes a really long time
                            for everything, there is a common problem.  RMI attempts to do a reverse-DNS
