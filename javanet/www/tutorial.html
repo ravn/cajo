@@ -282,20 +282,20 @@
                            you want to run.  This time you would specify the local machine address, even
                            if you are running behind NAT.  This would be your command line now:
                            <pre>    <code>java -jar server.jar 8080 1234 123.123.123.123 100.100.100.100</code></pre>
-                           This would also be required if your machine is multi-homed, i.e. havs multiple
+                           This would also be required if your machine is multi-homed, i.e. has multiple
                            logical network interfaces.  Multi-homing is guru magic. Generally speaking,
                            if you don't know what that term means, it probably doesn't apply to you.<br><br>
 
-                           The final, and <i>most obscure</i> option, is to cover port translation.
-                           Essentially, this means that a router is taking connections on your behalf
-                           on one port, and routing it to your machine on a another one.  For example,
-                           port 80 is sometimes translated in a *nix environment.  In this case you would
-                           specify the outside port. PT is <u><i>advanced</i></u> guru magic. If you are
-                           doing this, you already know what the command line would look like, but just
-                           for the rest of us, here it is:
-                           <pre>    <code>java -jar server.jar 8080 1234 guru.org 100.100.100.100 80</code></pre>
-                           Here a client connecting on port 80 of the public address actually connects
-                           to an internal machine on its port 8080.<br><br>
+                           The final, and most <i>obscure</i> option, is used to support port translation.
+                           Essentially, this means that a router is taking connections, on your behalf
+                           on one port, and routing it to your machine, on a another one. In this case
+                           you would specify the outside port. As the last option, you can imagine PT is
+                           <u><i>advanced</i></u> guru magic. If you are doing this, you already know
+                           what the command line would look like, but just for the rest of us, here it is:
+                           <pre>    <code>java -jar server.jar 8080 1234 guru.org 100.100.100.100 4321</code></pre>
+                           Here a client connecting on port 4321 of the public address actually connects
+                           to an internal machine on its port 1234. In this case, if none of this makes
+                           sense, if definitely doesn't apply to you.<br><br>
 
                            <b><a href=tutorial.html#connecting name=connecting>Connecting to the server:</a></b><br><br>
                            Connecting to this example is generally done using a browser.  You will need
