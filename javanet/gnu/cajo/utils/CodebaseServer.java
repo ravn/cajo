@@ -40,7 +40,7 @@ import gnu.cajo.invoke.Remote;
  * @version 1.0, 01-Nov-99 Initial release
  * @author John Catherino
  */
-public final class CodebaseServer {
+public final class CodebaseServer extends Thread {
    private static final byte[]
       bye = (
          "HTTP/1.0 404 Object not found\r\n" +
@@ -92,7 +92,6 @@ public final class CodebaseServer {
       ).getBytes();
    private static final int fixlen = top.length + mid.length + end.length;
    private static ServerSocket ss;
-   private static Thread thread;
    /**
     * This is the inbound {@link java.net.ServerSocket ServerSocket}
     * port number providing both the HTTP client tag and codebase jar service.
@@ -104,12 +103,36 @@ public final class CodebaseServer {
     */
    public static int port;
    /**
-    * Construction will start up the server's codebase transport mechanism.
-    * It will also support installing the hosting
-    * {@link gnu.cajo.invoke.Client Client} in a Java-enabled browser.
-    * If the browser does not have the correct plug-in this server will cause
-    * it to prompt the user to have it installed automatically.
-    * <br><br>The format of a browser's proxy request URL one required, and
+    * Construction will start up the server's codebase transport mechanism
+    * on the specified port.
+    * @param base The path and name of the file containing the codebase jar
+    * file.  The server will first search for it in its own executable jar
+    * file, if that fails, then it will check the local filesystem.
+    * @param port The TCP port on which to serve the codebase, and client
+    * applet. It can be zero, to use an anonymous port. If zero, the actual
+    * port selected by the OS at runtime will be stored in the
+    * {@link #port port} member.
+    * @throws IOException If the HTTP socket providing the codebase and applet
+    * tag service could not be created.
+    * @throws IllegalStateException If a second instance of this class is
+    * constructed, since each VM can have only one codebase server.
+    */
+   public CodebaseServer(String base, int port) throws IOException {
+      if (ss == null) {
+         ss = new ServerSocket(port, 50,
+            InetAddress.getByName(Remote.getServerHost()));
+         this.port = port == 0 ? ss.getLocalPort() : port;
+         System.setProperty("java.rmi.server.codebase",
+            "http://" + Remote.getClientHost() + ':' + port + '/' + base);
+         start();
+      } else throw new IllegalStateException("Codebase currently served");
+   }
+   /**
+    * The server thread method, it will send the proxy codebase, and it will
+    * also support installing the hosting {@link gnu.cajo.invoke.Client
+    * Client} in a Java-enabled browser, or as a web start application via
+    * JNLP.<br><br>
+    * The format of a browser's proxy request URL one required, and
     * five optional parameters, utilizing the following format:<p><code>
     * http://serverHost[:serverPort]/[clientPort][:localPort][-proxyName][!]
     * </code><p>
@@ -131,154 +154,130 @@ public final class CodebaseServer {
     * <p>To unspecify any optional item, simply omit it, from the URL, along
     * with its preceeding delimiter, if any.  The <u>order</u> of the arguments
     * must be maintained however.<p>
-    * @param base The path and name of the file containing the codebase jar
-    * file.  The server will first search for it in its own executable jar
-    * file, if that fails, then it will check the local filesystem.
-    * @param port The TCP port on which to serve the codebase, and client
-    * applet. It can be zero, to use an anonymous port. If zero, the actual
-    * port selected by the OS at runtime will be stored in the
-    * {@link #port port} member.
-    * @throws IOException If the HTTP socket providing the codebase and applet
-    * tag service could not be created.
-    * @throws IllegalStateException If a second instance of this class is
-    * constructed, since each VM can have only one codebase server.
-    */
-   public CodebaseServer(String base, int port) throws IOException {
-      if (ss == null) {
-         ss = new ServerSocket(port, 50,
-            InetAddress.getByName(Remote.getServerHost()));
-         this.port = port == 0 ? ss.getLocalPort() : port;
-         System.setProperty("java.rmi.server.codebase",
-            "http://" + Remote.getClientHost() + ':' + port + '/' + base);
-         thread = new Thread(new Runnable() {
-            public void run() {
-               try {
-                  byte msg[] = new byte[256];
-                  while(true) {
-                     Socket s = ss.accept();
-                     try {
-                        InputStream  is = s.getInputStream();
-                        OutputStream os = s.getOutputStream();
-                        int ix = is.read(msg);
-                        String itemName = null;
-                        scan: for (int i = 0; i < ix; i++) {
-                           if (msg[i] == '/') {
-                              for (int j = i + 1; j < msg.length; j++) {
-                                 if (msg[j] == ' ') {
-                                    itemName = new String(msg, i, j - i);
-                                    break scan;
-                                 }
-                              }
-                           }
+   */
+   public void run() {
+      try {
+         byte msg[] = new byte[256];
+         while(true) {
+            Socket s = ss.accept();
+            try {
+               InputStream  is = s.getInputStream();
+               OutputStream os = s.getOutputStream();
+               int ix = is.read(msg);
+               String itemName = null;
+               scan: for (int i = 0; i < ix; i++) {
+                  if (msg[i] == '/') {
+                     for (int j = i + 1; j < msg.length; j++) {
+                        if (msg[j] == ' ') {
+                           itemName = new String(msg, i, j - i);
+                           break scan;
                         }
-                        if (itemName == null) os.write(bye); // invalid request
-                        else if (itemName.endsWith(".jar")) { // code request
-                           try {
-                              InputStream ris =
-                                 getClass().getResourceAsStream(itemName);
-                              if (ris == null) ris =
-                                 new FileInputStream('.' + itemName);
-                              BufferedInputStream bis =
-                                 new BufferedInputStream(ris);
-                              msg = new byte[bis.available()];
-                              byte len[] = (msg.length + "\r\n\r\n").getBytes();
-                              bis.read(msg);
-                              bis.close();
-                              ris.close();
-                              os.write(jar);
-                              os.write(len);
-                              os.write(msg);
-                           } catch(Exception x) { os.write(bye); }
-                        } else if (itemName.indexOf('/', 1) == -1) { // URL request
-                           try { // parse request arguments
-                              int proxyPort = Remote.getClientPort();
-                              int ia =
-                                 itemName.indexOf(':') != -1 ? itemName.indexOf(':') :
-                                 itemName.indexOf('-') != -1 ? itemName.indexOf('-') :
-                                 itemName.indexOf('!') != -1 ? itemName.indexOf('!') :
-                                 itemName.length();
-                              int ib =
-                                 itemName.indexOf('-') != -1 ? itemName.indexOf('-') :
-                                 itemName.indexOf('!') != -1 ? itemName.indexOf('!') :
-                                 itemName.length();
-                              int ic =
-                                 itemName.indexOf('!') != -1 ? itemName.indexOf('!') :
-                                 itemName.length();
-                              String clientPort =
-                                 ia >  1 ? itemName.substring(     1, ia) : "0";
-                              String localPort =
-                                 ib > ia ? itemName.substring(ia + 1, ib) : "0";
-                              String proxyName =
-                                 ic > ib ? itemName.substring(ib + 1, ic) : "main";
-                              String clientHost = s.getInetAddress().getHostAddress();
-                              if (itemName.indexOf('!') == -1) { // applet request
-                                 byte iex[] = ( // used by Exploder:
-                                    "<PARAM NAME = \"clientHost\" VALUE = \"" + clientHost + "\">\r\n" +
-                                    "<PARAM NAME = \"clientPort\" VALUE = \"" + clientPort + "\">\r\n" +
-                                    "<PARAM NAME = \"localPort\"  VALUE = \"" + localPort  + "\">\r\n" +
-                                    "<PARAM NAME = \"proxyPort\"  VALUE = \"" + proxyPort  + "\">\r\n" +
-                                    "<PARAM NAME = \"proxyName\"  VALUE = \"" + proxyName  + "\">\r\n"
-                                 ).getBytes();
-                                 byte nav[] = ( // used by Navigator and Appletviewer:
-                                    "clientHost = " + clientHost + "\r\n" +
-                                    "clientPort = " + clientPort + "\r\n" +
-                                    "localPort  = " + localPort  + "\r\n" +
-                                    "proxyPort  = " + proxyPort  + "\r\n" +
-                                    "proxyName  = " + proxyName  + "\r\n"
-                                 ).getBytes();
-                                 byte len[] = (fixlen + iex.length + nav.length + "\r\n\r\n").getBytes();
-                                 os.write(tag);
-                                 os.write(len);
-                                 os.write(top);
-                                 os.write(iex);
-                                 os.write(mid);
-                                 os.write(nav);
-                                 os.write(end);
-                              } else { // JNLP application request
-                                 String title = Remote.getClientHost() + ':' + Remote.getClientPort() + '/' + proxyName;
-                                 byte xml[] = (
-                                    "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n" +
-                                    "<jnlp spec=\"1.0+\"\r\n" +
-                                    "  codebase=" + "\"http://" + Remote.getClientHost() + ':' + CodebaseServer.this.port + "\"\r\n" +
-                                    "  href=\"" + clientPort + ':' + localPort + '-'+ proxyName + "!\">\r\n" +
-                                    "  <information>\r\n" +
-                                    "    <title>CajoViewer - " + title + "</title>\r\n" +
-                                    "    <vendor>John Catherino</vendor>\r\n" +
-                                    "    <homepage href=\"https://cajo.dev.java.net\"/>\r\n" +
-                                    "    <description>Graphical cajo proxy client</description>\r\n" +
-                                    "  </information>\r\n" +
-                                    "  <resources>\r\n" +
-                                    "    <j2se version=\"1.2+\"/>\r\n" +
-                                    "    <jar href=\"client.jar\"/>\r\n" +
-                                    "  </resources>\r\n" +
-                                    "  <application-desc main-class=\"gnu.cajo.invoke.Client\">\r\n" +
-                                    "    <argument>//" + title + "</argument>\r\n" +
-                                    "    <argument>" + clientPort + "</argument>\r\n" +
-                                    "    <argument>" + clientHost + "</argument>\r\n" +
-                                    "    <argument>" + localPort  + "</argument>\r\n" +
-                                    "  </application-desc>\r\n" +
-                                    "</jnlp>"
-                                 ).getBytes();
-                                 byte len[] = (xml.length + "\r\n\r\n").getBytes();
-                                 os.write(jws);
-                                 os.write(len);
-                                 os.write(xml);
-                              }
-                           } catch(Exception x) { os.write(bye); }
-                        } else os.write(bye); // unsupported request
-                        os.flush();
-                        os.close();
-                        is.close();
-                     } catch (Exception x) { x.printStackTrace(System.err); }
-                     try { s.close(); }
-                     catch (Exception x) { x.printStackTrace(System.err); }
+                     }
                   }
-               } catch(Exception x) { x.printStackTrace(System.err); }
-               try { ss.close(); }
-               catch(Exception x) { x.printStackTrace(System.err); }
-            }
-         });
-         thread.start();
-      } else throw new IllegalStateException("Codebase currently served");
+               }
+               if (itemName == null) os.write(bye);  // invalid request
+               else if (itemName.endsWith(".jar")) { // code request
+                  try {
+                     InputStream ris =
+                        getClass().getResourceAsStream(itemName);
+                     if (ris == null) ris =
+                        new FileInputStream('.' + itemName);
+                     BufferedInputStream bis = new BufferedInputStream(ris);
+                     msg = new byte[bis.available()];
+                     byte len[] = (msg.length + "\r\n\r\n").getBytes();
+                     bis.read(msg);
+                     bis.close();
+                     ris.close();
+                     os.write(jar);
+                     os.write(len);
+                     os.write(msg);
+                  } catch(Exception x) { os.write(bye); }
+               } else if (itemName.indexOf('/', 1) == -1) { // URL request
+                  try { // parse request arguments
+                     int proxyPort = Remote.getClientPort();
+                     int ia =
+                        itemName.indexOf(':') != -1 ? itemName.indexOf(':') :
+                        itemName.indexOf('-') != -1 ? itemName.indexOf('-') :
+                        itemName.indexOf('!') != -1 ? itemName.indexOf('!') :
+                        itemName.length();
+                     int ib =
+                        itemName.indexOf('-') != -1 ? itemName.indexOf('-') :
+                        itemName.indexOf('!') != -1 ? itemName.indexOf('!') :
+                        itemName.length();
+                     int ic =
+                        itemName.indexOf('!') != -1 ? itemName.indexOf('!') :
+                        itemName.length();
+                     String clientPort =
+                        ia >  1 ? itemName.substring(     1, ia) : "0";
+                     String localPort =
+                        ib > ia ? itemName.substring(ia + 1, ib) : "0";
+                     String proxyName =
+                        ic > ib ? itemName.substring(ib + 1, ic) : "main";
+                     String clientHost = s.getInetAddress().getHostAddress();
+                     if (itemName.indexOf('!') == -1) { // applet request
+                        byte iex[] = ( // used by Exploder:
+                           "<PARAM NAME = \"clientHost\" VALUE = \"" + clientHost + "\">\r\n" +
+                           "<PARAM NAME = \"clientPort\" VALUE = \"" + clientPort + "\">\r\n" +
+                           "<PARAM NAME = \"localPort\"  VALUE = \"" + localPort  + "\">\r\n" +
+                           "<PARAM NAME = \"proxyPort\"  VALUE = \"" + proxyPort  + "\">\r\n" +
+                           "<PARAM NAME = \"proxyName\"  VALUE = \"" + proxyName  + "\">\r\n"
+                        ).getBytes();
+                        byte nav[] = ( // used by Navigator and Appletviewer:
+                           "clientHost = " + clientHost + "\r\n" +
+                           "clientPort = " + clientPort + "\r\n" +
+                           "localPort  = " + localPort  + "\r\n" +
+                           "proxyPort  = " + proxyPort  + "\r\n" +
+                           "proxyName  = " + proxyName  + "\r\n"
+                        ).getBytes();
+                        byte len[] = (fixlen + iex.length + nav.length + "\r\n\r\n").getBytes();
+                        os.write(tag);
+                        os.write(len);
+                        os.write(top);
+                        os.write(iex);
+                        os.write(mid);
+                        os.write(nav);
+                        os.write(end);
+                     } else { // JNLP application request
+                        String title = Remote.getClientHost() + ':' + Remote.getClientPort() + '/' + proxyName;
+                        byte xml[] = (
+                           "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n" +
+                           "<jnlp spec=\"1.0+\"\r\n" +
+                           "  codebase=" + "\"http://" + Remote.getClientHost() + ':' + CodebaseServer.this.port + "\"\r\n" +
+                           "  href=\"" + clientPort + ':' + localPort + '-'+ proxyName + "!\">\r\n" +
+                           "  <information>\r\n" +
+                           "    <title>CajoViewer - " + title + "</title>\r\n" +
+                           "    <vendor>John Catherino</vendor>\r\n" +
+                           "    <homepage href=\"https://cajo.dev.java.net\"/>\r\n" +
+                           "    <description>Graphical cajo proxy client</description>\r\n" +
+                           "  </information>\r\n" +
+                           "  <resources>\r\n" +
+                           "    <j2se version=\"1.2+\"/>\r\n" +
+                           "    <jar href=\"client.jar\"/>\r\n" +
+                           "  </resources>\r\n" +
+                           "  <application-desc main-class=\"gnu.cajo.invoke.Client\">\r\n" +
+                           "    <argument>//" + title + "</argument>\r\n" +
+                           "    <argument>" + clientPort + "</argument>\r\n" +
+                           "    <argument>" + clientHost + "</argument>\r\n" +
+                           "    <argument>" + localPort  + "</argument>\r\n" +
+                           "  </application-desc>\r\n" +
+                           "</jnlp>"
+                        ).getBytes();
+                        byte len[] = (xml.length + "\r\n\r\n").getBytes();
+                        os.write(jws);
+                        os.write(len);
+                        os.write(xml);
+                     }
+                  } catch(Exception x) { os.write(bye); }
+               } else os.write(bye); // unsupported request
+               os.flush();
+               os.close();
+               is.close();
+            } catch (Exception x) { x.printStackTrace(System.err); }
+            try { s.close(); }
+            catch (Exception x) { x.printStackTrace(System.err); }
+         }
+      } catch(Exception x) { x.printStackTrace(System.err); }
+      try { ss.close(); }
+      catch(Exception x) { x.printStackTrace(System.err); }
    }
 }
