@@ -132,7 +132,8 @@ public final class CodebaseServer extends Thread {
          thisJar = CodebaseServer.class.getClassLoader().getResource(classId).toString();
          thisJar = thisJar.substring(thisJar.lastIndexOf(':'), thisJar.lastIndexOf('!'));
          thisJar = thisJar.substring(thisJar.lastIndexOf('/') + 1);
-         ss = new ServerSocket(port, 50, InetAddress.getByName(Remote.getServerHost()));
+         ss = Remote.getServerHost() == null ? new ServerSocket(port) :
+            new ServerSocket(port, 50, InetAddress.getByName(Remote.getServerHost()));
          CodebaseServer.port = port == 0 ? ss.getLocalPort() : port;
          System.setProperty("java.rmi.server.codebase",
             "http://" + Remote.getClientHost() + ':' + port + '/' + base);
