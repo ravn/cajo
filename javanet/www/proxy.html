@@ -6,6 +6,7 @@
       <meta name="Author" content="John Catherino">
    </head>
    <body bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800000" alink="#FF0000">
+<div id="projecthome" class="app">
       <table width="100%" cellspacing="0" cellpadding="0" border="0">
          <tr>
             <td><img src="images/topl.gif" width="17" height="17" border="0"></td>
@@ -102,7 +103,9 @@
                            arrive with a remote link back to its server item, on which it can
                            asynchronously communicate with it.  Proxies are often used to pre-process
                            method invocations made by the client, using the computing resources of the
-                           client, rather than those of the server.<br><br>
+                           client, rather than those of the server.
+
+                           <h3>Base Proxies</h3><br>
 
                            A proxy can optionally provide a graphical user interface, if it is
                            intended to be more than just a machine-to-machine interface.
@@ -127,21 +130,27 @@
                            communication with the server item itself, and another for sending the proxy
                            codebase via the CodebaseServer.  If a server does not use proxies, it only
                            needs one port. The CodebaseServer can also be used to send complex objects
-                           to an item, which would require the necessary class definitions.<br><br>
+                           to an item, which would require the necessary class definitions.
 
-                           A server can optionally accept proxies, from other servers as well. Often it
-                           is done by invoking the
+                           <h3>Accepting Proxies</h3><br>
+
+                           A server can optionally accept proxies, from other servers as well. Generally
+                           it is done by invoking the
                            <a href=docs/gnu/cajo/utils/ItemServer.html#acceptProxies()>acceptProxies</a>
                            method of the ItemServer class. A server does not accept proxies by default.
                            A proxy can be sent to a server either as an argument, or a return value,
-                           typically it is done using an item's
+                           though typically it is done using an item's
                            <a href=docs/gnu/cajo/utils/BaseItem.html#setProxy(gnu.cajo.invoke.Invoke)>
                            setProxy</a> method. Where the returned value from this invocation will be a
                            remote reference to the installed proxy, over which the sending item can
-                           communicate with it. A <code>ClassNotFoundException</code> will be
-                           automatically thrown by the remote server, if it is not accepting proxies.<br><br>
+                           communicate with it. The setProxy method is often overridden, to provide the
+                           proxy with additional local resources, on which it may operate.  A
+                           <code>ClassNotFoundException</code> will be automatically thrown by the
+                           remote server, if it is not accepting proxies.
 
-                           A proxy it typically obtained from an item reference by using a null argument
+                           <h3>Requesting Proxies</h3><br>
+
+                           A proxy is typically obtained from an item reference by using a null argument
                            <a href=docs/gnu/cajo/utils/BaseItem.html#getProxy()>getProxy</a> invocation.
                            The returned item will be its default proxy, if it supports one. Once a proxy
                            item is received, the otrhodox initialization procedure is to:
@@ -157,7 +166,9 @@
                            obtain the default proxy. If an item serves multiple proxies, the method or
                            methods to obtain them are application specific.  A <i>suggestion</i> would
                            be to use a string argument in a getProxy invocation, to specify the desired
-                           proxy.<br><br>
+                           proxy.
+
+                           <h3>Conclusion</h3><br>
 
                            Both the proxy, and its serving item, can in turn give their remote
                            references to other items.  As a result, an item calling another item does not
