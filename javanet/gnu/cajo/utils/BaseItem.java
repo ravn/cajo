@@ -93,23 +93,25 @@ public class BaseItem {
     * called. The received proxy's init method will be invoked with a reference
     * to itself, remoted in the context of this VM.  This is done to initialize
     * the proxy, and provide it with a handle to pass to other remote items,
-    * on which they can contact this proxy. If the initialization returns an
-    * AWT component, it will be displayed automatically. The remote proxy
-    * reference will also be returned to the caller, providing an interface on
-    * which to asynchronously call its proxy.
+    * on which they can contact this proxy. The remote proxy reference will
+    * be returned to the caller, providing an interface on which to
+    * asynchronously call its proxy.
     * 
-    * @param proxy The proxy to run in this VM.
+    * @param proxy The proxy to run in this VM, it is typically sent as a
+    * MarshalledObject, from which it will be extracted automatically.
     * @return A reference to the proxy remoted within this context.
     * @throws ClassNotFoundException If the item does not accept proxies.
     * @throws IllegalArgumentException If the item provided is a remote
     * reference.
     * @throws Exception If the proxy rejected the initialization invocation.
     */
-   public Remote setProxy(Invoke proxy) throws Exception {
+   public Remote setProxy(Object proxy) throws Exception {
+      if (proxy instanceof MarshalledObject)
+         proxy = ((MarshalledObject)proxy).get();
       if (proxy instanceof RemoteInvoke)
          throw new IllegalArgumentException("Proxy must be local");
       Remote ref = new Remote(proxy);
-      Object result = proxy.invoke("init", ref);
+      Remote.invoke(proxy, "init", ref);
       return ref;
    }
    /**
