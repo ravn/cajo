@@ -1,0 +1,184 @@
+<html>
+   <head>
+      <title>The CaJo Project</title>
+      <meta name="Keywords" content="cajo, rmi, java, distributed computing">
+      <meta name="Description" content="Cajo Distributed Application Framework">
+      <meta name="Author" content="John Catherino">
+   </head>
+   <body bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800000" alink="#FF0000">
+      <table width="100%" cellspacing="0" cellpadding="0" border="0">
+         <tr>
+            <td><img src="images/topl.gif" width="17" height="17" border="0"></td>
+            <td width="100%" bgcolor="#8C6239"><img src="images/dot.gif" width="1" height="1" border="0"></td>
+            <td><img src="images/topr.gif" width="17" height="17" border="0"></td>
+         </tr>
+      </table>
+      <table width="100%" cellspacing="0" cellpadding="0" border="0">
+         <tr>
+            <td width="100%" height="15" bgcolor="#8C6239">
+               <img src="images/dot.gif" width="1" height="1" border="0">
+            </td>
+         </tr>
+      </table>
+      <table width="100%" cellspacing="0" cellpadding="0" border="0">
+         <tr>
+            <td width="120" valign="top">
+               <table width="120" border="0" cellspacing="2" cellpadding="2" align="left">
+<!-- begin table.html -->
+                  <tr>
+                     <td bgcolor="#C0C08D">
+                        <font face="Verdana,Geneva,Arial,Helvetica,sans-serif" size="-2">
+                           <a href="index.html" title="cajo home page"><b>Welcome</b></a><br>
+                        </font>
+                     </td>
+                  </tr>
+                  <tr>
+                     <td bgcolor="#C0C08D">
+                        <font face="Verdana,Geneva,Arial,Helvetica,sans-serif" size="-2">
+                           <a href="tutorial.html" title="getting started"><b>Tutorial</b></a>
+                        </font>
+                     </td>
+                  </tr>
+                  <tr>
+                     <td bgcolor="#C0C08D">
+                        <font face="Verdana,Geneva,Arial,Helvetica,sans-serif" size="-2">
+                           <a href="theory.html" title="how it all works"><b>Theory</b></a>
+                        </font>
+                     </td>
+                  </tr>
+                  <tr>
+                     <td bgcolor="#C0C08D">
+                        <font face="Verdana,Geneva,Arial,Helvetica,sans-serif" size="-2">
+                           <a href="gotcha.html" title="important details"><b>Gotchas</b></a>
+                        </font>
+                     </td>
+                  </tr>
+                  <tr>
+                     <td bgcolor="#C0C08D">
+                        <font face="Verdana,Geneva,Arial,Helvetica,sans-serif" size="-2">
+                           <a href="faq.html" title="common questions"><b>FAQ</b></a>
+                        </font>
+                     </td>
+                  </tr>
+                  <tr>
+                     <td bgcolor="#C0C08D">
+                        <font face="Verdana,Geneva,Arial,Helvetica,sans-serif" size="-2">
+                           <a href="acknowlege.html" title="supporters of the marque"><b>Acknowlegements</b></a>
+                        </font>
+                     </td>
+                  </tr>
+                  <tr>
+                     <td bgcolor="#C0C08D">
+                        <font face="Verdana,Geneva,Arial,Helvetica,sans-serif" size="-2">
+                           <a href="license.html" title="what's the LGPL"><b>License</b></a>
+                        </font>
+                     </td>
+                  </tr>
+<!-- end table.html -->
+               </table>
+            </td>
+            <td width="100%" valign="top">
+               <table width="100%" cellpadding="5" border="0">
+                  <tr>
+                     <td>
+                        <font face="Verdana, Helvetica" size="-1">
+<!-- begin main.html -->
+                           <font face="Verdana, Helvetica" size="3">
+                              <b>Server items are the core of the framework.</b>
+                           </font><br><br>
+
+                           A server VM has one, or more, items.  These are objects which can be remotely
+                           accessed by other items.  An item is simply an Object, which derives from the
+                           class gnu.cajo.utils.BaseItem, meaning it implements the Runnable interface,
+                           and the gnu.cajo.Invoke interface.  The invoke method is implemented
+                           in the base class, and declared as final.  This is to emphasize the fact that
+                           an Item is essentially just an Object, as will be explained below.<br><br>
+
+                           The final invoke method is the only method which is made remotely callable,
+                           as defined by the cajo paradigm.  Remote methods call the invoke method,
+                           passing it a method name, and a collection of arguments, or potentially even
+                           no arguments.  The final invoke implementation of the BaseItem class uses a
+                           technique called Java Reflection, whereby it finds a method matching the name
+                           provided in the remote call, which accepts arguments of the type, and in the
+                           order provided by the caller.  If there is a match, it will invoke that
+                           method on the object, and return the resulting object, if any, back to the
+                           caller.  If no matching method can be found, either in name or argument types,
+                           the remote invocation will result in a NoSuchMethodException being thrown.<br><br>
+
+                           Subclasses are free to implement methods of any type, the only requirement is
+                           that another item in a different (or local) machine (virtual or physical)
+                           must know its method signatures, no different than for traditional Objects,
+                           with the one exception, that there is no longer compile-time type checking.
+                           Also due to a restriction in the Java Reflection mechanism, primitive types
+                           such as int or char for example, cannot be sent as arguments, or returned,
+                           rather they must be sent in their Object representations, such as Integer or
+                           Character, for example.<br><br>
+
+                           If a legacy object has a long class tree, and cannot extend BaseItem, all is
+                           not lost.  An item wrapper can be made, which simply passes the remote
+                           invocations to its internal legacy object, and return the result, if any. <br><br>
+
+                           Invocations are made on a reference to a remote (or local) item through its
+                           Invoke interface.  While this isn't strictly necessary when the item is local,
+                           meaning in the same Virtual Machine; it allows the called object to later be
+                           moved to a remote machine, with no software changes!  A handy design pattern
+                           is to simply place a wrapper around the Invoke object, where its methods pass
+                           the invocation onto the internal reference, for example:
+<code><pre>
+   String toString() {
+      // no arguments, object return ...
+      return (String)invokeRef.invoke("toString", null);
+   }
+   boolean equals(Object o) {
+      // single argument, primitive return...
+      return ((Boolean)invokeRef.invoke("equals", o)).booleanValue());
+   }
+   void someMetnod(String a, String b, String c) {
+      // multiple arguments, no return...
+      invokeRef.invoke("someMethod", new Object{} { a, b, c });
+   }
+</pre></code>
+                           That's all there is to an item.  To make an item remotely accessible, it is
+                           passed to the static method gnu.cajo.invoke.Remote.bind.  A single virtual
+                           machine can remote as many items as it wants. An item obtains a reference to
+                           a remote item using the static method gnu.cajo.invoke.Remote.getItem.  If an
+                           application handles its items using their Invoke interface, it need not know,
+                           or even care, if the items are local or remote.  However, if it is important
+                           to know, either the remoteness or locality of an item; this is easily tested
+                           in the following way:
+<pre><code>
+   if (ref instanceof RemoteInvoke) {
+      // the reference is to a remote item ...
+   } else {
+      // the reference is to a local item ...
+   }
+</code></pre>
+                           This is the purpose for the creation of the gnu.cajo.invoke.RemoteInvoke
+                           interface; testing, as it is otherwise simply a bodyless interface.<br><br>
+
+                           As mentioned above, the BaseItem also abstractly implements the Runnable
+                           interface, so subclasses <b>must</b> define it.  Upon construction of an Item,
+                           its primary processing thread is created, and started.  If the item needs no
+                           local processing, it can simply return, otherwise its application specific
+                           functionality would go here.  There is also a public member named thread,
+                           which can be interrupted, and on which the item's processing thread should
+                           monitor, to see if it <code>isInterrupted</code>, and to perform an orderly
+                           shutdown.
+
+                           <br><br>
+                           <div align="center">
+                              <font face="Verdana, Helvetica" size="-2">
+                                 <hr width="80%">
+                                 Items are simply objects that can be called by other (remote) items.
+                              </font>
+                           </div>
+<!-- end main.html -->
+                        </font>
+                     </td>
+                  </tr>
+               </table>
+            </td>
+         </tr>
+      </table>
+   </body>
+</html>
