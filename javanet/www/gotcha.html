@@ -92,7 +92,7 @@
                            Here you would put the IP address/host name pairs for the machines, which do
                            not have DNS support.<br><br>
 
-                           <a id="3"></a><b><u>3. Nework Realities:</u></b> While it is very simple to
+                           <a id="3"></a><b><u>3. Network Realities:</u></b> While it is very simple to
                            write code without regard to locality or remoteness of objects, it is very
                            important to remember that any remote invocation can fail, or block for a
                            very long time, if there is a problem with the network, or the target machine
@@ -131,10 +131,10 @@
                            the firewall issue.<br><br>
 
                            <a id="5"></a><b><u>5. Marshalling Objects:</u></b> Sometimes, when sending
-                           large objects, particularly those which are large graphs of objects,
+                           large objects, particularly those which are a large graph of objects,
                            exceptions can randomly occur during transport. While this is not a defect
-                           in the framework, it can be very annoying. One particularly helpful technique
-                           is for the sender to encapsulate the object in a
+                           from the framework, it can be very annoying. One particularly helpful
+                           technique is for the sender to encapsulate the object in a
                            <a href=http://java.sun.com/j2se/1.4.2/docs/api/java/rmi/MarshalledObject.html>java.rmi.MarshalledObject</a>.
                            Then the receiver can retrieve the original object using its
                            <a href=http://java.sun.com/j2se/1.4.2/docs/api/java/rmi/MarshalledObject.html#get()>get()</a>
