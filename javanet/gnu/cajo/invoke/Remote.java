@@ -75,19 +75,13 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
    private static Registry registry;
    /**
     * A global reference to the remote client socket factory.  This is the
-    * factory remote VMs will use to communicate with local items. It simply
-    * returns a standard {@link java.net.Socket socket}, bypassing all of the
-    * http fallback mechanisms of the default
-    * {@link java.rmi.server.RMIClientSocketFactory RMIClientSocketFactory}.
+    * factory remote VMs will use to communicate with local items.
     */
    public static final RCSF rcsf = new RCSF();
    /**
     * A global reference to the remote server socket factory.  This is the
     * factory the local items use to asynchronously communicate with remote
-    * VMs. It simply returns a standard
-    * {@link java.net.ServerSocket ServerSocket}, bypassing all of the http
-    * fallback mechanisms of the default
-    * {@link java.rmi.server.RMIServerSocketFactory RMIServerSocketFactory}.
+    * VMs.
     */
    public static final RSSF rssf = new RSSF();
    /**
@@ -173,8 +167,10 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
     * through HTTP proxy servers. There will be a fairly significant performance
     * hit incurred using the HTTP tunnel, but it is better than having no
     * connectivity at all. Due to an unfortunate oversight in the design of
-    * the standard RMISocketFactory, no server network interface other than
-    * the default can be selected.
+    * the standard RMISocketFactory, no server network interface can be
+    * specified, instead it will listen on <i>all</i> network interfaces.
+    * It is probably not a problem for most, but is probably not desirable for
+    * multi-homed hosts.
     * <p><i>Note:</i> If this class is to be configured, it must be done
     * <b>before</b> any items are remoted.
     * @param serverPort Specifies the local inbound port on which the server is
