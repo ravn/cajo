@@ -70,11 +70,12 @@ public final class Registry {
     */
    public Hashtable get() { return entries; }
    /**
-    * Always a good idea; this method describes how the registry object
-    * is used. Not unlike these comments themselves.
-    * @return A string destribing the use of this server object
+    * Always a good idea; this method describes how to use the registry
+    * object, and what its features are. Not unlike these comments
+    * themselves.
+    * @return A string destribing this server object
     */
-   public String toString() {
+   public String getDescription() {
       return "Welcome to the cajo item registry!\n\n" +
       "There are two ways to register a remote item reference:\n\n" +
       "\tFirst, Multicast hailing frequency announcements are\n" +
@@ -104,11 +105,11 @@ public final class Registry {
       try {
          Remote.config(null, 1099, args.length > 0 ? args[0] : null, 0);
          Registry registry = new Registry();
+         Remote ref = new Remote(registry);
          Multicast multicast = new Multicast();
-         gnu.cajo.utils.ItemServer.bind(registry, "registry");
+         gnu.cajo.utils.ItemServer.bind(ref, "registry");
          multicast.listen(registry);
          Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
-         Remote ref = new Remote(registry);
          do { // periodically purge dead references:
             multicast.announce(ref, 200);
             Thread.currentThread().sleep(3600000L); // wait an hour
@@ -118,7 +119,6 @@ public final class Registry {
                Object o = registry.entries.get(key);
                try { Remote.invoke(o, "toString", null); }
                catch(Exception x) { registry.entries.remove(key); }
-               Thread.currentThread().sleep(300000L); // take five
             }
          } while(true);
       } catch(Exception x) { x.printStackTrace(); }
