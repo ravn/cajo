@@ -173,32 +173,33 @@
                               <li> file:// to load it from the local disc
                               <li> path/name to instantiate it from a local class file
                               <li> /path/name to load it as a serialized proxy from disc
-                              <li> //host[:port]/[name] to load it from an rmiregistry
+                              <li> //host[:port]/[name] to load it from an rmiregistry (most common)
                            </ul>
 
                            <h3>Important Details</h3><br>
 
                            This client, when run as an application, is intended for testing and
-                           development purposes in a trusted enviornment. It is <i>extremely unsafe</i>
-                           to run on the Internet. To make its use for development purposes simpler,
-                           the client application employs a
+                           development purposes in a trusted enviornment. To make its use for
+                           development purposes simpler, the client application employs a
                            <a href=docs/gnu/cajo/invoke/NoSecurityManager.html>NoSecurityManager</a>.
                            As its name implies, this allows any loaded proxy to do anything it wants, on
                            the host's physical machine. Under some circumstances granting proxy
                            items full permissions may be exactly what is needed; on kiosks, or thin client
-                           machines, on a protected newtork, for example.  It has an advantage it that
+                           machines, on a protected newtork for example.  It has an advantage it that
                            it allows the client to run simply as a single jar file, no security policy
                            file is even needed.<br><br>
 
-                           To protect the host in untrusted environments, it is <u>necessary</u> to
-                           start this application with a security policy installed. This would require
-                           an invocation such as the following:
+                           To protect the host in untrusted environments, it is <b>necessary</b> to
+                           start this application with a proper security manager installed. This would
+                           require an invocation such as the following:
 
-                           <pre><code>   java -jar -Djava.security.manager -Djava.security.policy=someURL client.jar</b></pre></code>
+                           <pre><code>   java -jar -Djava.security.manager -Djava.security.policy=someURL client.jar ...</b></pre></code>
 
-                           The file referenced by the URL (or simply path/filename) would clearly define
-                           what permissions the downloaded proxies would have.  For example; the
-                           following policy file, is highly restrictive, but suitable for most proxies:<code><pre>
+                           The file referenced by the URL (or simply [path/]filename) would clearly define
+                           what permissions the downloaded proxies would have.<br><br>
+
+                           For example; the following policy file is highly restrictive, but suitable
+                           for most proxies:<code><pre>
 grant {
    permission java.net.SocketPermission "*:1024-", "accept;
    permission java.net.SocketPermission "*", connect;
@@ -209,18 +210,18 @@ grant {
                            <i>Note:</i> be very sure to use the first -D argument, you don't want to
                            make the same
                            <a href=http://developer.java.sun.com/developer/bugParade/bugs/4915879.html target=_blank>
-                           mistake</a> I did. (essentially, omission of the first argument, completely
-                           negates the second)
+                           mistake</a> I did. (Essentially, omission of the first argument, completely
+                           negates the second.)
 
                            <h3>Conclusion</h3><br>
 
                            The client application runs quite nicely on small Java capable PDAs. With
                            integrated wireless networking, these make excellent control devices.  As
                            their processing and display capability continue to improve, their value as
-                           user interface hosts to a distributed computing collective becomes even more
+                           user interface hosts to a distributed computing collective become even more
                            attractive. Perhaps one day soon they may become the <i>primary</i> tool to
-                           interface to computer networks. The best part is, for now you can very
-                           accurately model and develop for these future devices, using standard
+                           interface to computer networks. The best part is that for now you can very
+                           accurately model, and develop for, these future devices using standard
                            desktop and laptop computers.<br><br>
 
                            <!--
