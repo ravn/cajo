@@ -1,0 +1,170 @@
+<html>
+   <head>
+      <title>The CaJo Project</title>
+      <meta name="Keywords" content="cajo, rmi, java, distributed computing">
+      <meta name="Description" content="Cajo Distributed Application Framework">
+      <meta name="Author" content="John Catherino">
+   </head>
+   <body bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800000" alink="#FF0000">
+      <table width="100%" cellspacing="0" cellpadding="0" border="0">
+         <tr>
+            <td><img src="images/topl.gif" width="17" height="17" border="0"></td>
+            <td width="100%" bgcolor="#8C6239"><img src="images/dot.gif" width="1" height="1" border="0"></td>
+            <td><img src="images/topr.gif" width="17" height="17" border="0"></td>
+         </tr>
+      </table>
+      <table width="100%" cellspacing="0" cellpadding="0" border="0">
+         <tr>
+            <td width="100%" height="15" bgcolor="#8C6239">
+               <img src="images/dot.gif" width="1" height="1" border="0">
+            </td>
+         </tr>
+      </table>
+      <table width="100%" cellspacing="0" cellpadding="0" border="0">
+         <tr>
+            <td width="120" valign="top">
+               <table width="120" border="0" cellspacing="2" cellpadding="2" align="left">
+<!-- begin table.html -->
+                  <tr>
+                     <td bgcolor="#C0C08D">
+                        <font face="Verdana,Geneva,Arial,Helvetica,sans-serif" size="-2">
+                           <a href="index.html" title="cajo home page"><b>Welcome</b></a><br>
+                        </font>
+                     </td>
+                  </tr>
+                  <tr>
+                     <td bgcolor="#C0C08D">
+                        <font face="Verdana,Geneva,Arial,Helvetica,sans-serif" size="-2">
+                           <a href="tutorial.html" title="getting started"><b>Tutorial</b></a>
+                        </font>
+                     </td>
+                  </tr>
+                  <tr>
+                     <td bgcolor="#C0C08D">
+                        <font face="Verdana,Geneva,Arial,Helvetica,sans-serif" size="-2">
+                           <a href="theory.html" title="how it all works"><b>Theory</b></a>
+                        </font>
+                     </td>
+                  </tr>
+                  <tr>
+                     <td bgcolor="#C0C08D">
+                        <font face="Verdana,Geneva,Arial,Helvetica,sans-serif" size="-2">
+                           <a href="gotcha.html" title="important details"><b>Gotchas</b></a>
+                        </font>
+                     </td>
+                  </tr>
+                  <tr>
+                     <td bgcolor="#C0C08D">
+                        <font face="Verdana,Geneva,Arial,Helvetica,sans-serif" size="-2">
+                           <a href="faq.html" title="common questions"><b>FAQ</b></a>
+                        </font>
+                     </td>
+                  </tr>
+                  <tr>
+                     <td bgcolor="#C0C08D">
+                        <font face="Verdana,Geneva,Arial,Helvetica,sans-serif" size="-2">
+                           <a href="acknowlege.html" title="supporters of the marque"><b>Acknowlegements</b></a>
+                        </font>
+                     </td>
+                  </tr>
+                  <tr>
+                     <td bgcolor="#C0C08D">
+                        <font face="Verdana,Geneva,Arial,Helvetica,sans-serif" size="-2">
+                           <a href="license.html" title="what's the LGPL"><b>License</b></a>
+                        </font>
+                     </td>
+                  </tr>
+<!-- end table.html -->
+               </table>
+            </td>
+            <td width="100%" valign="top">
+               <table width="100%" cellpadding="5" border="0">
+                  <tr>
+                     <td>
+                        <font face="Verdana, Helvetica" size="-1">
+<!-- begin main.html -->
+                           <font face="Verdana, Helvetica" size="3">
+                              <b>Proxy items distribute server functionality to the client.</b>
+                           </font><br><br>
+
+                           If you haven't yet read the page on items, you really should first, since
+                           a proxy is another type of an <a href=item.html>item</a>.  A proxy is an
+                           object, sent to a hosting VM to execute in its runtime. It is sent by an
+                           Item, and arrives with a link to the item's remote interface, on which it
+                           can invoke its methods.  Its purpose is to pre-process invocations made
+                           by the client, using its resources, as opposed to those of the server.<br><br>
+
+                           A proxy generally extends one of two possible classes,
+                           gnu.cajo.utils.BaseProxy or gnu.cajo.utils.PanelProxy.  Which is used depends
+                           on the primary function of the proxy.  If the proxy is purely a programmatic
+                           interface to remote item, it should extend BaseProxy.  If the proxy is also
+                           provides a graphical user interface to  display at the hosting VM, it should
+                           extend PanelProxy.<br><br>
+
+                           Architecturally a BaseProxy (or PanelProxy) is very similar to a BaseItem,
+                           it has a thread, which is cannonically launched by the client, upon its
+                           arrival. It also has a final implementation of the invoke interface, which
+                           is used to route remote invocations, to the appropriate local method,
+                           returning the result, if any.  It has a few differences from an Item however. It has a string table,
+                           which can be loaded with the language appropriate to the hosting VM. It has
+                           the link back to its remote server, as mentioned above.<br><br>
+
+                           Each proxy is served by an Item. An item binds itself and provides proxy
+                           service using the static gnu.cajo.utils.ProxyServer.bind method.  This also
+                           starts up the proxy codebase server, on which the client will request, and
+                           receive the proxy class files.  If a VM serves proxies it requires two TCP
+                           ports, one for communication with the server item, and one for sending the
+                           proxy codebase.  If an item server does not send proxies, it requires only
+                           one port.<br><br>
+
+                           A item can also accept proxies from other items, this is done when invoking
+                           its gnu.cajo.invoke.ItemServer.bind or gnu.cajo.invoke.ProxyServer.bind
+                           methods. There is a boolean argument <code>acceptProxies</code> for this
+                           purpose.  Unless it is set, the item will not accept, or run the proxy.
+                           A proxy can be sent to an item, using a "setProxy" invocation with the proxy
+                           object as the argument.  This call will with a ClassNotFoundException, if
+                           the called item does not accept proxies.  If the invocation is successful,
+                           the returned value from the invocation will be a remote reference to the
+                           installed proxy, over which communication can take place.<br><br>
+
+                           A proxy can be obtained from an item reference by using a null argument
+                           "getProxy" invocation. The returned item, if non-null, will be its default
+                           proxy.  The standard hosting the standard initialization procedure is to:
+                           <pre><code>   proxy.invoke("init", new Remote(proxy));</code></pre>
+                           This will cause the proxy to load its string table, create its main thread,
+                           and begin operating.  It uses the remote reference to itself, to pass back
+                           to its calling server, or to other items, on which they may asynchronously
+                           communicate with the proxy, as necessary.<br><br>
+
+                           Both the proxy and its serving item can, in turn, give their remote
+                           references to other items.  A item calling another item does not know if it
+                           is invoking it on a local item, a remote item, or a remote proxy.<br>br>
+
+                           The framework can allow a collection of objects to start on a single machine,
+                           and scale until each of its items are not only on separate virtual machines,
+                           but separate <i>physical</i> machines!  This creates the potential for using
+                           the internet as one giant computer, or the worlds largest supercomputing
+                           cluster, depending on your point of view.  Of course, the machines may be
+                           PCs, Macs, Workstations... everything from Mainframes, to Pocket PCs.<br><br>
+
+                           The next section <a href=multicast.html>multicast</a> will show how items
+                           can send, or receive, remote references to other items, or proxies, using
+                           a method similar to a radio broadcast.<br<br>
+
+                           <br><br>
+                           <div align="center">
+                              <font face="Verdana, Helvetica" size="-2">
+                                 <hr width="80%">
+                                 Proxies are just items, sent by the server, to run at the client.
+                              </font>
+                           </div>
+<!-- end main.html -->
+                        </font>
+                     </td>
+                  </tr>
+               </table>
+            </td>
+         </tr>
+      </table>
+   </body>
+</html>
