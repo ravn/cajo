@@ -93,6 +93,7 @@ public final class CodebaseServer extends Thread {
          "</EMBED></COMMENT></OBJECT></CENTER></BODY></HTML>"
       ).getBytes();
    private static final int fixlen = top.length + mid.length + end.length;
+   private static String thisJar;
    private static ServerSocket ss;
    /**
     * This is the inbound {@link java.net.ServerSocket ServerSocket}
@@ -109,12 +110,17 @@ public final class CodebaseServer extends Thread {
     * on the specified port.
     * @param base The path and name of the file containing the codebase jar
     * file.  The server will first search for it in its own executable jar
-    * file, if that fails, then it will check the local filesystem.
+    * file, if that fails, then it will check the local filesystem.<p>
+    * This server determines the name of the jar file in which it is running
+    * courtesy of a very cool hack published by Laird Nelson in his
+    * weblog: http://weblogs.java.net/pub/wlg/1874 Thanks Laird! This is
+    * used to allow the server to serve all the jar files in its working
+    * directory tree <i>except</i> its own.
     * @param port The TCP port on which to serve the codebase, and client
     * applet. It can be zero, to use an anonymous port. If zero, the actual
     * port selected by the OS at runtime will be stored in the
     * {@link #port port} member. To shut the service down, call its inherited
-	* interrupt method.
+    * interrupt method.
     * @throws IOException If the HTTP socket providing the codebase and applet
     * tag service could not be created.
     * @throws IllegalStateException If a second instance of this class is
@@ -122,8 +128,11 @@ public final class CodebaseServer extends Thread {
     */
    public CodebaseServer(String base, int port) throws IOException {
       if (ss == null) {
-         ss = new ServerSocket(port, 50,
-            InetAddress.getByName(Remote.getServerHost()));
+         String classId = CodebaseServer.class.getName().replace('.', '/') + ".class";
+         thisJar = CodebaseServer.class.getClassLoader().getResource(classId).toString();
+         thisJar = thisJar.substring(thisJar.lastIndexOf(':'), thisJar.lastIndexOf('!'));
+         thisJar = thisJar.substring(thisJar.lastIndexOf('/') + 1);
+         ss = new ServerSocket(port, 50, InetAddress.getByName(Remote.getServerHost()));
          CodebaseServer.port = port == 0 ? ss.getLocalPort() : port;
          System.setProperty("java.rmi.server.codebase",
             "http://" + Remote.getClientHost() + ':' + port + '/' + base);
@@ -157,10 +166,13 @@ public final class CodebaseServer extends Thread {
     * <p>To unspecify any optional item, simply omit it, from the URL, along
     * with its preceeding delimiter, if any.  The <u>order</u> of the arguments
     * must be maintained however.<p>
-	* <i>Note:</i> other item servers can share this instance, by placing their
-	* proxy jar files in the same working directory. However, those item
-	* servers will not be able to use the client service feature, as it is
-	* unique to the VM in which the CodebaseServer is running.
+    * <i>Note:</i> other item servers can share this instance, by placing their
+    * proxy jar files in the same working directory. However, those item
+    * servers will not be able to use the client service feature, as it is
+    * unique to the VM in which the CodebaseServer is running.<p>
+    * As a safety precaution, the server will send any requested jar file in
+    * or below its working directory <i>except</i> the jar file of the server
+    * itself! Typically people do not want to give this file out.
     */
    public void run() {
       try {
@@ -184,7 +196,7 @@ public final class CodebaseServer extends Thread {
                }
                if (itemName == null) os.write(bye);   // invalid request
                else if (itemName.endsWith(".jar") &&  // code request
-                  !itemName.endsWith("server.jar")) { // safety measure
+                  !itemName.endsWith(thisJar)) {      // safety measure
                   try {
                      InputStream ris =
                         getClass().getResourceAsStream(itemName);
