@@ -133,22 +133,17 @@
                            browser. Nearly half of the source code is documentation comments!<br><br>
 
                            The <b>example directory</b> contains the four Java classes comprising the
-                           example server.  The file
-                           <a href=https://cajo.dev.java.net/source/browse/cajo/example/Main.java>
-                           Main.java</a> is the server application itself. The file
-                           <a href=https://cajo.dev.java.net/source/browse/cajo/example/TestItem.java>
-                           TestItem</a> is a item, meaning a small server-side functional module, which
-                           is accessible to remote applications.  The file
-                           <a href=https://cajo.dev.java.net/source/browse/cajo/example/TestProxy.java>
-                           TestProxy</a> is a proxy, meaning a mobile functional module, which is
-                           sent to remote clients, and communicates back to an item.  Servers can be
-                           made that do not use proxies, it is simply here to demonstrate how
-                           to make one, and what it does. Finally there is the file
-                           <a href=https://cajo.dev.java.net/source/browse/cajo/example/Builder.java>
-                           Builder.java</a>.  Strictly speaking the example could have been made without
-                           this file also, but it is here to demonstrate the process of configuring
-                           proxies at compile time, rather than runtime.  It's a little extra work, but
-                           it can make the proxies a lot smaller, simpler, and even more secure.<br><br>
+                           example server.  The file Main.java is the server application itself. The
+                           file TestItem is an item, meaning a small server-side functional module,
+                           which is accessible to remote applications.  The file TestProxy is a proxy,
+                           meaning a mobile functional module, which is sent to remote clients, and
+                           communicates back to an item.  Servers can be made that do not use proxies,
+                           it is simply here to demonstrate how to make one, and what it does. Finally
+                           there is the file Builder.java.  Strictly speaking the example could have
+                           been made without this file also, but it is here to demonstrate the process
+                           of configuring proxies at compile time, rather than runtime.  It's a little
+                           extra work, but it can make the proxies a lot smaller, simpler, and even more
+                           secure.<br><br>
 
                            The <b>gui directory</b> contains a small collection of graphical widgets
                            used by the proxy to create its user interface on hosting clients. They are
@@ -176,13 +171,8 @@
 
                            <b><a href=tutorial.html#building name=building>Building the example:</a></b><br><br>
                            There are three fundamental ways to build the example, represented by the
-                           three batch files; 
-                           <a href=https://cajo.dev.java.net/source/browse/cajo/make1.bat>make1.bat</a>,
-                           <a href=https://cajo.dev.java.net/source/browse/cajo/make2.bat>make2.bat</a>,
-                           and
-                           <a href=https://cajo.dev.java.net/source/browse/cajo/make3.bat>make3.bat</a>.
-                           Each builds the server, with identical functionality, simply packaged in
-                           different ways.<br><br>
+                           three batch files; make1.bat, make2.bat, and make3.bat. Each builds the
+                           server, with identical functionality, simply packaged in different ways.<br><br>
 
                            The <b>make1</b> batch creates the server in a single monolithic jar file.
                            Everything is contained inside it, the server itself, the test item, the test
