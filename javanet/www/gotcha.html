@@ -77,6 +77,7 @@
                                         <li><a href=#4>Firewalled Clients</a>
                                         <li><a href=#5>Marshalling Objects</a>
                                         <li><a href=#6>Sending Proxies</a>
+                                        <li><a href=#7>Configuring Remote</a>
                                      </ol>
 
                            
@@ -177,7 +178,15 @@
                                      proxy object itself to another VM, the receiver will most likely suffer a
                                      <tt>ClassNotFoundException</tt>. However sending the MarshalledObject
                                      instead, will work correctly. MarshalledObjects are handy containers in which
-                                     proxy objects can be freely sent between remote objects.
+                                     proxy objects can be freely sent between remote objects.<br><br>
+
+                                     <a id="7"></a><b><u>7. Configuring Remote:</u></b> You must call Remote.<a href=https://cajo.dev.java.net/nonav/docs/gnu/cajo/invoke/Remote.html#config(java.lang.String,%20int,%20java.lang.String,%20int)>config</a>
+                                     once, in the lifetime of the server. It configures the TCP settings for
+                                     network communication. If you attempt to remote an object, either through
+                                     ItemServer.<a href=https://cajo.dev.java.net/nonav/docs/gnu/cajo/utils/ItemServer.html#bind(java.lang.Object,%20java.lang.String)>bind</a>
+                                     or via Multicast.<a href=https://cajo.dev.java.net/nonav/docs/gnu/cajo/utils/Multicast.html#announce(java.lang.Object,%20int)>announce</a>
+                                     <i>before</i> doing this; a NullPointerException will occur.
+
                                     </span>
                                  </td>
                               </tr>
