@@ -30,13 +30,13 @@ import java.util.zip.GZIPOutputStream;
  * 59 Temple Place Suite 330, Boston MA 02111-1307 USA
  */
 /**
- * These routines are used for item server construction.  The items would be
+ * These routines are used for server item construction.  The items can be
  * utilized by remote clients to compose larger, cooperative, functionality.
- * It creates an rmiregistry automatically, on class loading, since any given
- * VM instance can have only one.  It will be used to bind all item servers for
- * external access.  A given application can bind as many items as it needs.
+ * It creates an rmiregistry automatically, upon class loading, since any given
+ * VM instance can only have one.  It will be used to bind all item servers for
+ * external access.  A given application can bind as many items as it wants.
  * <p>A security policy file, named "server.policy" will be loaded from the
- * local directory By default, the policy file need only allow the following
+ * local directory. By default, the policy file need only allow the following
  * permissions:
  * <p><pre> grant codeBase "file:${java.class.path}" {
  *    permission java.security.AllPermission;
@@ -45,15 +45,15 @@ import java.util.zip.GZIPOutputStream;
  *    permission java.net.SocketPermission "*:1024-", "accept";
  *    permission java.net.SocketPermission "*", "connect";
  * };</pre><p>
- * This will allow the server codebase full priviliges, and restricts any
- * proxies to create server sockets only on non-priviliged local ports,
- * while allowing client socket connections to any remote port.
- * <p> It can also be run as an application, to export a single item, for use
- * by remote clients.
- * <i>Note:</i> if  the {@link gnu.cajo.invoke.Remote Remote} class needs
- * configuration, it must be done <b>before</b> binding a proxy serving item,
- * since this will use the server's name and port number. This is accomplished
- * by calling its {@link gnu.cajo.invoke.Remote#config config} static method.
+ * This will allow the three things:<ul>
+ * <li> The server codebase has full priviliges.
+ * <li> Proxies can only create server sockets only on non-priviliged local ports.
+ * <li> Proxies can only create client sockets to any remote port, on any host.
+ * </ul><i>Note:</i> if  the {@link gnu.cajo.invoke.Remote Remote} class needs
+ * configuration, it must be done <b>before</b> binding an item, since doing
+ * this will use the server's assigned name and port number. Configuration is
+ * accomplished by calling its {@link gnu.cajo.invoke.Remote#config config}
+ * static method.
  * 
  * @version 1.0, 01-Nov-99 Initial release
  * @author John Catherino
@@ -70,112 +70,110 @@ public class ItemServer {
     * operations must make use of this instance, as there can be only one
     * rmiregistry per session.  All other items bound on this registry will
     * also have to share the same port.  The port used for the registry will
-    * be the same one used to communicate with all local server instances.      
+    * be the same one used to communicate with all local server instances.
+    * Generally this instance is manipulated solely by the object. However,
+    * it is made public, to allow the application options; such as dynamically
+    * unbinding items, or binding objects of other types.
     */
    public static Registry registry;
    /**
     * Nothing happens in the constructor of this class, as all of its
     * methods are static, and it has no instance variables.  This class exists
-    * solely as a server facilitating collection.
+    * solely as a server item creation facilitator.
     */
    public ItemServer() {}
    /**
-    * The generic bind operation remotes an item in the local rmiregistry.
-    * strictly speaking, it performs a rebind operation on the rmiregistry.
-    * Since the registry is not shared with other applications, checking
-    * for already bound items is unnecessary.  If the server item implements
-    * {@link gnu.cajo.invoke.Invoke Invoke} it will be invoked with the method
-    * name "startProxy", and a null argument, to signal it to start its main
-    * processing thread.
-    * <i>Note:</i> if the Remote class needs configuration, it must be done
-    * <b>before</b> binding a proxy serving item, since this will use the
-    * server's name and port number. This is accomplished by calling its
-    * {@link gnu.cajo.invoke.Remote#config config} static method.
+    * This method enables this VM to host proxies, and accept other mobile code,
+    * from other remote servers. Hosting mobile code can result in the
+    * overloading of this server VM, either accidentially, or maliciously.
+    * Therefore hosting should be done either in a trusted environment, or on
+    * a non-essential VM. Hosting of mobile code is disabled by default.
+    * <p><i>Note:</i> accepting proxies may be disabled via a command line
+    * argument at the server's startup, in which case, this will accomplish
+    * nothing.  The loading of proxies can be prohibited when launching the
+    * server with the <b>-Djava.security.manager</b> switch. It installs a
+    * default SecurityManager, which will not allow the loading of proxies, or
+    * any other type of mobile code, and prohibits itself from being replaced
+    * by the application. <i>Note:</i> this is an <i>extremely</i> important
+    * command line switch; worth <u>memorizing</u>!
+    * @throws SecurityException If a SecurityManager is already installed, and
+    * explicitly prohibits itself from being replaced.
+    */
+   public static void acceptProxies() throws SecurityException {
+      System.setSecurityManager(new java.rmi.RMISecurityManager());
+   }
+   /**
+    * This method remotes the provided item in the local rmiregistry. The
+    * registry will not be created until the binding of the first item, to
+    * allow the opportunity for the {@link gnu.cajo.invoke.Remote Remote}
+    * class' network settings to be {@link gnu.cajo.invoke.Remote#config
+    * configured}. Strictly speaking, it performs a rebind operation on the
+    * rmiregistry, to more easily allow the application to dynamically replace
+    * server items at runtime, if necessary. Since the registry is not shared
+    * with other applications, checking for already bound items is unnecessary.
+    * <p> If the provided item implements the {@link gnu.cajo.invoke.Invoke
+    * Invoke} interface; it will first be invoked with the method name
+    * "startThread", and a null argument, to signal it to start its main
+    * processing thread. Next it will be invoked with a "setProxy", and a
+    * remote reference to itself, with which it can share with remote VMs, in
+    * an application specific manner.
     * @param item The item to be bound.  It may be either local to the machine,
-    * or remote, it can even be a proxy for a remote server, that is, if a
-    * suitable SecurityManager was already installed.
-    * @param name The name under which to bind the remote reference in the
+    * or remote, it can even be a proxy from a remote item, if proxy
+    * {@link #acceptProxies acceptance} was enabled for this VM.
+    * @param name The name under which to bind the item reference in the
     * local rmiregistry.
-    * @param acceptProxies If true, an RMISecurityManager will be installed,
-    * that is, if no SecurityManager is currently installed for the VM.  This
-    * would allow client proxies to run inside this VM.  <i>Note:</i> Allowing
-    * client proxies to run inside this VM invites the possibility of a denial
-    * of service attack.  Proxy hosting generally should be provided only on
-    * an expendible VM.
-    * @param mcast If non-null, a reference to a Multicast object on which to
-    * announce the binding of this server to the listening community.
     * @return A remoted reference to the item within the context of this VM's
     * settings.
-    * @throws RemoteException If the registry could not be contacted,
-    * technically <i>unlikely</i> since the registry is always local.
-    * @throws IOException If the UDP multicast announcement attempt failed.
-    * @throws Exception, if the item rejects the startThread invocation.
+    * @throws RemoteException If the registry could not be created.
     */
-   public static Remote bind(Object item, String name, boolean acceptProxies,
-      Multicast mcast) throws Exception {
+   public static Remote bind(Object item, String name) throws RemoteException {
       if (registry == null) {
          registry = LocateRegistry.
             createRegistry(Remote.getServerPort(), Remote.rcsf, Remote.rssf);
       }
-      if (item instanceof Invoke) ((Invoke)item).invoke("startThread", null);
       Remote handle = item instanceof Remote ? (Remote)item : new Remote(item);
-      if (item instanceof Invoke)
+      if (item instanceof Invoke) try {
+         ((Invoke)item).invoke("startThread", null);
          ((Invoke)item).invoke("setProxy", new MarshalledObject(handle));
+      } catch(Exception x) {}
       registry.rebind(name, handle);
-      if (mcast != null) mcast.announce(handle, 16);
       return handle;
    }
    /**
-    * The generic bind method is used to serve the provided proxy item by the
-    * provided server item.  It will remote a reference to the server item, and
-    * bind in it the local rmiregistry under the name provided. If the item
-    * implements {@link gnu.cajo.invoke.Invoke Invoke} it will be called with a
-    * method string of "setProxy" and a {@link java.rmi.MarshalledObject
-    * MarshalledObject} containing the proxy item. If the proxy implements
-    * Invoke, it will be called with a remote reference to the serving item,
-    * with a method argument of "setProxy".
+    * This method is used to bind a proxy serving item. It will remote a
+    * reference to the server item, and bind in it the local rmiregistry under
+    * the name provided. It works identically to the bind operation for regular
+    * server items, with a few additional steps.<p>
+    * If the proxy implements {@link gnu.cajo.invoke.Invoke Invoke}, it will
+    * be called with a remote reference to the serving item, with a method
+    * argument of "setProxy". If the item implements Invoke it will be called
+    * with a method string of "setProxy" and a {@link java.rmi.MarshalledObject
+    * MarshalledObject} containing the proxy item.
     * @param item The item to be bound.  It may be either local to the machine,
-    * or remote, it can even be a proxy for a remote server, that is, if a
-    * suitable SecurityManager was already installed.
-    * @param name The name under which to bind the server in the local
-    * rmiregistry.
-    * @param acceptProxies If true, an {@link java.rmi.RMISecurityManager
-    * RMISecurityManager} will be installed, that is, only if no other
-    * SecurityManager is currently installed for the VM.  This would allow
-    * client proxies to run inside this VM.<br>
-    * <i>Note:</i> Allowing client proxies to run inside this VM invites the
-    * possibility of a denial of service attack.  Proxy hosting generally
-    * should be provided only on a mission-expendible VM.
-    * @param proxy The proxy item to be sent to requesting clients. If it
-    * implements the Invoke interface, it will be called with a null argument,
-    * and a remote reference to its server item.
-    * @param mcast If non-null, a reference to a Multicast object on which to
-    * announce the startup of this server to the listening community.
+    * or remote, it can even be a proxy from a remote item, if proxy
+    * {@link #acceptProxies acceptance} was enabled for this VM.
+    * @param name The name under which to bind the item reference in the
+    * local rmiregistry.
+    * @param proxy The proxy item to be sent to requesting clients.
     * @return A remoted reference to the item within the context of this VM's
     * settings.
-    * @throws IOException If the http server providing the codebase and applet
-    * tag service could not be created, or the multicast announcement failed
-    * to occur.
-    * @throws java.rmi.RemoteException If the remote server reference could not
-    * be created.
-    * @throws RemoteException If the binding operation to the rmiregistry
-    * failed, <i>very unlikely</i>, since it runs inside this VM.
-    * @throws Exception if either the item or the proxy implements the
-    * Invoke interface, and rejects the initialization invocation.
+    * @throws RemoteException If the registry could not be created.
     */
-   public static Remote bind(Object item, String name, boolean acceptProxies,
-      Multicast mcast, Object proxy) throws Exception {
+   public static Remote bind(Object item, String name, Object proxy)
+      throws RemoteException {
       if (registry == null) {
          registry = LocateRegistry.
             createRegistry(Remote.getServerPort(), Remote.rcsf, Remote.rssf);
       }
-      if (item instanceof Invoke) ((Invoke)item).invoke("startThread", null);
       Remote handle = item instanceof Remote ? (Remote)item : new Remote(item);
-      if (proxy instanceof Invoke) ((Invoke)proxy).invoke("setItem", handle);
-      if (item instanceof Invoke)
+      if (proxy instanceof Invoke) try {
+         ((Invoke)proxy).invoke("setItem", handle);
+      } catch(Exception x) {}
+      if (item instanceof Invoke) try {
+         ((Invoke)item).invoke("startThread", null);
          ((Invoke)item).invoke("setProxy", new MarshalledObject(proxy));
+      } catch(Exception x) {}
       registry.rebind(name, handle);
-      if (mcast != null) mcast.announce(handle, 16);
       return handle;
    }
    /**
@@ -189,20 +187,20 @@ public class ItemServer {
     * local {@link #bind bind} method.
     * <p>The startup can take up to six optional configuration parameters,
     * which must be in order, progressing from most important, to most
-    * unlikely.<p>
-    * @param args[0] The URL where to get the object: file:// http:// ftp://
-    * /path/file, path/file or alternatively; //[host][:port]/[name]. The host
-    * port and name are optional, if missing the host is presumed local, the
-    * port 1099, and the name proxy. If no argument is provided, it will be
-    * assumed to be ///proxy.
-    * @param args[1] The optional external client host name, if using NAT.
-    * @param args[2] The optional external client port number, if using NAT.
-    * @param args[3] The optional internal client host name, if multi home/NIC.
-    * @param args[4] The optional internal client port number, if using NAT.
-    * @param args[5] The optional URL where to get a proxy item: file://
+    * least:<ul>
+    * <li> args[0] The URL where to get the object: file:// http:// ftp://
+    * /path/file, path/file or alternatively; //[host][:port]/[name] -- the
+    * host port and name are optional, if omitted the host is presumed local,
+    * the port 1099, and the name proxy. If no arguments are provided, this
+    * will be assumed to be ///main.
+    * <li> args[1] The optional external client host name, if using NAT.
+    * <li> args[2] The optional external client port number, if using NAT.
+    * <li> args[3] The optional internal client host name, if multi home/NIC.
+    * <li> args[4] The optional internal client port number, if using NAT.
+    * <li> args[5] The optional URL where to get a proxy item: file://
     * http:// ftp:// ..., //host:port/name (rmiregistry), /path/name
     * (serialized), or path/name (class).  It will be passed into the loaded
-    * item as the sole argument to its setItem method.
+    * item as the sole argument to its setItem method.<ul>
     */
    public static void main(String args[]) {
       try {
@@ -212,10 +210,11 @@ public class ItemServer {
          String localHost  = args.length > 3 ? args[3] : null;
          int localPort     = args.length > 4 ? Integer.parseInt(args[4]) : 0;
          Remote.config(localHost, localPort, clientHost, clientPort);
-         System.setSecurityManager(new java.rmi.RMISecurityManager());
          main = Remote.getItem(url);
          if (args.length > 5) main.invoke("setItem", Remote.getItem(args[5]));
-         main = bind(main, "main", true, new Multicast());
+         main = bind(main, "main");
+         new Multicast().announce((Remote)main, 16);
+         acceptProxies();
          System.out.println("Server started: " +
             DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL).
                format(new java.util.Date()));
