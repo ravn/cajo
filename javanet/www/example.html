@@ -91,7 +91,7 @@
                         <font face="Verdana, Helvetica" size="-1">
 <!-- begin main.html -->
                            <font face="Verdana, Helvetica" size="4">
-                              <b>Demonstrating the framework's features and functions.</b>
+                              <b>Demonstrating the cajo framework's features and functions.</b>
                            </font><br><br>
 
                            The example package is a collection of four small classes demonstrating the
@@ -108,8 +108,8 @@
                            </ul>
 
                            As mentioned in the <a href=proxy.html>proxy</a> page, a server does not
-                           need to use proxies; one is included in the example, just for completeness
-                           of illustration.<br><br>
+                           need to use proxies; one is included in the example, for completeness of
+                           illustration.<br><br>
 
                            <a id="TestItem"></a>The <b>TestItem</b> class demonstrates the basic
                            functionality of a server item.  A server item has two primary components; a
@@ -125,15 +125,15 @@
                            methods. (subject to the minor restrictions outlined in the
                            <a href="theory.html#rules">theory</a> page)<br><br>
 
-                           The thread in the example item performs the <i>highly recommended</i> practice
-                           of looping on its <code>thread.isInterrupted()</code> method. The item itself,
-                           or other parts of the application, can invoke a <code>thread.interrupt()</code>
-                           on the public thread member.  This does not terminate the thread automatically,
-                           rather only flags it. This allows item's processing thread a mechanism to
-                           perform a safe and orderly shutdown.  This is generally done when taking a
-                           server item offline. This technique has the added benefit that if the item's
-                           thread is waiting, it will wake it up, via the throwing of an <code>
-                           InterruptedException</code><br><br>
+                           The thread in the example item performs the <i>highly recommended</i>
+                           practice of looping on its <code>thread.isInterrupted()</code> method. The
+                           item itself, or other parts of the application, can invoke a
+                           <code>thread.interrupt()</code> on the public thread member.  This does
+                           <b>not</b> terminate the thread automatically, rather only flags it. This
+                           allows item's processing thread a mechanism to perform a safe and orderly
+                           shutdown.  This is generally done when taking a server item offline. This
+                           technique has the added benefit that if the item's thread is waiting, it
+                           will wake it up, via the throwing of an <code>InterruptedException</code><br><br>
 
                            Since this is only an example item implementation, the main processing thread
                            has basically nothing to do.  So it simply puts itself to sleep, to be awoken
@@ -178,25 +178,26 @@
                            define a main thread, i.e. it can also be purely event driven.<br><br>
 
                            The example demonstrates the Internationalization feature of proxies.
-                           When the proxy is initialized, it will load its string table, from a
-                           properties file, most closely matching the locale of the receiving VM.  This
-                           allows the proxy's user interface to be in German on an Austrian machine, and
-                           Spanish on a Mexican one.  Of course, all of these translated string tables
-                           must be provided.  The properties file, and all other non-class resources are
-                           generally placed in a support directory.  In this case it is called include.
-                           The reason for the separate directory, is to simplify the proxy's jar
-                           creation as the build script can include all the files blindly.<br><br>
+                           When the proxy is initialized, it will load its string table, if defined,
+                           from a properties file, most closely matching the locale of the receiving VM.
+                           This allows the proxy's user interface to be in German on an Austrian machine,
+                           and Spanish on a Mexican one, for example.  Of course, all of these
+                           translated string tables must be provided.  The properties file, and all
+                           other non-class resources are generally placed in a support directory.  In
+                           this case it is called include. The reason for the separate directory, is to
+                           simplify the proxy's jar creation, as the build script can then include all
+                           the files in the directory blindly.<br><br>
 
                            Since this is a graphical proxy example, it's initialization invocation also
-                           provides a non-null graphical component, which the client can display at
-                           its location.  The purpose of the component is to provide a graphical user
-                           interface to a remot server item, however offloading as much processing as
+                           returns a non-null graphical component that the client can display on its
+                           monitor. The purpose of the component is to provide a graphical user
+                           interface to a remote server item, however offloading as much processing as
                            necessary, to the client's runtime.<br><br>
 
-                           When the proxy's processing thread first starts, it writes out an arrival
-                           notice to the client's user interface.  Next, it invokes the method named
-                           callback on the reference to its server item.  It passes its remote reference
-                           to itself, and a message string.  It displays the value returned  by the
+                           When the proxy's processing thread starts, it writes out an arrival notice
+                           to the client's user interface.  Next, it invokes the method named callback
+                           on the reference to its server item.  It passes its remote reference to
+                           itself, and a message string.  It displays the value returned  by the
                            invocation as well.  Following that, it exits its run method, causing its
                            main processing thread to terminate.<br><br>
 
@@ -210,20 +211,20 @@
                            <a id="Builder"></a>The <b>Builder</b> class serves two purposes.  First it
                            serves to replace the code which would otherwise go into the proxy's
                            constructor.  Why do this?  Because all of the construction code, which can
-                           be quite a sizeable amount if the proxy is elaborate, can be left out of the
-                           proxy's jar file.  This reduces the proxy jar size, can and also add the
-                           additional feature that a proxy becomes much more difficult to
-                           reverse-engineer, if such a protection is important to an application.<br><br>
+                           be quite sizeable if the proxy is elaborate, can be left out of the proxy's
+                           jar file.  This reduces the proxy jar size, and also adds the additional
+                           feature that the proxy becomes much more difficult to <i>reverse-engineer</i>,
+                           if such a protection is important.<br><br>
 
                            The second function of the Builder class is to instantiate the proxy, then
                            serialize its image to disc.  This serialized object will be included in the
-                           proxy jar file, referenced through a
-                           <a href=docs/gnu/cajo/utils/ProxyLoader.html>ProxyLoader</a>
-                           in the TestItem's runtime.  The is the <i>most elaborate</i> way to use a
-                           ProxyLoader. It can also be used to invoke a proxy's no-arg constructor,
-                           to create a new instance of the proxy, on its arrival at the host VM. In
-                           that case, all of the construction code would have to be passed to the
-                           client VM.<br><br>
+                           proxy jar file, and referenced through a
+                           <a href=docs/gnu/cajo/utils/ProxyLoader.html>ProxyLoader</a> in the TestItem's
+                           runtime.  The is the <i>most elaborate</i> way to use a ProxyLoader. They can
+                           also be used to invoke a proxy's no-arg constructor, to create a new instance
+                           of the proxy, on its arrival at the host VM. In that case, all of the
+                           construction code would have to be passed to the client VM. Use of a
+                           ProxyLoader is optional, but it is a <i>highly recommended</i> optimization.<br><br>
 
                            The actual mechanics of what is going on inside the builder is not so
                            important.  It is basically configuring graphical components, and putting
@@ -231,13 +232,13 @@
                            <a href=docs/gnu/cajo/utils/BaseProxy.html#container>container</a>.
                            The proxy will return this graphical container to the hosting client as a
                            result of its initialization invocation.  It also defines the keys of the
-                           string table, to be loaded during initialization. It also references a
+                           string table, also loaded during initialization. It also references a
                            ProxyLoader.  This is a special requirement.  The proxy will need to use
                            the ProxyLoader class file on its arrival at the host, however, it doesn't
                            need to use it during compile time.  Without this apparently unused
-                           reference, the proxy would suffer a ClassNotFoundException at the host,
-                           as ProxyLoader class would not have been loaded into the proxy jar file,
-                           since it would have not been compiled.<br><br>
+                           reference, the proxy would suffer a <code>ClassNotFoundException</code> at
+                           the host, as ProxyLoader class would not be in the proxy jar file, as it
+                           would have not been compiled.<br><br>
 
                            <a id="Main"></a>The <b>Main</b> class illustrates how to make a server
                            application.  A server is simply an application which makes one, or more,
@@ -245,27 +246,27 @@
                            network settings, then makes the test item accessible.  As explained in the
                            <a href=tutorial.html#launching>launching</a> turorial, the application can
                            take up to five parameters, in order, from most likely to need changing, to
-                           least likely, and where precedence matters. The network configuration
-                           parameters are as follows:
+                           least likely, and where order and precedence matters. The network
+                           configuration parameters are as follows:
 
                            <ul>
-                              <li> the port number on which to serve the proxy's codebase (default = 80)
-                              <li> the port number on which to communicate with the item (default = 1099)
-                              <li> the external server name or address, if using NAT (default = same as local)
-                              <li> the local host network interface, if multiple (default = primary NIC)
-                              <li> the outside port number to communicate with the item (default = same as local)
+                              <li> the port number on which to serve the proxy's codebase <br>(default = 80)
+                              <li> the port number on which to communicate with the item <br>(default = 1099)
+                              <li> the external server name or address, if using NAT <br>(default = same as local)
+                              <li> the local host network interface, if multiple <br>(default = primary NIC)
+                              <li> the outside port number to communicate with the item <br>(default = same as local)
                            </ul>
 
                            The server also does a few additional actions, to illustrate the operation of
                            remaining parts of the framework.  It multicasts a remote reference to itself
-                           to announce its startup.  It installs a monitor item, to log data about the
-                           remote invocations to its item, to the system
-                           console.  It even listens for other item announcements, sending the
-                           announcer's a remote reference the test proxy, invoked on their setProxy
-                           method, if they have one. Finally it finishes up by listing its
-                           configuration information.  This can be useful if the server is told to use
-                           any anonymous TCP ports (i.e. port = 0), the info will contain the actual
-                           port numbers chosen by the system at startup.<br><br>
+                           to announce its startup.  It uses a
+                           <a href=docs/gnu/cajo/utils/MonitorItem.html>MonitorItem</a>, to log data
+                           about the remote invocations to its item to the system console.  It even
+                           listens for other item announcements; sending the announcers a remote
+                           reference the test proxy, invoked on their setProxy method, if they have one.
+                           Finally it finishes up by listing its configuration information.  This can be
+                           useful if the server is told to use any anonymous TCP ports (i.e. port = 0),
+                           the info will contain the actual port numbers chosen by the system at startup.<br><br>
                            
                            <a id="Extras"></a>The <a href=docs/gnu/cajo/utils/ZippedProxy.html>
                            ZippedProxy</a> class is the only utility class not used in the example.
@@ -276,13 +277,13 @@
                            single VM is serving many proxies.<br><br>
 
                            In cases, when a proxy <u>must</u> be loaded into the server's VM; presumably
-                           for some runtime dependent configuration, then it is <i>strongly recommended</i>
+                           for some runtime dependent configuration, it is <i>highly recommended</i>
                            to use a ZippedProxy.  It compresses the serialized image of the proxy as it
                            is sent to the hosting VM. This is done to reduce the amount of data, and
                            transmission time, required to send the proxy.  If the proxy image is large,
-                           the network link is slow, or the cost per bit sent is high, this technique
-                           makes tremendous sense.  Its use is recommended for all server loaded
-                           proxies, as a general paradigm.<br><br>
+                           the network uplink is slow, or the cost per bit sent is high, this technique
+                           makes tremendous sense.  Its use is recommended for all proxies loaded into
+                           the server, as a general paradigm.<br><br>
 
                            <br>
                            <div align="center">

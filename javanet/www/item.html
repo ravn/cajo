@@ -91,7 +91,7 @@
                         <font face="Verdana, Helvetica" size="-1">
 <!-- begin main.html -->
                            <font face="Verdana, Helvetica" size="4">
-                              <b>Server items are the core of the framework.</b>
+                              <b>Server items are the core of the cajo framework.</b>
                            </font><br><br>
 
                            A server is a Java Virtual Machine that makes one or more of its objects
@@ -104,19 +104,18 @@
                            to emphasize the fact that an item is otherwise an ordinary object, as will
                            be explained.<br><br>
 
-                           The Invoke interface method is an item's primary interfacing method, which
+                           The Invoke interface method is an item's primary interfacing method, it
                            also serves to make it remotely callable. Remote objects call the invoke
-                           method, passing it a method name and an argument, of which either or both,
-                           may be null.  The invoke implementation of
-                           the BaseItem class uses a Java technique called <i>reflection</i> whereby it
-                           finds a public method of its subclass, exactly matching the name provided in
-                           the remote call, accepting arguments of exactly the type, and in the exact
-                           order, provided by the caller.  If there is a match, it will invoke that
-                           method on the item, and return the method result, if any.  This technique
-                           effectively makes <u>all public methods</u> of subclasses of BaseItem
-                           remotely callable.  If no matching method can be found however, in method
-                           name and argument type/order, the invocation will result in a
-                           <code>NoSuchMethodException</code> being thrown.<br><br>
+                           method, passing it a method name, and an argument that can be null.  The
+                           invoke implementation of the BaseItem class uses a Java technique called
+                           <i>reflection</i> whereby it finds a public method of its subclass, exactly
+                           matching the name provided in the remote call, accepting arguments of exactly
+                           the type, and in the exact order, provided by the caller.  If there is a
+                           match, it will invoke that method on the item, and return the method result,
+                           if any.  This technique effectively makes <u>all public methods</u> of
+                           subclasses of BaseItem remotely callable.  If no matching method can be found
+                           however, in method name and argument type/order, the invocation will result
+                           in a <code>NoSuchMethodException</code> being thrown.<br><br>
 
                            Subclasses of BaseItem are free to implement any public (meaning remotely
                            callable) methods of any type. The only requirement is that another item on
@@ -130,12 +129,13 @@
                            Basically, all argument and return typechecking will be done at runtime.<br><br>
 
                            If a legacy object already has a class inheritance, and cannot extend
-                           BaseItem; all is not lost.  A BaseItem wrapper can be made, which simply
+                           BaseItem, all is not lost.  A BaseItem wrapper can be made, which simply
                            passes the invocations onto its internal legacy object returning the result,
-                           if any. <br><br>
+                           if any. It can even perform the conversions between primitive types and their
+                           object representations.<br><br>
 
                            All invocations on an item should be made via its Invoke interface.  While
-                           this technique isn't strictly necessary when the item is local (i.e. in
+                           this technique isn't technically necessary when the item is local (i.e. in
                            the same Virtual Machine) it allows the called object to be moved to a
                            remote machine (virtual or physical) with <b>no</b> source code
                            changes. A useful design pattern is to simply place a wrapper around the item
@@ -174,13 +174,13 @@
                            local or remote. If it should be important to know, either the remoteness or
                            locality of an item, this can be easily tested in the following way:
 <pre><code>
-   if (ref instanceof RemoteInvoke) {
+   if (foo instanceof RemoteInvoke) {
       // the reference is to a remote item ...
    } else {
       // the reference is to a local item ...
    }
 </code></pre>
-                           This is the sole purpose for the
+                           This is the sole purpose of the
                            <a href=docs/gnu/cajo/invoke/RemoteInvoke.html>RemoteInvoke</a> interface;
                            testing locality, as it is otherwise a bodyless interface.<br><br>
 
@@ -192,7 +192,13 @@
                            member, named <a href=docs/gnu/cajo/utils/BaseItem.html#thread>thread</a>,
                            on which it can be interrupted, and on which the item's run method should
                            periodically monitor, to check if the thread <code>isInterrupted</code>, and
-                           perform an orderly shutdown.<br><br>
+                           perform an orderly shutdown. An item can also have no main thread; this
+                           would be called an <i>event driven</i> item, meaning it executes only when
+                           called by a client.<br><br>
+
+                           In the next section, see how an item can use a <a href=proxy.html>proxy</a>
+                           to send some, or a majority, of its functionality, and even an optional user
+                           interface, to the client.<br><br>
                            
                            <div align="center">
                               <font face="Verdana, Helvetica" size="-2">

@@ -103,7 +103,7 @@
                            Next it will move on to
                            <a href=#building>building</a> and
                            <a href=#launching>launching</a> the example server,
-                           and the related options.  It will conclude by describing the ways to
+                           and their related options.  It will conclude by describing the ways to
                            <a href=#connecting>connect</a> to the server, which should
                            provide a fairly complete introduction to the use of the project.<br><br>
 
@@ -130,7 +130,7 @@
                            You will need to download the source code into the structure outlined above,
                            in a working directory. (you don't have to name it root though) <i>Note:</i> there
                            is also a www directory, but you don't need to download this. It's just the
-                           HTML for this site, though you can, if you really want to :-)<br><br>
+                           HTML for this site, but you can though, if you <i>really</i> want to :-)<br><br>
 
                            In the <b>root directory</b>, you will find several files, all of these will be
                            covered in the course of this tutorial.  For now, the most important file is
@@ -148,20 +148,20 @@
                            file TestItem is an item, meaning a small server-side functional module,
                            which is accessible to remote applications.  The file TestProxy is a proxy,
                            meaning a mobile functional module, which is sent to remote clients, and
-                           communicates back to an item.  Servers can be made that do not use proxies,
+                           communicates back to its item.  Servers can be made that do not use proxies,
                            it is simply here to demonstrate how to make one, and what it does. Finally
                            there is the file Builder.java.  Strictly speaking the example could have
-                           been made without this file also, but it is here to demonstrate the process
+                           been made without this class also, but it is here to demonstrate the process
                            of configuring proxies at compile time, rather than runtime.  It's a little
                            extra work, but it can make the proxies a lot smaller, simpler, and even more
                            secure.<br><br>
 
                            The <b>gui directory</b> contains a small collection of graphical widgets
                            used by the proxy to create its user interface on hosting clients. They are
-                           outside the scope of this project, as a proxy is free to use the AWT, or
-                           Swing, in any manner. By all means, please don't think this is the graphical
-                           toolkit you'll have to use, it is only used for the purposes of this example,
-                           and doesn't even merit any detailed examination.<br><br>
+                           outside the scope of this project as a proxy is free to use the AWT, or
+                           Swing, in any manner. <i>By all means</i>, please don't think this is the
+                           graphical toolkit you'll have to use, it is here only for the purposes of
+                           this example, and doesn't even merit any detailed examination.<br><br>
 
                            The <b>gnu/cajo/invoke</b> directory houses the core paradigm of this
                            framework.  Its files are described at length in the javadoc pages.
@@ -169,22 +169,22 @@
                            between which all items communicate.<br><br>
 
                            The <b>gnu/cajo/utils</b> directory applies the invoke paradigm to create
-                           several useful utilities. Likewise, these files are covered in detail in
+                           the core framework. Likewise, these files are covered in detail in
                            the javadoc pages. For now it can be summarized as providing a collection
                            of classes used in the creation of clients, servers, and proxies.<br><br>
 
                            The <b>docs</b> directory, as mentioned previously, is where the
-                           auto-generated documentation goes.  Initially it is empty, in fact it does
-                           not even exist in the source repository.  You have to make this directory
-                           yourself. Then when you run the documentation generating batch file, it will
-                           create the files on your drive. (Don't worry, the documentation is not huge,
-                           only about 370kB)
-                           <br><br>
+                           auto-generated documentation goes.  Initially it is empty, in fact <u>it
+                           does not even exist</u> in the source repository.  You have to make this
+                           directory yourself. Then when you run the documentation generating batch
+                           file, it will create the files on your drive. (Don't worry, the documentation
+                           is not huge, about 370kB)<br><br>
 
                            <a id="building"></a><b>Building the example:</b><br><br>
+
                            There are three fundamental ways to build the example, represented by the
                            three batch files; make1.bat, make2.bat, and make3.bat. Each builds the
-                           server, with identical functionality; simply packaged in different ways.<br><br>
+                           server with identical functionality; simply packaged in different ways.<br><br>
 
                            The <b>make1</b> batch creates the server in a single monolithic jar file.
                            Everything is contained inside it, the server itself, the test item, the test
@@ -194,9 +194,9 @@
                            directory could consist of many server jars, and a single policy
                            file.  This is an important part of the paradigm; to allow complex
                            functionality to be modularized into multiple Virtual Machines seamlessly
-                           working together. <i>Note:</i> If you really need separate policy files for
-                           each server, each server jar and its associated policy file must be in
-                           separate directories.<br><br>
+                           working together. <i>Note:</i> If you <i>really</i> need separate policy
+                           files for each server, each server jar and its associated policy file would
+                           be in separate directories.<br><br>
 
                            The <b>make2</b> batch creates two files; server.jar and client.jar. The
                            client.jar is a stand-alone standard client application, in addition to
@@ -205,9 +205,10 @@
                            references it), and the policy file. All servers built this way reference the
                            same client jar, in much the same way as they all reference the
                            same policy file. A stand-alone client not only reduces the server jar file
-                           size, which can be helpful if there are many servers in a directory. It
-                           is also very useful in its own right. Using the standard
-                           <a href=client.html>client</a> is a topic of its own, and gets its own page.<br><br>
+                           size, which can be helpful if there are many servers in a directory, it is
+                           also very useful in its own right. Using the standard
+                           <a href=client.html>client</a> is a topic of its own, and as such gets its
+                           own page.<br><br>
 
                            The <b>make3</b> batch creates the server as three files; server.jar
                            client.jar, and proxy.jar. Now deployment consists of four files, the three
@@ -280,23 +281,22 @@
                            the phony one that the NAT router gave your host.<br><br>
 
                            <b>4.</b> Next, lets assume your computer has two network adapters; a wired
-                           connection to your LAN, and a wireless connection to the internet.  You are
-                           going to want to specify which IP address, in this case network adapter, on
-                           which you want to run.  This time you would specify the local machine
-                           address, even if you are running behind NAT.  This would be your command
-                           line now:
+                           connection to your LAN, and a wireless connection to the internet.  You will
+                           need to specify on which IP address, in this case network adapter, on you
+                           want to run.  This time you would specify the local machine address, even if
+                           you are running behind NAT.  This would be your command line now:
                            <pre>    <code>java -jar server.jar 8080 1234 123.123.123.123 100.100.100.100</code></pre>
                            This would also be required if your machine is multi-homed, i.e. has multiple
-                           logical network interfaces.  Multi-homing is guru magic. Generally speaking,
-                           if you don't know what that term means, it probably doesn't apply to you.<br><br>
+                           logical network interfaces.  Generally speaking, multi-homing is guru magic,
+                           if you don't know what that term means, it most likely doesn't apply to you.<br><br>
 
                            <b>5.</b> The final, and most <i>obscure</i> option, is used to support port translation.
                            Essentially, this means that a router is taking connections, on your behalf
                            on one port, and routing it to your machine, on a another one. In this case
                            you would specify the outside port. As the last option, you have probably
-                           already guessed, PT is <i>advanced</i> guru magic. If you are doing this, you
-                           already know what the command line would look like, but just for the rest of
-                           us, here it is:
+                           already guessed it, PT is <i>advanced</i> guru magic. If you are doing this,
+                           you already know what the command line would look like, but just for the rest
+                           of us, here it is:
                            <pre>    <code>java -jar server.jar 8080 1234 guru.org 100.100.100.100 4321</code></pre>
                            Here a client connecting on port 4321 of the public address guru.org actually
                            connects to some internal machine at 100.100.100.100 on its port 1234. In this
@@ -317,12 +317,12 @@
                            Following the example from the previous section, you would use:
                            <pre>    <code>http://yourserver:8080</code></pre>
                            Where 8080 was the port on which http service was started.  The server
-                           will correctly configure proxy communications settings wven when the client
+                           will correctly configure proxy communications settings even when the client
                            is operating behind a NAT router.<br><br>
 
                            <u><b>Conclusion:</b></u><br><br>
-                           This is the proverbial tip of the iceberg, but should get you started.  If
-                           you have further questions, there is a forum for this
+                           This is the proverbial tip of the iceberg, but it should get you started.
+                           If you have further questions, there is a forum for this
                            <a href=https://cajo.dev.java.net/servlets/ProjectForumView>project</a>,
                            also there is a  more general
                            <a href=http://forum.java.sun.com/forum.jsp?forum=58>RMI</a> forum at Sun
@@ -330,7 +330,7 @@
                            posting however, please do your
                            <a href=http://catb.org/~esr/faqs/smart-questions.html>homework</a>.
                            (<i>Disclaimer:</i> the previously cited link is <u>not</u> affiliated with
-                           this project, rather simply provided for insight.) Often the answer you are
+                           this project, rather provided simply for insight.) Often the answer you are
                            seeking can can be found in the source documentation, or on this site, and
                            typically much faster.<br><br>
 

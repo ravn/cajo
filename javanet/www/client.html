@@ -91,7 +91,7 @@
                         <font face="Verdana, Helvetica" size="-1">
 <!-- begin main.html -->
                            <font face="Verdana, Helvetica" size="4">
-                              <b>Inside the standard graphical client application.</b>
+                              <b>Inside the cajo graphical client application.</b>
                            </font><br><br>
 
                            The
@@ -105,8 +105,8 @@
                            remoted within the context of the plug-in's VM.  Finally, the return of this
                            proxy invocation, cannonically a descendant of java.awt.Container, is added
                            to the applet's panel.  This allows a single client to host an unlimited
-                           variety of graphical application proxies, with all of the code provided by
-                           the server.<br><br>
+                           variety of graphical application proxies, using only one client applet, with
+                           <u>all</u> of the code provided by the server.<br><br>
 
                            The server fully configures the applet using the parameters specified in
                            its tag.  The client can provide three of the optional configuration
@@ -116,10 +116,10 @@
                               <li><b>clientPort</b>: The port on which to communicate with the proxy
                               <li><b>localPort</b>:  The client's internal port number, if translated
                            </ul>
-                           Normally the default settings will work fine, unless either the client is
-                           behind a firewall, or wants a specific proxy, other than the default.
+                           Normally the default settings will work fine, unless either the client wants
+                           a specific port because it is behind a firewall, or wants a specific proxy.
                            The client can tell the server how to set these parameters, via the URL it
-                           uses to request the applet. It would use the following syntax:
+                           uses to request the applet. The URL uses the following syntax:
                            <pre><code><b>   http://host[:port]/[clientPort][:localPort][-proxyName]</b></code></pre>
                            The parameters in brackets can be selectively omitted, but the order of
                            arguments is required.<br><br>
@@ -132,13 +132,15 @@
                            initialize it in the identical manner as the applet does, and if the
                            initialization returns a Component (or JComponent), it will create a frame
                            (or JFrame) on the client machine, displaying the result. The second optional
-                           function, provided by the client is to additionally go to load an initial
-                           proxy item at startup.<br><br>
+                           function, provided by the client is to additionally load an initial proxy
+                           item at startup.<br><br>
 
                            The application can take up to five optional parameters.  They are in order,
-                           from  most often changed, to least often; because to change an option, all of
-                           the  previous options must also be specified, i.e. both order and precedence
-                           count. Here are the options:
+                           from  most often changed, to least often, because to change an option, all of
+                           the  previous options must also be specified; i.e. both order and precedence
+                           count.<br><br>
+
+                           Here are the options:
                            <ul>
                               <li> The client's external host name, if it's using NAT
                               <li> The client's external port number, if it's behind a firewall
@@ -153,8 +155,7 @@
                               <li> <b>file://</b> to load it from the local disc
                               <li> <b>path/name</b> to instantiate it from a local class file
                               <li> <b>/path/name</b> to load it as a serialized proxy from disc
-                              <li> <b>//host[:port]/[name]</b> to load it from a
-                                      <a href=docs/gnu/cajo/utils/ItemServer.html>ItemServer</a>
+                              <li> <b>//host[:port]/[name]</b> to load it from an rmiregistry
                            </ul>
 
                            <b><u>Very Important:</u></b> This class, when run as an application, is
@@ -163,7 +164,7 @@
                            for development purposes simpler, the client application employs a
                            <a href=docs/gnu/cajo/invoke/NoSecurityManager.html>NoSecurityManager</a>.
                            As its name implies, this allows any loaded proxy to do anything it wants, on
-                           the host's physical machine! Under some circumstances granting proxy
+                           the host's physical machine. Under some circumstances granting proxy
                            items full permissions may be exactly what is needed; on kiosks, or thin client
                            machines, on a protected newtork, for example.  It has an advantage it that
                            it allows the client to run simply as a single jar file, no security policy
@@ -191,11 +192,11 @@ grant {
                            mistake</a> I did. (essentially, omission of the first argument, negates the
                            second)<br><br>
 
-                           One more detail; by design, the client is vulnerable to a denial of service
-                           attack.  Though unlikely, a malicious server could flood the client's
-                           Virtual Machine with so many proxies that it crashes.  However with proper
-                           security installed, no real harm would come to the host machine. It's an
-                           inherent risk of hosting untrusted foreigh code... just so you know.<br><br>
+                           One more detail: by design, the client VM is vulnerable to a <i>denial of
+                           service attack</i>.  Though unlikely, a malicious server could flood the
+                           client's Virtual Machine with so many proxies that it crashes.  However with
+                           proper security installed, no real harm would come to the host machine. It's
+                           an inherent risk of hosting mobile code... just so you know.<br><br>
 
                            Lastly, all classes in the <a href=docs/gnu/cajo/invoke/package-summary.html>
                            invoke</a> package have no knowlege of the existence of the

@@ -91,36 +91,37 @@
                         <font face="Verdana, Helvetica" size="-1">
 <!-- begin main.html -->
                            <font face="Verdana, Helvetica" size="4">
-                              <b>Connecting to items independently of their IP address.</b>
+                              <b>Connecting to cajo items independently of their IP address.</b>
                            </font><br><br>
 
                            The
                            <a href=docs/gnu/cajo/utils/Multicast.html>Multicast</a> class performs
                            two complimentary functions. First, it allows an item to <i>"broadcast"</i>
-                           a remote reference to itself over the network. Second, it allows items to
+                           a remote reference to itself over the network. Second, it allows an item to
                            listen for, and capture, these reference broadcasts. Once captured, an item
                            can communicate the broadcasting item. These two functions operate entirely
                            independently of each other; meaning an item can broadcast without
                            listening; and listen without broadcasting; it can even do both.  If it is
                            listening when it broadcasts, it will even capture its own reference.<br><br>
 
-                           The use of multicasting is application specific; it can be used to join a
-                           group of inter-operating items, or it can be used to announce a particular
-                           event.  Essentially, it gives items an opportunity to connect to each other
-                           spontaneously, without having to know the IP address' of the listening items
-                           beforehand. This is particularly handy in DCHP environments, where each
-                           machine's IP address is randomly assigned, and reassigned.<br><br>
+                           The use of multicasting is completely application specific; for example, it
+                           can be used to join a group of inter-operating items, or it can be used to
+                           announce a particular event.  Essentially, it gives items an opportunity to
+                           connect to each other spontaneously, without having to know the IP address'
+                           of the listening items beforehand. This is particularly useful in DCHP
+                           environments, where each machine's IP address is randomly assigned, and
+                           later reassigned.<br><br>
 
                            <i>Note:</i> for long-range multicasting to work, the network routers must
                            be configured to pass UDP multicast packets.  If they are not, the
                            multicasting will work only within the subnet of origination.  There are
                            two parameters on which the items must agree in order to send and receive
                            references between each other.  An IP address and port number define a
-                           specific <i>"channel"</i>, using the radio analogy. Changing either of
-                           these, effectively switches to an entirely different channel.  The UDP/IP
-                           address is different from a traditional TCP/IP address in that it doesn't
-                           identify a machine (and socket) rather it represents all machines that are
-                           a member of a <i>"group"</i>.<br><br>
+                           specific <i>"channel"</i>, to use a radio analogy. Changing either of
+                           these values effectively switches to an entirely different channel.  The
+                           UDP/IP address is different from a traditional TCP/IP address in that it
+                           doesn't identify a specific machine (and socket), rather it represents all
+                           machines that are a members of a <i>"group"</i>.<br><br>
 
                            A single item can listen and broadcast on as many channels as it wants.
                            Applications can range from performing all multicasts on a single
@@ -129,7 +130,7 @@
                            inter-networking.  To use a <b><i>Star Trek</i></b> metaphor; it
                            could be likened to the <i>'hailing frequency'</i> for contacting new and
                            unknown items.  An item performs a broadcast by passing a remoted reference
-                           to itself, or even some other item, to the multicast's
+                           to itself to the multicast's
                            <a href=docs/gnu/cajo/utils/Multicast.html#announce(gnu.cajo.invoke.Remote,%20int)>
                            announce</a> method.<br><br>
 
@@ -139,7 +140,7 @@
                            listen</a> method, passing in a reference to itself.  When the multicast
                            object receives a broadcast of a remote item reference, it will invoke the
                            listener with a string of <i>"multicast"</i>, and a reference to itself, as
-                           an argument. Logically, a listening object must implement the following
+                           an argument. Logically, a listening object would implement the following
                            method:
                            <b><pre>   public Object multicast(Multicast m);</pre></b>
 
@@ -148,20 +149,22 @@
                               <li><code>item    </code> The remote reference to the broadcasting item.
                               <li><code>address </code> The address on which this reference was received.
                               <li><code>port    </code> The port on which this reference was received.
-                           </ul>The reason for calling a listener with a reference to the multicast
+                           </ul>
+
+                           The reason for calling a listener with a reference to the multicast
                            object is to allow for the possibility of a single item to listen, with
                            multiple multicast objects.  If the listener is listening with only one
-                           object, there is no chance of its multicast method being invoked reentrantly.
-                           However, if a listener is listening on more than one, the possibility
-                           exists for reentrant invocation.<br><br>
+                           Multicast object, there is no chance of its multicast method being invoked
+                           reentrantly. However, if a listener is listening on more than one, the
+                           possibility exists for reentrant invocation.<br><br>
 
                            A listening multicast object checks the return value of its listener's
-                           invocation.  If it returns null, it will continue listening; if the method
+                           invocation.  If it returns null, it will continue listening; if the listener
                            returns a non-null value, it will stop listening.  To start the object
-                           listening again, its listen method must be called, either with the same, or
-                           with a different listener. A multicast object listens with only one monitor
-                           item at a time.  If the object is actively listening, and its listen method
-                           is invoked again, it will throw an IllegalArgumentException.<br><br>
+                           listening again, its listen method must be called, with either the same, or
+                           a different listener. A multicast object listens with only one listener item
+                           at a time.  If the object is actively listening, and its listen method is
+                           invoked again, it will throw an <code>IllegalArgumentException</code>.<br><br>
 
                            <div align="center">
                               <font face="Verdana, Helvetica" size="-2">

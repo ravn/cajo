@@ -95,7 +95,7 @@
                            </font>
 
                            Every remotely accessible object in the framework is known as an
-                           <a href=item.html>Item</a>. An application can host one, or more, items
+                           <a href=item.html>Item</a>. An application can host one or more items
                            within its virtual machine. Items can call other items (local or remote)
                            and an item can also be called by other items (local or remote). A special
                            type of item is known as a <a href=proxy.html>Proxy</a>. Proxies are items
@@ -133,22 +133,22 @@
                            invocation; consider these examples:<code><pre>
 
    void baker() {
-      someItem.invoke("baker", null);
+      foo.invoke("baker", null);
       // no argument or return
    }
 
    int baker(int charlie) {
-      return ((Integer)someItem.invoke("baker", new Integer(charlie))).intValue();
+      return ((Integer)foo.invoke("baker", new Integer(charlie))).intValue();
       // primitive argument and return
    }
 
    Able baker(Charlie c) {
-      return (Able)someItem.invoke("baker", c);
+      return (Able)foo.invoke("baker", c);
       // object argument and return
    }
 
    Able[] baker(Charlie c, Delta d) {
-      return (Able[])someItem.invoke("baker", new Object[] { c, d });
+      return (Able[])foo.invoke("baker", new Object[] { c, d });
       // multiple object argument and return
    } </pre></code>
                            Now when one object is invoking a method directly, or through an Invoke
@@ -165,10 +165,10 @@
                            on its internal object, matching both the name and the argument types. If
                            it is found, it executes that method, and returns the result, if any.  If no
                            matching method can be found on the internal object, a
-                           <i>NoSuchMethodException</i> is thrown.<br><br>
+                           <code>NoSuchMethodException</code> is thrown.<br><br>
 
-                           This technique makes <u><b>all public methods</b></u> of the internal object
-                           remotely callable!<br><br>
+                           This technique effectively makes <u><b>all public methods</b></u> of the
+                           internal object remotely callable!<br><br>
 
                            <div align="center">
                               <font face="Verdana, Helvetica" size="-2">
