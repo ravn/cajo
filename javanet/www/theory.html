@@ -115,13 +115,15 @@
 
                               <pre><tt>   Object invoke(String method, Object args);</tt></pre>
 
-                           The interface defines a single method, in which a method name is provided,
-                           is given an argument, and returns a result. This signature operates
-                           <i>slightly</i> differently from local Java method invocation in two distinct
-                           ways.  First the return type must be of type Object or a derived type.  This
-                           means an invocation cannot return a primitive type, such as int or char.
-                           Second, the argument type must also be of type Object, meaning it too cannot be a
-                           primitive type.  However, just as with local invocations, both the argument
+                           The interface defines a single method, in which a method name may be
+                           provided, may be given an argument, and may return a result.<br><br>
+
+                           <a id="rules"></a><i>Note:</i> this signature operates <u>slightly</u>
+                           differently from local Java method invocation in two distinct ways.  First
+                           the return type must be of type Object or a derived type.  This means an
+                           invocation cannot return a primitive type, such as int or char. Second, the
+                           argument type must also be of type Object, meaning it too cannot be a
+                           primitive type. However, just as with local invocations, both the argument
                            and the return, can be of type Object[] indicating more than one object is
                            being transferred, they can even be null, indicating no object transfer.<br><br>
 
