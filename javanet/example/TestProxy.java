@@ -22,7 +22,7 @@ public final class TestProxy extends gnu.cajo.utils.BaseProxy {
                System.out.println(strings[RESPONSE]);
                d.display(strings[RESPONSE] + "\n\t");
                String result =
-                  (String)server.invoke("callback", new Object[] {
+                  (String)item.invoke("callback", new Object[] {
                      remoteThis, strings[HELLO]
                   }
                );
