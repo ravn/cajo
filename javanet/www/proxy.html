@@ -106,7 +106,9 @@
                            binds itself and serves its proxy object using the static
                            <a href=docs/gnu/cajo/utils/ItemServer.html#bind(java.lang.Object,%20java.lang.String,%20java.lang.Object)>
                            bind</a> method of the <a href=docs/gnu/cajo/utils/ItemServer.html>ItemServer</a>
-                           class .  It is generally necessary to start up a
+                           class.  The server item can also announce its availablity to a collection of
+                           listening VMs via the <a href=multicast.html>multicast</a> mechanism,
+                           described in the next section. It is generally necessary to start up a
                            <a href=docs/gnu/cajo/utils/CodebaseServer.html>CodebaseServer</a>, on which
                            the  client will automatically request, and receive the proxy class files.
                            When a VM serves proxies, it will require two TCP ports; one for
