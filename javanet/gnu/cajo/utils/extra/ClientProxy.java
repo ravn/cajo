@@ -48,6 +48,7 @@ import gnu.cajo.invoke.*;
 public final class ClientProxy implements Invoke {
    private String method;
    private Object args;
+   private boolean done;
    /**
     * A server creates this object, then provides a remote reference to it
     * to the client. This creates the first half of the bridge, the {@link
@@ -73,14 +74,17 @@ public final class ClientProxy implements Invoke {
       throws Exception {
       if (method == null) {     // client callback response thread
          this.args = args;      // save the callback result
+         done = true;           // indicate callback complete
          notify();              // wake the server item thread
          wait();                // suspend the client callback thread
          return new Object[] { this.method, this.args };
       } else {                  // server callback invocation thread
          this.method = method;  // save the client method to be invoked
          this.args   = args;    // save the data to provide the invocation
+         done = false;          // indicate callback pending
          notify();              // wake the client callback thread
-         wait();                // suspend the server item thread
+         wait(5000);            // suspend the server item thread
+         if (!done) throw new InterruptedException("Callback Timeouw");
          if (this.args instanceof Exception) throw (Exception)this.args;
          return this.args;      // return the callback result
       }
