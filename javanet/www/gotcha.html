@@ -92,13 +92,13 @@
                                      receive a local, remote, or proxy item reference, a method signature must
                                      declare the argument to be of type Invoke.</strike><br><br>
 
-                                     &nbsp&nbsp&nbsp&nbsp<b>*<u>Wonderful news</u>!</b> Today (08-Jan-04) a
+                                     &nbsp&nbsp&nbsp&nbsp<b>*<u>Wonderful news</u>!</b> (08-Jan-04) A
                                      <i>significant</i> improvement to the project codebase was uploaded, which
-                                     <u>eliminates</u> this <i>"gotcha"</i>. It was most generously provided by
+                                     <u>eliminates</u> this <i>"gotcha"</i>. It was most generously proposed by
                                      project member <b>frelars</b> (aka Fredrik Larsen), with assistance by project
                                      member <b>li_ma</b> (aka Li Ma). It will traverse argument inheritance trees
                                      to find the best fitting method. It is a <i>stunning</i> improvement, and
-                                     removes the <u>most common problem</u> encountered by users.
+                                     removes the most <u>common</u> problem encountered by users.
                                      <b>Well done!</b><br><br>
 
                                      <a id="2"></a><b><u>2. Long delays:</u></b> When each remote invocation takes
@@ -112,7 +112,7 @@
                                      is a text file containing address/host name pairs, which the operating system
                                      will check first, before attempting a DNS lookup.<br><br>
 
-                                     On *nix boxes (Solaris/Unix/Linux/BSD...) the file is typically located at:
+                                     On *nix-type boxes (Solaris/Linux/BSD...) the file is typically located at:
                                      <u>/etc/hosts</u><br>
                                      On Windows boxes, it is usually: <u>\WINNT\system32\drivers\etc\hosts</u><br><br>
 
@@ -143,21 +143,15 @@
 
                                      <a id="4"></a><b><u>4. Firewalled Clients:</u></b> Very often a client item
                                      is operating behind a firewall that prohibits inbound socket connections. If
-                                     server callbacks are necessary for the design, this posed a real problem.
-                                     Project member Fredrik Larsen proposed a method whereby the client would
-                                     periodically check for server callbacks, thus allowing both inbound and
-                                     outbound asynchronous calls on a single outbound client socket. This
-                                     functionality has been realised using a
-                                     <a href=docs/gnu/cajo/utils/extra/ClientProxy.html>ClientProxy</a> object, to
-                                     locally represent a callable reference to the client item in the server
-                                     address space. A server would instantiate a ClientProxy, and pass a remote
+                                     server callbacks are necessary for the design, this posed a real problem. A
+                                     solution to this issue is provided through two specialised classes in the
+                                     gnu.cajo.utils.extra package. The <a href=docs/gnu/cajo/utils/extra/ClientProxy.html>
+                                     ClientProxy</a> object is used to locally represent a callable reference to
+                                     the client, item in the server address space. A server would instantiate a ClientProxy, and pass a remote
                                      reference to it to the client. The client would then combine that reference,
-                                     with a reference to the local item in a
-                                     <a href=docs/gnu/cajo/utils/extra/ItemProxy.html>ItemProxy</a> object.
-                                     In the latest release, server callbacks are invoked on the local client
-                                     immediately, over the client's outbound socket, and no longer involves
-                                     polling. This architecture allows object design for both servers and
-                                     clients, without regard for the firewall issue.<br><br>
+                                     with a reference to the local item in an <a href=docs/gnu/cajo/utils/extra/ItemProxy.html>
+                                     ItemProxy</a> object. This transparent approach allows object design for both
+                                     servers and clients, without regard for the firewall issue.<br><br>
 
                                      <a id="5"></a><b><u>5. Marshalling Objects:</u></b> Sometimes, when sending
                                      large objects, particularly those which are a large graph of objects,
