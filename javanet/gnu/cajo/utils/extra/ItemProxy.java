@@ -59,7 +59,7 @@ public final class ItemProxy extends Thread {
     * @param client The firewalled local object that wishes to receive
     * asynchronous callbacks
     */
-   public ItemProxy(Remote item, Object client) {
+   public ItemProxy(RemoteInvoke item, Object client) {
       this.item   = item;
       this.client = client;
       start();
