@@ -106,8 +106,6 @@ public class BaseItem {
          throw new IllegalArgumentException("Proxy must be local");
       Remote ref = new Remote(proxy);
       Object result = proxy.invoke("init", ref);
-      if (result instanceof java.awt.Component)
-         Client.frame((java.awt.Component)result);
       return ref;
    }
    /**
