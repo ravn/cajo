@@ -132,7 +132,7 @@ public final class CodebaseServer extends Thread {
     * The server thread method, it will send the proxy codebase, and it will
     * also support installing the hosting {@link gnu.cajo.invoke.Client
     * Client} in a Java-enabled browser, or as a web start application via
-    * JNLP.<br><br>
+    * JNLP.<p>
     * The format of a browser's proxy request URL one required, and
     * five optional parameters, utilizing the following format:<p><code>
     * http://serverHost[:serverPort]/[clientPort][:localPort][-proxyName][!]

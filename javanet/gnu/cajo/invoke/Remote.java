@@ -189,7 +189,7 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
     * will be closed.
     * @param os The output stream on which to write the reference.  It may be
     * a file stream, a socket stream, or any other type of stream.
-    * @param the Item or reference to be serialized.
+    * @param ref The item or reference to be serialized.
     * @throws IOException For any stream related writing error.
     */
    public static void zedmob(OutputStream os, Invoke ref) throws IOException {
