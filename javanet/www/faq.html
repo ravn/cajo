@@ -170,12 +170,13 @@
                                       speaking, if you went <a href=http://java.sun.com/j2se/1.4.2/docs/guide/security/jsse/samples/index.html target=_blank>here</a>,
                                       and copied the sample <a href=http://java.sun.com/j2se/1.4.2/docs/guide/security/jsse/samples/jssesamples.zip>zip file</a>,
                                       and replaced the two socket factories in <tt>gnu.cajo.invoke.Remote</tt>;
-                                      that just might get the system communicating over SSL. Update: If you are
-                                      using J2SE5 (1.5.x) SSL/TLS socket factories are now <a href=http://java.sun.com/j2se/1.5.0/docs/guide/rmi/relnotes.html>
-                                      included</a>. Of course I should <i>not</i> endorse any of this...
-                                      <i>(cough* Patriot Act *cough). &nbsp; <u>Psst</u>: if you want something
-                                      even <u>stronger</u>, take a look <a href=https://cajo.dev.java.net/files/documents/974/6293/CryptObject.java>
-                                      here</a>.</i> :-)<br><br>
+                                      that just might get the system communicating over SSL. Of course I should
+                                      <i>not</i> endorse any of this... <i>(cough* Patriot Act *cough).</i>
+                                      <u>Update:</u> If you are using J2SE5 (1.5.x) SSL/TLS socket factories are
+                                      now <a href=http://java.sun.com/j2se/1.5.0/docs/guide/rmi/relnotes.html>
+                                      included</a>. &nbsp; <i>Psst: if you want something a little <u>stronger</u>,
+                                      take a look <a href=https://cajo.dev.java.net/files/documents/974/6293/CryptObject.java>
+                                      here</a>.</i> ;-)<br><br>
 
                                       <a id="8"></a><b><u>8. Why is there no package version number?</u></b>
                                       This is an <u>excellent</u> question! In the cajo project, a release
@@ -193,20 +194,21 @@
                                       <a id="9"></a><b><u>9. Can my application put proxies in an Applet sandbox?</u></b>
                                       Wow, what an important question! I am sorry the answer to this was not
                                       perfectly clear sooner: Of course, it is Yes! This is easily done. When
-                                      starting up your application, use the following -D arugments:
+                                      starting up your application, use the following two -D arugments:
                                       <blockquote><tt>
                                          java -jar -Djava.security.manager -Djava.security.policy=policyURL myApp.jar
                                       </tt></blockquote>
-                                      The first -D argument puts the entire VM in an applet sandbox. Then if you
-                                      need your application classes to be free of these restrictions, a policy
-                                      file is needed; looking something like this:
+                                      The first -D argument puts the entire VM in an applet sandbox. Then, if you
+                                      need <i>your</i> host code to be free of these restrictions, the second
+                                      -D argument is used. It specifies a policy file, which could look
+                                      something like this:
                                       <blockquote><tt>
                                          grant codeBase "file:${java.class.path}" {<br>
                                          &nbsp&nbsp  permission java.security.AllPermission;<br>
                                       };
                                       </tt></blockquote>
-                                      This second -D argument will give full permissions, but only to your local
-                                      server code.<br><br>
+                                      This file gives full permissions, but <i>only</i> to classes that were loaded
+                                      from <u>your</u> local filesystem.<br><br>
                            
                                       <a id="10"></a><b><u>10. Why is the framework named cajo?</u></b> This is a
                                       fair question. I guess the best answer is; it had to be named <i>something</i>.
