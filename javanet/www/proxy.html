@@ -80,7 +80,7 @@
 
                            <h3>Requesting Proxies</h3><br>
 
-                           A proxy is typically obtained from a re,pte item reference by using its null
+                           A proxy is typically obtained from a remote item reference by using its null
                            argument <a href=docs/gnu/cajo/utils/BaseItem.html#getProxy()>getProxy</a>
                            method. The returned item will be its default proxy, if it supports one. Once
                            a proxy item is received, the otrhodox initialization procedure is to:
@@ -118,14 +118,15 @@
                            does not accept them will result in a ClassNotFoundException being
                            automatically thrown to the sender. BaseItem's setProxy method is often
                            extended, to provide additional application specific resources to the
-                           arriving proxy.
+                           arriving proxy. Proxies offer an exciting dynamic method for what is
+                           popularly called these days, <i>grid</i> computing.
 
                            <h3>Conclusion</h3><br>
 
                            One of the most important features of a proxy is to mitigate network latency.
                            This can be of critical importance, if the remote item is very far away, or
                            linked over a slow network. Generally it is a recommended practice for remote
-                           items to support a proxy. At a minimum, it would serve to reduce network
+                           items to provide a proxy. At a minimum, it would serve to reduce network
                            traffic, and possibly pre-fetch needed objects contextually.  Effectively
                            this type of proxy would be considered a <i>'smart'</i> remote reference.
                            Clients would then
