@@ -82,8 +82,8 @@ public final class Client extends java.applet.Applet implements Invoke {
       return "CaJo Proxy Applet, Copyright \u00A9 1999 by John Catherino";
    }
    /**
-    * When running as an applet, this method is describes the optional client
-    * applet perameters. There are five such parameters which can be specified:
+    * When running as an applet, this method describes the optional client
+    * applet parameters. There are five such parameters which can be specified:
     * <ul>
     * <li>The <code>proxyName</code> parameter is the name of the proxy server
     * registered in the server's rmiregistry.  Unspecified it will be "main".

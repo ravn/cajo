@@ -114,7 +114,7 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
    /**
     * This method configures the class' TCP parameters for RMI.  It allows
     * complete specification of client-side and server-side ports and
-    * hostnamess.  Is is used to override default values.  It is necessary
+    * hostnames.  It used to override default values.  It is necessary
     * when the VM is either operating behind a firewall, is multi-addressed,
     * or is using NAT. <p><i>Note:</i> If the class is to be custom configured,
     * it must be done <b>before</b> any items are remoted. The first two
@@ -246,7 +246,7 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
       this.item = item;
    }
    /**
-    * This method checks if two wrappers holding an equavilent inner item.
+    * This method checks if two wrappers are holding an equavilent inner item.
     * It short-circuit's the invocation, returning the result of the internal
     * item's equals invocation.
     * @param object A reference to another object to compare for equality.
@@ -274,7 +274,8 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
     * implements the {@link Invoke Invoke} interface, the call will simply be
     * forwarded to the internal implementation's method.  Otherwise, the
     * method specified will be invoked, with the provided arguments if any,
-    * on the internal object via the Java reflection mechanism.
+    * on the internal object via the Java reflection mechanism, and the
+    * result returned, if any.
     * <p><i>Note:</i> reflection will only invoke a method whose argument
     * types match exactly.  Unfortunately polymorphism is not recognized.
     * Therefore as one <b>special case</b>, all arguments implementing the
