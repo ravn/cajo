@@ -1,80 +1,150 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN""http://www.w3.org/TR/html4/loose.dtd">
 <html>
-   <head>
-      <title>The CaJo Project</title>
-      <meta name="Keywords" content="cajo, rmi, java, distributed computing, Transparent Distributed Computing">
-      <meta name="Description" content="Cajo Distributed Application Framework">
-      <meta name="Author" content="John Catherino">
-   </head>
-   <body>
-      <div id="projecthome" class="app">
-      <table width="100%" align="center">
+
+<head>
+   <title>cajo - The cajo project</title>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <link href="ventro/css.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+
+<table width="98%" border="0" cellpadding="0" cellspacing="0">
+   <tr>
+      <table width="100%" height="67"  border="0" cellpadding="4" cellspacing="0">
          <tr>
-            <td>
-
-<!-- begin main.html -->
-
-                           <font size="4">
-                              <b>About the project licensing...</b><br><br>
+            <td background="ventro/vert_logobarbg.gif">
+               <table width="100%" height="47"  border="0" cellpadding="4" cellspacing="0">
+                  <tr><br>
+                     <td width="85" valign="bottom">
+                        <div align="right">
+                           <img src="ventro/cajologo.gif" width="61" height="34">
+                           <img src="ventro/blank.gif" width="6" height="8">
+                        </div>
+                     </td>
+                     <td width="10"><img src="ventro/seperatorline.gif" width="1" height="38"></td>
+                     <td>
+                        <span class="style8">
+                           <font size="+1">
+                              <b>Free, simple, powerful: Transparent Distributed Computing</b>
                            </font>
-
-                           This framework is licensed under the GNU LGPL, the technical <i>lawyerese</i>
-                           can be found <a href=http://www.fsf.org/licenses/lgpl.html target=_blank>
-                           here</a>. The short, <i>human-readable</i> <a href=http://www.fsf.org/licenses/lgpl.html#SEC2 target=_blank>
-                           preamble</a>, is definitely worth reading.
-
-                           <br><br>Let me summarise the two most important parts:<br>
-
-                           <ul>
-                              <li>This license grants you the right to use this code in your applications,
-                              without payment of any royalties to the copyright holder; he being I.
-                              <br><br>
-                              <li>In a feature not present in the regular
-                              <a href=http://www.fsf.org/licenses/gpl.html target=_blank>GPL</a>; you have
-                              the right to use this library in proprietary applications, without having to
-                              make the combined code free.
-                           </ul>
-
-                           Many will argue that this second point makes the license
-                           "<a href=http://www.fsf.org/licenses/why-not-lgpl.html target=_blank>less
-                           free</a>" than the GPL. However, I believe this framework has its greatest
-                           opportunity to influence application development if it is a resource for
-                           <u>all</u> developers, not just the free ones. Just as with its objects, this
-                           framework allows all of its developers to work together; whether they have
-                           the option to make their code free or not.<br><br>
-
-                           The license does impose an important provision however; which in order to
-                           use this code, you must also agree:
-                           <blockquote>
-                              If you modify the gnu.cajo classes, its interfaces, or its packages;
-                              if you add classes or interfaces to its packages, or create subpackages:
-                              The resulting packages if sold, or given away, must also be licensed
-                              under the terms of the GNU LGPL. <i>Note:</i> extending the classes and
-                              implementing the interfaces in <u>your</u> packages, are <i><b>not</b></i>
-                              subject to this provision.
-                           </blockquote><br>
-
-                           <img src=images/cajo.png align=left>&nbsp&nbsp Finally, you are both
-                           welcomed, and encouraged to identify your application's distributed
-                           capability by using this button; on webpages, in documentation, and for
-                           products. Of course it is purely optional, and also <u>free</u>. On a
-                           webpage, a tag could be as simple as this:<br>
-
-<pre>
-&lt;a href=https://cajo.dev.java.net/index.html&gt;
-    &lt;img src=https://cajo.dev.java.net/images/cajo.png&gt;
-&lt;/a&gt;
-</pre>
-
-                           <div align="center">
-                              <font size="-2">
-                                 <hr width="80%">
-                                 A free library, so free, it can be used for free, in free and non-free applications, freely.
-                              </font>
-                           </div>
-<!-- end main.html -->
-
+                        </span>
+                     </td>
+                  </tr>
+               </table>
             </td>
          </tr>
       </table>
-   </body>
+      <table border="0" cellspacing="0" cellpadding="4">
+         <tr>
+            <td height="331" valign="top" bgcolor="#FFFFFF">
+               <td width="100%" valign="top" bgcolor="#FFFFFF">
+                  <table width="100%" border="0" cellpadding="4" cellspacing="0" bgcolor="#FFFFFF">
+                     <tr>
+                        <td>
+                           <table width="100%" height="35" border="0" cellpadding="0" cellspacing="0">
+                              <tr>
+                                 <td width="2%" background="ventro/bar_bg.gif"><img src="ventro/arrowed.gif" width="30" height="35"></td>
+                                 <td width="100%" background="ventro/bar_bg.gif">
+                                    <table width="100%" height="31" border="0" cellpadding="0" cellspacing="0">
+                                       <tr>
+                                          <td>
+                                             <span class="style8 style12">
+<!-- main page title bar -->                    <div align="left">About the project license</div>
+                                             </span>
+                                          </td>
+                                       </tr>
+                                    </table>
+                                 </td>
+                                 <td width="3%"><img src="ventro/bar_Right.gif" width="10" height="35"></td>
+                              </tr>
+                           </table>
+                           <table width="95%" height="96" border="0" cellpadding="9" cellspacing="0">
+                              <tr>
+                                 <td valign="top">
+<!-- title bar section -->         <span class="spacing style4 style7 style9">
+                                      This framework is licensed under the GNU LGPL, the technical <i>lawyerese</i>
+                                      can be found <a href=http://www.fsf.org/licenses/lgpl.html target=_blank>
+                                      here</a>. The short, <i>human-readable</i> <a href=http://www.fsf.org/licenses/lgpl.html#SEC2 target=_blank>
+                                      preamble</a>, is definitely worth reading.
+
+                                      <br><br>Let me summarise the two most important parts:<br>
+
+                                      <ul>
+                                         <li>This license grants you the right to use this code in your applications,
+                                         without payment of any royalties to the copyright holder; he being I.
+                                         <br><br>
+                                         <li>In a feature not present in the regular
+                                         <a href=http://www.fsf.org/licenses/gpl.html target=_blank>GPL</a>; you have
+                                         the right to use this library in proprietary applications, without having to
+                                         make the combined code free.
+                                      </ul>
+
+                                      Many will argue that this second point makes the license
+                                      "<a href=http://www.fsf.org/licenses/why-not-lgpl.html target=_blank>less
+                                      free</a>" than the GPL. However, I believe this framework has its greatest
+                                      opportunity to influence application development if it is a resource for
+                                      <u>all</u> developers, not just the free ones. Just as with its objects, this
+                                      framework allows all of its developers to work together; whether they have
+                                      the option to make their code free or not.<br><br>
+
+                                      The license does impose an important provision however; which in order to
+                                      use this code, you must also agree:
+                                      <blockquote>
+                                         If you modify the gnu.cajo classes, its interfaces, or its packages;
+                                         if you add classes or interfaces to its packages, or create subpackages:
+                                         The resulting packages if sold, or given away, must also be licensed
+                                         under the terms of the GNU LGPL. <i>Note:</i> extending the classes and
+                                         implementing the interfaces in <u>your</u> packages, are <i><b>not</b></i>
+                                         subject to this provision.
+                                      </blockquote><br>
+
+                                      <img src=images/cajo.png align=left>&nbsp&nbsp Finally, you are both
+                                      welcomed, and encouraged to identify your application's distributed
+                                      capability by using this button; on webpages, in documentation, and for
+                                      products. Of course it is purely optional, and also <u>free</u>. On a
+                                      webpage, a tag could be as simple as this:<br>
+
+<blockquote><pre>
+&lt;a href=https://cajo.dev.java.net/index.html&gt;
+   &lt;img src=https://cajo.dev.java.net/images/cajo.png&gt;
+&lt;/a&gt;
+</pre></blockquote>
+                                    </span>
+                                 </td>
+                              </tr>
+                           </table></td>
+                        </tr>
+                     </table>
+
+<!-- footer: -->
+   <table width="95%" height="56" border="0" align="center" cellpadding="9" cellspacing="0">
+      <tr>
+         <td valign="top">
+            <div align="center">
+               <hr width=90%">
+               <span class="spacing style4 style7 style9">
+                  A free library, so free, it can be used for free, in free and non-free applications, freely.
+               </span>
+            </div>
+         </td>
+      </tr>
+   </table><br>
+
+   <table width="98%" height="35" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+         <td width="2%" background="ventro/bar_bg.gif"><img src="ventro/arrowed.gif" width="30" height="35"></td>
+         <td width="95%" valign="top" background="ventro/bar_bg.gif">
+            <table width="100%" height="31" border="0" cellpadding="0" cellspacing="0">
+               <tr>
+                  <td width="47%"><span class="style11">&copy; 2004 GNU FDL</span></td>
+                  <td width="53%"><div align="right"></div></td></tr></table></td>
+                  <td width="3%"><img src="ventro/bar_Right.gif" width="10" height="35"></td></tr></table></td>
+               </tr>
+            </table>
+         </td>
+      </tr>
+   </table>
+
+</body>
 </html>
