@@ -100,13 +100,13 @@
                            local, remote, or proxy item reference, a method signature must declare
                            the argument to be of type Invoke.</strike><br><br>
 
-                           <u><b>*What wonderful news!</b></u> Today (08-Jan-04) a <i>significant</i>
-                           improvement to the project codebase was uploaded, which completely
-                           <u>eliminates</u> this <i>"gotcha"</i>. It was most generously provided by
-                           project member <b>frelars</b> (aka Fredrik Larsen), with assistance by
-                           project member <b>li_ma</b> (aka Li Ma). It will traverse argument
-                           inheritance trees to find the best fitting method. It is a 'stunning'
-                           improvement, and removes the <u>most common problem</u> encountered by users.
+                           <b>*<u>Wonderful news!</u></b> Today (08-Jan-04) a <i>significant</i>
+                           improvement to the project codebase was uploaded, which <u>eliminates</u>
+                           this <i>"gotcha"</i>. It was most generously provided by project member
+                           <b>frelars</b> (aka Fredrik Larsen), with assistance by project member
+                           <b>li_ma</b> (aka Li Ma). It will traverse argument inheritance trees to
+                           find the best fitting method. It is a <i>stunning</i> improvement, and
+                           removes the <u>most common problem</u> encountered by users.
                            <b>Well done!</b><br><br>
 
                            <b><u>2. Long delays:</u></b> When a remote invocation takes a really long time
@@ -116,17 +116,17 @@
                            several minutes to each invocation. If you do not have a DNS server to
                            resolve the addresses to names, it is necessary to revert back to the <i>'old
                            way'</i>, i.e. the hosts file.  This is a text file containing address/host
-                           name pairs, which the system will check first, before attempting a DNS lookup
-                           over the network.<br><br>
+                           name pairs, which the operating system will check first, before attempting a
+                           DNS lookup over the network.<br><br>
 
                            On *nix boxes (Solaris/Unix/Linux/BSD) the file is typically located at:
                            <b>/etc/hosts</b><br>
                            On Windows boxes, it is usually: <b>\WINNT\system32\drivers\etc\hosts</b><br><br>
 
-                           Here you would put the IP address/host name pairs for the machines involved,
-                           which do not have a DNS support.<br><br>
+                           Here you would put the IP address/host name pairs for the machines, which do
+                           not have DNS support.<br><br>
 
-                           <b><u>3. Nework Reality:</u></b> While it is very simple to write code without
+                           <b><u>3. Nework Realities:</u></b> While it is very simple to write code without
                            regard to locality or remoteness of objects, it is very important to remember
                            that any remote invocation can fail, or block for a very long time, if there
                            is a problem with the network, or the target machine is unresponsive. The
@@ -134,13 +134,14 @@
                            is logical, i.e. the invocation is invalid, the other is genuinely
                            exceptional, i.e. something unexpected happened.<br><br>
 
-                           These realities can be managed in three different ways. First, when dealing
+                           These realities can be managed in three different ways: First, when dealing
                            with a remote item reference, your code should be prepared for unexpected
                            network exceptions, and long transaction delays. Second, a proxy can be sent
                            which manages these error conditions when calling its remote sender. (This
                            makes life very nice for the user) Third, when it absolutely positively
                            cannot go wrong, a proxy can be sent containing all of its necessary
-                           functionality, and makes no use of its remote link back to its sender.<br><br>
+                           functionality, and makes little to no use of its remote link back to its
+                           sender.<br><br>
 
                            Lastly, I find it extremely helpful to print, frame, memorize, and post
                            somewhere near your monitor, the eight
