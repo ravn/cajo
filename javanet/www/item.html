@@ -96,44 +96,50 @@
 
                            A server is a Java Virtual Machine that makes one or more of its objects
                            remotely accessible.  A remotely accessible object is one which derives
-                           from the class <a href= docs/gnu/cajo/utils/BaseItem.html>
-                           gnu.cajo.utils.BaseItem</a>, meaning it implements the
-                           <a href=docs/gnu/cajo/invoke/Invoke.html>gnu.cajo.invoke.Invoke</a>
+                           from the class <a href= docs/gnu/cajo/utils/BaseItem.html>BaseItem</a>,
+                           meaning it implements the <a href=docs/gnu/cajo/invoke/Invoke.html>Invoke</a>
                            interface.  The invoke method is implemented in the base class, and is
                            declared as <b>final</b>.  This is done to emphasize the fact that an Item
                            is essentially just an object, as will be explained below.<br><br>
 
-                           The final invoke method is its only public method, which makes it remotely
-                           callable, as defined by the paradigm.  Remote methods call the invoke method,
-                           passing it both a method name, and a collection of arguments, or possibly
-                           even no arguments.  The final invoke implementation of the BaseItem class
-                           uses a technique called <i>Java Reflection</i>, whereby it finds a method
-                           matching the name provided in the remote call, which accepts arguments of
-                           exactly the type, and in the exact order, provided by the caller.  If there
-                           is a match, it will invoke that method on the object, and return the resulting
-                           object, if any, back to the caller.  If no matching method can be found,
-                           either in name or argument type and order, the invocation will result in a
-                           <b>NoSuchMethodException</b> being thrown.<br><br>
+                           The final invoke method is its fundamental public method, which actually
+                           makes it remotely callable, as defined by the paradigm.  Remote methods call
+                           the invoke method, passing it both a method name, and a collection of
+                           arguments, possibly even none at all.  The invoke implementation of the
+                           <a href= docs/gnu/cajo/utils/BaseItem.html>BaseItem</a> class uses a
+                           technique called <i>Java Reflection</i>, whereby it finds a public method
+                           of its subclass exactly matching the name provided in the remote call, which
+                           accepts arguments of exactly the type, and in the exact order, provided by
+                           the caller.  If there is a match, it will invoke that method on the object,
+                           and return the method result, if any.  This effectively makes <u>all</u>
+                           public methods of subclasses of <a href= docs/gnu/cajo/utils/BaseItem.html>
+                           BaseItem</a> remotely callable.  When no matching method can be found,
+                           either in method name, or argument type and order, the invocation will
+                           result in a <b>NoSuchMethodException</b> being thrown.<br><br>
 
-                           Subclasses are free to implement methods of any type, the only requirement
-                           is that another item in a different (or local) machine (virtual or physical)
-                           must know its method signatures, no different than for traditional Objects,
-                           with the one exception, that there is no longer compile-time type checking.
-                           Also due to a restriction in the Java Reflection mechanism, primitive types
-                           such as int or char for example, cannot be sent as arguments, or returned,
-                           rather they must be sent in their Object representations, such as Integer or
-                           Character, for example.<br><br>
+                           Subclasses are free to implement public methods of any type, the only
+                           requirement is that another item on a different (or local) machine (virtual
+                           or physical) must know its method signatures; no differently than for
+                           traditional objects, with the one exception; there is no longer compile-time
+                           type checking. Also, due to a restriction in the Java Reflection mechanism,
+                           primitive types such as <code>int</code> or <code>char</code>, for example,
+                           cannot be sent as arguments or returned, rather, they must be sent in their
+                           object representations, in this case; <code>Integer</code> or
+                           <code>Character</code>.<br><br>
 
-                           If a legacy object has a long class tree, and cannot extend BaseItem, all is
-                           not lost.  An item wrapper can be made, which simply passes the invocations,
-                           local or remote, to its internal legacy object, and return the result, if any. <br><br>
+                           If a legacy object has a long class tree, and cannot extend
+                           <a href= docs/gnu/cajo/utils/BaseItem.html>BaseItem</a>, all is not lost!  A
+                           wrapper item can be made that simply passes the invocations to its internal
+                           legacy object, returning the result, if any. <br><br>
 
-                           Invocations are made on a reference to a remote, or local, item through its
-                           Invoke interface.  While it isn't strictly necessary when the item is local,
-                           meaning in the same Virtual Machine; it allows the called object to later be
-                           moved to a remote machine, with <b><u>no</b></u> software changes!  A handy
-                           design pattern is to simply place a wrapper around the Invoke object, where
-                           its methods pass the invocation onto the internal reference, for example:
+                           All invocations should be made on an item reference through its
+                           <a href=docs/gnu/cajo/invoke/Invoke.html>Invoke</a> interface.  While this
+                           technique isn't technically necessary when the item is local, meaning in the
+                           same Virtual Machine; it allows the called object to later be moved to a
+                           remote machine (virtual or physical) with <b><u>no</b></u> software changes!
+                           A useful design pattern is to simply place a wrapper around the
+                           <a href=docs/gnu/cajo/invoke/Invoke.html>Invoke</a> object, where its
+                           methods pass the invocation on to the internal reference, for examples:
 <code><pre>
    String toString() {
       // no arguments, object return ...
@@ -149,14 +155,15 @@
    }
 </pre></code>
                            That's all there is to an item! To make an item remotely accessible, it is
-                           passed to the static method <a href=docs/gnu/cajo/utils/ItemServer.html>
-                           gnu.cajo.invoke.ItemServer.bind</a>. A single virtual machine can remote as
-                           many items as it wants. An item obtains a reference to a remote item using
-                           the static method <a href=docs/gnu/cajo/invoke/Invoke.html>
-                           gnu.cajo.invoke.Remote.getItem</a>. As a <i>de facto</i> convention; the
-                           primary item served by a VM is typically bound under the name <i>"main"</i>.
-                           If an application handles its items using their Invoke interface, it need not
-                           know, or even care, if the items are local or remote. However, if it is
+                           passed to the static method
+                           <a href=docs/gnu/cajo/utils/ItemServer.html#bind(java.lang.Object,%20java.lang.String,%20boolean,%20gnu.cajo.utils.Multicast)>
+                           bind</a> method. A single virtual machine can remote as many items as it
+                           wants. An item obtains a reference to a remote item using the static method
+                           <a href=docs/gnu/cajo/invoke/Remote.html#getItem(java.lang.String)>getItem</a>. As a <i>de facto</i>
+                           convention; the primary item served by a VM is typically bound under the name
+                           <i>"main"</i>. If an application handles its items using their
+                           <a href=docs/gnu/cajo/invoke/Invoke.html>Invoke</a> interface, it need not
+                           know, or even care, if the items are local or remote. However, should it be
                            important to know, either the remoteness or locality of an item; this is
                            easily tested in the following way:
 <pre><code>
@@ -166,23 +173,23 @@
       // the reference is to a local item ...
    }
 </code></pre>
-                           This is the purpose for the creation of the gnu.cajo.invoke.RemoteInvoke
-                           interface; testing, as it is otherwise simply a bodyless interface.<br><br>
+                           This is the purpose for the creation of the
+                           <a href=docs/gnu/cajo/invoke/RemoteInvoke.html>RemoteInvoke</a> interface;
+                           testing, as it is otherwise a bodyless interface.<br><br>
 
-                           As mentioned above, the BaseItem also abstractly implements the Runnable
-                           interface, so subclasses <b>must</b> define it.  Upon construction of an Item,
-                           its primary processing thread is created, and started.  If the item needs no
-                           local processing, it can simply return, otherwise its application specific
-                           functionality would go here.  There is also a public member named thread,
-                           which can be interrupted, and on which the item's processing thread should
-                           monitor, to see if it <code>isInterrupted</code>, and to perform an orderly
-                           shutdown.
-
-                           <br><br>
+                           A <a href= docs/gnu/cajo/utils/BaseItem.html>BaseItem</a> can also define a
+                           <a href= docs/gnu/cajo/utils/BaseItem.MainThread.html>MainThread</a> object,
+                           which will be launched automatically, on the item's being made remote. The
+                           item's application specific functionality would go here. There is also a
+                           public member named <a href=docs/gnu/cajo/utils/BaseItem.html#thread>thread</a>,
+                           on which it can be interrupted, and on which the item's processing thread
+                           should periodically monitor, to see if the thread <code>isInterrupted</code>,
+                           and to perform an orderly shutdown.<br><br>
+                           
                            <div align="center">
                               <font face="Verdana, Helvetica" size="-2">
                                  <hr width="80%">
-                                 Items are just objects, which can be also called by remote objects.
+                                 Items are just objects, which can be also invoked by other (remote) objects.
                               </font>
                            </div>
 <!-- end main.html -->
