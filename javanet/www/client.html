@@ -110,17 +110,30 @@
 
                            The server fully configures the applet using the parameters specified in
                            its tag.  The client can provide three of the optional configuration
-                           parameters however:
-                           <ul>
-                              <li><b>proxyName</b>:  The name of the proxy to request from the server
-                              <li><b>clientPort</b>: The port on which to communicate with the proxy
-                              <li><b>localPort</b>:  The client's internal port number, if translated
-                           </ul>
+                           parameters however:<br><br>
+
+                           <table>
+                              <tr>
+                                 <td><b>proxyName</b></td>
+                                 <td>The name of the proxy to request from the server</td>
+                              </tr>
+                              <tr>
+                                 <td><b>clientPort</b></td>
+                                 <td>The port on which to communicate with the proxy</td>
+                              </tr>
+                              <tr>
+                                 <td><b>localPort</b></td>
+                                 <td>The client's internal port number, if translated</td>
+                              </tr>
+                           </table><br>
+
                            Normally the default settings will work fine, unless either the client wants
                            a specific port because it is behind a firewall, or wants a specific proxy.
                            The client can tell the server how to set these parameters, via the URL it
                            uses to request the applet. The URL uses the following syntax:
-                           <pre><code><b>   http://host[:port]/[clientPort][:localPort][-proxyName]</b></code></pre>
+
+                           <pre><code>   http://host[:port]/[clientPort][:localPort][-proxyName]</code></pre>
+
                            The parameters in brackets can be selectively omitted, but the order of
                            arguments is required.<br><br>
 
@@ -150,12 +163,12 @@
                            </ul>
                            The last option has six possibilities to load a proxy:
                            <ul>
-                              <li> <b>http://</b> to load it from a web server
-                              <li> <b>ftp://</b> to load it from an ftp server
-                              <li> <b>file://</b> to load it from the local disc
-                              <li> <b>path/name</b> to instantiate it from a local class file
-                              <li> <b>/path/name</b> to load it as a serialized proxy from disc
-                              <li> <b>//host[:port]/[name]</b> to load it from an rmiregistry
+                              <li> http:// to load it from a web server
+                              <li> ftp:// to load it from an ftp server
+                              <li> file:// to load it from the local disc
+                              <li> path/name to instantiate it from a local class file
+                              <li> /path/name to load it as a serialized proxy from disc
+                              <li> //host[:port]/[name] to load it from an rmiregistry
                            </ul>
 
                            <b><u>Very Important:</u></b> This class, when run as an application, is
@@ -174,7 +187,7 @@
                            start this application with a security policy installed. This would require
                            an invocation such as the following:
 
-                           <pre><code><b> java -jar -Djava.security.manager -Djava.security.policy=someURL client.jar</b></pre></code>
+                           <pre><code>   java -jar -Djava.security.manager -Djava.security.policy=someURL client.jar</b></pre></code>
 
                            The file referenced by the URL (or simply path/filename) would clearly define
                            what permissions the downloaded proxies would have.  For example; the
@@ -189,8 +202,8 @@ grant {
                            <i>Note:</i> be very sure to use the first -D argument, you don't want to
                            make the same
                            <a href=http://developer.java.sun.com/developer/bugParade/bugs/4915879.html target=_blank>
-                           mistake</a> I did. (essentially, omission of the first argument, negates the
-                           second)<br><br>
+                           mistake</a> I did. (essentially, omission of the first argument, completely
+                           negates the second)<br><br>
 
                            One more detail: by design, the client VM is vulnerable to a <i>denial of
                            service attack</i>.  Though unlikely, a malicious server could flood the
@@ -203,7 +216,7 @@ grant {
                            <a href=docs/gnu/cajo/utils/package-summary.html>utils</a> package. All that
                            is required to build a client of your own, is the invoke package, and your
                            application specific classes.  The utils package exists solely for the purpose
-                           of creating server and proxy items, and their server applications.<br><br>
+                           of creating server and proxy items, and server applications.<br><br>
 
                            <div align="center">
                               <font face="Verdana, Helvetica" size="-2">
