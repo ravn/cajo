@@ -115,7 +115,7 @@
 
                            Each proxy is served by, and services an Item. An item binds itself and
                            provides its proxy interface using the static
-                           <a href=docs/gnu/cajo/utils/proxyserver.html>gnu.cajo.utils.ProxyServer.bind</a>
+                           <a href=docs/gnu/cajo/utils/ProxyServer.html>gnu.cajo.utils.ProxyServer.bind</a>
                            method.  This also starts up the proxy codebase server, on which the client
                            will request, and receive, the proxy class files.  If a VM serves proxies,
                            it will require two TCP ports; one for communication with the server item,
@@ -124,9 +124,9 @@
 
                            A server item can also accept proxies from other items, this is done when
                            invoking the
-                           <a href=docs/gnu/cajo/utils/itemserver.html>gnu.cajo.utils.ItemServer.bind</a>
+                           <a href=docs/gnu/cajo/utils/ItemServer.html>gnu.cajo.utils.ItemServer.bind</a>
                            or the
-                           <a href=docs/gnu/cajo/utils/proxyserver.html>gnu.cajo.utils.ProxyServer.bind</a>
+                           <a href=docs/gnu/cajo/utils/ProxyServer.html>gnu.cajo.utils.ProxyServer.bind</a>
                            methods. There is a boolean argument <b><code>acceptProxies</code></b>
                            for this purpose.  Unless it is set, the item will not accept the proxy.
                            A proxy can be sent to an item, using the <b><code>setProxy</code></b>

@@ -95,7 +95,7 @@
                            </font><br><br>
 
                            The
-                           <a href=docs/gnu/cajo/utils/multicast.html>gnu.cajo.utils.Multicast</a>
+                           <a href=docs/gnu/cajo/utils/Multicast.html>gnu.cajo.utils.Multicast</a>
                            class performs two complimentary functions. First, it allows an item to
                            "broadcast" a remote reference to itself over the network. Second, it allows
                            items to listen for, and capture, these reference broadcasts. Once captured,
@@ -127,11 +127,11 @@
                            be likened to the <i>'hailing frequency'</i> for contacting new and unknown
                            items.  An item broadcasts by passing a remoted reference to itself, or some
                            other item, to the multicast's
-                           <a href=docs/gnu/cajo/utils/multicast.html>announce</a> method.<br><br>
+                           <a href=docs/gnu/cajo/utils/Multicast.html>announce</a> method.<br><br>
 
                            An item can register itself with a multicast object to listen for these
                            reference broadcasts.  It does this by invoking multicast's
-                           <a href=docs/gnu/cajo/utils/multicast.html>listen</a> method, passing in a
+                           <a href=docs/gnu/cajo/utils/Multicast.html>listen</a> method, passing in a
                            reference to itself.  When the multicast object receives a broadcast of a
                            remote item reference, it will invoke the listener with a string of
                            "multicast", and a reference to itself, as an argument. Logically, a
@@ -155,7 +155,7 @@
                            A listening multicast object checks the return value of its listener's
                            invocation.  If it returns a null, it will continue listening; if the method
                            returns a non-null value, it will stop listening.  To start the object
-                           listening again, its <a href=docs/gnu/cajo/utils/multicast.html>listen</a>
+                           listening again, its <a href=docs/gnu/cajo/utils/Multicast.html>listen</a>
                            method must be called, either with the same, or a different listener. The
                            multicast's listen method can only monitor using one listening object at a
                            time.  This means that if the multicast object is actively listening, and its
