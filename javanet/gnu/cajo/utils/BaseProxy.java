@@ -47,13 +47,13 @@ public abstract class BaseProxy implements Invoke {
     * asynchronously callback.  It is set by the {@link ItemServer ItemServer}
     * during the bind operation.
     */
-   protected RemoteInvoke server;
+   protected RemoteInvoke item;
    /**
     * A reference to the proxy's processing code.  If non-null, it will be
     * started automatically upon arrival at the host.  Its thread can be
     * accessed through the thread member.
     */
-   protected Runnable runnable;
+   protected MainThread runnable;
    /**
     * The processing thread of the proxy object, it will be started
     * automatically upon arrival at the host when the init method is invoked.
@@ -88,7 +88,7 @@ public abstract class BaseProxy implements Invoke {
     * This is an an inner class of BaseProxy, to allow its implementations
     * access to the item's private and protected members and methods.
     * This is critical because <b>all</b> public methods of BaseProxy can be
-    * invoked by remote objects, just like local objects.
+    * invoked by remote objects, just like with local objects.
     */
    public abstract class MainThread implements Runnable, Serializable {
       /**
@@ -146,34 +146,29 @@ public abstract class BaseProxy implements Invoke {
     */
    public BaseProxy() {}
    /**
-    * This function may be called reentrantly, so critical methods <i>must</i>
-    * be synchronized. It will invoke the specified method with the
-    * provided arguments, if any, using the Java reflection mechanism.<br><br>
-    * It is expected to be invoked the first time from the proxy server, to
-    * install a remote reference to itself.  Next it is expected to be invoked
-    * by the receiving host VM. That invocation will first load all of the
-    * localized strings, based on the locale of the receiving host, when
-    * available. Next it will start the processing thread of the proxy. Finally
-    * invocation will return the proxy's graphical component, if any.<br><br>
-    * After this, all subsequent invocations are directed to the proxy's public
-    * method collection.
-    * @param  method The method to invoke in this item.
-    * @param args The arguments to provide to the method for its invocation.
-    * @return The sychronous data, if any, resulting from the invocation.
-    * @throws java.rmi.RemoteException For network communication related
-    * reasons.
-    * @throws IllegalArgumentException If the method argument is null.
-    * @throws NoSuchMethodException If no matching method can be found.
-    * @throws Exception If the method rejects the invocation, for any
-    * application specific reason.
+    * This function is called by the {@link ItemServer ItemServer} during its
+    * bind operation.
+    * @param  server A remote reference to the server, on which the proxy may
+    * asynchronously call back to it.
     */
-   public final Object invoke(String method, Object args) throws Exception {
-      if (server == null) {
-         server = (RemoteInvoke)args;
-         return null;
-      }
-      if (remoteThis == null) {
-         remoteThis = (Remote)args;
+   public void setItem(Invoke item) {
+      if (this.item == null) this.item = (RemoteInvoke)item;
+   }
+   /**
+    * This function is called by the hosting client on its arrival.  The client
+    * will provide a reference to the proxy, remoted in the context of the
+    * client's VM.  This value will be saved in the remoteThis member, and
+    * can be provided to remote objects on which they can contact the proxy.
+    * If the proxy has a localized string bundle, the localized strings most
+    * closely matching the local of the receiving host will be loaded.
+    * @param  remoteRef A reference to the proxy, remoted in the context of the
+    * client's VM.
+    * @return The proxy's graphical user interface, if it has one, otherwise
+    * null.
+    */
+   public Container init(Invoke remoteRef) {
+      if (remoteThis == null && remoteRef instanceof Remote) {
+         remoteThis = (Remote)remoteRef;
          if (bundle != null) {
             java.util.ResourceBundle rb =
                java.util.ResourceBundle.getBundle(bundle);
@@ -184,14 +179,29 @@ public abstract class BaseProxy implements Invoke {
                }
             }
          }
-         if (runnable != null) {
-            thread = new java.lang.Thread(runnable);
-            thread.start();
-         }
-         return container;
+         thread = new Thread(runnable);
+         thread.start();
       }
+      return container;
+   }
+   /**
+    * The reflection based method router.  This method finds the public method
+    * matching the name, and using the arguments provided, if any, and returns
+    * the result.
+    * @param  method The method to invoke on this object.
+    * @param args The arguments to provide to the method for its invocation.
+    * It can be a single object, an array of objects, or even null.
+    * @return The sychronous data, if any, resulting from the invocation.
+    * @throws java.rmi.RemoteException For network communication related
+    * reasons.
+    * @throws IllegalArgumentException If the method argument is null.
+    * @throws NoSuchMethodException If no matching method can be found.
+    * @throws Exception If the method rejects the request, for any
+    * application specific reason.
+    */
+   public final Object invoke(String method, Object args) throws Exception {
       if (method == null)
-         throw new IllegalArgumentException("Method cannot be null");
+         throw new IllegalArgumentException("Method argument cannot be null");
       Class types[] = null;
       if (args instanceof Object[]) {
          types = new Class[((Object[])args).length];
@@ -205,4 +215,4 @@ public abstract class BaseProxy implements Invoke {
       }
       return getClass().getMethod(method, types).invoke(this, (Object[])args);
    }
-}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+}
