@@ -46,9 +46,7 @@ import java.rmi.server.ServerNotActiveException;
  * @author John Catherino
  */
 public final class Registry {
-   private static final Hashtable entries = new Hashtable();
-   private static final Registry registry = new Registry();
-   private static Multicast multicast;
+   private final Hashtable entries = new Hashtable();
    /**
     * This method is called solely by this registry's Multicast member
     * object, to register objects of remote server announcements.
@@ -105,19 +103,21 @@ public final class Registry {
    public static void main(String args[]) {
       try {
          Remote.config(null, 1099, args.length > 0 ? args[0] : null, 0);
+         Registry registry = new Registry();
+         Multicast multicast = new Multicast();
          gnu.cajo.utils.ItemServer.bind(registry, "registry");
-         multicast = new Multicast();
          multicast.listen(registry);
          Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
+         Remote ref = new Remote(registry);
          do { // periodically purge dead references:
-            multicast.announce(registry, 200);
+            multicast.announce(ref, 200);
             Thread.currentThread().sleep(3600000L); // wait an hour
-            java.util.Enumeration keys = entries.keys();
+            java.util.Enumeration keys = registry.entries.keys();
             while (keys.hasMoreElements()) {
                Object key = keys.nextElement();
-               Object o = entries.get(key);
+               Object o = registry.entries.get(key);
                try { Remote.invoke(o, "toString", null); }
-               catch(Exception x) { entries.remove(key); }
+               catch(Exception x) { registry.entries.remove(key); }
                Thread.currentThread().sleep(300000L); // take five
             }
          } while(true);
