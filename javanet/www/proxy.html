@@ -129,11 +129,11 @@
                            to pass back to its server item, or to other remote items, on which they
                            may asynchronously communicate with it. The return of this invocation, if
                            non-null, will be the proxy's default graphical user interface.  The client
-                           can display this if it wishes. The framework specifies only the method to
-                           obtain the default proxy. If an item serves multiple proxies, the method or
-                           methods to obtain them are application specific.  A <i>suggestion</i> would
-                           be to use a string argument in a getProxy invocation, to specify the desired
-                           proxy.
+                           can display this if it wishes. (By default, a BaseItem automatically will)
+                           The framework specifies only the method to obtain the default proxy. If an
+                           item serves multiple proxies, the method or methods to obtain them are
+                           application specific.  A <i>suggestion</i> would be to use a string argument
+                           in a getProxy invocation, to specify the desired proxy.
 
                            <h3>Conclusion</h3><br>
 
