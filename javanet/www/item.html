@@ -148,11 +148,12 @@
                            That's all there is to an item.  To make an item remotely accessible, it is
                            passed to the static method gnu.cajo.invoke.Remote.bind.  A single virtual
                            machine can remote as many items as it wants. An item obtains a reference to
-                           a remote item using the static method gnu.cajo.invoke.Remote.getItem.  If an
-                           application handles its items using their Invoke interface, it need not know,
-                           or even care, if the items are local or remote.  However, if it is important
-                           to know, either the remoteness or locality of an item; this is easily tested
-                           in the following way:
+                           a remote item using the static method gnu.cajo.invoke.Remote.getItem. As an
+                           informal convention; the primary item served by a VM it typically bound under
+                           the name "main". If an application handles its items using their Invoke
+                           interface, it need not know, or even care, if the items are local or remote.
+                           However, if it is important to know, either the remoteness or locality of an
+                           item; this is easily tested in the following way:
 <pre><code>
    if (ref instanceof RemoteInvoke) {
       // the reference is to a remote item ...
