@@ -35,10 +35,8 @@ import java.util.zip.GZIPOutputStream;
  * server's VM, to represent a proxy item of arbitrary size.  Upon its arrival
  * at the hosting VM, it will reconstruct the internally referenced proxy item,
  * either by construction or deserialization, and initialize it such that any
- * standard {@link BaseProxy proxy} can be handled via this class. This will
- * also conserve bandwidth, as proxies in the codebase jar file are compressed.
- * <i>Note:</i> the proxy object is assumed to implement the
- * {@link gnu.cajo.invoke.Invoke Invoke} interface.
+ * proxy object can be handled via this class. This will also conserve
+ * bandwidth, as proxies in the codebase jar file are compressed.
  * <p>
  * Typical serialized proxy names:  /test.ser /objects/test.ser
  * <p>
@@ -50,11 +48,11 @@ import java.util.zip.GZIPOutputStream;
 public final class ProxyLoader implements Invoke {
    private final String handle;
    private RemoteInvoke server;
-   private transient Invoke proxy;
+   private transient Object proxy;
    /**
     * The constructor creates a small wrapper object referencing a proxy item
     * solely by name, but not loading its object into the server's VM runtime.
-    *  It is simply a server-side representation of the proxy, but not the
+    * It is simply a server-side representation of the proxy, but not the
     * proxy itself.
     * @param handle The path of either the proxy class file, or the file
     * containing serialized instance of the proxy, to be found inside the
@@ -89,13 +87,14 @@ public final class ProxyLoader implements Invoke {
          if (handle.charAt(0) == '/') {
             InputStream is = ProxyLoader.class.getResourceAsStream(handle);
             ObjectInputStream ois = new ObjectInputStream(is);
-            proxy = (Invoke)ois.readObject();
+            proxy = ois.readObject();
             ois.close();
             is.close();
-         } else proxy = (Invoke)Class.forName(handle).newInstance();
-         proxy.invoke("setItem", server);
+         } else proxy = Class.forName(handle).newInstance();
+         try { Remote.invoke(proxy, "setItem", server); }
+         catch(Exception x) {}
       }
-      return proxy.invoke(method, args);
+      return Remote.invoke(proxy, method, args);
    }
    /**
     * This method is used to identify the contents of the ProxyLoader.
