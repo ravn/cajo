@@ -143,12 +143,26 @@
                            method:
                            <b><pre>   public Object multicast(Multicast m);</pre></b>
 
-                           A multicast object has four public members:<ul>
-                              <li><code>item    </code> The remote reference to the broadcasted item.
-                              <li><code>iaddr   </code> The TCP address of the broadcasting server.
-                              <li><code>address </code> The UDP address on which this reference was received.
-                              <li><code>port    </code> The UDP port on which this reference was received.
-                           </ul>
+                           A multicast object has four public members:<br><br>
+
+                           <table>
+                              <tr>
+                                 <td><b>item</b></td>
+                                 <td>The remote reference to the broadcasted item.</td>
+                              </tr>
+                              <tr>
+                                 <td><b>iaddr</b></td>
+                                 <td>The TCP address of the broadcasting server.</td>
+                              </tr>
+                              <tr>
+                                 <td><b>address</b></td>
+                                 <td>The UDP address on which this reference was received.</td>
+                              </tr>
+                              <tr>
+                                 <td><b>port</b></td>
+                                 <td>The UDP port on which this reference was received.</td>
+                              </tr>
+                           </table><br>
 
                            The reason for calling a listener with a reference to the multicast
                            object is to allow for the possibility of a single item to listen with
