@@ -93,7 +93,11 @@
                            The framework specifies only the method to obtain the default proxy. If an
                            item serves multiple proxies, the method or methods to obtain them are
                            application specific.  A <i>suggestion</i> would be to use a string argument
-                           in a getProxy invocation, to specify the desired proxy.
+                           in a getProxy invocation, to specify the desired proxy. <i>Note:</i> as a
+                           general rule, it is considered elegant practice for an item to support both
+                           a proxy interface to itself, and for that proxy to support a graphical
+                           interface. Minimally, an item should at least support a <code>String
+                           getDescription()</code> method to describe its use and features.
 
                            <h3>Sending Proxies</h3><br>
 
