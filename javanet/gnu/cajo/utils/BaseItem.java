@@ -133,6 +133,8 @@ public class BaseItem {
     * started, and its reference stored in the {@link #thread thread} member.
     */
    public void startThread() {
+      if (thread != null)
+         throw new IllegalArgumentException("Thread already started");
       if (thread == null && runnable != null) {
          thread = new Thread(runnable);
          thread.start();
