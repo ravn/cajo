@@ -6,6 +6,7 @@
       <meta name="Author" content="John Catherino">
    </head>
    <body bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800000" alink="#FF0000">
+<div id="projecthome" class="app">
       <table width="100%" cellspacing="0" cellpadding="0" border="0">
          <tr>
             <td><img src="images/topl.gif" width="17" height="17" border="0"></td>
@@ -121,14 +122,15 @@
 
                            As mentioned in the <a href=proxy.html>proxy</a> page, a server does not
                            need to use proxies; one is included in the example, for completeness of
-                           illustration.<br><br>
+                           illustration.
 
-                           <a id="TestItem"></a>The <b>TestItem</b> class demonstrates the basic
-                           functionality of a server item.  A server item has two primary components; a
-                           processing thread, and a callable interface.  While the processing thread is
-                           technically optional, a callable interface is logically essential. The
-                           processing thread, if defined, is launched automatically following binding of
-                           the object with the
+                           <a id="TestItem"></a><h3>TestItem</h3><br>
+
+                           The TestItem class demonstrates the basic functionality of a server item. A
+                           server item has two primary components; a processing thread, and a callable
+                           interface.  While the processing thread is technically optional, a callable
+                           interface is logically essential. The processing thread, if defined, is
+                           launched automatically following binding of the object with the
                            <a href=docs/gnu/cajo/utils/ItemServer.html>ItemServer</a>. A server item can
                            also be purely <i>event driven</i>; i.e. only executing when its callable
                            methods are being invoked; in this case it would not define a
@@ -174,11 +176,12 @@
                            <code>Object</code>.  This is also a <i>highly recommended</i> practice.  In
                            this case, it is used when monitoring the item, which is covered in the
                            upcoming section on <a href="#Main">Main</a>, and also greatly aids in
-                           debugging. That's all there is to the TestItem example.<br><br>
+                           debugging. That's all there is to the TestItem example.
 
-                           <a id="TestProxy"></a>The <b>TestProxy</b> class is a small proxy item
-                           illustrating many features of the framework.  It is sent to a client, as
-                           the return from the TestItem's
+                           <a id="TestProxy"></a><h3>Test Proxy</h3><br>
+
+                           The TestProxy class is a small proxy item illustrating many features of the
+                           framework.  It is sent to a client, as the return from the TestItem's
                            <a href=docs/gnu/cajo/utils/BaseItem.html#getProxy()>getProxy</a> method,
                            inherited from
                            <a href=docs/gnu/cajo/utils/BaseItem.html>BaseItem</a>. The proxy
@@ -218,15 +221,16 @@
                            synchronous text acknowlegement of its own. Just as with server items, all
                            of a proxy's public methods, can be called by remote items (or proxies),
                            having a reference to the proxy.
-                           <br><br>
 
-                           <a id="Builder"></a>The <b>Builder</b> class serves two purposes.  First it
-                           serves to replace the code which would otherwise go into the proxy's
-                           constructor.  Why do this?  Because all of the construction code, which can
-                           be quite sizeable if the proxy is elaborate, can be left out of the proxy's
-                           jar file.  This reduces the proxy jar size, and also adds the additional
-                           feature that the proxy becomes much more difficult to <i>reverse-engineer</i>,
-                           if such a protection is important.<br><br>
+                           <a id="Builder"></a><h3>Builder</h3><br>
+
+                           The Builder class serves two purposes.  First it serves to replace the code
+                           which would otherwise go into the proxy's constructor.  Why do this?
+                           Because all of the construction code, which can be quite sizeable if the
+                           proxy is elaborate, can be left out of the proxy's jar file.  This reduces
+                           the proxy jar size, and also adds the additional feature that the proxy
+                           becomes much more difficult to <i>reverse-engineer</i>, if such a protection
+                           is important.<br><br>
 
                            The second function of the Builder class is to instantiate the proxy, then
                            serialize its image to disc.  This serialized object will be included in the
@@ -250,12 +254,14 @@
                            need to use it during compile time.  Without this apparently unused
                            reference, the proxy would suffer a <code>ClassNotFoundException</code> at
                            the host, as ProxyLoader class would not be in the proxy jar file, as it
-                           would have not been compiled.<br><br>
+                           would have not been compiled.
 
-                           <a id="Main"></a>The <b>Main</b> class illustrates how to make a server
-                           application.  A server is simply an application which makes one, or more,
-                           items available for remote invocation. The Main class first configures its
-                           network settings, then makes the test item accessible.  As explained in the
+                           <a id="Main"></a><h3>Main</h3><br>
+
+                           The Main class illustrates how to make a server application.  A server is
+                           simply an application which makes one, or more, items available for remote
+                           invocation. The Main class first configures its network settings, then makes
+                           the test item accessible.  As explained in the
                            <a href=tutorial.html#launching>launching</a> turorial, the application can
                            take up to five parameters, in order, from most likely to need changing, to
                            least likely, and where order and precedence matters. The network
@@ -278,7 +284,9 @@
                            reference the test proxy, invoked on their setProxy method, if they have one.
                            Finally it finishes up by listing its configuration information.  This can be
                            useful if the server is told to use any anonymous TCP ports (i.e. port = 0),
-                           the info will contain the actual port numbers chosen by the system at startup.<br><br>
+                           the info will contain the actual port numbers chosen by the system at startup.
+
+                           <h3>Conclusion</h3><br>
                            
                            <a id="Extras"></a>The <a href=docs/gnu/cajo/utils/ZippedProxy.html>
                            ZippedProxy</a> class is the only utility class not used in the example.
