@@ -94,6 +94,7 @@
                               <b>Inside the cajo framework.</b><br><br>
                            </font>
 
+                           <b>Introduction</b><br>
                            Every remotely accessible object in the framework is known as an
                            <a href=item.html>Item</a>. An application can host one or more items
                            within its virtual machine. Items can call other items (local or remote)
@@ -102,78 +103,83 @@
                            sent from one virtual machine, to execute in the context of another.  This
                            allows an application to be originally designed with all of its items
                            local to its virtual machine, then evolve until each item exists
-                           in a separate virtual, or even physical machine; <u>with no changes to
-                           the source code</u>.<br><br>
+                           in a separate virtual, or even physical machine; with no changes to the
+                           source code</u>.<br><br>
 
                            In the standard RMI framework, each remote object must have a unique <i>"stub"</i>
                            compiled for it. This can quickly become burdensome, especially if the
                            interaction between objects becomes highly diverse; it is completely
-                           <u>impossible</u> when method signatures are unknown at compile time. To
-                           address these problems, the framework defines only one functional interface;
+                           impossible when method signatures are unknown at compile time. To address
+                           these problems, the framework defines only one functional interface;
                            every item inherits the <a href=docs/gnu/cajo/invoke/Invoke.html>Invoke</a>
-                           interface, i.e.:
+                           interface. It defines a single method to represent the method name, the
+                           arguments provided to it and the returned data, i.e.:
 
                               <pre><tt>   Object invoke(String method, Object args);</tt></pre>
 
-                           The interface defines a single method, in which a method name may be
-                           provided, may be given an argument, and may return a result.<br><br>
+                           <a id="rules"></a><i>Note:</i> this mechanism operates slightly differently
+                           from local Java method invocation in two distinct ways.  First the return
+                           type must be of type Object or a derived type.  This means an invocation
+                           cannot return a primitive type, such as int or char. Second, the argument
+                           type must also be of type Object, meaning it too cannot be a primitive type.
+                           However, just as with local invocations, both the argument and the return,
+                           can be of type Object[] indicating more than one object is being transferred,
+                           they can even be null, indicating no object transfer.<br><br>
 
-                           <a id="rules"></a><i>Note:</i> this signature operates <u>slightly</u>
-                           differently from local Java method invocation in two distinct ways.  First
-                           the return type must be of type Object or a derived type.  This means an
-                           invocation cannot return a primitive type, such as int or char. Second, the
-                           argument type must also be of type Object, meaning it too cannot be a
-                           primitive type. However, just as with local invocations, both the argument
-                           and the return, can be of type Object[] indicating more than one object is
-                           being transferred, they can even be null, indicating no object transfer.<br><br>
-
-                           Aside from these minor differences, object and item interaction behave
-                           identically. Typically, a small wrapper is placed around an item reference
-                           to give it the identical semantics, and type-safety, of a local method
-                           invocation; consider these examples:<code><pre>
-
-   void baker() {
-      foo.invoke("baker", null);
-      // no argument or return
-   }
-
-   int baker(int charlie) {
-      return ((Integer)foo.invoke("baker", new Integer(charlie))).intValue();
-      // primitive argument and return
-   }
-
-   Able baker(Charlie c) {
-      return (Able)foo.invoke("baker", c);
-      // object argument and return
-   }
-
-   Able[] baker(Charlie c, Delta d) {
-      return (Able[])foo.invoke("baker", new Object[] { c, d });
-      // multiple object argument and return
-   } </pre></code>
-                           Now when one object is invoking a method directly, or through an Invoke
-                           interface, to an item (local or remote) it is completely abstracted, and
-                           ultimately irrelevant to the invoking object.<br><br>
-
+                           <b>Remoting Items</b><br>
                            The invocation of a method on a remote item using the Invoke interface is
                            made possible using the
                            <a href=docs/gnu/cajo/invoke/Remote.html>Remote</a> class.  It utilizes
                            a Java feature known as <i>reflection</i>.  The Remote class can take
-                           <i>any</i>
-                           object, and place a remotely invokable wrapper around it. When other objects
-                           execute its invoke method, the wrapper uses reflection to find the method
-                           on its internal object, matching both the name and the argument types. If
-                           it is found, it executes that method, and returns the result, if any.  If no
-                           matching method can be found on the internal object, a
-                           <code>NoSuchMethodException</code> is thrown.<br><br>
+                           <i>any</i> object, and place a remotely invokable wrapper around it. When
+                           other objects execute its invoke method, the wrapper uses reflection to
+                           find the method on its internal object, matching both the name and the
+                           argument types. If it is found, it executes that method, and returns the
+                           result, if any.  If no matching method can be found on the internal object,
+                           a <code>NoSuchMethodException</code> is thrown. This technique effectively
+                           makes all public methods of the internal object remotely callable<br><br>
 
-                           This technique effectively makes <u><b>all public methods</b></u> of the
-                           internal object remotely callable!<br><br>
+                           <b>Contacting Items</b><br>
+                           Items, i.e. objects wrapped by a Remote object, are made remotely
+                           accessible in one of two ways. First it is generally useful to bind the
+                           object with the <a href=docs/gnu/cajo/utils/ItemServer.html>ItemServer</a>
+                           class. ItemServer will create an rmiregistry and bind the object under the
+                           name provided. Now other clients can contact this registry, and obtain a
+                           remote reference to the item.  The rmiregistry, and the item communication
+                           use the same TCP port, therefore all that is required of a client to obtain
+                           a reference to the item is the IP address and port of the item server, and
+                           the name under which the item is bound in the rmiregistry. Cannonically,
+                           the default item for a server is bound under the name "<i>main</i>".<br><br>
+
+                           The second method to obtain a reference to a remote item is done using the
+                           <a href=docs/gnu/cajo/utils/Multicast.html>Multicast</a> class. Unlike the
+                           previous method which uses TCP to obtain the reference, this technique uses
+                           UDP.  Instead of needing to know the server's TCP/IP address and port number,
+                           the client needs to know the server's UDP/IP address and port number.  The
+                           advantage is that the server can pick its UDP address, and it is independent
+                           of its TCP address.  A server broadcasts a remote reference to an item by
+                           calling the announce method of ItemServer.  This will send the reference to
+                           all clients listening on the address/port pair.  Items listen for these
+                           announcements using the listen method of Multicast.  This allows items to
+                           dynamically collaborate to form item networks of functionality.<br><br>
+
+                           <b>Mobile Code</b><br>
+                           An item can send mobile code, complex objects, and proxy items to clients
+                           using the <a href=docs/gnu/cajo/utils/CodebaseServer.html>CodebaseServer</a>
+                           class.  CodebaseServer will create a specialized http server on the specified
+                           TCP port, and serve the specified jar file containing the class definitions
+                           needed by the client, along with any other resources needed by proxy items.
+                           These resource items are typically, images and string tables.  By default a
+                           client will not accept mobile code. This is typically enabled by calling the
+                           acceptProxies method of the ItemServer class.  This will install an
+                           RMISecurityManager, to protect the client hardware and files, effectively
+                           creating a applet-like sandbox around the incoming code.<br><br>
 
                            <div align="center">
                               <font face="Verdana, Helvetica" size="-2">
                                  <hr width="80%">
-                                 All objects are local. Machine boundaries, whether virtual or physical, are only illusions.
+                                 All objects are local: machine boundaries, whether virtual or
+                                 physical, are only conceptual.
                               </font>
                            </div>
 <!-- end main.html -->
