@@ -1,191 +1,263 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN""http://www.w3.org/TR/html4/loose.dtd">
 <html>
-   <head>
-      <title>The CaJo Project</title>
-      <meta name="Keywords" content="cajo, rmi, java, distributed computing, Transparent Distributed Computing">
-      <meta name="Description" content="Cajo Distributed Application Framework">
-      <meta name="Author" content="John Catherino">
-   </head>
-   <body>
-      <div id="projecthome" class="app">
-      <table width="100%" align="center">
+
+<head>
+   <title>cajo - The cajo project</title>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <link href="ventro/css.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+
+<table width="98%" border="0" cellpadding="0" cellspacing="0">
+   <tr>
+      <table width="100%" height="67"  border="0" cellpadding="4" cellspacing="0">
          <tr>
-            <td>
-
-<!-- begin main.html -->
-                           <font size="4">
-                              <b>Frequently Asked Questions.</b><br><br>
+            <td background="ventro/vert_logobarbg.gif">
+               <table width="100%" height="47"  border="0" cellpadding="4" cellspacing="0">
+                  <tr><br>
+                     <td width="85" valign="bottom">
+                        <div align="right">
+                           <img src="ventro/cajologo.gif" width="61" height="34">
+                           <img src="ventro/blank.gif" width="6" height="8">
+                        </div>
+                     </td>
+                     <td width="10"><img src="ventro/seperatorline.gif" width="1" height="38"></td>
+                     <td>
+                        <span class="style8">
+                           <font size="+1">
+                              <b>Free, simple, powerful: Transparent Distributed Computing</b>
                            </font>
-
-                           This page will stand as a living document, based on the feedback of
-                           developers.  In any project, a certain collection of questions are asked
-                           disproportionately often.  These deserve their own space, as they have the
-                           highest statistical probability of being very helpful.<br>
-
-                           <ol>
-                           <li><a href=#1>Why doesn't the example work in Appletviewer?</a>
-                           <li><a href=#2>What if someone forks this code?</a>
-                           <li><a href=#3>What is a zedmob?</a>
-                           <li><a href=#4>Can I forcibly disconnect a client?</a>
-                           <li><a href=#5>Can I restrict my server only to local clients?</a>
-                           <li><a href=#6>What is this crazy cajo coding style?</a>
-                           <li><a href=#7>Can I run cajo over Secure Sockets Layer?</a>
-                           <li><a href=#8>Why is there no package version number?</a>
-                           <li><a href=#9>Can my application put proxies in an Applet sandbox?</a>
-                           <li><a href=#10>Why is the framework named cajo?</a>
-                           </ol>
-
-                           <a id="1"></a><b><u>1. Why doesn't the example work in Appletviewer?</u></b>
-                           The <a href=docs/gnu/cajo/utils/CodebaseServer.html>CodebaseServer</a> tells
-                           the browser to make the applet 100% of the width and height of its window.
-                           While this has been legal HTML since 1.0, the Appletviewer doesn't know what
-                           to make of it, as it has no window open when it connects to the server. If
-                           you <i>really</i> need to use Appletviewer, you'll have to edit
-                           CodebaseServer to use a fixed width and height value.  Then you will be
-                           able to use the tool.<br><br>
-
-                           <a id="2"></a><b><u>2. What if someone forks this code?</u></b> A fork, i.e.
-                           an alternative development, is something I would not like to see happen, as
-                           it could divide the community. I am completely open to new ideas, and I could
-                           not envision any useful reason to do it. Most importantly, the gnu.cajo
-                           packages belong to this project, and for cajo objects to link, they must use
-                           these packages specifically. Besides, in this type of project, there is so
-                           much greater capability gained through cooperation.<br><br>
-
-                           <a id="3"></a><b><u>3. What is a zedmob?</u></b> A zedmob first off, is a
-                           contraction of the two words <i><u>Z</u></i>ipp<i><u>ed</u></i>
-                           <i><u>M</u></i>arshalled<i><u>Ob</u></i>ject. It is the standard mechanism for
-                           encapsulating remote item references, serialized objects, and item proxies;
-                           for transmission over the network, or storage on disc. A zedmob is
-                           particularly helpful in the case of proxies, as items are free to pass a
-                           proxy zedmob between each other, and successfully extract the proxy. This is
-                           because its codebase annotation stays intact. In other words; once a proxy is
-                           extracted from a zedmob, it cannot be passed to another item, <i>unless</i>
-                           that item <i>already</i> has the codebase for the proxy, since the codebase
-                           location information is lost. A zedmob is typically written to a stream, and
-                           read from a stream, using the static zedmob methods of the
-                           <a href=docs/gnu/cajo/invoke/Remote.html>Remote</a> class, and typically
-                           has the file extension .zmob for identification.<br><br>
-
-                           <a id="4"></a><b><u>4. Can I forcibly disconnect a client?</u></b> The answer is
-                           yes, but, it will take a little effort. In RMI it is possible to terminate an
-                           object's remoteness, but it will mean for <u>all</u> remote VMs connected to
-                           it. If you want to disconnect a <i>specific</i> client, you need to uniquely
-                           remote the object reference given to that client using the
-                           <a href=docs/gnu/cajo/invoke/Remote.html>Remote</a> class. Then you can
-                           invoke the remote wrapper's <tt>unexportObject()</tt> method, inherited from
-                           java.rmi.server.UnicastRemoteObject. This can be used to forcibly terminate
-                           all remote connections to that wrapper, and even to check if any remote
-                           invocations were in progress (or pending) on it.<br><br>
-
-                           <a id="5"></a><b><u>5. Can I restrict my server only to local clients?</u></b>
-                           This is an intriguing question; fortunately the answer is <u>yes</u>! To make
-                           the <a href=tutorial.html#launching>example</a> server solely accessible
-                           locally, use the following startup:<br><br>
-
-                           &nbsp&nbsp&nbsp&nbsp java -jar server.jar 1111 2222 localhost localhost<br><br>
-
-                           The two port numbers, for http and rmiregistry service respectively, can be
-                           anything, even zero, meaning chosen randomly at runtime. What the localhost
-                           arguments will do is require the <a href=tutorial.html#connecting>client</a>
-                           to connect specifically to the host name <i>localhost</i>, or to
-                           <i>127.0.0.1</i>. This effectively restricts access to this server only to
-                           clients running locally on the machine. For example:<br><br>
-
-                           &nbsp&nbsp&nbsp&nbsp java -jar client.jar <u>//localhost:2222/</u>
-                           &nbsp <i>-or-</i> &nbsp <u>//127.0.0.1:2222/</u><br><br>
-
-                           <a id="6"></a><b><u>6. What is this crazy cajo coding style?</u></b> I never
-                           thought this would become a FAQ, but apparently it has. OK, over the years
-                           I've become quite tolerant of allowing each developer his own formatting
-                           style. <i>(I know this freedom drives some developers crazy!)</i> Basically,
-                           I find it becomes easy to <u><i>see</i></u> who wrote a section; just by its
-                           formatting. In my case, my primary motivation is: <i>I hate <u>whitespace</u>!</i>
-                           Other developers seem to love the stuff. I think this stems from my early
-                           years, developing large applications in assembly language. There each line
-                           did so little, that to get an overview of how a subroutine <i>(prehistoric
-                           for method)</i> worked, you needed to see a <u>lot</u> of lines. In Computer
-                           Science there is a concept called <i>Locality of Reference</i>. Basically it means
-                           how much adjacent code is involved in any particular operation. I believe as
-                           developers improve, their locality of reference increases. I hear both noobs,
-                           and <i>so-called</i> industry experts, proclaim that no method should be
-                           longer than 9 to 12 lines: <u>rubbish</u>! Were that reasonable, no books
-                           should be written above the Grade 5 reading level. As you probably know, I
-                           have methods of 100 lines or more; but precisely as many as needed, no less
-                           and <u>definitely</u> no more! Even when I print, it is always 4 pages per
-                           sheet, ordered top to bottom. I do however heartily recommend, and try to
-                           closely follow, Sun Microsystems' code <a href=http://java.sun.com/docs/codeconv/>conventions</a>
-                           for the Java programming language.<br><br>
-
-                           <a id="7"></a><b><u>7. Can I run cajo over Secure Sockets Layer?</u></b>
-                           Why, yes this should be possible. Uh, these days however, living in the uh,
-                           land of the <i>'free'</i>, it could be really dangerous to give out
-                           information on strong cryptography that can be directly traced back to me.
-                           <i>(I don't want to be exiled to Cuba;)</i> I suppose however, it couldn't
-                           hurt to link to someone else's fine work. So, let's just say, hypothetically
-                           speaking, if you went <a href=http://java.sun.com/j2se/1.4.2/docs/guide/security/jsse/samples/index.html target=_blank>here</a>,
-                           and copied the sample <a href=http://java.sun.com/j2se/1.4.2/docs/guide/security/jsse/samples/jssesamples.zip>zip file</a>,
-                           and replaced the two socket factories in <tt>gnu.cajo.invoke.Remote</tt>,
-                           that just might get the system communicating over SSL. Of course I must not
-                           endorse any of this... <i>(cough* Patriot Act *cough). Psst: if you want
-                           something even <u>stronger</u>, take a look <a href=https://cajo.dev.java.net/files/documents/974/6293/CryptObject.java>
-                           here</a>.</i><br><br>
-
-                           <a id="8"></a><b><u>8. Why is there no package version number?</u></b>
-                           This is an <u>excellent</u> question! In the cajo project, a release
-                           version number is irrelevant. This is due to the philosophy of its design.
-                           This project evolves continuously, but always in a consistently backward
-                           compatible manner. Why? Because it is important to remember that in this
-                           framework, one will both receive, and use, objects at varying levels of
-                           development in the project's timeline. This is not unlike natural language;
-                           for example, one does not ask: "Might we converse, at v.1.2.7.a," rather, one
-                           interacts, at the highest common ground possible. This project is
-                           fundamentally focused on communication, between virtual machines, potentially
-                           separated in <u>both</u> space <b>and</b> time... <i>Woah dude</i>, What hast
-                           thou spoketh?<br><br>
-
-                           <a id="9"></a><b><u>9. Can my application put proxies in an Applet sandbox?</u></b>
-                           Wow, what an important question! I am sorry the answer to this was not
-                           perfectly clear sooner: Of course, it is Yes! This is easily done. When
-                           starting up your application, use the following -D arugments:
-                           <blockquote><tt>
-                           java -jar -Djava.security.manager -Djava.security.policy=policyURL myApp.jar
-                           </tt></blockquote>
-                           The first -D argument puts the entire VM in an applet sandbox. Then if you
-                           need your application classes to be free of these restrictions, a policy
-                           file is needed, something like this:
-                           <blockquote><tt>
-                           grant codeBase "file:${java.class.path}" {<br>
-                            &nbsp&nbsp  permission java.security.AllPermission;<br>
-                           };
-                           </tt></blockquote>
-                           This second -D argument will give full permissions, but only to your local
-                           server code, as an exception.<br><br>
-                           
-                           <a id="10"></a><b><u>10. Why is the framework named cajo?</u></b> This is a
-                           fair question. I guess the answer is; it had to be <i>something</i>. It also
-                           seemed, <i>all the good names were taken!</i> I certainly didn't want to get
-                           things rolling, only to fall into some sort of trademark dispute. Instead I
-                           opted for a risky historical association. I believed in this framework
-                           <u><i>so</i></u> strongly: I gave it my first, and <i>only</i>, internet
-                           handle; dating back to 1979. I essentially put my <i>entire</i> online
-                           reputation at stake. The name was christened by my high school sysadmin, as
-                           a username on an old <a href=http://en.wikipedia.org/wiki/System/360>
-                           System/360</a>. He took the first two letters of a <i>'computer club'</i>
-                           member's last name, and concatenated it with the first two of the first. I
-                           then went on to use it at University, and ever since. I hope he never found
-                           out the full extent, but he was the first person to let me <i>really</i>
-                           experiment with 'big-iron' and the 'net... Thank-you cuto!<br><br>
-
-                           <div align="center">
-                              <font face="Verdana, Helvetica" size="-2">
-                                 <hr width="80%">
-                                 Everybody seems to ask these questions.
-                              </font>
-                           </div>
-<!-- end main.html -->
-
+                        </span>
+                     </td>
+                  </tr>
+               </table>
             </td>
          </tr>
       </table>
-   </body>
+      <table border="0" cellspacing="0" cellpadding="4">
+         <tr>
+            <td height="331" valign="top" bgcolor="#FFFFFF">
+               <td width="100%" valign="top" bgcolor="#FFFFFF">
+                  <table width="100%" border="0" cellpadding="4" cellspacing="0" bgcolor="#FFFFFF">
+                     <tr>
+                        <td>
+                           <table width="100%" height="35" border="0" cellpadding="0" cellspacing="0">
+                              <tr>
+                                 <td width="2%" background="ventro/bar_bg.gif"><img src="ventro/arrowed.gif" width="30" height="35"></td>
+                                 <td width="100%" background="ventro/bar_bg.gif">
+                                    <table width="100%" height="31" border="0" cellpadding="0" cellspacing="0">
+                                       <tr>
+                                          <td>
+                                             <span class="style8 style12">
+<!-- main page title bar -->                    <div align="left">Frequently Asked Questions</div>
+                                             </span>
+                                          </td>
+                                       </tr>
+                                    </table>
+                                 </td>
+                                 <td width="3%"><img src="ventro/bar_Right.gif" width="10" height="35"></td>
+                              </tr>
+                           </table>
+                           <table width="95%" height="96" border="0" cellpadding="9" cellspacing="0">
+                              <tr>
+                                 <td valign="top">
+<!-- title bar section -->         <span class="spacing style4 style7 style9">
+                                      This page will stand as a living document, based on the feedback of
+                                      developers.  In any project, a certain collection of questions are asked
+                                      disproportionately often.  These deserve their own space, as they have the
+                                      highest statistical probability of being very helpful.<br>
+
+                                      <ol>
+                                         <li><a href=#1>Why doesn't the example work in Appletviewer?</a>
+                                         <li><a href=#2>What if someone forks this code?</a>
+                                         <li><a href=#3>What is a zedmob?</a>
+                                         <li><a href=#4>Can I forcibly disconnect a client?</a>
+                                         <li><a href=#5>Can I restrict my server only to local clients?</a>
+                                         <li><a href=#6>What is this crazy cajo coding style?</a>
+                                         <li><a href=#7>Can I run cajo over Secure Sockets Layer?</a>
+                                         <li><a href=#8>Why is there no package version number?</a>
+                                         <li><a href=#9>Can my application put proxies in an Applet sandbox?</a>
+                                         <li><a href=#10>Why is the framework named cajo?</a>
+                                      </ol>
+
+                                      <a id="1"></a><b><u>1. Why doesn't the example work in Appletviewer?</u></b>
+                                      The <a href=docs/gnu/cajo/utils/CodebaseServer.html>CodebaseServer</a> tells
+                                      the browser to make the applet 100% of the width and height of its window.
+                                      While this has been legal HTML since 1.0, the Appletviewer doesn't know what
+                                      to make of it, as it has no window open when it connects to the server. If
+                                      you <i>really</i> need to use Appletviewer, you'll have to edit
+                                      CodebaseServer to use a fixed width and height value.  Then you will be
+                                      able to use the tool.<br><br>
+
+                                      <a id="2"></a><b><u>2. What if someone forks this code?</u></b> A fork, i.e.
+                                      an alternative development, is something I would not like to see happen, as
+                                      it could divide the community. I am completely open to new ideas, and I could
+                                      not envision any useful reason to do it. Most importantly, the gnu.cajo
+                                      packages belong to this project, and for cajo objects to link, they must use
+                                      these packages specifically. Besides, in this type of project, there is so
+                                      much greater capability gained through cooperation.<br><br>
+
+                                      <a id="3"></a><b><u>3. What is a zedmob?</u></b> A zedmob first off, is a
+                                      contraction of the two words <i><u>Z</u></i>ipp<i><u>ed</u></i>
+                                      <i><u>M</u></i>arshalled<i><u>Ob</u></i>ject. It is the standard mechanism for
+                                      encapsulating remote item references, serialized objects, and item proxies;
+                                      for transmission over the network, or storage on disc. A zedmob is
+                                      particularly helpful in the case of proxies, as items are free to pass a
+                                      proxy zedmob between each other, and successfully extract the proxy. This is
+                                      because its codebase annotation stays intact. In other words; once a proxy is
+                                      extracted from a zedmob, it cannot be passed to another item, <i>unless</i>
+                                      that item <i>already</i> has the codebase for the proxy, since the codebase
+                                      location information is lost. A zedmob is typically written to a stream, and
+                                      read from a stream, using the static zedmob methods of the
+                                      <a href=docs/gnu/cajo/invoke/Remote.html>Remote</a> class, and typically
+                                      has the file extension .zmob for identification.<br><br>
+
+                                      <a id="4"></a><b><u>4. Can I forcibly disconnect a client?</u></b> The answer is
+                                      yes, but, it will take a little effort. In RMI it is possible to terminate an
+                                      object's remoteness, but it will mean for <u>all</u> remote VMs connected to
+                                      it. If you want to disconnect a <i>specific</i> client, you need to uniquely
+                                      remote the object reference given to that client using the
+                                      <a href=docs/gnu/cajo/invoke/Remote.html>Remote</a> class. Then you can
+                                      invoke the remote wrapper's <tt>unexportObject()</tt> method, inherited from
+                                      java.rmi.server.UnicastRemoteObject. This can be used to forcibly terminate
+                                      all remote connections to that wrapper, and even to check if any remote
+                                      invocations were in progress (or pending) on it.<br><br>
+
+                                      <a id="5"></a><b><u>5. Can I restrict my server only to local clients?</u></b>
+                                      This is an intriguing question; fortunately the answer is <u>yes</u>! To make
+                                      the <a href=tutorial.html#launching>example</a> server solely accessible
+                                      locally, use the following startup:<br><br>
+
+                                      &nbsp&nbsp&nbsp&nbsp java -jar server.jar 1111 2222 localhost localhost<br><br>
+
+                                      The two port numbers, for http and rmiregistry service respectively, can be
+                                      anything, even zero, meaning chosen randomly at runtime. What the localhost
+                                      arguments will do is require the <a href=tutorial.html#connecting>client</a>
+                                      to connect specifically to the host name <i>localhost</i>, or to
+                                      <i>127.0.0.1</i>. This effectively restricts access to this server only to
+                                      clients running locally on the machine. For example:<br><br>
+
+                                      &nbsp&nbsp&nbsp&nbsp java -jar client.jar <u>//localhost:2222/</u>
+                                      &nbsp <i>-or-</i> &nbsp <u>//127.0.0.1:2222/</u><br><br>
+
+                                      <a id="6"></a><b><u>6. What is this crazy cajo coding style?</u></b> I never
+                                      thought this would become a FAQ, but apparently it has. OK, over the years
+                                      I've become quite tolerant of allowing each developer his own formatting
+                                      style. <i>(I know this freedom drives some developers crazy!)</i> Basically,
+                                      I find it becomes easy to <u><i>see</i></u> who wrote a section; just by its
+                                      formatting. In my case, my primary motivation is: <i>I hate <u>whitespace</u>!</i>
+                                      Other developers seem to love the stuff. I think this stems from my early
+                                      years, developing large applications in assembly language. There each line
+                                      did so little, that to get an overview of how a subroutine <i>(prehistoric
+                                      for method)</i> worked, you needed to see a <u>lot</u> of lines. In Computer
+                                      Science there is a concept called <i>Locality of Reference</i>. Basically it means
+                                      how much adjacent code is involved in any particular operation. I believe as
+                                      developers improve, their locality of reference increases. I hear both noobs,
+                                      and <i>so-called</i> industry experts, proclaim that no method should be
+                                      longer than 9 to 12 lines: <u>rubbish</u>! Were that reasonable, no books
+                                      should be written above the Grade 5 reading level. As you probably know, I
+                                      have methods of 100 lines or more; but precisely as many as needed, no less
+                                      and <u>definitely</u> no more! Even when I print, it is always 4 pages per
+                                      sheet, ordered top to bottom. I do however heartily recommend, and try to
+                                      closely follow, Sun Microsystems' code <a href=http://java.sun.com/docs/codeconv/>conventions</a>
+                                      for the Java programming language.<br><br>
+
+                                      <a id="7"></a><b><u>7. Can I run cajo over Secure Sockets Layer?</u></b>
+                                      Why, yes this should be possible. Uh, these days however, living in the uh,
+                                      land of the <i>'free'</i>, it could be really dangerous to give out
+                                      information on strong cryptography that can be directly traced back to me.
+                                      <i>(I don't want to be exiled to Cuba;)</i> I suppose however, it couldn't
+                                      hurt to link to someone else's fine work. So, let's just say, hypothetically
+                                      speaking, if you went <a href=http://java.sun.com/j2se/1.4.2/docs/guide/security/jsse/samples/index.html target=_blank>here</a>,
+                                      and copied the sample <a href=http://java.sun.com/j2se/1.4.2/docs/guide/security/jsse/samples/jssesamples.zip>zip file</a>,
+                                      and replaced the two socket factories in <tt>gnu.cajo.invoke.Remote</tt>,
+                                      that just might get the system communicating over SSL. Of course I must not
+                                      endorse any of this... <i>(cough* Patriot Act *cough). Psst: if you want
+                                      something even <u>stronger</u>, take a look <a href=https://cajo.dev.java.net/files/documents/974/6293/CryptObject.java>
+                                      here</a>.</i><br><br>
+
+                                      <a id="8"></a><b><u>8. Why is there no package version number?</u></b>
+                                      This is an <u>excellent</u> question! In the cajo project, a release
+                                      version number is irrelevant. This is due to the philosophy of its design.
+                                      This project evolves continuously, but always in a consistently backward
+                                      compatible manner. Why? Because it is important to remember that in this
+                                      framework, one will both receive, and use, objects at varying levels of
+                                      development in the project's timeline. This is not unlike natural language;
+                                      for example, one does not ask: "Might we converse, at v.1.2.7.a," rather, one
+                                      interacts, at the highest common ground possible. This project is
+                                      fundamentally focused on communication, between virtual machines, potentially
+                                      separated in <u>both</u> space <b>and</b> time... <i>Woah dude</i>, What hast
+                                      thou spoketh?<br><br>
+
+                                      <a id="9"></a><b><u>9. Can my application put proxies in an Applet sandbox?</u></b>
+                                      Wow, what an important question! I am sorry the answer to this was not
+                                      perfectly clear sooner: Of course, it is Yes! This is easily done. When
+                                      starting up your application, use the following -D arugments:
+                                      <blockquote><tt>
+                                         java -jar -Djava.security.manager -Djava.security.policy=policyURL myApp.jar
+                                      </tt></blockquote>
+                                      The first -D argument puts the entire VM in an applet sandbox. Then if you
+                                      need your application classes to be free of these restrictions, a policy
+                                      file is needed, something like this:
+                                      <blockquote><tt>
+                                         grant codeBase "file:${java.class.path}" {<br>
+                                         &nbsp&nbsp  permission java.security.AllPermission;<br>
+                                      };
+                                      </tt></blockquote>
+                                      This second -D argument will give full permissions, but only to your local
+                                      server code, as an exception.<br><br>
+                           
+                                      <a id="10"></a><b><u>10. Why is the framework named cajo?</u></b> This is a
+                                      fair question. I guess the answer is; it had to be <i>something</i>. It also
+                                      seemed, <i>all the good names were taken!</i> I certainly didn't want to get
+                                      things rolling, only to fall into some sort of trademark dispute. Instead I
+                                      opted for a risky historical association. I believed in this framework
+                                      <u><i>so</i></u> strongly: I gave it my first, and <i>only</i>, internet
+                                      handle; dating back to 1979. I essentially put my <i>entire</i> online
+                                      reputation at stake. The name was christened by my high school sysadmin, as
+                                      a username on an old <a href=http://en.wikipedia.org/wiki/System/360>
+                                      System/360</a>. He took the first two letters of a <i>'computer club'</i>
+                                      member's last name, and concatenated it with the first two of the first. I
+                                      then went on to use it at University, and ever since. I hope he never found
+                                      out the full extent, but he was the first person to let me <i>really</i>
+                                      experiment with 'big-iron' and the 'net... Thank-you cuto!
+                                    </span>
+                                 </td>
+                              </tr>
+                           </table></td>
+                        </tr>
+                     </table>
+
+
+<!-- footer: -->
+   <table width="95%" height="56" border="0" align="center" cellpadding="9" cellspacing="0">
+      <tr>
+         <td valign="top">
+            <div align="center">
+               <hr width=90%">
+               <span class="spacing style4 style7 style9">
+                  Everybody seems to ask these questions.
+               </span>
+            </div>
+         </td>
+      </tr>
+   </table><br>
+
+   <table width="98%" height="35" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+         <td width="2%" background="ventro/bar_bg.gif"><img src="ventro/arrowed.gif" width="30" height="35"></td>
+         <td width="95%" valign="top" background="ventro/bar_bg.gif">
+            <table width="100%" height="31" border="0" cellpadding="0" cellspacing="0">
+               <tr>
+                  <td width="47%"><span class="style11">&copy; 2004 GNU FDL</span></td>
+                  <td width="53%"><div align="right"></div></td></tr></table></td>
+                  <td width="3%"><img src="ventro/bar_Right.gif" width="10" height="35"></td></tr></table></td>
+               </tr>
+            </table>
+         </td>
+      </tr>
+   </table>
+
+</body>
 </html>
