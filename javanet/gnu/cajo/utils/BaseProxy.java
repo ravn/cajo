@@ -37,7 +37,7 @@ import java.lang.reflect.Method;
  * @version 1.0, 01-Nov-99 Initial release
  * @author John Catherino
  */
-public abstract class BaseProxy implements Invoke {
+public abstract class BaseProxy implements Serializable {
    /**
     * A remote reference to the proxy itself, which it can send to its server,
     * or other remote VMs on which they can asynchronously callback.
@@ -153,8 +153,8 @@ public abstract class BaseProxy implements Invoke {
     * @param  item A remote reference to the server item, on which the proxy
     * may asynchronously call back to it.
     */
-   public void setItem(Invoke item) {
-      if (this.item == null) this.item = (RemoteInvoke)item;
+   public void setItem(RemoteInvoke item) {
+      if (this.item == null) this.item = item;
       else throw new IllegalArgumentException("Item already set");
    }
    /**
@@ -192,29 +192,5 @@ public abstract class BaseProxy implements Invoke {
          }
       } else throw new IllegalArgumentException("Item already initialized");
       return container;
-   }
-   /**
-    * The Java reflection based method router.  This method tries to find the
-    * public method matching the name, and using the arguments provided, if
-    * any, and returns the result, if any. It uses the static invoke utility
-    * of the invoke.Remote class. Strictly speaking, a BaseProxy could be
-    * a regular object, and its Remote wrapper would manage the  remote
-    * invocations. However this method allows for proxy-to-proxy invocation
-    * within the same host VM, without the need for the Remote indirection.
-    * @param  method The method to invoke on this object.
-    * @param args The arguments to provide to the method for its invocation.
-    * It can be a single object, an array of objects, or even null.
-    * @return The sychronous data, if any, resulting from the invocation.
-    * @throws java.rmi.RemoteException For network communication related
-    * reasons.
-    * @throws IllegalArgumentException If the method argument is null.
-    * @throws NoSuchMethodException If no matching method can be found.
-    * @throws Exception If the proxy method rejects the request, for any
-    * application specific reason.
-    */
-   public Object invoke(String method, Object args) throws Exception {
-      if (method.equals("invoke")) // prevent infinite recursion!
-         throw new IllegalArgumentException("Invalid proxy invocation");
-      return Remote.invoke(this, method, args); // invoke any method but this
    }
 }
