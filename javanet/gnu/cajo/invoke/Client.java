@@ -42,7 +42,6 @@ import java.util.zip.GZIPOutputStream;
  */
 public final class Client extends java.applet.Applet {
    private static final String TITLE = "CaJo Proxy Viewer";
-   private static Registry registry;
    private static Object proxy;
    private static final class CFrame extends Frame implements WindowListener {
       public CFrame(String title) {
@@ -138,8 +137,7 @@ public final class Client extends java.applet.Applet {
          int lPort = localPort  != null ? Integer.parseInt(localPort)  : 0;
          if (proxyName == null) proxyName = "main";
          Remote.config(null, lPort, clientHost, cPort);
-         Object proxy =
-            LocateRegistry.getRegistry(getCodeBase().getHost(), pPort);
+         proxy = LocateRegistry.getRegistry(getCodeBase().getHost(), pPort);
          proxy = ((Registry)proxy).lookup(proxyName);
          proxy = ((Invoke)proxy).invoke("getProxy", null);
          if (proxy instanceof MarshalledObject)
