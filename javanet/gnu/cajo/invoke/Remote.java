@@ -377,6 +377,7 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
             for (int j = 0; j < args.length; j++)
                if (args[j].isAssignableFrom(m.getParameterTypes()[j]))
                   closeness++;
+            if (closeness == args.length) return m;
             if (closeness > goodness) {
                best = m;
                goodness = closeness;
