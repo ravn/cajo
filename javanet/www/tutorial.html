@@ -161,8 +161,14 @@
                            means you can modify the proxy, or proxies, recompile their jar file, and
                            overwrite the existing proxy.jar file, all while the server is still running.
                            All subsequent clients will receive the updated functionality automatically,
-                           and the server need never be shut down!
+                           and the server need never be shut down!<br><br>
                            
+                           <b>*<u>New feature</u>:</b> you can now build the application, in an <i>OS
+                           independent</i> manner, using the <u>highly-recommended</u> build system,
+                           <a href=http://ant.apache.org>Ant</a>! Just use the new script,
+                           <tt>build.xml</tt>, most generously donated by <b>Jean-Marie Dautelle</b>.
+                           Simply execute: <tt>ant make1</tt>, <tt>ant make2</tt>, or <tt>ant make3</tt>!
+
                            <a id="launching"></a><h3>Launching the example</h3><br>
 
                            Once you have built the example, launching it can be as simple as executing
