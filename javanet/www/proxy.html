@@ -137,21 +137,41 @@
                            application specific.  A <i>suggestion</i> would be to use a string argument
                            in a getProxy invocation, to specify the desired proxy.
 
+                           <h3>Sending Proxies</h3><br>
+
+                           If a remote machine is willing to host proxies, another item can typically
+                           install a proxy, by invoking a remote item's
+                           <a href=docs/gnu/cajo/utils/BaseItem.html#setProxy(gnu.cajo.invoke.Invoke)>setProxy</a>
+                           method, passing its proxy, as the argument. The default implementation will
+                           invoke the proxy's init method, passing a reference to the proxy, remoted
+                           within the context of the BaseItem's VM, to start its operation and with
+                           which it may share with other items/proxies. It will then return the same
+                           reference back to the calling VM, on which it may asynchronously communicate
+                           with its proxy. Receiving too many proxies could overload a VM, therefore
+                           acceptance of proxies is disabled by default. It can be enabled by invoking
+                           the
+                           <a href=docs/gnu/cajo/utils/ItemServer.html#acceptProxies()>acceptProxies</a>
+                           method of the ItemServer class. Attempting to send a proxy to an VM that
+                           does not accept them will result in a ClassNotFoundException being
+                           automatically thrown at the caller. BaseItem's setProxy method is often
+                           extended, to provide additional application specific resources to the
+                           arriving proxy.
+
                            <h3>Conclusion</h3><br>
 
                            One of the most important features of a proxy is to mitigate network latency.
                            This can be of critical importance, if the remote item is very far away, or
-                           linked over a slow network. Generally it is a recommended practice for
-                           remote items to support a proxy. At a minimum, it would serve to minimize
-                           network traffic, and pre-fetch objects contextually.  Effectively this type
-                           of proxy would be considered a <i>'smart'</i> remote reference. Clients
-                           would then have the option to use the proxy, or to manipulate the remote
-                           object directly over the network.<br><br>
+                           linked over a slow network. Generally it is a recommended practice for remote
+                           items to support a proxy. At a minimum, it would serve to minimize network
+                           traffic, and pre-fetch objects contextually.  Effectively this type of proxy
+                           would be considered a <i>'smart'</i> remote reference. Clients would then
+                           have the option to use the proxy, or to manipulate the remote object directly
+                           over the network.<br><br>
 
                            Both the proxy, and its serving item, can in turn give their remote
-                           references to other items.  As a result, an item calling another item does not
-                           know, or need even care, if it is invoking a local item, a remote item, a
-                           local proxy, or a remote proxy.<br><br>
+                           references to other items.  As a result, an item calling another item does
+                           not know, or need even care, if it is invoking a local item, a remote item,
+                           a local proxy, or a remote proxy.<br><br>
 
                            The next section <a href=multicast.html>multicast</a> will show how items
                            can send, or receive, remote item references using a method analogous to a
