@@ -100,18 +100,19 @@
                            specifically. Besides, in this type of project, there is so much greater
                            capability gained through cooperation.<br><br>
 
-                           <b><u>What is a zedmob?</u></b> A zedmob first off is a contraction of the
-                           words <b><u>Z</u></b>ipp<b><u>ed</u></b> <b><u>M</u></b>arshalled<b><u>Ob</u></b>ject.
-                           It is the standard method for encapsulating remote references, objects, and
-                           proxies, for transmission over the network, or storage on disc. A zedmob is
-                           particularly helpful in the case of proxies, as items can pass a proxy zedmob
-                           between each other and successfully extract the proxy. This is because its
-                           codebase annotation stays intact. In other words, once a proxy is extracted
-                           from a zedmob, it can not be passed to another item, unless that item already
-                           has the codebase for the proxy, as the codebase location information is lost.
-                           A zedmob is typically written to a stream, and read from a stream using the
-                           static zedmob methods of the Remote class.
-                           <br><br>
+                           <b><u>What is a zedmob?</u></b> A zedmob first off, is a contraction of the
+                           two words <b><u>Z</u></b>ipp<b><u>ed</u></b>
+                           <b><u>M</u></b>arshalled<b><u>Ob</u></b>ject. It is the standard mechanism for
+                           encapsulating remote item references, serialized objects, and item proxies;
+                           for transmission over the network, or storage on disc. A zedmob is
+                           particularly helpful in the case of proxies, as items are free to pass a
+                           proxy zedmob between each other, and successfully extract the proxy. This is
+                           because its codebase annotation stays intact. In other words; once a proxy is
+                           extracted from a zedmob, it cannot be passed to another item, <i>unless</i>
+                           that item <i>already</i> has the codebase for the proxy, since the codebase
+                           location information is lost. A zedmob is typically written to a stream, and
+                           read from a stream, using the static zedmob methods of the
+                           <a href=docs/gnu/cajo/invoke/Remote.html>Remote</a> class.<br><br>
 
                            <div align="center">
                               <font face="Verdana, Helvetica" size="-2">
