@@ -53,7 +53,7 @@ import java.util.zip.GZIPOutputStream;
  * configuration, it must be done <b>before</b> binding an item, since doing
  * this will use the server's assigned name and port number. Configuration is
  * accomplished by calling its {@link gnu.cajo.invoke.Remote#config config}
- * static method.
+ * static method. Also, by default, acceptance of proxies is disabled.
  * 
  * @version 1.0, 01-Nov-99 Initial release
  * @author John Catherino
@@ -77,11 +77,27 @@ public class ItemServer {
     */
    public static Registry registry;
    /**
-    * Nothing happens in the constructor of this class, as all of its
-    * methods are static, and it has no instance variables.  This class exists
-    * solely as a server item creation facilitator.
+    * Nothing happens in the default constructor of this class. This is used
+	* when the server has its own internal {@link CodebaseServer CodebaseServer}
+	* instance running. To take advantage the client loading capability of the
+	* CodebaseServer, it must be running in the same instance of the server's VM.
     */
    public ItemServer() {}
+   /**
+    * This constructor sets the RMI codebase property for this VM instance.
+	* This is necessary if the server is serving proxies, or other types of
+	* classes, <b>and</b> is using a common, or remote, code base server.
+	* @param host The public IP address or host name, on which the codebase
+	* is being served. It need not be the same physical machine as the item
+	* server.
+	* @param port The TCP port on which the codebase server is operating.
+    * @param codebase The path/filename of the jar file containing the
+	* codebase, relative to the working directory of the codebase server.
+    */
+   public ItemServer(String host, int port, String codebase) {
+      System.setProperty("java.rmi.server.codebase",
+         "http://" + host + ':' + port + '/' + codebase);
+   }
    /**
     * This method enables this VM to host proxies, and accept other mobile code,
     * from other remote servers. Hosting mobile code can result in the
