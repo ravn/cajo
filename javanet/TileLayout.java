@@ -364,7 +364,7 @@ public final class TileLayout implements LayoutManager2, Serializable {
             components.remove(i);
             components.remove(i);
             break;
-         }
+         } else i++;
       }
    }
    /**
