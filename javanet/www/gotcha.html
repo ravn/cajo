@@ -63,26 +63,27 @@
                            receive a local, remote, or proxy item reference, a method signature must
                            declare the argument to be of type Invoke.</strike><br><br>
 
-                           <b>*<u>Wonderful news</u>!</b> Today (08-Jan-04) a <i>significant</i>
-                           improvement to the project codebase was uploaded, which <u>eliminates</u>
-                           this <i>"gotcha"</i>. It was most generously provided by project member
-                           <b>frelars</b> (aka Fredrik Larsen), with assistance by project member
-                           <b>li_ma</b> (aka Li Ma). It will traverse argument inheritance trees to
-                           find the best fitting method. It is a <i>stunning</i> improvement, and
+                           &nbsp&nbsp&nbsp&nbsp<b>*<u>Wonderful news</u>!</b> Today (08-Jan-04) a
+                           <i>significant</i> improvement to the project codebase was uploaded, which
+                           <u>eliminates</u> this <i>"gotcha"</i>. It was most generously provided by
+                           project member <b>frelars</b> (aka Fredrik Larsen), with assistance by project
+                           member <b>li_ma</b> (aka Li Ma). It will traverse argument inheritance trees
+                           to find the best fitting method. It is a <i>stunning</i> improvement, and
                            removes the <u>most common problem</u> encountered by users.
                            <b>Well done!</b><br><br>
 
-                           <a id="2"></a><b><u>2. Long delays:</u></b> When a remote invocation takes a
-                           really long time for everything, there is a common problem.  RMI attempts to
+                           <a id="2"></a><b><u>2. Long delays:</u></b> When each remote invocation takes
+                           a really long time to execute, there is a common problem.  RMI attempts to
                            do a reverse-DNS lookup before each invocation. In theory, this is for
-                           security purposes. When trying to match IP addresses to host names, a DNS
-                           timeout can add up to several minutes to each invocation. If you do not have
-                           a DNS server to resolve the addresses to names, say on a private LAN for
-                           instance, it is necessary to revert back to the <i>'old way'</i>, i.e. the
-                           hosts file.  This is a text file containing address/host name pairs, which
-                           the operating system checks first, before attempting a DNS lookup.<br><br>
+                           security purposes, so there is no way to disable it. The problem is; when
+                           trying to match IP addresses to host names, a DNS timeout can add up to
+                           several minutes to each invocation. If you do not have a DNS server to
+                           resolve the addresses to names, say on a private LAN for instance, it will be
+                           necessary to revert back to the <i>'old way'</i>, i.e. the hosts file.  This
+                           is a text file containing address/host name pairs, which the operating system
+                           will check first, before attempting a DNS lookup.<br><br>
 
-                           On *nix boxes (Solaris/Unix/Linux/BSD) the file is typically located at:
+                           On *nix boxes (Solaris/Unix/Linux/BSD...) the file is typically located at:
                            <u>/etc/hosts</u><br>
                            On Windows boxes, it is usually: <u>\WINNT\system32\drivers\etc\hosts</u><br><br>
 
@@ -95,7 +96,7 @@
                            very long time, if there is a problem with the network, or the target machine
                            is unresponsive. The invoke interface is declared to throw an exception for
                            two good reasons: One is logical, i.e. the invocation is invalid; the other
-                           is genuinely exceptional, i.e. something genuinely unexpected happened.<br><br>
+                           is genuinely exceptional, i.e. something completely unexpected happened.<br><br>
 
                            These realities can be managed in three different ways: First, when dealing
                            with a remote item reference, your code should be prepared for unexpected
@@ -103,7 +104,7 @@
                            which manages these error conditions when calling its remote sender. (This
                            makes life very nice for the user) Third, when it absolutely positively
                            cannot go wrong, a proxy can be sent containing all of its necessary
-                           functionality, and makes little to no use of its remote link back to its
+                           functionality, makeing little to no use of its remote link back to its
                            sender.<br><br>
 
                            Lastly, I find it extremely helpful to print, frame, memorize, and post
@@ -118,14 +119,14 @@
                            periodically check for server callbacks, thus allowing both inbound and
                            outbound asynchronous calls on a single outbound client socket. To accomplish
                            this, a server would create a
-                           <a href=https:files/documents/974/3597/ClientProxy.java>ClientProxy</a>
-                           object, to locally represent a callable reference to the client item. Next it
-                           would extract an
-                           <a href=https:files/documents/974/3598/ItemProxy.java>ItemProxy</a> from the
-                           ClientProxy, to give to the client. The client registers itself as a listener
-                           with this object, and will receive the asynchronous callbacks made by the
-                           server through it. This allows object design without regard for the firewall
-                           issue.<br><br>
+                           <a href=docs/gnu/cajo/utils/extra/ClientProxy.html>ClientProxy</a> object, to
+                           locally represent a callable reference to the client item. Next it would
+                           extract an
+                           <a href=docs/gnu/cajo/utils/extra/ItemProxy.html>ItemProxy</a> from the
+                           ClientProxy, to give to the client. The client then registers itself as a
+                           listener with this object, and will receive the asynchronous callbacks made
+                           by the server. This allows application level object design without regard for
+                           the firewall issue.<br><br>
 
                            <div align="center">
                               <font size="-2">
