@@ -101,8 +101,9 @@
                            support a graphical interface. Minimally, an item should at least support a
                            <code>String getDescription()</code> method to describe its use and features.
                            <i>Note:</i> you can save proxies to disc for later use, possibly in a
-                           diffent VM session; however, you will need to reinitialize the proxy, each
-                           time it is deserialized.
+                           diffent VM session. However, you will need to reinitialize the proxy, each
+                           time it is deserialized. The most common storage format used within the
+                           framework is called a <a href=https://cajo.dev.java.net/faq.html#3>zedmob</a>.
 
                            <h3>Sending Proxies</h3><br>
 
@@ -122,12 +123,12 @@
                            automatically thrown to the sender. BaseItem's setProxy method is often
                            extended, to provide additional application specific resources to the
                            arriving proxy. Proxies offer an exciting dynamic method for what is
-                           popularly called these days, <i>grid</i> computing.
+                           popularly called <i>grid</i> computing these days.
 
                            <h3>Conclusion</h3><br>
 
                            The diagram below illustrates the four step process to using proxies:<ol>
-                           <li>Client recives remote item reference
+                           <li>Client receives remote item reference
                            <li>Client requests proxy from remote item
                            <li>Client receives proxy codebase
                            <li>Clinent initializes proxy (receiving optional GUI)
