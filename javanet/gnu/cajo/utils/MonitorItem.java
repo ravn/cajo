@@ -1,7 +1,6 @@
 package gnu.cajo.utils;
 
-import gnu.cajo.invoke.Invoke;
-import gnu.cajo.invoke.Remote;
+import gnu.cajo.invoke.*;
 import java.rmi.server.RemoteServer;
 import java.rmi.RemoteException;
 import java.rmi.server.ServerNotActiveException;
@@ -9,6 +8,7 @@ import java.util.Date;
 import java.text.DateFormat;
 import java.io.PrintStream;
 import java.io.OutputStream;
+import java.lang.reflect.Method;
 
 /*
  * Item Invocation Monitor
@@ -109,23 +109,9 @@ public final class MonitorItem implements Invoke {
       long time = System.currentTimeMillis();
       Object arg = args;
       try {
-         if (item instanceof Invoke)
-            return args = ((Invoke)item).invoke(method, args);
-         else if (method == null)
-            throw new IllegalArgumentException("Method argument cannot be null");
-         Class types[] = null;
-         if (args instanceof Object[]) {
-            types = new Class[((Object[])args).length];
-            for (int i = 0; i < types.length; i++)
-               types[i] = ((Object[])args)[i] instanceof Invoke ?
-                  Invoke.class : ((Object[])args)[i].getClass();
-         } else if (args != null) {
-            types = new Class[] {
-               args instanceof Invoke ? Invoke.class : args.getClass() };
-            args = new Object[] { args };
-         }
-         return args = item.getClass().getMethod(method, types).
-            invoke(item, (Object[])args);
+         return args = (item instanceof Invoke) ?
+            ((Invoke)item).invoke(method, args) :
+               Remote.invoke(item, method, args);
       } catch(Exception x) {
          args = x;
          throw x;

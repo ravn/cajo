@@ -3,6 +3,7 @@ package gnu.cajo.utils;
 import java.awt.*;
 import gnu.cajo.invoke.*;
 import java.io.Serializable;
+import java.lang.reflect.Method;
 
 /*
  * Abstract Proxy Item Base Class
@@ -191,8 +192,9 @@ public abstract class BaseProxy implements Invoke {
    }
    /**
     * The Java reflection based method router.  This method tries to find the
-    * public method exactly matching the name, and using the arguments provided,
-    * if any, in the exact type and order, and returns the result, again if any.
+    * public method matching the name, and using the arguments provided, if
+    * any, and returns the result, if any. It uses the static invoke utility
+    * of the invoke.Remote class.
     * @param  method The method to invoke on this object.
     * @param args The arguments to provide to the method for its invocation.
     * It can be a single object, an array of objects, or even null.
@@ -204,20 +206,7 @@ public abstract class BaseProxy implements Invoke {
     * @throws Exception If the proxy method rejects the request, for any
     * application specific reason.
     */
-   public final Object invoke(String method, Object args) throws Exception {
-      if (method == null)
-         throw new IllegalArgumentException("Method argument cannot be null");
-      Class types[] = null;
-      if (args instanceof Object[]) {
-         types = new Class[((Object[])args).length];
-         for (int i = 0; i < types.length; i++)
-            types[i] = ((Object[])args)[i] instanceof Invoke ?
-               Invoke.class : ((Object[])args)[i].getClass();
-      } else if (args != null) {
-         types = new Class[] {
-            args instanceof Invoke ? Invoke.class : args.getClass() };
-         args = new Object[] { args };
-      }
-      return getClass().getMethod(method, types).invoke(this, (Object[])args);
+   public Object invoke(String method, Object args) throws Exception {
+      return Remote.invoke(this, method, args);
    }
 }
