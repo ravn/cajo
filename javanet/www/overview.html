@@ -1,0 +1,150 @@
+<html>
+   <head>
+      <title>The CaJo Project</title>
+      <meta name="Keywords" content="cajo, rmi, java, distributed computing, Transparent Distributed Computing">
+      <meta name="Description" content="Cajo Distributed Application Framework">
+      <meta name="Author" content="John Catherino">
+   </head>
+   <body>
+      <div id="projecthome" class="app">
+      <table width="100%" align="center">
+         <tr>
+            <td>
+
+<!-- begin main.html -->
+
+                        <center>
+                           <a href="index.html" title="cajo home page"><b>Welcome</b></a> |
+                           <a href="tutorial.html" title="getting started"><b>Tutorial</b></a> |
+                           <a href="theory.html" title="how it all works"><b>Theory</b></a> | 
+                           <a href="gotcha.html" title="important details"><b>Gotchas</b></a> |
+                           <a href="faq.html" title="common questions"><b>FAQ</b></a> |
+                           <a href="acknowlege.html" title="supporters of the marque"><b>Acknowledgments</b></a> |
+                           <a href="license.html" title="what's the LGPL"><b>License</b></a> |
+                           <a href="docs/overview-summary.html" title="package documentation"><b>Javadocs</b></a> <br><br>
+                        </center>
+                        <center>
+                           <a href="item.html" title="Remote object"><b>Item</b></a> |
+                           <a href="proxy.html" title="interface object"><b>Proxy</b></a> |
+                           <a href="multicast.html" title="broadcast object"><b>Multicast</b></a> |
+                           <a href="client.html" title="host object"><b>Client</b></a> |
+                           <a href="server.html" title="application server"><b>CodebaseServer</b></a> |
+                           <a href="example.html" title="demo objects"><b>Example</b></a> |
+                           <b>Overview</b><br><br>
+                        </center>
+
+                           <font size="4">
+                              <b>Adding cajo to existing applications...</b><br><br>
+                           </font>
+
+It is very easy to incorporate the cajo framework into any existing
+application. Hopefully this overview will help clarify the
+process...<br><br>
+
+Let's start with an example object:<br>
+
+<tt><pre>public class SomeObject {
+   protected String string;
+   protected Integer stuff;
+   public String foo() { return string; }
+   public void bar(String string, Integer stuff) {
+      this.string = string;
+      this.stuff = stuff;
+   }
+   public String baz(String string) {
+      try { return this.string; }
+      finally { this.string = string; } // tricky :)
+   }
+}</pre></tt>
+
+One of the most important aspects of the cajo framework is that it does not
+require any changes to your objects, in order to use them remotely. Even if
+your application is already using another distributed object framework,
+you'll see it is very easy to drop in cajo support too, thereby increasing
+your distributed user base. To make this object remotely accessible, the
+framework provides two options, commonly known as static and dynamic binding;
+both may even be used on the same object.<br><br>
+
+Static binding is done via a call to the static bind method of the ItemServer
+class. This type of binding will require the client to know the address
+of the server, in order to get a reference to the object. Clients statically
+bind to a remote object using the static getItem method of the Remote class.<br><br>
+
+Dynamic binding is done via a call to the static announce method of the
+Multicast class. This will broadcast the remote object reference to all
+listening virtual machines. Clients dynamically bind using the static listen
+method of the Multicast class. This will invoke the callback provided by the
+client with a reference, when a remote object makes an announcement.<br><br>
+
+In either case, once a remote reference to an object is obtained, it can be
+used to invoke its public methods. The reference can also be passed to other
+objects, including remote ones, as either a method argument, or a return
+value. It could even be thrown in an Exception, even to a remote caller. The
+object receiving this reference can also invoke its remote methods. The
+reference can even be written to a file, via the static zedmob method of the
+Remote class, to be used later, possibly by another program.  The key
+to all this is the static invoke method of the Remote class.<br><br>
+
+Invoke is the cajo architecture approach to dynamic method invocation,
+supplemented by the use of Java reflection. It is the foundation of the
+framework. It can be used to invoke any public method on any type of object,
+even local ones.<br><br>
+
+The method has the following signature:
+
+<code><pre>  Object Remote.invoke(Object object, String method, Object args) throws Exception;</pre></code>
+
+The object argument is the object to be operated on, it can be any type of
+object, local or remote. The method argument is quite reasonably the name of
+the method to be invoked. The args argument represents naturally enough, the
+arguments to be provided to the method, if any. Multiple arguments are
+represented when args is an Object array. The args value can even be null.
+The method's result works in the typical fashion. The method declares that it
+throws Exception, to allow the called method the freedom to throw any type of
+Exception, including none at all.<br><br>
+
+Now it might appear that all type safety has been completely abandoned,
+looking somewhat like a return to the C language; however, what has really
+happened is that stron type checking has moved, necessarily from to compile
+time, to run time. There is however a very useful technique to restore
+compile time checking; it is called a <i>wrapper</i> class.<br><br>
+
+In the case where the interface to a remote object is already known by the
+client, it can define a wrapper class that will take the remote reference,
+and provide a compile time type safe interface to it.<br><br>
+
+For example:<br>
+
+<tt><pre>public class WrapperObject {
+   protected final SomeObject obj;
+   public WrapperObject(SomeObject obj) { this.obj = obj; }
+   public String foo() { return (String)Remote.invoke(obj, "foo", null); }
+   public void bar(String string, Integer stuff) {
+      Remote.invoke(obj, "bar", new Object[] { string, stuff }); }
+   }
+   public String baz(String string) {
+      return (String)Remote.invoke(obj, "baz", string);
+   }
+}</pre></tt>
+
+Again note that since the Remote.invoke method works on both remote and
+ordinary local objects, the wrapper paradigm provides the ability to
+transparently scale from local to remote object interaction, without
+affecting the remaining source code. It provides the ultimate in freedom;
+the wrapped object can even change, from local, to remote, to a different
+server, even at runtime!<br><br>
+
+
+                           <div align="center">
+                              <font size="-2">
+                                 <hr width="80%">
+                                 The cajo framework doesn't dictate your architecture, it simply drops in!
+                              </font>
+                           </div>
+<!-- end main.html -->
+
+            </td>
+         </tr>
+      </table>
+   </body>
+</html>
