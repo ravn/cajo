@@ -74,6 +74,14 @@ bind to a remote object using the static
 <a href=docs/gnu/cajo/invoke/Remote.html#getItem(java.lang.String)>getItem</a>
 method of the Remote class.<br><br>
 
+It can be done something like this:
+
+<tt><pre>
+   Itemserver.bind(new SomeObject(), "someName");
+
+   Object someObject = Remote.getItem("//serverName/someName");
+</pre></tt>
+
 Dynamic binding is done via a call to the static
 <a href=docs/gnu/cajo/utils/Multicast.html#announce(java.lang.Object,%20int)>announce</a>
 method of the
@@ -82,6 +90,14 @@ listening virtual machines. Clients dynamically bind using the static
 <a href=docs/gnu/cajo/utils/Multicast.html#listen(java.lang.Object)>listen</a>
 method of the Multicast class. This will invoke the callback provided by the
 client with a reference, when a remote object makes an announcement.<br><br>
+
+It can be done something like this:
+
+<tt><pre>
+   Multicast.announce(new SomeObject(), 16);
+
+   Multicast.listen(someListener);
+</pre></tt>
 
 In either case, once a remote reference to an object is obtained, it can be
 used to invoke its public methods. The reference can also be passed to other
@@ -128,11 +144,15 @@ and provide a compile time type safe interface to it.<br><br>
 Wrapping our previous example:<br>
 
 <tt><pre>public class WrapperObject {
-   protected final SomeObject obj;
-   public WrapperObject(SomeObject obj) { this.obj = obj; }
-   public String foo() { return (String)Remote.invoke(obj, "foo", null); }
+   protected Object obj;
+   public WrapperObject() {
+      this.obj = Remote.getItem("//serverName/someName");
+   }
+   public String foo() {
+      return (String)Remote.invoke(obj, "foo", null);
+   }
    public void bar(String string, Integer stuff) {
-      Remote.invoke(obj, "bar", new Object[] { string, stuff }); }
+      Remote.invoke(obj, "bar", new Object[] { string, stuff });
    }
    public String baz(String string) {
       return (String)Remote.invoke(obj, "baz", string);
@@ -143,7 +163,7 @@ Again note that since the Remote.invoke method works on both remote and
 ordinary local objects, the wrapper paradigm provides the ability to
 transparently scale from local to remote object interaction, without
 affecting the remaining source code. It provides the ultimate in freedom;
-the wrapped object can even be changed, from local, to remote, to a different
+the wrapped object can even be changed, from local to remote, to a different
 server, even at runtime!<br><br>
 
 
