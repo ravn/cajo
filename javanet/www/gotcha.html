@@ -84,23 +84,27 @@
                            in reports of odd things that have gone wrong.  Often these <i>'pearls from
                            tears'</i> can be as useful for learning as the source documentation itself.
 
-                           <br><br>In that spirit, I'll do the honor of the first one...<br><br>
+                           <ol>
+                           <li><a href=#1>Argument Types</a> &nbsp <i>(corrected)</i>
+                           <li><a href=#2>Long Delays</a>
+                           <li><a href=#3>Network Realities</a>
+                           <li><a href=#4>Firewalled Clients</a>
+                           </ol>
 
                            
-                           <b><u>1. <strike>Argument Types:</u>
-                           </b> When executing an inovke method on an item, Java reflection requires
-                           the argument types to match exactly.  Unfortunately reflection does not
-                           recognize inheritance trees.  For example, if class B extends class A, and
-                           an item method declares an argument of type A, you cannot send it an object
-                           of type B and have it work!-(  This results in the much dreaded <b><code>
-                           NoSuchMethodException</code></b>; if you haven't got one yet, you probably
-                           will soon.  This gotcha can be so inconvienient that the framework makes a
-                           special case for Objects extending the Invoke interface.  They are always
-                           typecast into Invoke. Therefore: to receive a local, remote, or proxy item
-                           reference, a method signature must declare the argument to be of type
-                           Invoke.</strike><br><br>
+                           <a id="1"></a><b><u>1. Argument Types:</u></b> <strike>When executing an
+                           inovke method on an item, Java reflection requires the argument types to
+                           match exactly.  Unfortunately reflection does not recognize inheritance
+                           trees.  For example, if class B extends class A, and an item method declares
+                           an argument of type A, you cannot send it an object of type B and have it
+                           work!-(  This results in the much dreaded <code>NoSuchMethodException</code>;
+                           if you haven't got one yet, you probably will soon.  This gotcha can be so
+                           inconvienient that the framework makes a special case for Objects extending
+                           the Invoke interface.  They are always typecast into Invoke. Therefore: to
+                           receive a local, remote, or proxy item reference, a method signature must
+                           declare the argument to be of type Invoke.</strike><br><br>
 
-                           <b>*<u>Wonderful news!</u></b> Today (08-Jan-04) a <i>significant</i>
+                           <b>*<u>Wonderful news</u>!</b> Today (08-Jan-04) a <i>significant</i>
                            improvement to the project codebase was uploaded, which <u>eliminates</u>
                            this <i>"gotcha"</i>. It was most generously provided by project member
                            <b>frelars</b> (aka Fredrik Larsen), with assistance by project member
@@ -109,15 +113,15 @@
                            removes the <u>most common problem</u> encountered by users.
                            <b>Well done!</b><br><br>
 
-                           <b><u>2. Long delays:</u></b> When a remote invocation takes a really long time
-                           for everything, there is a common problem.  RMI attempts to do a reverse-DNS
-                           lookup before each invocation. In theory, this is for security purposes. When
-                           trying to match IP addresses to host names, a DNS timeout can add up to
-                           several minutes to each invocation. If you do not have a DNS server to
-                           resolve the addresses to names, say on a private LAN for instance, it is
-                           necessary to revert back to the <i>'old way'</i>, i.e. the hosts file.  This
-                           is a text file containing address/host name pairs, which the operating system
-                           checks first, before attempting a DNS.<br><br>
+                           <a id="2"></a><b><u>2. Long delays:</u></b> When a remote invocation takes a
+                           really long time for everything, there is a common problem.  RMI attempts to
+                           do a reverse-DNS lookup before each invocation. In theory, this is for
+                           security purposes. When trying to match IP addresses to host names, a DNS
+                           timeout can add up to several minutes to each invocation. If you do not have
+                           a DNS server to resolve the addresses to names, say on a private LAN for
+                           instance, it is necessary to revert back to the <i>'old way'</i>, i.e. the
+                           hosts file.  This is a text file containing address/host name pairs, which
+                           the operating system checks first, before attempting a DNS.<br><br>
 
                            On *nix boxes (Solaris/Unix/Linux/BSD) the file is typically located at:
                            <u>/etc/hosts</u><br>
@@ -126,13 +130,13 @@
                            Here you would put the IP address/host name pairs for the machines, which do
                            not have DNS support.<br><br>
 
-                           <b><u>3. Nework Realities:</u></b> While it is very simple to write code without
-                           regard to locality or remoteness of objects, it is very important to remember
-                           that any remote invocation can fail, or block for a very long time, if there
-                           is a problem with the network, or the target machine is unresponsive. The
-                           invoke interface is declared to throw an exception for two good reasons: One
-                           is logical, i.e. the invocation is invalid; the other is genuinely
-                           exceptional, i.e. something genuinely unexpected happened.<br><br>
+                           <a id="3"></a><b><u>3. Nework Realities:</u></b> While it is very simple to
+                           write code without regard to locality or remoteness of objects, it is very
+                           important to remember that any remote invocation can fail, or block for a
+                           very long time, if there is a problem with the network, or the target machine
+                           is unresponsive. The invoke interface is declared to throw an exception for
+                           two good reasons: One is logical, i.e. the invocation is invalid; the other
+                           is genuinely exceptional, i.e. something genuinely unexpected happened.<br><br>
 
                            These realities can be managed in three different ways: First, when dealing
                            with a remote item reference, your code should be prepared for unexpected
@@ -148,13 +152,13 @@
                            <a href=http://weblogs.java.net/jag/Fallacies.html>fallacies</a>
                            of distributed computing.<br><br>
 
-                           <b><u>4. Firewalled Clients:</u></b> Very often a client item is operating
-                           behind a firewall that prohibits inbound socket connections. If server
-                           callbacks are necessary for the design, this posed a real problem. Project
-                           member Fredrik Larsen proposed a method whereby the client would periodically
-                           check for server callbacks, thus allowing both inbound and outbound
-                           asynchronous calls on a single outbound client socket. To accomplish this, a
-                           server would create a
+                           <a id="4"></a><b><u>4. Firewalled Clients:</u></b> Very often a client item
+                           is operating behind a firewall that prohibits inbound socket connections. If
+                           server callbacks are necessary for the design, this posed a real problem.
+                           Project member Fredrik Larsen proposed a method whereby the client would
+                           periodically check for server callbacks, thus allowing both inbound and
+                           outbound asynchronous calls on a single outbound client socket. To accomplish
+                           this, a server would create a
                            <a href=https:files/documents/974/3597/ClientProxy.java>ClientProxy</a>
                            object, to locally represent a callable reference to the client item. Next it
                            would extract an
