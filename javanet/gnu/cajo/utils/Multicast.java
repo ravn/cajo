@@ -105,8 +105,8 @@ public final class Multicast implements Runnable {
    }
    /**
     * This method is used to make UDP announcements on the network.
-    * @param item The remote item reference to be sent in the announcement
-    * packet.
+    * @param item The item reference to be sent in the announcement
+    * packet, if it is not already remoted, it will be, automatically.
     * @param ttl The time-to-live of the broadcast packet. This roughly
     * specifies how many multicast enabled routers will pass this packet before
     * automatically discarding it. For example 16, should cover a medium sized
@@ -116,10 +116,11 @@ public final class Multicast implements Runnable {
     * @throws IOException If a datagram socket could not be created, or the
     * packet could not be sent.
     */
-   public void announce(Remote item, int ttl) throws IOException {
+   public void announce(Object item, int ttl) throws IOException {
       InetAddress group = InetAddress.getByName(address);
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
-      item.zedmob(baos);
+      if (!(item instanceof Remote)) item = new Remote(item);
+      ((Remote)item).zedmob(baos);
       byte packet[] = baos.toByteArray();
       baos.close();
       MulticastSocket ms = new MulticastSocket();
