@@ -49,7 +49,7 @@ import java.util.zip.GZIPOutputStream;
  */
 public final class ProxyLoader implements Invoke {
    private final String handle;
-   private Invoke server;
+   private RemoteInvoke server;
    private transient Invoke proxy;
    /**
     * The constructor creates a small wrapper object referencing a proxy item
@@ -81,7 +81,7 @@ public final class ProxyLoader implements Invoke {
     */
    public Object invoke(String method, Object args) throws Exception {
       if (server == null) {
-         this.server = (Invoke)args;
+         this.server = (RemoteInvoke)args;
          return null;
       } else if (proxy == null) {
          if (handle.charAt(0) == '/') {
@@ -91,8 +91,8 @@ public final class ProxyLoader implements Invoke {
             ois.close();
             is.close();
          } else proxy = (Invoke)Class.forName(handle).newInstance();
-         proxy.invoke("setServer", server);
-         proxy.invoke("init", args);
+         proxy.invoke(null, server);
+         proxy.invoke(method, args);
          return proxy;
       } else return ((Invoke)proxy).invoke(method, args);
    }

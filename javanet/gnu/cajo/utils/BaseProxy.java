@@ -47,12 +47,13 @@ public abstract class BaseProxy implements Invoke, Runnable {
     * A remote reference to the proxy itself, which it can send to its server,
     * or other remote VMs on which they can asynchronously callback.
     */
-   protected transient Invoke remoteThis;
+   protected transient Remote remoteThis;
    /**
     * The reference to the sending server, on which the proxy may
-    * asynchronously callback.
+    * asynchronously callback.  It is set by the ProxyServer during the
+    * {@link ProxyServer#bind bind} operation.
     */
-   protected Invoke server;
+   protected RemoteInvoke server;
    /**
     * The path & file name of the resource bundle in the proxy's jar file.
     * It will be used to localize any displayed strings to the language of
@@ -79,19 +80,25 @@ public abstract class BaseProxy implements Invoke, Runnable {
     * Next it will start the processing thread of the proxy.
     * @param remoteRef A reference to this proxy remoted within the context
     * of the receiving host, on its preferred ports and network interface.
+    * @throws IllegalStateException If the init method is called more than
+    * once.
+    * @throws ClassCastException If the reference provided is not of type
+    * {@link gnu.cajo.invoke.Remote Remote}.
     */
    public final void init(Invoke remoteRef) {
-      remoteThis = remoteRef;
-      if (bundle != null) {
-         java.util.ResourceBundle rb =
-            java.util.ResourceBundle.getBundle(bundle);
-         for (int i = 0; i < strings.length; i++) {
-            try { strings[i] = rb.getString(strings[i]); }
-            catch (java.util.MissingResourceException e) {
-               strings[i] = e.getLocalizedMessage();
+      if (remoteThis == null) {
+         remoteThis = (Remote)remoteRef;
+         if (bundle != null) {
+            java.util.ResourceBundle rb =
+               java.util.ResourceBundle.getBundle(bundle);
+            for (int i = 0; i < strings.length; i++) {
+               try { strings[i] = rb.getString(strings[i]); }
+               catch (java.util.MissingResourceException e) {
+                  strings[i] = e.getLocalizedMessage();
+               }
             }
          }
-      }
+      } else throw new IllegalStateException("Can't reinitialize proxy");
       thread = new Thread(this);
       thread.start();
    }
@@ -108,10 +115,12 @@ public abstract class BaseProxy implements Invoke, Runnable {
     * @throws NoSuchMethodException If no matching method can be found.
     * @throws Exception If the method rejects the invocation, for any
     * application specific reason.
+    * @throws ClassCastException If the first invocation is not with a
+    * remote reference to the proxy's server item.
     */
    public final Object invoke(String method, Object args) throws Exception {
       if (server == null) {
-         server = (Invoke)args;
+         server = (RemoteInvoke)args;
          return null;
       }
       if (method == null)

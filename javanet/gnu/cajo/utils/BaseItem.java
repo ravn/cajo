@@ -1,6 +1,6 @@
 package gnu.cajo.utils;
 
-import gnu.cajo.invoke.Invoke;
+import gnu.cajo.invoke.*;
 import java.rmi.MarshalledObject;
 
 /*
@@ -35,7 +35,8 @@ import java.rmi.MarshalledObject;
  */
 public abstract class BaseItem implements Invoke, Runnable {
    /**
-    * A reference to the proxy served by this item.
+    * A reference to the proxy served by this item.  It is assigned by the
+    * ProxyServer during its {@link ProxyServer#bind bind} operation.
     */
    protected MarshalledObject mob;
    /**
@@ -52,12 +53,23 @@ public abstract class BaseItem implements Invoke, Runnable {
       thread.start();
    }
    /**
-    * This method is called by the proxy server, before making the item
-    * accessible to remote clients.
-    * @param mob The interface proxy to this item encapsulated as a
-    * {@link java.rmi.MarshalledObject MarshalledObject}.
+    * This method is called by remote clients to install a proxy in this VM.
+    * This invocation will only succeed if acceptProxies was true when it
+    * was bound.  The received proxy's init method will be invoked with a
+    * reference to itself, remoted in the context of this VM.  This remote
+    * reference will be returned, providing the calling item with an interface
+    * on which to asynchronously call its proxy back.
+    * @param proxy The proxy to run in this VM.
+    * @return A reference to the proxy remoted within this context.
+    * @throws ClassNotFoundException If the item does not accept proxies.
+    * @throws Exception If the init invocation rejected the initialization
+    * invocation.
     */
-   public final void setProxy(MarshalledObject mob) { this.mob = mob; }
+   public Remote setProxy(Invoke proxy) throws Exception {
+      Remote ref = new Remote(proxy);
+      proxy.invoke("init", new Remote(proxy));
+      return ref;
+   }
    /**
     * This method is called by the remote clients, to request the proxy
     * object through which to interface to this item.
@@ -82,8 +94,14 @@ public abstract class BaseItem implements Invoke, Runnable {
     * @throws NoSuchMethodException If no matching method can be found.
     * @throws Exception If the method rejects the invocation, for any
     * application specific reason.
+    * @throws ClassCastException If the first invocation is not with a
+    * {@link java.rmi.MarshalledObject MarshalledObject} of its proxy.
     */
    public final Object invoke(String method, Object args) throws Exception {
+      if (mob == null) {
+         mob = (MarshalledObject)args;
+         return null;
+      }
       if (method == null)
          throw new IllegalArgumentException("Method cannot be null");
       Class types[] = null;
