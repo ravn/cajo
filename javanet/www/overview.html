@@ -65,14 +65,21 @@ your distributed user base. To make this object remotely accessible, the
 framework provides two options, commonly known as static and dynamic binding;
 both may even be used on the same object.<br><br>
 
-Static binding is done via a call to the static bind method of the ItemServer
+Static binding is done via a call to the static
+<a href=docs/gnu/cajo/utils/ItemServer.html#bind(java.lang.Object,%20java.lang.String)>bind</a>
+method of the ItemServer
 class. This type of binding will require the client to know the address
 of the server, in order to get a reference to the object. Clients statically
-bind to a remote object using the static getItem method of the Remote class.<br><br>
+bind to a remote object using the static
+<a href=docs/gnu/cajo/invoke/Remote.html#getItem(java.lang.String)>getItem</a>
+method of the Remote class.<br><br>
 
-Dynamic binding is done via a call to the static announce method of the
+Dynamic binding is done via a call to the static
+<a href=docs/gnu/cajo/utils/Multicast.html#announce(java.lang.Object,%20int)>announce</a>
+method of the
 Multicast class. This will broadcast the remote object reference to all
-listening virtual machines. Clients dynamically bind using the static listen
+listening virtual machines. Clients dynamically bind using the static
+<a href=docs/gnu/cajo/utils/Multicast.html#listen(java.lang.Object)>listen</a>
 method of the Multicast class. This will invoke the callback provided by the
 client with a reference, when a remote object makes an announcement.<br><br>
 
@@ -83,7 +90,9 @@ value. It could even be thrown in an Exception, even to a remote caller. The
 object receiving this reference can also invoke its remote methods. The
 reference can even be written to a file, via the static zedmob method of the
 Remote class, to be used later, possibly by another program.  The key
-to all this is the static invoke method of the Remote class.<br><br>
+to all this is the static
+<a href=docs/gnu/cajo/invoke/Invoke.html#invoke(java.lang.String,%20java.lang.Object)>invoke</a>
+method of the Remote class.<br><br>
 
 Invoke is the cajo architecture approach to dynamic method invocation,
 supplemented by the use of Java reflection. It is the foundation of the
@@ -107,7 +116,8 @@ Now it might appear that all type safety has been completely abandoned,
 looking somewhat like a return to the C language; however, what has really
 happened is that stron type checking has moved, necessarily from to compile
 time, to run time. There is however a very useful technique to restore
-compile time checking; it is called a <i>wrapper</i> class.<br><br>
+compile time checking; it is called a
+<a href=docs/gnu/cajo/utils/extra/Wrapper.html>wrapper</a> class.<br><br>
 
 In the case where the interface to a remote object is already known by the
 client, it can define a wrapper class that will take the remote reference,
