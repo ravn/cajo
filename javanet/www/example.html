@@ -1,0 +1,274 @@
+<html>
+   <head>
+      <title>The CaJo Project</title>
+      <meta name="Keywords" content="cajo, rmi, java, distributed computing">
+      <meta name="Description" content="Cajo Distributed Application Framework">
+      <meta name="Author" content="John Catherino">
+   </head>
+   <body bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800000" alink="#FF0000">
+      <table width="100%" cellspacing="0" cellpadding="0" border="0">
+         <tr>
+            <td><img src="images/topl.gif" width="17" height="17" border="0"></td>
+            <td width="100%" bgcolor="#8C6239"><img src="images/dot.gif" width="1" height="1" border="0"></td>
+            <td><img src="images/topr.gif" width="17" height="17" border="0"></td>
+         </tr>
+      </table>
+      <table width="100%" cellspacing="0" cellpadding="0" border="0">
+         <tr>
+            <td width="100%" height="15" bgcolor="#8C6239">
+               <img src="images/dot.gif" width="1" height="1" border="0">
+            </td>
+         </tr>
+      </table>
+      <table width="100%" cellspacing="0" cellpadding="0" border="0">
+         <tr>
+            <td width="120" valign="top">
+               <table width="120" border="0" cellspacing="2" cellpadding="2" align="left">
+<!-- begin table.html -->
+                  <tr>
+                     <td bgcolor="#C0C08D">
+                        <font face="Verdana,Geneva,Arial,Helvetica,sans-serif" size="-2">
+                           <a href="index.html" title="cajo home page"><b>Welcome</b></a><br>
+                        </font>
+                     </td>
+                  </tr>
+                  <tr>
+                     <td bgcolor="#C0C08D">
+                        <font face="Verdana,Geneva,Arial,Helvetica,sans-serif" size="-2">
+                           <a href="tutorial.html" title="getting started"><b>Tutorial</b></a>
+                        </font>
+                     </td>
+                  </tr>
+                  <tr>
+                     <td bgcolor="#C0C08D">
+                        <font face="Verdana,Geneva,Arial,Helvetica,sans-serif" size="-2">
+                           <a href="theory.html" title="how it all works"><b>Theory</b></a>
+                        </font>
+                     </td>
+                  </tr>
+                  <tr>
+                     <td bgcolor="#C0C08D">
+                        <font face="Verdana,Geneva,Arial,Helvetica,sans-serif" size="-2">
+                           <a href="gotcha.html" title="important details"><b>Gotchas</b></a>
+                        </font>
+                     </td>
+                  </tr>
+                  <tr>
+                     <td bgcolor="#C0C08D">
+                        <font face="Verdana,Geneva,Arial,Helvetica,sans-serif" size="-2">
+                           <a href="faq.html" title="common questions"><b>FAQ</b></a>
+                        </font>
+                     </td>
+                  </tr>
+                  <tr>
+                     <td bgcolor="#C0C08D">
+                        <font face="Verdana,Geneva,Arial,Helvetica,sans-serif" size="-2">
+                           <a href="acknowlege.html" title="supporters of the marque"><b>Acknowlegements</b></a>
+                        </font>
+                     </td>
+                  </tr>
+                  <tr>
+                     <td bgcolor="#C0C08D">
+                        <font face="Verdana,Geneva,Arial,Helvetica,sans-serif" size="-2">
+                           <a href="license.html" title="what's the LGPL"><b>License</b></a>
+                        </font>
+                     </td>
+                  </tr>
+                  <tr>
+                     <td bgcolor="#C0C08D">
+                        <font face="Verdana,Geneva,Arial,Helvetica,sans-serif" size="-2">
+                           <a href="docs/overview-summary.html" title="package documentation"><b>Javadocs</b></a>
+                        </font>
+                     </td>
+                  </tr>
+<!-- end table.html -->
+               </table>
+            </td>
+            <td width="100%" valign="top">
+               <table width="100%" cellpadding="5" border="0">
+                  <tr>
+                     <td>
+                        <font face="Verdana, Helvetica" size="-1">
+<!-- begin main.html -->
+                           <font face="Verdana, Helvetica" size="4">
+                              <b>Demonstrating the framework's features and functions.</b>
+                           </font><br><br>
+
+                           The example package is a collection of four short classes demonstrating the
+                           use of the framework.  It involves all the classes of the framework, except
+                           one, and that one will be described at the <a href=example.html#Extras>end</a>
+                           of the document, as well as why it was not part of the example.<br><br>
+                           The four example classes are as follows:
+
+                           <ul>
+                              <li><a href=example.html#TestItem>TestItem</a> -- An introductory server item
+                              <li><a href=example.html#TestProxy>TestProxy.java</a> -- An introductory server item proxy
+                              <li><a href=example.html#Builder>Builder.java</a> -- To configure and serialize the example proxy
+                              <li><a href=example.html#Main>Main.java</a> -- To launch the example server application
+                           </ul>
+
+                           As mentioned in the <a href=proxy.html>proxy</a> page, a server does not
+                           need to use proxies, one is included in the example, for completely
+                           illustrative purposes.<br><br>
+
+                           The <a href=example.html#TestItem name=TestItem>TestItem</a> class is
+                           demonstrates the basic functionality of a server item.  A server item has two
+                           primary components; a processing thread, and a callable interface.  While the
+                           processing thread is technically optional, a callable interface is logically
+                           essential. The processing thread, if defined, is launched automatically
+                           following construction of the object. If the server item wishes to be purely
+                           <i>event driven</i>; i.e. only operating when its interface methods are being
+                           called, its would not define a <code>MainThread</code> object.<br><br>
+
+                           The thread in the example item performs the <i>highly recommended</i> practice
+                           of looping on its <code>thread.isInterrupted()</code> method. The item itself,
+                           or other parts of parts of the application, can invoke a <code>
+                           thread.interrupt()</code> on the public thread member.  This does not
+                           terminate the thread automatically, rather only flags it. This allows item's
+                           processing thread a mechanism to perform a safe and orderly shutdown.  This
+                           is generally done when taking a server item offline.<br><br>
+
+                           Since this is only an example item implementation, the main processing thread
+                           has nothing to do.  So it simply puts itself to sleep, to be awoken should
+                           something interesting happen.  When awoken, it sleeps for 500
+                           milliseconds, to <i>appear</i> that it is doing something.  Following that
+                           it invokes a callback to an item reference it gets from <i>somewhere</i>
+                           (actually one of its own methods) and invokes the method "callback" on this
+                           reference, passing a string argument, and displaying the result.  It then
+                           loops back up into sleep. That's all it does, until interrupted, if ever.<br><br>
+
+                           The interesting part happens in its callback method.  It is appropriately
+                           named, though it could be named anything.  When it is invoked, it saves
+                           the reference to the, presumably remote, item and wakes the item's main
+                           thread. It prints the message provided by the invoking item, and returns a
+                           string indicating synchronous acknowlegement.  Every public method this
+                           item declares will be invokable from remote items, no differently than if
+                           it was interfaced  by local objects. <i>Note:</i> this implementation also
+                           illustrates the importance of <u>reentrancy</u> concerns.  If many items
+                           invoke this method simultaneously, only the last caller will be called back.<br><br>
+
+                           Lastly, the item implements the <code>toString</code> method, inherited from
+                           <code>Object</code>.  This is also <i>highly recommended</i>.  In this case,
+                           it aids when monitoring the item, covered in the section on
+                           <a href=example.html#Main>Main.java</a>, and greatly aids in debugging. That's
+                           all there is to the <code>TestItem</code> example.<br><br>
+
+                           The <a href=example.html#TestProxy name=TestProxy>TestProxy</a> class is a
+                           small, proxy, illustrating many features of the framework.  It will be sent
+                           to a client, on invocation of the TestItem's <code>getProxy</code> method it
+                           inherited from <code>BaseItem</code>.  The proxy inherits a remote reference
+                           to the TestItem, assigned by the ProxyLoader.  It is next initialized at the
+                           client, with the assignment of its remoteThis member with a reference to the
+                           proxy itself, remoted the context of the client VM.  This initialization,
+                           will causee the proxy's main thread to start, if it has one.  As with server
+                           items, a proxy need not define a main thread, i.e. it can also be purely
+                           event driven.<br><br>
+
+                           The example demonstrates the Internationalization feature of the framework.
+                           When the proxy is initialized, it will load its string table from a
+                           properties file most closely matching the locale of the receiving VM.  This
+                           allows the proxy's user interface to be in German on an Austrian machine, and
+                           Spanish on a Mexican one.  Of course, all of these translated string tables
+                           must be provided.  The properties file, and all other non-class resources are
+                           generally placed in a support directory.  In this case it is called include.
+                           The reason for the separate directory, is to simplify the proxy's jar
+                           creation as the build script can include all the files blindly.<br><br>
+
+                           When the proxy's processing thread first starts, it writes out an arrival
+                           notice to the client's user interface.  Next, it invokes the method named
+                           callback on the reference to its server item.  It passes its remote reference
+                           to itself, and a message string.  It displays the value returned  by the
+                           invocation as well.  Following that, it exits its run method, causing its
+                           processing thread to terminate.<br><br>
+
+                           The proxy has a public method named callback. Just as with all of its public
+                           methods, this can be called by remote items.  When called by the TestProxy,
+                           it will display the incoming text argument, and send back a synchronous
+                           text acknowlegement of its own.<br><br>
+
+                           The <a href=example.html#Builder name=Builder>Builder</a> class serves two
+                           purposes.  First it serves to replace the code which would normally go into
+                           the proxy's constructor.  Why do this?  Because all of the construction code,
+                           which can be quite a sizeable amount if the proxy is elaborate, can be left
+                           out of the proxy's jar file.  This reduces the proxy jar size, can and also
+                           add the additional feature that a proxy becomes much more difficult to
+                           reverse-engineer, when such a protection is important.<br><br>
+
+                           The second function of the Builder class is to instantiate the proxy, then
+                           serialize its image to disc.  This serialized object will be included in the
+                           proxy jar file, referenced through a <code>ProxyLoader</code> on the
+                           TestItem's side.  The is the most elaborate way to use a ProxyLoader, it can
+                           also be used to invoke a proxy's no-arg constructor, to create a new instance
+                           of the proxy, on its arrival at the host VM.<br><br>
+
+                           The actual mechanics of what is going on inside the builder is not so
+                           important.  It is basically configuring graphical components, and putting
+                           them into the graphical user interface member object <code>container</code>.
+                           The proxy will return this graphical container to the hosting client as a
+                           result of its initialization invocation.  It also defines the keys of the
+                           string table, to be loaded during initialization. It also references a
+                           ProxyLoader.  This is a special situation.  The proxy will need to use the
+                           ProxyLoader class file on its arrival at the host, however, it doesn't need
+                           to reference it during compile time.  Without this reference, the proxy
+                           would suffer a <code>ClassNotFoundException</code> at the host,
+                           ProxyLoader would not have been loaded into the proxy jar file.<br><br>
+
+                           The <a href=example.html#Main name=Main>Main</a> class illustrates how to
+                           make a server application.  A server is simply an application which makes
+                           one, or more, items available for remote invocation. The <code>Main</code>
+                           class first configures the network settings, then makes the test item
+                           accessible.  As explained in the <a href=tutorial.html#launching>launching
+                           </a>turorial the application can take up to five parameters, in order,
+                           from most likely to least likely to need changing, and where precedence
+                           matters:
+
+                           <ul>
+                              <li> the port number on which to serve the proxy's codebase (default = 80)
+                              <li> the port number on which to communicate with the item (default = 1099)
+                              <li> the external server name or address, if using NAT (default = same as local)
+                              <li> the local host network interface, if multiple (default = primary NIC)
+                              <li> the outside port number to communicate with the item (default = same as local)
+                           </ul>
+
+                           The server also does a few additional actions, to illustrate the operation of
+                           remaining parts of the framework.  It multicasts a remote reference to itself
+                           to announce its startup.  It installs a monitor item, to log data about the
+                           remote invocations, and system state of the server item, to the system
+                           console.  It even listens for other item announcements, sending the
+                           announcer's remote reference the test proxy, invoked on its setProxy method,
+                           if it has one. Finally it finishes up by listing its configuration
+                           information.  This can be helpful if the server is told to use anonymous
+                           ports, the info will contain the port numbers chosen by the system at startup.<br><br>
+
+                           The <a href=example.html#Extras name=Extras>ZippedProxy</a> class is the
+                           only utility class not used in the example.  This is bacause the example
+                           demonstrated indirectly referencing a proxy by the serving item.  This is
+                           recommended when the server item, does not need to configure a proxy before
+                           sending it.  This can save a lot of space in the server item's runtime, if
+                           the proxy is very large, or if a single VM is serving many proxies.<br><br>
+
+                           In cases, when a proxy <i>must</i> be loaded into the server's VM; presumably
+                           for some runtime dependent configuration, then it is <i>strongly recommended</i>
+                           to use a <code>ZippedProxy</code>.  It compresses the serialized image of the
+                           proxy as it is sent to the hosting VM.  This is done to reduce the amount of
+                           data, and transmission time, required to send the proxy.  If the network link is
+                           slow, or the cost per bit is high, this approach makes tremendous sense.  It
+                           is recommended to use it under all circumstances as a general paradigm.<br><br>
+
+                           <br>
+                           <div align="center">
+                              <font face="Verdana, Helvetica" size="-2">
+                                 <hr width="80%">
+                                 Once you know the basics; the advances begin to evolve.
+                              </font>
+                           </div>
+<!-- end main.html -->
+                        </font>
+                     </td>
+                  </tr>
+               </table>
+            </td>
+         </tr>
+      </table>
+   </body>
+</html>
