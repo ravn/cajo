@@ -99,6 +99,12 @@
                            extra work, but it can make the proxies a lot smaller, simpler, and more
                            secure.<br><br>
 
+                           The <b>include directory</b> contains miscellaneous data resources used by
+                           the proxy. This includes things like properties tables for multiple language
+                           support, graphical bitmaps. Essentially it is any non-Java files required
+                           for operation of the proxy. It is put in its own directory so that it can
+                           be included as a simple *.* option.<br><br>
+
                            The <b>gui directory</b> contains a small collection of graphical widgets
                            used by the proxy to create its user interface on hosting clients. They are
                            outside the scope of this project as a proxy is free to use the AWT, or
@@ -320,7 +326,7 @@
 
                            <h3>Conclusion</h3><br>
 
-                           The example should provide you a view something like this:<br><br>
+                           The example will provide you a view something like this:<br><br>
 
                            <center><img src=images/applet.gif></center><br><br>
                            <center><img src=images/console.gif></center><br><br>
