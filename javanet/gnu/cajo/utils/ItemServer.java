@@ -127,12 +127,11 @@ public class ItemServer {
     * rmiregistry, to more easily allow the application to dynamically replace
     * server items at runtime, if necessary. Since the registry is not shared
     * with other applications, checking for already bound items is unnecessary.
-    * <p> If the provided item implements the {@link gnu.cajo.invoke.Invoke
-    * Invoke} interface; it will first be invoked with the method name
-    * "startThread", and a null argument, to signal it to start its main
-    * processing thread. Next it will be invoked with a "setProxy", and a
-    * remote reference to itself, with which it can share with remote VMs, in
-    * an application specific manner.
+    * <p> The provided item will first have its startThread method invoked
+    * with a null argument, to signal it to start its main processing thread
+    * (if it has one). Next it will have its setProxy method invoked remote
+    * reference to itself, with which it can share with remote VMs, in an
+    * application specific manner (again if it has one).
     * @param item The item to be bound.  It may be either local to the machine,
     * or remote, it can even be a proxy from a remote item, if proxy
     * {@link #acceptProxies acceptance} was enabled for this VM.
@@ -148,9 +147,9 @@ public class ItemServer {
             createRegistry(Remote.getServerPort(), Remote.rcsf, Remote.rssf);
       }
       Remote handle = item instanceof Remote ? (Remote)item : new Remote(item);
-      if (item instanceof Invoke) try {
-         ((Invoke)item).invoke("startThread", null);
-         ((Invoke)item).invoke("setProxy", new MarshalledObject(handle));
+      try {
+         Remote.invoke(item, "setProxy", new MarshalledObject(handle));
+         Remote.invoke(item, "startThread", null);
       } catch(Exception x) {}
       registry.rebind(name, handle);
       return handle;
@@ -160,11 +159,9 @@ public class ItemServer {
     * reference to the server item, and bind in it the local rmiregistry under
     * the name provided. It works identically to the bind operation for regular
     * server items, with a few additional steps.<p>
-    * If the proxy implements {@link gnu.cajo.invoke.Invoke Invoke}, it will
-    * be called with a remote reference to the serving item, with a method
-    * argument of "setProxy". If the item implements Invoke it will be called
-    * with a method string of "setProxy" and a {@link java.rmi.MarshalledObject
-    * MarshalledObject} containing the proxy item.
+    * If the proxy has a setProxy method, it will be called with a remote
+    * reference to the serving item. If the item implements a setProxy method
+    * it will be called with a MarshalledObject containing the proxy item.
     * @param item The item to be bound.  It may be either local to the machine,
     * or remote, it can even be a proxy from a remote item, if proxy
     * {@link #acceptProxies acceptance} was enabled for this VM.
@@ -182,12 +179,11 @@ public class ItemServer {
             createRegistry(Remote.getServerPort(), Remote.rcsf, Remote.rssf);
       }
       Remote handle = item instanceof Remote ? (Remote)item : new Remote(item);
-      if (proxy instanceof Invoke) try {
-         ((Invoke)proxy).invoke("setItem", handle);
-      } catch(Exception x) {}
-      if (item instanceof Invoke) try {
-         ((Invoke)item).invoke("startThread", null);
-         ((Invoke)item).invoke("setProxy", new MarshalledObject(proxy));
+      try { Remote.invoke(proxy, "setItem", handle); }
+      catch(Exception x) {}
+      try {
+         Remote.invoke(item, "setProxy", new MarshalledObject(proxy));
+         Remote.invoke(item, "startThread", null);
       } catch(Exception x) {}
       registry.rebind(name, handle);
       return handle;
