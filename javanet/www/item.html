@@ -80,11 +80,11 @@
 
                            A server is a Java Virtual Machine that makes one or more of its objects
                            remotely accessible.  A remotely accessible object is called an <b>item</b>
-                           in terms of this framework. Items usually derive from the class
+                           in terms of this framework. Items often derive from the class
                            <a href= docs/gnu/cajo/utils/BaseItem.html>BaseItem</a>, though they can
-                           actually be any object. Remotely accessible items are created from objects
-                           using the <a href=docs/gnu/cajo/invoke/Remote.html>Remote</a> class.  Remote
-                           takes the item object in its constructor, and finally implements the
+                           actually be <u>any</u> object. Remotely accessible items are created from
+                           objects using the <a href=docs/gnu/cajo/invoke/Remote.html>Remote</a> class.
+                           Remote takes the item object in its constructor, and finally implements the
                            <a href=docs/gnu/cajo/invoke/Invoke.html>Invoke</a> interface, which serves
                            to make the item object's public methods remotely callable. The Invoke
                            interface defines a single method:
@@ -113,6 +113,26 @@
                            representations, in this case <code>Integer</code> or <code>Character</code>.
                            This means all argument and return typechecking will be done at runtime
                            instead of compiletime.
+
+                           <h3>Deploying items</h3><br>
+
+                           An object can be made available for remote access in either of two ways.
+                           First the object can be passed to the
+                           <a href=docs/bnu/cajo/utils/ItemServer.html#bind(java.lang.Object,%20java.lang.String)>
+                           bind</a> method of the
+                           <a href=docs/bnu/cajo/utils/ItemServer.html>ItemServer</a> class, along
+                           with a name, by which it may be referenced. This allows remote machines to
+                           <i>fetch</i> the reference using the
+                           <a href=docs/gnu/cajo/invoke/Remote.html#getItem(java.lang.String)>getItem</a>
+                           method of <a href=docs/gnu/cajo/invoke/Remote.html>Remote<a>,  providing the
+                           host name, and item name. This is called <i>static</i> linking in the context
+                           of this framework.<br><br>
+
+                           The second method to obtain remote methods is by broadcasting the reference
+                           to all listening VMs. This technique is covered in the <a href=multicast.html>
+                           multicast</a> section. For now, think of it as a way to <i>send</i> a
+                           reference to an object to remote VMs. This is known as <i>dynamic</i> linking,
+                           in the context of this framework.
 
                            <h3>Using items</h3><br>
 
