@@ -2,7 +2,6 @@ package gnu.cajo.utils;
 
 import gnu.cajo.invoke.*;
 import java.io.*;
-import java.util.zip.GZIPOutputStream;
 
 /*
  * Item Proxy Loader Wrapper

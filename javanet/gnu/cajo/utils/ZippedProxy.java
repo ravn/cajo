@@ -1,9 +1,6 @@
 package gnu.cajo.utils;
 
 import gnu.cajo.invoke.*;
-import java.rmi.MarshalledObject;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
 import java.io.*;
 
 /*

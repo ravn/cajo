@@ -3,7 +3,6 @@ package gnu.cajo.utils;
 import java.awt.*;
 import gnu.cajo.invoke.*;
 import java.io.Serializable;
-import java.lang.reflect.Method;
 
 /*
  * Abstract Proxy Item Base Class

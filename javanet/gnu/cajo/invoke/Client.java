@@ -1,12 +1,10 @@
 package gnu.cajo.invoke;
 
-import java.io.*;
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
 import java.rmi.registry.*;
 import java.rmi.MarshalledObject;
-import java.util.zip.GZIPOutputStream;
 
 
 /*
@@ -164,7 +162,7 @@ public final class Client extends java.applet.Applet {
    public static Frame frame(Component component) {
       if (component instanceof JComponent) {
          JFrame frame = new JFrame(TITLE);
-         frame.setDefaultCloseOperation(frame.EXIT_ON_CLOSE);
+         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
          frame.setVisible(true);
          frame.getContentPane().add((JComponent)component);
          frame.pack();

@@ -1,12 +1,10 @@
 package gnu.cajo.utils;
 
 import gnu.cajo.invoke.*;
-import java.io.*;
 import java.rmi.registry.*;
 import java.text.DateFormat;
 import java.rmi.RemoteException;
 import java.rmi.MarshalledObject;
-import java.util.zip.GZIPOutputStream;
 
 /*
  * Standard Item Server Utility

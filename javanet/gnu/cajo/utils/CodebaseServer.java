@@ -122,7 +122,7 @@ public final class CodebaseServer extends Thread {
       if (ss == null) {
          ss = new ServerSocket(port, 50,
             InetAddress.getByName(Remote.getServerHost()));
-         this.port = port == 0 ? ss.getLocalPort() : port;
+         CodebaseServer.port = port == 0 ? ss.getLocalPort() : port;
          System.setProperty("java.rmi.server.codebase",
             "http://" + Remote.getClientHost() + ':' + port + '/' + base);
          start();
@@ -248,7 +248,7 @@ public final class CodebaseServer extends Thread {
                         byte xml[] = (
                            "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n" +
                            "<jnlp spec=\"1.0+\"\r\n" +
-                           "  codebase=" + "\"http://" + Remote.getClientHost() + ':' + CodebaseServer.this.port + "\"\r\n" +
+                           "  codebase=" + "\"http://" + Remote.getClientHost() + ':' + CodebaseServer.port + "\"\r\n" +
                            "  href=\"" + clientPort + ':' + localPort + '-'+ proxyName + "!\">\r\n" +
                            "  <information>\r\n" +
                            "    <title>CajoViewer - " + title + "</title>\r\n" +
