@@ -4,6 +4,7 @@ import gnu.cajo.invoke.*;
 import java.io.*;
 import java.net.*;
 import java.rmi.registry.*;
+import java.rmi.MarshalledObject;
 
 /*
  * Multicast Announcement Class
@@ -106,14 +107,19 @@ public final class Multicast implements Runnable {
       this.port = port;
    }
    /**
-    * This method is used to make UDP announcements on the network.
+    * This method is used to make UDP announcements on the network. The
+    * provided item will first have its startThread method invoked with a null
+    * argument, to signal it to start its main processing thread (if it has
+    * one). Next it will have its setProxy method invoked remote reference to
+    * itself, with which it can share with remote VMs, in an application
+    * specific manner (again if it has one).
     * @param item The item reference to be sent in the announcement
     * packet, if it is not already remoted, it will be, automatically.
     * @param ttl The time-to-live of the broadcast packet. This roughly
     * specifies how many multicast enabled routers will pass this packet before
     * automatically discarding it. For example 16, should cover a medium sized
     * LAN. The maximum value is 255, which could theoretically cover the globe,
-    * that is in 1999. A value of 1 confines the packet to its immediate
+    * that is, in 1999. A value of 1 confines the packet to its immediate
     * subnet.
     * @throws IOException If a datagram socket could not be created, or the
     * packet could not be sent.
@@ -122,6 +128,50 @@ public final class Multicast implements Runnable {
       InetAddress group = InetAddress.getByName(address);
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
       if (!(item instanceof Remote)) item = new Remote(item);
+      try {
+         Remote.invoke(item, "startThread", null);
+         Remote.invoke(item, "setProxy", new MarshalledObject(item));
+      } catch(Exception x) {}
+      ((Remote)item).zedmob(baos);
+      byte packet[] = baos.toByteArray();
+      baos.close();
+      MulticastSocket ms = new MulticastSocket();
+      try {
+         ms.setInterface(host);
+         ms.setTimeToLive(ttl);
+         ms.send(new DatagramPacket(packet, packet.length, group, port));
+      } finally { ms.close(); }
+   }
+   /**
+    * This method is used to make UDP announcements on the network. The
+    * provided item will first have its startThread method invoked with a null
+    * argument, to signal it to start its main processing thread (if it has
+    * one). If the proxy has a setItem method, it will be called with a remote
+    * reference to the serving item. If the item implements a setProxy method
+    * it will be called with a MarshalledObject containing the proxy item.
+    * @param item The item reference to be sent in the announcement
+    * packet, if it is not already remoted, it will be, automatically.
+    * @param ttl The time-to-live of the broadcast packet. This roughly
+    * specifies how many multicast enabled routers will pass this packet before
+    * automatically discarding it. For example 16, should cover a medium sized
+    * LAN. The maximum value is 255, which could theoretically cover the globe,
+    * that is, in 1999. A value of 1 confines the packet to its immediate
+    * subnet.
+    * @param proxy The proxy item to be sent to requesting clients.
+    * @throws IOException If a datagram socket could not be created, or the
+    * packet could not be sent.
+    */
+   public void announce(Object item, int ttl, Object proxy)
+      throws IOException {
+      InetAddress group = InetAddress.getByName(address);
+      ByteArrayOutputStream baos = new ByteArrayOutputStream();
+      if (!(item instanceof Remote)) item = new Remote(item);
+      try { Remote.invoke(proxy, "setItem", item); }
+      catch(Exception x) {}
+      try {
+         Remote.invoke(item, "startThread", null);
+         Remote.invoke(item, "setProxy", new MarshalledObject(proxy));
+      } catch(Exception x) {}
       ((Remote)item).zedmob(baos);
       byte packet[] = baos.toByteArray();
       baos.close();
