@@ -1,173 +1,223 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN""http://www.w3.org/TR/html4/loose.dtd">
 <html>
-   <head>
-      <title>The CaJo Project</title>
-      <meta name="Keywords" content="cajo, rmi, java, distributed computing, Transparent Distributed Computing">
-      <meta name="Description" content="Cajo Distributed Application Framework">
-      <meta name="Author" content="John Catherino">
-   </head>
-   <body>
-      <div id="projecthome" class="app">
-      <table width="100%" align="center">
+
+<head>
+   <title>cajo - The cajo project</title>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <link href="ventro/css.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+
+<table width="98%" border="0" cellpadding="0" cellspacing="0">
+   <tr>
+      <table width="100%" height="67"  border="0" cellpadding="4" cellspacing="0">
          <tr>
-            <td>
-
-<!-- begin main.html -->
-
-                        <center>
-                           <a href="index.html" title="cajo home page"><b>Welcome</b></a> |
-                           <a href="tutorial.html" title="getting started"><b>Tutorial</b></a> |
-                           <a href="theory.html" title="how it all works"><b>Theory</b></a> | 
-                           <b>Gotchas</b> |
-                           <a href="faq.html" title="common questions"><b>FAQ</b></a> |
-                           <a href="acknowlege.html" title="supporters of the marque"><b>Acknowledgments</b></a> |
-                           <a href="license.html" title="what's the LGPL"><b>License</b></a> |
-                           <a href="docs/overview-summary.html" title="package documentation"><b>Javadocs</b></a> <br><br>
-                        </center>
-                        <center>
-                           <a href="item.html" title="Remote object"><b>Item</b></a> |
-                           <a href="proxy.html" title="interface object"><b>Proxy</b></a> |
-                           <a href="multicast.html" title="broadcast object"><b>Multicast</b></a> |
-                           <a href="client.html" title="host object"><b>Client</b></a> |
-                           <a href="server.html" title="application server"><b>CodebaseServer</b></a> |
-                           <a href="example.html" title="demo objects"><b>Example</b></a> |
-                           <a href="overview.html" title="adding to existing applications"><b>Overview</b></a><br><br>
-                        </center>
-
-                           <font size="4">
-                              <b>Common mistakes to be avoided.</b><br><br>
+            <td background="ventro/vert_logobarbg.gif">
+               <table width="100%" height="47"  border="0" cellpadding="4" cellspacing="0">
+                  <tr><br>
+                     <td width="85" valign="bottom">
+                        <div align="right">
+                           <img src="ventro/cajologo.gif" width="61" height="34">
+                           <img src="ventro/blank.gif" width="6" height="8">
+                        </div>
+                     </td>
+                     <td width="10"><img src="ventro/seperatorline.gif" width="1" height="38"></td>
+                     <td>
+                        <span class="style8">
+                           <font size="+1">
+                              <b>Free, simple, powerful: Transparent Distributed Computing</b>
                            </font>
-
-                           This page will stand as a living document, fueled by the feedback of
-                           developers.  It's easy to become highly proficient at this library, and
-                           completely forget all the initial frustrations in getting it to work the
-                           first time.  Therefore, I would like to ask the community to please send
-                           in reports of odd things that have gone wrong.  Often these <i>'pearls from
-                           tears'</i> can be as useful for learning as the source documentation itself.
-
-                           <ol>
-                           <li><a href=#1>Argument Types</a> &nbsp <i>(corrected)</i>
-                           <li><a href=#2>Long Delays</a>
-                           <li><a href=#3>Network Realities</a>
-                           <li><a href=#4>Firewalled Clients</a>
-                           <li><a href=#5>Marshalling Objects</a>
-                           <li><a href=#6>Sending Proxies</a>
-                           </ol>
-
-                           
-                           <a id="1"></a><b><u>1. Argument Types:</u></b> <strike>When executing an
-                           inovke method on an item, Java reflection requires the argument types to
-                           match exactly.  Unfortunately reflection does not recognize inheritance
-                           trees.  For example, if class B extends class A, and an item method declares
-                           an argument of type A, you cannot send it an object of type B and have it
-                           work!-(  This results in the much dreaded <code>NoSuchMethodException</code>;
-                           if you haven't got one yet, you probably will soon.  This gotcha can be so
-                           inconvienient that the framework makes a special case for Objects extending
-                           the Invoke interface.  They are always typecast into Invoke. Therefore: to
-                           receive a local, remote, or proxy item reference, a method signature must
-                           declare the argument to be of type Invoke.</strike><br><br>
-
-                           &nbsp&nbsp&nbsp&nbsp<b>*<u>Wonderful news</u>!</b> Today (08-Jan-04) a
-                           <i>significant</i> improvement to the project codebase was uploaded, which
-                           <u>eliminates</u> this <i>"gotcha"</i>. It was most generously provided by
-                           project member <b>frelars</b> (aka Fredrik Larsen), with assistance by project
-                           member <b>li_ma</b> (aka Li Ma). It will traverse argument inheritance trees
-                           to find the best fitting method. It is a <i>stunning</i> improvement, and
-                           removes the <u>most common problem</u> encountered by users.
-                           <b>Well done!</b><br><br>
-
-                           <a id="2"></a><b><u>2. Long delays:</u></b> When each remote invocation takes
-                           a really long time to execute, there is a common problem.  RMI attempts to
-                           do a reverse-DNS lookup before each invocation. In theory, this is for
-                           security purposes, so there is no way to disable it. The problem is; when
-                           trying to match IP addresses to host names, a DNS timeout can add up to
-                           several minutes to each invocation. If you do not have a DNS server to
-                           resolve the addresses to names, say on a private LAN for instance, it will be
-                           necessary to revert back to the <i>'old way'</i>, i.e. the hosts file.  This
-                           is a text file containing address/host name pairs, which the operating system
-                           will check first, before attempting a DNS lookup.<br><br>
-
-                           On *nix boxes (Solaris/Unix/Linux/BSD...) the file is typically located at:
-                           <u>/etc/hosts</u><br>
-                           On Windows boxes, it is usually: <u>\WINNT\system32\drivers\etc\hosts</u><br><br>
-
-                           Here you would put the IP address/host name pairs for the machines, which do
-                           not have DNS support.<br><br>
-
-                           <a id="3"></a><b><u>3. Network Realities:</u></b> While it is very simple to
-                           write code without regard to locality or remoteness of objects, it is very
-                           important to remember that any remote invocation can fail, or block for a
-                           very long time, if there is a problem with the network, or the target machine
-                           is unresponsive. The invoke interface is declared to throw an exception for
-                           two good reasons: One is logical, i.e. the invocation is invalid; the other
-                           is genuinely exceptional, i.e. something completely unexpected happened.<br><br>
-
-                           These realities can be managed in three different ways: First, when dealing
-                           with a remote item reference, your code should be prepared for unexpected
-                           network exceptions, and long transaction delays. Second, a proxy can be sent
-                           which manages these error conditions when calling its remote sender. (This
-                           makes life very nice for the user) Third, when it absolutely positively
-                           cannot go wrong, a proxy can be sent containing all of its necessary
-                           functionality, makeing little to no use of its remote link back to its
-                           sender.<br><br>
-
-                           Lastly, I find it extremely helpful to print, frame, memorize, and post
-                           somewhere near your monitor, the eight
-                           <a href=http://weblogs.java.net/jag/Fallacies.html>fallacies</a>
-                           of distributed computing.<br><br>
-
-                           <a id="4"></a><b><u>4. Firewalled Clients:</u></b> Very often a client item
-                           is operating behind a firewall that prohibits inbound socket connections. If
-                           server callbacks are necessary for the design, this posed a real problem.
-                           Project member Fredrik Larsen proposed a method whereby the client would
-                           periodically check for server callbacks, thus allowing both inbound and
-                           outbound asynchronous calls on a single outbound client socket. This
-                           functionality has been realised using a
-                           <a href=docs/gnu/cajo/utils/extra/ClientProxy.html>ClientProxy</a> object, to
-                           locally represent a callable reference to the client item in the server
-                           address space. A server would instantiate a ClientProxy, and pass a remote
-                           reference to it to the client. The client would then combine that reference,
-                           with a reference to the local item in a
-                           <a href=docs/gnu/cajo/utils/extra/ItemProxy.html>ItemProxy</a> object.
-                           In the latest release, server callbacks are invoked on the local client
-                           immediately, over the client's outbound socket, and no longer involves
-                           polling. This architecture allows object design for both servers and
-                           clients, without regard for the firewall issue.<br><br>
-
-                           <a id="5"></a><b><u>5. Marshalling Objects:</u></b> Sometimes, when sending
-                           large objects, particularly those which are a large graph of objects,
-                           exceptions can randomly occur during transport. While this is not a defect
-                           from the framework, it can be very annoying. One particularly helpful
-                           technique is for the sender to encapsulate the object in a
-                           <a href=http://java.sun.com/j2se/1.4.2/docs/api/java/rmi/MarshalledObject.html>java.rmi.MarshalledObject</a>.
-                           Then the receiver can retrieve the original object using its
-                           <a href=http://java.sun.com/j2se/1.4.2/docs/api/java/rmi/MarshalledObject.html#get()>get()</a>
-                           method. Encapsulating objects this way seems to make them far less prone to
-                           failure during transmission. The reason why this failure occurs, and even why
-                           this technique helps to fix it, is still a mystery.<br><br>
-
-                           <a id="6"></a><b><u>6. Sending Proxies:</u></b> Proxy objects, when sent
-                           from remote objects, nearly always arrive in a Marshalled Object. There is a
-                           <i>very</i> important reason for this. A proxy is an object, whose codebase
-                           is typically foreign to its hosting VM. When a proxy is extracted,
-                           via the <tt>get</tt> method of MarshalledObject, its remote codebase will
-                           be automatically loaded to instantiate the proxy, the location is
-                           contained <i>within</i> the MarshalledObject. The proxy now exists, but no longer
-                           has information about where its codebase came from. If you try to send the
-                           proxy object itself to another VM, the receiver will most likely suffer a
-                           <tt>ClassNotFoundException</tt>. However sending the MarshalledObject
-                           instead, will work correctly. MarshalledObjects are handy containers in which
-                           proxy objects can be freely sent between remote objects.<br><br>
-
-                           <div align="center">
-                              <font size="-2">
-                                 <hr width="80%">
-                                 A place to remember common mistakes, in order to make them less common.
-                              </font>
-                           </div>
-<!-- end main.html -->
-
+                        </span>
+                     </td>
+                  </tr>
+               </table>
             </td>
          </tr>
       </table>
-   </body>
+      <table border="0" cellspacing="0" cellpadding="4">
+         <tr>
+            <td height="331" valign="top" bgcolor="#FFFFFF">
+               <td width="100%" valign="top" bgcolor="#FFFFFF">
+                  <table width="100%" border="0" cellpadding="4" cellspacing="0" bgcolor="#FFFFFF">
+                     <tr>
+                        <td>
+                           <table width="100%" height="35" border="0" cellpadding="0" cellspacing="0">
+                              <tr>
+                                 <td width="2%" background="ventro/bar_bg.gif"><img src="ventro/arrowed.gif" width="30" height="35"></td>
+                                 <td width="100%" background="ventro/bar_bg.gif">
+                                    <table width="100%" height="31" border="0" cellpadding="0" cellspacing="0">
+                                       <tr>
+                                          <td>
+                                             <span class="style8 style12">
+<!-- main page title bar -->                    <div align="left">Common mistakes to avoid</div>
+                                             </span>
+                                          </td>
+                                       </tr>
+                                    </table>
+                                 </td>
+                                 <td width="3%"><img src="ventro/bar_Right.gif" width="10" height="35"></td>
+                              </tr>
+                           </table>
+                           <table width="95%" height="96" border="0" cellpadding="9" cellspacing="0">
+                              <tr>
+                                 <td valign="top">
+<!-- title bar section -->         <span class="spacing style4 style7 style9">
+                                     This page will stand as a living document, fueled by the feedback of
+                                     developers.  It's easy to become highly proficient at this library, and
+                                     completely forget all the initial frustrations in getting it to work the
+                                     first time.  Therefore, I would like to ask the community to please send
+                                     in reports of odd things that have gone wrong.  Often these <i>'pearls from
+                                     tears'</i> can be as useful for learning as the source documentation itself.
+
+                                     <ol>
+                                        <li><a href=#1>Argument Types</a> &nbsp <i>(corrected)</i>
+                                        <li><a href=#2>Long Delays</a>
+                                        <li><a href=#3>Network Realities</a>
+                                        <li><a href=#4>Firewalled Clients</a>
+                                        <li><a href=#5>Marshalling Objects</a>
+                                        <li><a href=#6>Sending Proxies</a>
+                                     </ol>
+
+                           
+                                     <a id="1"></a><b><u>1. Argument Types:</u></b> <strike>When executing an
+                                     inovke method on an item, Java reflection requires the argument types to
+                                     match exactly.  Unfortunately reflection does not recognize inheritance
+                                     trees.  For example, if class B extends class A, and an item method declares
+                                     an argument of type A, you cannot send it an object of type B and have it
+                                     work!-(  This results in the much dreaded <code>NoSuchMethodException</code>;
+                                     if you haven't got one yet, you probably will soon.  This gotcha can be so
+                                     inconvienient that the framework makes a special case for Objects extending
+                                     the Invoke interface.  They are always typecast into Invoke. Therefore: to
+                                     receive a local, remote, or proxy item reference, a method signature must
+                                     declare the argument to be of type Invoke.</strike><br><br>
+
+                                     &nbsp&nbsp&nbsp&nbsp<b>*<u>Wonderful news</u>!</b> Today (08-Jan-04) a
+                                     <i>significant</i> improvement to the project codebase was uploaded, which
+                                     <u>eliminates</u> this <i>"gotcha"</i>. It was most generously provided by
+                                     project member <b>frelars</b> (aka Fredrik Larsen), with assistance by project
+                                     member <b>li_ma</b> (aka Li Ma). It will traverse argument inheritance trees
+                                     to find the best fitting method. It is a <i>stunning</i> improvement, and
+                                     removes the <u>most common problem</u> encountered by users.
+                                     <b>Well done!</b><br><br>
+
+                                     <a id="2"></a><b><u>2. Long delays:</u></b> When each remote invocation takes
+                                     a really long time to execute, there is a common problem.  RMI attempts to
+                                     do a reverse-DNS lookup before each invocation. In theory, this is for
+                                     security purposes, so there is no way to disable it. The problem is; when
+                                     trying to match IP addresses to host names, a DNS timeout can add up to
+                                     several minutes to each invocation. If you do not have a DNS server to
+                                     resolve the addresses to names, say on a private LAN for instance, it will be
+                                     necessary to revert back to the <i>'old way'</i>, i.e. the hosts file.  This
+                                     is a text file containing address/host name pairs, which the operating system
+                                     will check first, before attempting a DNS lookup.<br><br>
+
+                                     On *nix boxes (Solaris/Unix/Linux/BSD...) the file is typically located at:
+                                     <u>/etc/hosts</u><br>
+                                     On Windows boxes, it is usually: <u>\WINNT\system32\drivers\etc\hosts</u><br><br>
+
+                                     Here you would put the IP address/host name pairs for the machines, which do
+                                     not have DNS support.<br><br>
+
+                                     <a id="3"></a><b><u>3. Network Realities:</u></b> While it is very simple to
+                                     write code without regard to locality or remoteness of objects, it is very
+                                     important to remember that any remote invocation can fail, or block for a
+                                     very long time, if there is a problem with the network, or the target machine
+                                     is unresponsive. The invoke interface is declared to throw an exception for
+                                     two good reasons: One is logical, i.e. the invocation is invalid; the other
+                                     is genuinely exceptional, i.e. something completely unexpected happened.<br><br>
+
+                                     These realities can be managed in three different ways: First, when dealing
+                                     with a remote item reference, your code should be prepared for unexpected
+                                     network exceptions, and long transaction delays. Second, a proxy can be sent
+                                     which manages these error conditions when calling its remote sender. (This
+                                     makes life very nice for the user) Third, when it absolutely positively
+                                     cannot go wrong, a proxy can be sent containing all of its necessary
+                                     functionality, makeing little to no use of its remote link back to its
+                                     sender.<br><br>
+
+                                     Lastly, I find it extremely helpful to print, frame, memorize, and post
+                                     somewhere near your monitor, the eight
+                                     <a href=http://weblogs.java.net/jag/Fallacies.html>fallacies</a>
+                                     of distributed computing.<br><br>
+
+                                     <a id="4"></a><b><u>4. Firewalled Clients:</u></b> Very often a client item
+                                     is operating behind a firewall that prohibits inbound socket connections. If
+                                     server callbacks are necessary for the design, this posed a real problem.
+                                     Project member Fredrik Larsen proposed a method whereby the client would
+                                     periodically check for server callbacks, thus allowing both inbound and
+                                     outbound asynchronous calls on a single outbound client socket. This
+                                     functionality has been realised using a
+                                     <a href=docs/gnu/cajo/utils/extra/ClientProxy.html>ClientProxy</a> object, to
+                                     locally represent a callable reference to the client item in the server
+                                     address space. A server would instantiate a ClientProxy, and pass a remote
+                                     reference to it to the client. The client would then combine that reference,
+                                     with a reference to the local item in a
+                                     <a href=docs/gnu/cajo/utils/extra/ItemProxy.html>ItemProxy</a> object.
+                                     In the latest release, server callbacks are invoked on the local client
+                                     immediately, over the client's outbound socket, and no longer involves
+                                     polling. This architecture allows object design for both servers and
+                                     clients, without regard for the firewall issue.<br><br>
+
+                                     <a id="5"></a><b><u>5. Marshalling Objects:</u></b> Sometimes, when sending
+                                     large objects, particularly those which are a large graph of objects,
+                                     exceptions can randomly occur during transport. While this is not a defect
+                                     from the framework, it can be very annoying. One particularly helpful
+                                     technique is for the sender to encapsulate the object in a
+                                     <a href=http://java.sun.com/j2se/1.4.2/docs/api/java/rmi/MarshalledObject.html>java.rmi.MarshalledObject</a>.
+                                     Then the receiver can retrieve the original object using its
+                                     <a href=http://java.sun.com/j2se/1.4.2/docs/api/java/rmi/MarshalledObject.html#get()>get()</a>
+                                     method. Encapsulating objects this way seems to make them far less prone to
+                                     failure during transmission. The reason why this failure occurs, and even why
+                                     this technique helps to fix it, is still a mystery.<br><br>
+
+                                     <a id="6"></a><b><u>6. Sending Proxies:</u></b> Proxy objects, when sent
+                                     from remote objects, nearly always arrive in a Marshalled Object. There is a
+                                     <i>very</i> important reason for this. A proxy is an object, whose codebase
+                                     is typically foreign to its hosting VM. When a proxy is extracted,
+                                     via the <tt>get</tt> method of MarshalledObject, its remote codebase will
+                                     be automatically loaded to instantiate the proxy, the location is
+                                     contained <i>within</i> the MarshalledObject. The proxy now exists, but no longer
+                                     has information about where its codebase came from. If you try to send the
+                                     proxy object itself to another VM, the receiver will most likely suffer a
+                                     <tt>ClassNotFoundException</tt>. However sending the MarshalledObject
+                                     instead, will work correctly. MarshalledObjects are handy containers in which
+                                     proxy objects can be freely sent between remote objects.
+                                    </span>
+                                 </td>
+                              </tr>
+                           </table></td>
+                        </tr>
+                     </table>
+
+<!-- footer: -->
+   <table width="95%" height="56" border="0" align="center" cellpadding="9" cellspacing="0">
+      <tr>
+         <td valign="top">
+            <div align="center">
+               <hr width=90%">
+               <span class="spacing style4 style7 style9">
+                  A place to remember common mistakes, in order to make them less common.
+               </span>
+            </div>
+         </td>
+      </tr>
+   </table><br>
+
+   <table width="98%" height="35" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+         <td width="2%" background="ventro/bar_bg.gif"><img src="ventro/arrowed.gif" width="30" height="35"></td>
+         <td width="95%" valign="top" background="ventro/bar_bg.gif">
+            <table width="100%" height="31" border="0" cellpadding="0" cellspacing="0">
+               <tr>
+                  <td width="47%"><span class="style11">&copy; 2004 GNU FDL</span></td>
+                  <td width="53%"><div align="right"></div></td></tr></table></td>
+                  <td width="3%"><img src="ventro/bar_Right.gif" width="10" height="35"></td></tr></table></td>
+               </tr>
+            </table>
+         </td>
+      </tr>
+   </table>
+
+</body>
 </html>
