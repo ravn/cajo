@@ -24,12 +24,13 @@ public class Main { // General purpose server startup pattern
          int clientPort    = args.length > 4 ? Integer.parseInt(args[4]) : 0;
          Remote.config(serverHost, serverPort, clientHost, clientPort);
          pl = new ProxyLoader("/example/include/proxy.ser");
-// multicast our startup, just for fun:
          Multicast mc = new Multicast();
 // monitor the item, just for fun:
          item = new MonitorItem(new TestItem(), System.out);
 // here's the crux:
          ProxyServer.bind(item, "main", true, mc, pl);
+// multicast our startup, just for fun:
+         mc.announce(ProxyServer.defaultServer, 16);
 // listen for announcements, just for fun:
          mc.listen(new Invoke() {  // any announcers can have a proxy too
             public Object invoke(String method, Object args) {
