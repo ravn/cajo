@@ -163,7 +163,8 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
    }
    /**
     * A utility method to reconstitute a zipped marshalled object (zedmob)
-    * into a remote item reference.
+    * into a remote item reference. <i>Note:</i> on completion of reading the
+    * item from the stream, the stream will be automatically closed.
     * @param is The input stream containing the zedmob of the item reference.
     * @return A reconstituted reference to the item.
     * @throws IOException if the zedmob format is invalid.
@@ -176,8 +177,28 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
       ObjectInputStream ois = new ObjectInputStream(gis);
       MarshalledObject  mob = (MarshalledObject)ois.readObject();
       ois.close();
-      gis.close();
       return (Invoke)mob.get();
+   }
+   /**
+    * This method will write the local item, or remote item reference, to an
+    * output stream as a zipped marshalled object (zedmob). A zedmob is the
+    * standard serialized format in this paradigm. This can be used to
+    * <i>'freeze-dry'</i> an item, or reference, to a file for later use,
+    * send it over the network, or to an object archival service, for example.
+    * <i>Note:</i> on completion of writing the item, or reference, the stream
+    * will be closed.
+    * @param os The output stream on which to write the reference.  It may be
+    * a file stream, a socket stream, or any other type of stream.
+    * @param the Item or reference to be serialized.
+    * @throws IOException For any stream related writing error.
+    */
+   public static void zedmob(OutputStream os, Invoke ref) throws IOException {
+      GZIPOutputStream   zos = new GZIPOutputStream(os);
+      ObjectOutputStream oos = new ObjectOutputStream(zos);
+      oos.writeObject(new MarshalledObject(ref));
+      oos.flush();
+      zos.flush();
+      oos.close();
    }
    /**
     * A utility method to load either an item, or a zipped marshalled object
@@ -425,13 +446,7 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
     * @throws IOException For any stream related writing error.
     */
    public void zedmob(OutputStream os) throws IOException {
-      GZIPOutputStream   zos = new GZIPOutputStream(os);
-      ObjectOutputStream oos = new ObjectOutputStream(zos);
-      oos.writeObject(new MarshalledObject(this));
-      oos.flush();
-      zos.flush();
-      oos.close();
-      zos.close();
+      zedmob(os, this);
    }
    /**
     * The application method loads a zipped marshalled object (zedmob) from a
