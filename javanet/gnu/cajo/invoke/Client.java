@@ -167,15 +167,15 @@ public final class Client extends java.applet.Applet {
       if (component instanceof JComponent) {
          JFrame frame = new JFrame(TITLE);
          frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-         frame.setVisible(true);
          frame.getContentPane().add((JComponent)component);
          frame.pack();
+         frame.setVisible(true);
          return frame;
       } else {
          CFrame frame = new CFrame(TITLE);
-         frame.setVisible(true);
          frame.add((Component)component);
          frame.pack();
+         frame.setVisible(true);
          return frame;
       }
    }
