@@ -167,7 +167,8 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
     * A utility method to reconstitute a zipped marshalled object (zedmob)
     * into a remote item reference, proxy object, or local object. <i>Note:</i>
     * on completion of reading the item from the stream, the stream will be
-    * automatically closed.
+    * automatically closed. Typically a file containing a zedmob has the file
+    * extension .zedmob as an identifier.
     * @param is The input stream containing the zedmob of the item reference.
     * @return A reconstituted reference to the item.
     * @throws IOException if the zedmob format is invalid.
@@ -189,7 +190,8 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
     * <i>'freeze-dry'</i> the object to a file for later use, to send it over
     * the network, or to an object archival service, for example. <i>Note:</i>
     * on completion of writing the item, or reference, the stream will be
-    * closed.
+    * closed. Typically, when saved to a file, a zedmob has the file extension
+    * .zmob to provide obvious identification.
     * @param os The output stream on which to write the reference.  It may be
     * a file stream, a socket stream, or any other type of stream.
     * @param ref The item or reference to be serialized.
@@ -325,7 +327,9 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
     * object's public method via the framework Java reflection mechanism, and
     * the result returned, if any. The method is declared static to centralize
     * the implementation, and allow other derived classes to use this
-    * mechanism without having to reimplement it.
+    * mechanism without having to reimplement it. If the arguments are being
+    * sent to a remote VM, and are not already encapsulated in a
+    * MarshalledObject, they will be, automatically.
     * @param item The object on which to invoke the method. If the item
     * implements the {@link Invoke Invoke} interface, the call will be passed
     * directly to it.
@@ -337,24 +341,26 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
     * @throws Exception If the item rejected the invocation, for application
     * specific reasons.
     */
-   public static Object invoke
-      (Object item, String method, Object args) throws Exception {
-      if (item instanceof Invoke) return ((Invoke)item).invoke(method, args);
-      if (method == null) throw
-         new IllegalArgumentException("Method argument cannot be null");
-      if(args instanceof Object[]) {
+   public static Object invoke(Object item, String method, Object args)
+      throws Exception {
+      if (item instanceof Invoke) args = ((Invoke)item).invoke(method, args);
+      else if (method == null)
+         throw new IllegalArgumentException("Method argument cannot be null");
+      else if (args instanceof Object[]) {
          Object[] o_args = (Object[])args;
          Class[]  c_args = new Class[o_args.length];
          for(int i = 0; i < o_args.length; i++)
             c_args[i] = o_args[i].getClass();
          Method m = findBestMethod(item, method,c_args);
-         if (m!= null) return m.invoke(item, o_args);
+         if (m!= null) args = m.invoke(item, o_args);
+         else throw new NoSuchMethodException();
       } else if (args != null) {
          Method m =
             findBestMethod(item, method, new Class[]{ args.getClass() });
-         if (m != null) return m.invoke(item, new Object[]{ args });
-      } else return item.getClass().getMethod(method, null).invoke(item, null);
-      throw new NoSuchMethodException();
+         if (m != null) args = m.invoke(item, new Object[]{ args });
+         else throw new NoSuchMethodException();
+      } else args = item.getClass().getMethod(method, null).invoke(item, null);
+      return args;
    }
    private final Object item;
    /**
@@ -397,7 +403,9 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
     * The sole generic, multi-purpose interface for communication between VMs.
     * This function may be called reentrantly, so the inner object <i>must</i>
     * synchronize its critical sections as necessary. Technically, it simply
-    * passes the call to this class' static invoke method.
+    * passes the call to this class' static invoke method. If the arriving
+    * arguments are encapsulated in a MarshalledObject, they will be extracted
+    * here automatically.
     * @param method The method to invoke on the internal object.
     * @param args The arguments to provide to the method for its invocation.
     * It can be a single object, an array of objects, or even null.
@@ -455,10 +463,8 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
     * of the item, it will also create an rmiregistry, and bind a remote
     * reference to it under the name "main".  This will also allow remote
     * clients to connect to, and interact with it.  <i>Note:</i>It will
-    * install a {@link NoSecurityManager NoSecurityManager}, which if not
-    * blocked by a user-specified SecurityManager, will allow the loaded item,
-    * and all loaded proxies thereafter, <b>full permissions</b> on this
-    * machine. There are six optional configuration parameters:<ul>
+    * require a security policy, to define what permissions the loaded item
+    * will be allowed. There are six optional configuration parameters:<ul>
     * <li> args[0] The optional URL where to get the object: file:// http://
     * ftp:// ..., /path/name <serialized>, path/name <class>, or alternatively;
     * //[host][:port]/[name].  If no arguments are provided, the URL will be
@@ -472,7 +478,6 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
     * (serialized), or path/name (class).  It will be passed into the loaded
     * proxy as the sole argument to a setItem method invoked on the loaded item.
     * </ul>
-    * @see NoSecurityManager
     */
    public static void main(String args[]) {
       try {
@@ -482,10 +487,8 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
          String localHost  = args.length > 3 ? args[3] : null;
          int localPort     = args.length > 4 ? Integer.parseInt(args[4]) : 0;
          config(localHost, localPort, clientHost, clientPort);
-         try {
-            System.setSecurityManager(new NoSecurityManager());
-            System.setProperty("java.rmi.server.disableHttp", "true");
-         } catch(SecurityException x) {}
+         try { System.setProperty("java.rmi.server.disableHttp", "true"); }
+         catch(SecurityException x) {}
          proxy = getItem(args[0]);
          if (args.length > 5) invoke(proxy, "setItem", getItem(args[5]));
          registry =
