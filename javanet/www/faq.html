@@ -12,27 +12,6 @@
             <td>
 
 <!-- begin main.html -->
-
-                        <center>
-                           <a href="index.html" title="cajo home page"><b>Welcome</b></a> |
-                           <a href="tutorial.html" title="getting started"><b>Tutorial</b></a> |
-                           <a href="theory.html" title="how it all works"><b>Theory</b></a> | 
-                           <a href="gotcha.html" title="important details"><b>Gotchas</b></a> |
-                           <b>FAQ</b> |
-                           <a href="acknowlege.html" title="supporters of the marque"><b>Acknowledgments</b></a> |
-                           <a href="license.html" title="what's the LGPL"><b>License</b></a> |
-                           <a href="docs/overview-summary.html" title="package documentation"><b>Javadocs</b></a> <br><br>
-                        </center>
-                        <center>
-                           <a href="item.html" title="Remote object"><b>Item</b></a> |
-                           <a href="proxy.html" title="interface object"><b>Proxy</b></a> |
-                           <a href="multicast.html" title="broadcast object"><b>Multicast</b></a> |
-                           <a href="client.html" title="host object"><b>Client</b></a> |
-                           <a href="server.html" title="application server"><b>CodebaseServer</b></a> |
-                           <a href="example.html" title="demo objects"><b>Example</b></a> |
-                           <a href="overview.html" title="adding to existing applications"><b>Overview</b></a><br><br>
-                        </center>
-
                            <font size="4">
                               <b>Frequently Asked Questions.</b><br><br>
                            </font>
@@ -51,6 +30,7 @@
                            <li><a href=#6>What is this crazy cajo coding style?</a>
                            <li><a href=#7>Can I run cajo over Secure Sockets Layer?</a>
                            <li><a href=#8>Why is there no package version number?</a>
+                           <li><a href=#9>Can my application put proxies in an Applet sandbox?</a>
                            </ol>
 
                            <a id="1"></a><b><u>1. Why doesn't the example work in Appletviewer?</u></b>
@@ -162,6 +142,24 @@
                            fundamentally focused on communication, between virtual machines, potentially
                            separated in <u>both</u> space <b>and</b> time... <i>Woah dude</i>, What hast
                            thou spoketh?<br><br>
+
+                           <a id="9"></a><b><u>9. Can my application put proxies in an Applet sandbox?</u></b>
+                           Wow, what an important question! I am sorry the answer to this was not
+                           perfectly clear sooner: Of course, it is Yes! This is easily done. When
+                           starting up your application, use the following -D arugments:
+                           <blockquote><tt>
+                           java -jar -Djava.security.manager -Djava.security.policy=policyURL myApp.jar
+                           </tt></blockquote>
+                           The first -D argument puts the entire VM in an applet sandbox. Then if you
+                           need your application classes to be free of these restrictions, a policy
+                           file is needed, something like this:
+                           <blockquote><tt>
+                           grant codeBase "file:${java.class.path}" {<br>
+                            &nbsp&nbsp  permission java.security.AllPermission;<br>
+                           };
+                           </tt></blockquote>
+                           This second -D argument will give full permissions, but only to your local
+                           server code, as an exception.<br><br>
                            
                            <div align="center">
                               <font face="Verdana, Helvetica" size="-2">
