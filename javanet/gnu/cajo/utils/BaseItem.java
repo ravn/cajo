@@ -105,17 +105,18 @@ public class BaseItem {
    }
    /**
     * This method is called by the remote clients, to request the item's
-    * proxy, if it supports one. If it does not, it will return null.
-    * @return A the proxy serving this item, encased in a
-    * {@link java.rmi.MarshalledObject MarshalledObject}, if the item has a
-    * proxy interface, otherwise null.
+    * proxy, if it supports one. If it does not, it will a remote reference
+    * to itself.
+    * @return A the proxy serving this item, or a remote reference to the
+    * item, encased in a
+    * {@link java.rmi.MarshalledObject MarshalledObject}.
     */
    public MarshalledObject getProxy() { return mob; }
    /**
     * This method is called by the {@link ItemServer ItemServer} during a
     * bind operation, if the item has a proxy interface.
     * @param mob The item's proxy object, if it supports one, otherwise a
-    * remote referenced to itself, either way, encased in a
+    * remote reference to itself, either way, encased in a
     * {@link java.rmi.MarshalledObject MarshalledObject}
     */
    public void setProxy(MarshalledObject mob) {
