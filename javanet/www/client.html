@@ -156,8 +156,15 @@
                               <li> file:// to load it from the local disc
                               <li> path/name to instantiate it from a local class file
                               <li> /path/name to load it as a serialized proxy from disc
-                              <li> //host[:port]/[name] to load it from an rmiregistry (most common)
+                              <li> //host[:port]/[name] to load it from an rmiregistry
                            </ul>
+
+                           The <i>most common</i> client startup invocation looks something like this:
+
+                           <pre><code>   java -jar client.jar yourHost 0 yourHost 0 //someHost/</code></pre>
+
+                           This will connect from yourHost, to someHost, and get the item "main", using
+                           any available port, not currently in use.
 
                            <h3>Important Details</h3><br>
 

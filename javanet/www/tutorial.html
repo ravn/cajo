@@ -309,21 +309,44 @@
                            connections easy for end users, who may be technically unsophisticated.
                            Just as with launching the application, connecting could be as simple as
                            pointing your browser to:
+
                            <pre>    <code>http://yourserver</code></pre>
+
                            The proxy, which is graphical, will load and appear inside your browser,
-                           full screen and dynamically resizable. If you were not able to use port 80
-                           for your server, you will need to specify the port on which your server is
-                           providing the proxy code. Following the example from the previous section,
-                           you would use:
+                           full screen and dynamically resizable.<br><br>
 
-                           <pre>    <code>http://yourserver:8080</code></pre>
+                           Just as with the server, there are a similar set of options to configure the
+                           client. This time let's start with the complete command, then explain its
+                           optional components:
 
-                           Where 8080 was the port on which http service was started.  The server
-                           will correctly configure the client's communications settings if the client
-                           is operating behind a NAT router.<br><br>
+                           <pre>    <code>http://serverHost[:serverPort]/[clientPort][:localPort][-proxyName]</code></pre>
+
+                           <ul>
+                           <li>The <b>serverPort</b> value is specified when port 80 was not abvailable
+                           for the server. Unspecified, it will be port 80. In our example with the
+                           server options, it would be 8080.
+
+                           <li>The <b>clientPort</b> value would indicate the inbound TCP port on which
+                           the client would like to receive the server callbacks.  This would need to be
+                           specified if the client was behind a firewall.  Unspecified it would be
+                           anonymous, meaning randomly chosen by the server, at runtime.
+
+                           <li>The <b>:localPort</b> value would be the client's internal port number if
+                           it is being translated from the external port number.  Unspecified it will be
+                           the same as clientPort. <i>Very few</i> people will ever need this option.
+
+                           <li>The <b>-proxyName</b> value would be used when the server binds more than
+                           one item.  This is the name under which the item would be bound in the
+                           registry. Unspecified the name "main" will be used, as servers typically bind
+                           their default item under that name.
+                           </ul>
+
+                           The server will correctly configure the client's remaining communications
+                           settings, even when the client is operating behind a NAT router.<br><br>
 
                            Connecting can also be done using the generic <a href=client.html>client</a>
-                           application.
+                           application. It is <i>highly recommended</i> to use this application for
+                           development purposes.
 
                            <h3>Conclusion</h3><br>
 
