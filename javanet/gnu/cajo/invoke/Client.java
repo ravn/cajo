@@ -119,12 +119,12 @@ public final class Client extends java.applet.Applet {
     * server and request the item from the server's rmiregistry. Next it will
     * invoke a getProxy(null) on the remote reference to request its proxy
     * item.  If the item returns the proxy in a MarshalledObject, it will be
-    * extracted automatically. If the proxy supports the Invoke interface, the
-    * client will invoke an init on the returned proxy, passing it a remote
-    * reference itself, to obtain its primary graphical representation, which
-    * will then be added into the applet's panel.  The proxy can pass its
-    * remote reference back to hosting server, or to other VMs, on which
-    * they can asynchronously call it back.
+    * extracted automatically. If the returned object is a proxy, the client
+    * will invoke its init method, passing it a remote reference itself, and
+    * to obtain its primary graphical representation, which will then be added
+    * into the applet's panel.  The proxy can pass its remote reference back
+    * to its hosting item, or to other remote items, on which they can
+    * asynchronously call it back.
     */
     public void init() {
       try {
@@ -143,8 +143,9 @@ public final class Client extends java.applet.Applet {
          proxy = ((Invoke)proxy).invoke("getProxy", null);
          if (proxy instanceof MarshalledObject)
             proxy = ((MarshalledObject)proxy).get();
-         if (proxy instanceof Invoke && !(proxy instanceof RemoteInvoke))
-            proxy = ((Invoke)proxy).invoke("init", new Remote(proxy));
+         if (!(proxy instanceof RemoteInvoke)) try {
+            proxy = Remote.invoke(proxy, "init", new Remote(proxy));
+         } catch(Exception x) {}
          if (proxy instanceof Component) {
             setLayout(new BorderLayout());
             add((Component)proxy);
@@ -178,13 +179,14 @@ public final class Client extends java.applet.Applet {
    }
    /**
     * The application creates a graphical proxy hosting VM.
-    * With the URL argument provided, it will use the static {@link Remote#getItem getItem}
-    * method of the {@link Remote Remote} class to contact the server. It will then
-    * invoke a null-argument getProxy on the resulting reference to request the
-    * primary proxy object of the item.<br><br>
-    * <i>Note:</i> by default, it loads a NoSecurityManager, therefore, if no
-    * external SecurityManager is specified in the startup command line options;
-    * the arriving proxies will have <b>full permissions</b> on this machine.<br><br>
+    * With the URL argument provided, it will use the static
+    * {@link Remote#getItem getItem} method of the {@link Remote Remote} class
+    * to contact the server. It will then invoke a null-argument getProxy on
+    * the resulting reference to request the primary proxy object of the item.<br><br>
+    * <i>Note:</i> When running as an application (except via JNLP) it will
+    * load a NoSecurityManager, therefore, if no external SecurityManager is
+    * specified in the startup command line options; the arriving proxies will
+    * have <u><b>full permissions</b></u> on this machine.<br><br>
     * The startup requires one, and can take up to four additional optional
     * configuration parameters, in this order:<ul>
     * <li> args[0] The required URL where to get the graphical proxy item:<br>
@@ -210,8 +212,9 @@ public final class Client extends java.applet.Applet {
          proxy = ((Invoke)proxy).invoke("getProxy", null);
          if (proxy instanceof MarshalledObject)
             proxy = ((MarshalledObject)proxy).get();
-         if (proxy instanceof Invoke && !(proxy instanceof RemoteInvoke))
-            proxy = ((Invoke)proxy).invoke("init", new Remote(proxy));
+         if (!(proxy instanceof RemoteInvoke)) try {
+            proxy = Remote.invoke(proxy, "init", new Remote(proxy));
+         } catch(Exception x) {}
          if (proxy instanceof Component) frame = frame((Component)proxy);
       } catch (Exception x) { x.printStackTrace(System.err); }
    }
