@@ -88,57 +88,60 @@
                            </font>
 
                            Every inter-operating object in the cajo framework is called an <b><code>item
-                           </code></b>.  An item can exist within a Virtual Machine, and interact with other
-                           local items.  An item can be called by remote items. An item can be a <b><code>
-                           proxy</code></b>, meaning an item sent from one Virtual Machine to execute in
+                           </code></b>.  An item can exist within a Virtual Machine, and call other
+                           local items.  An item can also be called by remote items in other virtual, or
+                           even physical machines. An item can also be a <b><code>proxy</code></b>,
+                           meaning an item sent from one machine (virtual or physical) to execute in
                            the runtime of another.  This means that an application can be originally
                            designed with all its objects local, and evolve until each object is in a
-                           separate Virtual Machine, with no changes to the source code.<br><br>
+                           separate virtual or physical machine, with no changes to the source code.<br><br>
 
-                           In RMI, each class called on a remote object must have a "stub" compiled for
-                           it.  This becomes burdensome, if the interaction between objects become
-                           highly diverse, and impossible when the method signatures vary at runtime.
-                           To address this issue; the cajo framework defines only one functional
-                           interface.  Every cajo item implements the Invoke interface:
+                           In RMI, each remote object must have a "stub" compiled for it.  This becomes
+                           burdensome if the interaction between objects becomes highly diverse, and is
+                           impossible when the method signatures vary at runtime. To address this issue,
+                           the cajo framework defines just one functional interface.  Every cajo item
+                           inherits the Invoke interface:
                               <b><pre>   Object invoke(String method, Object args);</pre></b>
-                           The interface defines a single method call, whereby a method name is given,
-                           provided an argument, and returns an object.  This signature differs from
+                           The interface defines a single method call, whereby a method name is provided,
+                           given an argument, and returns an object.  This signature differs from
                            regular a Java method invocation in two distinct ways.  First the return
                            type must be of type Object, or a derived type.  This means that an
                            invocation cannot return a primitive type, such as int or char.  Second, the
                            argument type must also be of type Object, meaning it too cannot be a
-                           primitive type.  However, both the argument, and the return can be of type
-                           Object[], indicating more than one object is being transferred, as well as
+                           primitive type.  However, both the argument and return can be of type
+                           Object[], indicating more than one object is being transferred, or it can be
                            null, indicating no object transfer.<br><br>
 
                            Aside from these minor differences, object interaction can behave identically.
-                           Often, a small wrapper is placed around an item reference; to give it the
-                           identical semantics, and type-safety, of a local method invocation.  Consider
-                           these examples:<code>,<b><pre>
+                           Often a small wrapper is placed around an item reference to give it the
+                           identical semantics, and type-safety, of a local method invocation. Consider
+                           these examples:<code><pre>
    void baker() { someItem.invoke("baker", null); }
+
    Able baker(Charlie c) {
       return (Able)someItem.invoke("baker", c);
    }
+
    Able[] baker(Charlie c, Delta d) {
       return (Able[])someItem.invoke("baker", new Object[] { c, d });
-   } </pre></b></code>
+   } </pre></code>
                            Now, whether an object is invoking a method directly, through the invoke
-                           interface to a local object, a remote object, or proxy, is completely
-                           hidden, and ultimately irrelevant to the external software.<br><br>
+                           interface to a local or remote object, or even to a proxy, it is completely
+                           abstracted, and ultimately irrelevant to the calling object.<br><br>
 
-                           The invocation of a method on a remote item or proxy is accomplished through
+                           The invocation of a method on a remote item, or proxy, is accomplished using
                            the Remote class.  It makes use of a Java feature known as reflection.  The
                            Remote class takes any Object, and places a remotely invokable wrapper around
                            it.  When items execute the invoke interface on a Remote object, it uses
                            reflection to lookup the method on its internal object, matching both the
-                           name, and the argument types. When it is found, it executes that method call,
-                           and returns the result.  Naturally, if no matching method can be found on the
+                           name and the argument types. When it is found, it executes that method and
+                           returns the result.  Naturally, if no matching method can be found on the
                            internal object, a NoSuchMethodException is thrown.<br><br>
 
                            <div align="center">
                               <font face="Verdana, Helvetica" size="-2">
                                  <hr width="80%">
-                                 All objects are local, whether virtual, or physical; machine barriers are only an illusion.
+                                 All objects are local. Whether virtual, or physical; machine barriers are an illusion.
                               </font>
                            </div>
 <!-- end main.html -->
