@@ -126,6 +126,27 @@
                            Here you would put the IP address/host name pairs for the machines involved,
                            which do not have a DNS support.<br><br>
 
+                           <b><u>Nework Reality:</u></b> While it is very simple to write code without
+                           regard to locality or remoteness of objects, it is very important to remember
+                           that any remote invocation can fail, or block for a very long time, if there
+                           is a problem with the network, or the target machine is unresponsive. The
+                           invoke interface is declared to throw an exception for two good reasons; one
+                           is logical, i.e. the invocation is invalid, the other is genuinely
+                           exceptional, i.e. something unexpected happened.<br><br>
+
+                           These realities can be managed in three different ways. First, when dealing
+                           with a remote item reference, your code should be prepared for unexpected
+                           network exceptions, and long transaction delays. Second, a proxy can be sent
+                           which manages these error conditions when calling its remote sender. (This
+                           makes life very nice for the user) Third, when it absolutely positively
+                           cannot go wrong, a proxy can be sent containing all of its necessary
+                           functionality, and makes no use of its remote link back to its sender.<br><br>
+
+                           Lastly, I find it extremely helpful to print, frame, memorize, and post
+                           somewhere near your monitor, the eight
+                           <a href=http://web.archive.org/web/20030208015752/http://java.sun.com/people/jag/Fallacies.html>fallacies</a>
+                           of distributed computing.<br><br>
+
                            <div align="center">
                               <font size="-2">
                                  <hr width="80%">
