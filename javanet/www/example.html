@@ -94,8 +94,8 @@
                               <b>Demonstrating the framework's features and functions.</b>
                            </font><br><br>
 
-                           The example package is a collection of four short classes demonstrating the
-                           use of the framework.  It involves all the classes of the framework, except
+                           The example package is a collection of four small classes demonstrating the
+                           use of the framework.  It uses all the classes of the framework, except
                            one, and that one will be described at the <a href="#Extras">end</a>
                            of the document, as well as why it was not part of the example.<br><br>
                            The four example classes are as follows:
@@ -108,8 +108,8 @@
                            </ul>
 
                            As mentioned in the <a href=proxy.html>proxy</a> page, a server does not
-                           need to use proxies; one is included in the example, for completeness
-                           in illustration.<br><br>
+                           need to use proxies; one is included in the example, just for completeness
+                           of illustration.<br><br>
 
                            <a id="TestItem"></a>The <b>TestItem</b> class demonstrates the basic
                            functionality of a server item.  A server item has two primary components; a
@@ -117,63 +117,69 @@
                            technically optional, a callable interface is logically essential. The
                            processing thread, if defined, is launched automatically following binding of
                            the object with the
-                           <ahref=gnu/cajo/utils/ItemServer.html>ItemServer</a>. The server item can
-                           also be purely <i>event driven</i>; i.e. only executing when its interface
-                           methods are being called, its would not define a
-                           <a href=gnu/cajo/utils/BaseItem.MainThread.html>MainThread</a> object. The
+                           <a href=docs/gnu/cajo/utils/ItemServer.html>ItemServer</a>. A server item can
+                           also be purely <i>event driven</i>; i.e. only executing when its callable
+                           methods are being invoked; in this case it would not define a
+                           <a href=docs/gnu/cajo/utils/BaseItem.MainThread.html>MainThread</a> object. The
                            callable interface to an item is simply its collection of publicly declared
-                           methods.<br><br>
+                           methods. (subject to the minor restrictions outlined in the
+                           <a href=theory.html>theory</a> page)<br><br>
 
                            The thread in the example item performs the <i>highly recommended</i> practice
                            of looping on its <code>thread.isInterrupted()</code> method. The item itself,
-                           or other parts of the application, can invoke a <code>
-                           thread.interrupt()</code> on the public thread member.  This does not
-                           terminate the thread automatically, rather only flags it. This allows item's
-                           processing thread a mechanism to perform a safe and orderly shutdown.  This
-                           is generally done when taking a server item offline. This technique has the
-                           added benefit that if the item's thread is waiting, it will wake it up via
-                           throwing an <code>InterruptedException</code><br><br>
+                           or other parts of the application, can invoke a <code>thread.interrupt()</code>
+                           on the public thread member.  This does not terminate the thread automatically,
+                           rather only flags it. This allows item's processing thread a mechanism to
+                           perform a safe and orderly shutdown.  This is generally done when taking a
+                           server item offline. This technique has the added benefit that if the item's
+                           thread is waiting, it will wake it up, via the throwing of an <code>
+                           InterruptedException</code><br><br>
 
                            Since this is only an example item implementation, the main processing thread
-                           has nothing to do.  So it simply puts itself to sleep, to be awoken should
-                           something interesting happen.  When awoken, it sleeps for 500
-                           milliseconds, to <i>appear</i> that it is doing something.  Following that
-                           it invokes a callback to an item reference it gets from <i>somewhere</i>
-                           (actually one of its own methods) and invokes the method "callback" on this
-                           reference, passing a string argument, and displaying the result.  It then
-                           loops back up into sleep. That's all it does, until interrupted, if ever.<br><br>
+                           has basically nothing to do.  So it simply puts itself to sleep, to be awoken
+                           should something interesting happen.  When awoken, it sleeps for 500
+                           milliseconds, to <i>appear</i> that it is doing something.  Following that,
+                           it invokes the method "callback" on an item reference it gets from
+                           <i>somewhere</i>, (actually one of its own methods, described next) passing a
+                           string argument, and displaying the result.  It then loops back up into sleep.
+                           That's all it does, until interrupted, if ever.<br><br>
 
-                           The interesting part happens in its callback method.  It is appropriately
-                           named, though it actually could be named anything.  When it is invoked, it
-                           saves the reference to the presumably remote item, and wakes its own main
-                           thread. It prints the message provided by the invoking item, and returns a
-                           string indicating synchronous acknowlegement.  The critical point is; every
-                           public method this item declares will be invokable from remote items, no
-                           differently than if it was interfaced  by local objects. <i>Note:</i> this
-                           implementation also illustrates the importance of reentrancy concerns.
-                           If many items invoke this method simultaneously, only the last caller will be
-                           called back.<br><br>
+                           The interesting part happens in its public callback method.  It is
+                           appropriately named, though it actually could be named anything.  When it is
+                           invoked, it saves the reference to the presumably remote calling item, and
+                           wakes its main thread, to operate as described in the previous paragraph. It
+                           then prints the message provided by the invoking item, and returns a string
+                           indicating synchronous acknowlegement. Again, the critical point is; every
+                           public method an item declares will be invokable from remote items, no
+                           differently than if it was being interfaced  by local objects. <i>Note:</i>
+                           this implementation also intentionally illustrates the importance of
+                           reentrancy consideration with regard to an item's public interface. If many
+                           items invoke this method simultaneously, only the last caller will get called
+                           back by the item's main thread.  Making the example's callback method
+                           threadsafe is left as a mental excercise for the reader.<br><br>
 
                            Lastly, the item implements the <code>toString</code> method, inherited from
-                           <code>Object</code>.  This is also <i>highly recommended</i>.  In this case,
-                           it aids when monitoring the item, covered in the section on
-                           <a href="#Main">Main</a>, and greatly aids in debugging. That's all there is
-                           to the <code>TestItem</code> example.<br><br>
+                           <code>Object</code>.  This is also a <i>highly recommended</i> practice.  In
+                           this case, it is used when monitoring the item, which is covered in the
+                           upcoming section on <a href="#Main">Main</a>, and also greatly aids in
+                           debugging. That's all there is to the TestItem example.<br><br>
 
-                           <a id="TestProxy"></a>The <b>TestProxy</b> class is a small, proxy,
-                           illustrating many features of the framework.  It will be sent to a client, as
-                           returned from the TestItem's <code>getProxy</code> method inherited from
-                           <code>BaseItem</code>.  The proxy inherits a remote reference
-                           to the TestItem, assigned by the ProxyLoader.  It is next initialized at the
-                           client, with the assignment of its remoteThis member with a reference to the
-                           proxy itself, remoted the context of the client VM.  This initialization,
-                           will causee the proxy's main thread to start, if it has one.  As with server
-                           items, a proxy need not define a main thread, i.e. it can also be purely
-                           event driven.<br><br>
+                           <a id="TestProxy"></a>The <b>TestProxy</b> class is a small proxy item
+                           illustrating many features of the framework.  It is sent to a client, as
+                           the return from the TestItem's
+                           <a href=docs/gnu/cajo/utils/BaseItem.html#getProxy()>getProxy</a> method,
+                           inherited from
+                           <a href=docs/gnu/cajo/utils/BaseItem.html>BaseItem</a>. The proxy
+                           automatically inherits a remote reference to the TestItem.  On arrival at
+                           the client, it is initialized (by the client) with the assignment of its
+                           remoteThis member with a reference to the proxy itself, remoted the context
+                           of the client VM.  This initialization, will causee the proxy's main
+                           thread to start, if it has one. As with server items; a proxy need not
+                           define a main thread, i.e. it can also be purely event driven.<br><br>
 
                            The example demonstrates the Internationalization feature of proxies.
-                           When the proxy is initialized, it will load its string table from a
-                           properties file most closely matching the locale of the receiving VM.  This
+                           When the proxy is initialized, it will load its string table, from a
+                           properties file, most closely matching the locale of the receiving VM.  This
                            allows the proxy's user interface to be in German on an Austrian machine, and
                            Spanish on a Mexican one.  Of course, all of these translated string tables
                            must be provided.  The properties file, and all other non-class resources are
@@ -181,52 +187,66 @@
                            The reason for the separate directory, is to simplify the proxy's jar
                            creation as the build script can include all the files blindly.<br><br>
 
+                           Since this is a graphical proxy example, it's initialization invocation also
+                           provides a non-null graphical component, which the client can display at
+                           its location.  The purpose of the component is to provide a graphical user
+                           interface to a remot server item, however offloading as much processing as
+                           necessary, to the client's runtime.<br><br>
+
                            When the proxy's processing thread first starts, it writes out an arrival
                            notice to the client's user interface.  Next, it invokes the method named
                            callback on the reference to its server item.  It passes its remote reference
                            to itself, and a message string.  It displays the value returned  by the
                            invocation as well.  Following that, it exits its run method, causing its
-                           processing thread to terminate.<br><br>
+                           main processing thread to terminate.<br><br>
 
-                           The proxy has a public method named callback. Just as with all of its public
-                           methods, this can be called by remote items.  When called by the TestProxy,
-                           it will display the incoming text argument, and send back a synchronous
-                           text acknowlegement of its own.<br><br>
+                           The proxy has a public method named callback. When called, in this case by
+                           the TestProxy, it will display the incoming text argument, and send back a
+                           synchronous text acknowlegement of its own. Just as with server items, all
+                           of a proxy's public methods, can be called by remote items (or proxies),
+                           having a reference to the proxy.
+                           <br><br>
 
                            <a id="Builder"></a>The <b>Builder</b> class serves two purposes.  First it
-                           serves to replace the code which would normally go into the proxy's
+                           serves to replace the code which would otherwise go into the proxy's
                            constructor.  Why do this?  Because all of the construction code, which can
                            be quite a sizeable amount if the proxy is elaborate, can be left out of the
                            proxy's jar file.  This reduces the proxy jar size, can and also add the
                            additional feature that a proxy becomes much more difficult to
-                           reverse-engineer, if such a protection is important.<br><br>
+                           reverse-engineer, if such a protection is important to an application.<br><br>
 
                            The second function of the Builder class is to instantiate the proxy, then
                            serialize its image to disc.  This serialized object will be included in the
-                           proxy jar file, referenced through a <code>ProxyLoader</code> on the
-                           TestItem's side.  The is the most elaborate way to use a ProxyLoader, it can
-                           also be used to invoke a proxy's no-arg constructor, to create a new instance
-                           of the proxy, on its arrival at the host VM.<br><br>
+                           proxy jar file, referenced through a
+                           <a href=docs/gnu/cajo/utils/ProxyLoader.html>ProxyLoader</a>
+                           in the TestItem's runtime.  The is the <i>most elaborate</i> way to use a
+                           ProxyLoader. It can also be used to invoke a proxy's no-arg constructor,
+                           to create a new instance of the proxy, on its arrival at the host VM. In
+                           that case, all of the construction code would have to be passed to the
+                           client VM.<br><br>
 
                            The actual mechanics of what is going on inside the builder is not so
                            important.  It is basically configuring graphical components, and putting
-                           them into the graphical user interface member object <code>container</code>.
+                           them into the graphical user interface member object
+                           <a href=docs/gnu/cajo/utils/BaseProxy.html#container>container</a>.
                            The proxy will return this graphical container to the hosting client as a
                            result of its initialization invocation.  It also defines the keys of the
                            string table, to be loaded during initialization. It also references a
-                           ProxyLoader.  This is a special situation.  The proxy will need to use the
-                           ProxyLoader class file on its arrival at the host, however, it doesn't need
-                           to reference it during compile time.  Without this reference, the proxy
-                           would suffer a <code>ClassNotFoundException</code> at the host,
-                           ProxyLoader would not have been loaded into the proxy jar file.<br><br>
+                           ProxyLoader.  This is a special requirement.  The proxy will need to use
+                           the ProxyLoader class file on its arrival at the host, however, it doesn't
+                           need to use it during compile time.  Without this apparently unused
+                           reference, the proxy would suffer a ClassNotFoundException at the host,
+                           as ProxyLoader class would not have been loaded into the proxy jar file,
+                           since it would have not been compiled.<br><br>
 
                            <a id="Main"></a>The <b>Main</b> class illustrates how to make a server
                            application.  A server is simply an application which makes one, or more,
-                           items available for remote invocation. The <code>Main</code> class first
-                           configures the network settings, then makes the test item accessible.  As
-                           explained in the <a href=tutorial.html#launching>launching</a> turorial the
-                           application can take up to five parameters, in order, from most likely to
-                           least likely to need changing, and where precedence matters:
+                           items available for remote invocation. The Main class first configures its
+                           network settings, then makes the test item accessible.  As explained in the
+                           <a href=tutorial.html#launching>launching</a> turorial, the application can
+                           take up to five parameters, in order, from most likely to need changing, to
+                           least likely, and where precedence matters. The network configuration
+                           parameters are as follows:
 
                            <ul>
                               <li> the port number on which to serve the proxy's codebase (default = 80)
@@ -239,13 +259,13 @@
                            The server also does a few additional actions, to illustrate the operation of
                            remaining parts of the framework.  It multicasts a remote reference to itself
                            to announce its startup.  It installs a monitor item, to log data about the
-                           remote invocations, and system state of the server item, to the system
+                           remote invocations to its item, to the system
                            console.  It even listens for other item announcements, sending the
-                           announcer's remote reference the test proxy, invoked on its setProxy method,
-                           if it has one. Finally it finishes up by listing its configuration
-                           information.  This can be helpful if the server is told to use anonymous
-                           ports, the info will contain the port numbers chosen by the system at startup.<br><br>
-
+                           announcer's a remote reference the test proxy, invoked on their setProxy
+                           method, if they have one. Finally it finishes up by listing its
+                           configuration information.  This can be useful if the server is told to use
+                           any anonymous TCP ports (i.e. port = 0), the info will contain the actual
+                           port numbers chosen by the system at startup.<br><br>
                            
                            <a id="Extras"></a>The <a href=docs/gnu/cajo/utils/ZippedProxy.html>
                            ZippedProxy</a> class is the only utility class not used in the example.
@@ -256,19 +276,19 @@
                            single VM is serving many proxies.<br><br>
 
                            In cases, when a proxy <u>must</u> be loaded into the server's VM; presumably
-                           for some runtime dependent configuration, then it is <u>strongly recommended</u>
+                           for some runtime dependent configuration, then it is <i>strongly recommended</i>
                            to use a ZippedProxy.  It compresses the serialized image of the proxy as it
                            is sent to the hosting VM. This is done to reduce the amount of data, and
                            transmission time, required to send the proxy.  If the proxy image is large,
-                           the network link is slow, or the cost per bit sent is high, this approach
-                           makes tremendous sense.  It is recommended to use it under all circumstances
-                           as a general paradigm.<br><br>
+                           the network link is slow, or the cost per bit sent is high, this technique
+                           makes tremendous sense.  Its use is recommended for all server loaded
+                           proxies, as a general paradigm.<br><br>
 
                            <br>
                            <div align="center">
                               <font face="Verdana, Helvetica" size="-2">
                                  <hr width="80%">
-                                 Once you know the basics; the advances begin to evolve.
+                                 Once you understand the basics; the advances begin to emerge.
                               </font>
                            </div>
 <!-- end main.html -->
