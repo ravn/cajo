@@ -13,37 +13,16 @@
 
 <!-- begin main.html -->
 
-                        <center>
-                           <a href="index.html" title="cajo home page"><b>Welcome</b></a> |
-                           <a href="tutorial.html" title="getting started"><b>Tutorial</b></a> |
-                           <a href="theory.html" title="how it all works"><b>Theory</b></a> | 
-                           <a href="gotcha.html" title="important details"><b>Gotchas</b></a> |
-                           <a href="faq.html" title="common questions"><b>FAQ</b></a> |
-                           <a href="acknowlege.html" title="supporters of the marque"><b>Acknowledgments</b></a> |
-                           <a href="license.html" title="what's the LGPL"><b>License</b></a> |
-                           <a href="docs/overview-summary.html" title="package documentation"><b>Javadocs</b></a> <br><br>
-                        </center>
-                        <center>
-                           <a href="item.html" title="Remote object"><b>Item</b></a> |
-                           <a href="proxy.html" title="interface object"><b>Proxy</b></a> |
-                           <b>Multicast</b> |
-                           <a href="client.html" title="host object"><b>Client</b></a> |
-                           <a href="server.html" title="application server"><b>CodebaseServer</b></a> |
-                           <a href="example.html" title="demo objects"><b>Example</b></a> |
-                           <a href="overview.html" title="adding to existing applications"><b>Overview</b></a><br><br>
-                        </center>
-
                            <font size="4">
-                              <b>Connecting to cajo items independently of their server's host address.</b>
+                              <b>Connecting to cajo objects independently of their server's host address.</b>
                            </font><br><br>
 
-                           The
-                           <a href=docs/gnu/cajo/utils/Multicast.html>Multicast</a> class performs
-                           two complimentary functions. First, it allows an item to <i>"broadcast"</i>
-                           a remote reference to itself over the network. Second, it allows an item to
+                           The <a href=docs/gnu/cajo/utils/Multicast.html>Multicast</a> class performs
+                           two complimentary functions. First, it allows an object to <i>"broadcast"</i>
+                           a remote reference to itself over the network. Second, it allows an object to
                            listen for, and <i>catch</i>, these reference broadcasts. Once caught, an
-                           item can invoke the public methods of the broadcasting item. These two
-                           functions operate entirely independently of each other; i.e. an item can
+                           object can invoke the public methods of the broadcasting object. These two
+                           functions operate entirely independently of each other; i.e. an object can
                            broadcast without listening, and listen without broadcasting, it can even
                            do both.  If it is listening when it broadcasts, a VM will even catch its
                            own reference.
@@ -51,45 +30,45 @@
                            <h3>Using Multicast</h3><br>
 
                            The use of multicasting is completely application specific; for example, it
-                           can be used to join a group of inter-operating items, or it can be used to
-                           announce a particular event.  Essentially, it gives items an opportunity to
+                           can be used to join a group of inter-operating objects, or it can be used to
+                           announce a particular event.  Essentially, it gives objects an opportunity to
                            connect to each other spontaneously, without having to know the host address'
                            of the listening or sending items beforehand. This is particularly useful in
                            DHCP environments, where each machine's host address can be randomly assigned
                            and reassigned.<br><br>
 
-                           There are two parameters on which the items must agree in order to send and
-                           receive references between each other.  An IP address and port number define
-                           a specific <i>"channel"</i>, to use a radio analogy. Changing either of
-                           these values effectively switches to an entirely different channel.  The
-                           UDP/IP address is different from a traditional TCP/IP address in that it
-                           doesn't identify a specific machine and socket, rather it represents all
-                           machines that are a members of a <i>"group"</i>.<br><br>
+                           There are two parameters on which the objects must agree in order to send
+                           and receive references between each other.  An IP address, and port number,
+                           define a specific <i>"channel"</i>, to use a radio analogy. Changing either
+                           of these values effectively switches to an entirely different channel.  This
+                           UDP/IP address/port pair is fundamentally different from a TCP/IP address in
+                           that it doesn't identify a <i>specific</i> machine and socket, rather it
+                           represents all machines that are a members of a <i>"group"</i>.<br><br>
 
-                           A single item can listen and broadcast on as many channels as it wants.
+                           A object can listen and broadcast on as many channels as it wants.
                            Applications can range from performing all multicasts on a single channel,
                            to using separate channels for each specific meaning. A server performs a
-                           broadcast by passing a remoted reference to one of its items to a multicast's
-                           <a href=docs/gnu/cajo/utils/Multicast.html#announce(java.lang.Object,%20int)>announce</a>
-                           method.<br><br>
+                           broadcast by passing a reference to any object to a multicast object's
+                           <a href=docs/gnu/cajo/utils/Multicast.html#announce(java.lang.Object,%20int)>
+                           announce</a> method.<br><br>
 
                            The framework defines a default channel, which can be useful for spontaneous
                            inter-networking.  To use a <b><i>Star Trek</i></b> metaphor; it could be
-                           likened to the <i>'hailing frequency'</i> for contacting new and unknown
-                           items. Extracting interface information from spontaneously discovered items
-                           is currently application specific; unless there is a strong community
+                           likened to the <i>'hailing frequency'</i>, for contacting new and unknown
+                           objects. Extracting interface information from spontaneously discovered
+                           objects is currently application specific, unless there is strong community
                            interest for its standardization. The official <i>suggestion</i> would be
-                           for items to implement a <code>String getDescription()</code> method, which
+                           for objects to implement a <code>String getDescription()</code> method, which
                            would return a description of the features and use of the object in detail,
-                           with HTML markup allowed. Ideally, items should also implement the
+                           with HTML markup allowed. Ideally, objects should also implement the
                            <code>getProxy()</code> method, to provide a local interface, which would in
                            turn provide a graphical user interface to the object, as described in the
                            <a href=proxy.html>proxy</a> tutorial, and demonstrated in the
-                           <a href=example.html>example</a>. When an item announces its reference
-                           on the hailing frequency, the suggestion would be for remote VMs to invoke a
-                           method called <code>contact</code> on the received reference, passing a
-                           string of the URL (//host[:port]/[itemName]) on which its main item can be
-                           statically contacted, as the sole argument.
+                           <a href=example.html>example</a>. When an object announces its reference
+                           on the hailing frequency, the <i>suggestion</i> would be for remote VMs to
+                           invoke a method called <code>contact</code> on the received reference,
+                           passing a string of the URL, typically in the form //host[:port]/[name], on
+                           which its main object can be statically contacted, as the sole argument.
 
                            <h3>Receiving Multicasts</h3><br>
 
@@ -97,19 +76,20 @@
                            reference broadcasts.  It does this by invoking the multicast's
                            <a href=docs/gnu/cajo/utils/Multicast.html#listen(java.lang.Object)>
                            listen</a> method, passing in a reference to itself.  When the multicast
-                           object receives a broadcast of a remote item reference, it will invoke the
+                           object receives a broadcast of a remote object reference, it will invoke the
                            listener's public multicast method, passing a reference to itself, as
-                           an argument. Logically, a listening object would have to implement the
-                           following method:
+                           an argument. Logically, a listening object must implement the following
+                           method:
 
                            <pre>   public Object multicast(Multicast m);</pre>
 
-                           A multicast object has four public members:<br><br>
+                           A multicast object has four public members, which can be accessed by the
+                           listening object:<br><br>
 
                            <table>
                               <tr>
                                  <td><b>item</b></td>
-                                 <td>The remote reference to the broadcasted item.</td>
+                                 <td>The remote reference to the broadcasted object.</td>
                               </tr>
                               <tr>
                                  <td><b>iaddr</b></td>
@@ -129,8 +109,8 @@
                            object is to allow for the possibility of a single object to listen with
                            multiple multicast objects.  If the listener is listening with only one
                            Multicast object, there is no chance of its multicast method being invoked
-                           reentrantly. However, if a listener is listening on more than one, the
-                           possibility exists for reentrant invocation.<br><br>
+                           reentrantly. However, if it is listening on more than one, the possibility
+                           exists for reentrant invocation.<br><br>
 
                            A multicast object checks the return value of its listener's
                            multicast method invocation.  If it returns null, it will continue
@@ -140,28 +120,30 @@
 
                            <h3>Conclusion</h3><br>
 
-                           Graphically, we can try to represent the multicast concept like this:<br><br>
+                           Graphically, the multicast concept looks something like this:<br><br>
 
                            <center><img src=images/multicast.gif></center><br><br>
 
                            Just as an <i>orthodox</i> item would support both the <code>getDescription</code>
-                           and <code>getProxy</code> interface methods; an <i>orthodox</i> server would
-                           also be listening on the hailing frequency, and giving its primary contact URL
-                           to announcing items.<br><br>
+                           and <code>getProxy</code> methods; an <i>orthodox</i> server would also be
+                           listening on the hailing frequency, and giving its primary contact URL to
+                           announcing items.<br><br>
 
-                           The multicast mechanism creates the possibility for items to spontaneously,
-                           and dynamically connect. This allows items to join confederations of items
-                           to accomplish larger tasks. Dynamic confederation can provide resilient,
-                           adaptive, and fault-tolerant application networks, exhibiting <a href=http://www.wwnorton.com/catalog/fall02/004142.htm target=_blank>small-world</a>
-                           and <a href=http://us.penguingroup.com/Book/BookFrame/0,1007,,00.html?id=0452284392 target=_blank>scale-free</a>
-                           network phenomena. When operating in the context of a group of developers,
-                           it can enable a whole range of <a href=http://www.simonsays.com/book/default_book.cfm?isbn=0684868768&areaid=33 target=_blank>emergent</a>
-                           applications to form.<br><br>
+                           The multicast mechanism creates the possibility for objects to spontaneously,
+                           and dynamically connect. This allows objects to join confederations of
+                           objects to accomplish larger tasks. Dynamic confederation can provide
+                           resilient, adaptive, and fault-tolerant application networks, exhibiting
+                           <a href=http://www.wwnorton.com/catalog/fall02/004142.htm target=_blank>
+                           small-world</a> and <a href=http://www.amazon.com/exec/obidos/ASIN/0452284392/qid=1102258432/sr=2-1/ref=pd_ka_b_2_1/002-5249030-9700002 target=_blank>
+                           scale-free</a> network properties. When operating in the context of a group
+                           of developers; it can enable a whole range of <a href=http://www.simonsays.com/book/default_book.cfm?isbn=0684868768&areaid=33 target=_blank>
+                           emergent</a> applications to form. This is an extremely exciting new
+                           frontier!<br><br>
 
                            <div align="center">
                               <font size="-2">
                                  <hr width="80%">
-                                 Musticasting allows items to join an item collective dynamically.
+                                 Musticasting allows objects to join object collectives dynamically.
                               </font>
                            </div>
 
