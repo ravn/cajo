@@ -87,18 +87,18 @@
                            <br><br>In that spirit, I'll do the honor of the first one...<br><br>
 
                            
-                           <b><u>1. Argument Types:</u>
-                           <strike></b> When executing an inovke method on an item,
-                           Java reflection requires the argument types to match exactly.  Unfortunately
-                           reflection does not recognize inheritance trees.  For example, if class B
-                           extends class A, and an item method declares an argument of type A, you
-                           cannot send it an object of type B and have it work!-(  This results in the
-                           much dreaded <b><code>NoSuchMethodException</code></b>; if you haven't got
-                           one yet, you probably will soon.  This gotcha can be so inconvienient that
-                           the framework makes a special case for Objects extending the Invoke
-                           interface.  They are always typecast into Invoke. Therefore: to receive a
-                           local, remote, or proxy item reference, a method signature must declare
-                           the argument to be of type Invoke.</strike><br><br>
+                           <b><u>1. <strike>Argument Types:</u>
+                           </b> When executing an inovke method on an item, Java reflection requires
+                           the argument types to match exactly.  Unfortunately reflection does not
+                           recognize inheritance trees.  For example, if class B extends class A, and
+                           an item method declares an argument of type A, you cannot send it an object
+                           of type B and have it work!-(  This results in the much dreaded <b><code>
+                           NoSuchMethodException</code></b>; if you haven't got one yet, you probably
+                           will soon.  This gotcha can be so inconvienient that the framework makes a
+                           special case for Objects extending the Invoke interface.  They are always
+                           typecast into Invoke. Therefore: to receive a local, remote, or proxy item
+                           reference, a method signature must declare the argument to be of type
+                           Invoke.</strike><br><br>
 
                            <b>*<u>Wonderful news!</u></b> Today (08-Jan-04) a <i>significant</i>
                            improvement to the project codebase was uploaded, which <u>eliminates</u>
@@ -114,14 +114,14 @@
                            lookup before each invocation. In theory, this is for security purposes. When
                            trying to match IP addresses to host names, a DNS timeout can add up to
                            several minutes to each invocation. If you do not have a DNS server to
-                           resolve the addresses to names, it is necessary to revert back to the <i>'old
-                           way'</i>, i.e. the hosts file.  This is a text file containing address/host
-                           name pairs, which the operating system will check first, before attempting a
-                           DNS lookup over the network.<br><br>
+                           resolve the addresses to names, say on a private LAN for instance, it is
+                           necessary to revert back to the <i>'old way'</i>, i.e. the hosts file.  This
+                           is a text file containing address/host name pairs, which the operating system
+                           checks first, before attempting a DNS.<br><br>
 
                            On *nix boxes (Solaris/Unix/Linux/BSD) the file is typically located at:
-                           <b>/etc/hosts</b><br>
-                           On Windows boxes, it is usually: <b>\WINNT\system32\drivers\etc\hosts</b><br><br>
+                           <u>/etc/hosts</u><br>
+                           On Windows boxes, it is usually: <u>\WINNT\system32\drivers\etc\hosts</u><br><br>
 
                            Here you would put the IP address/host name pairs for the machines, which do
                            not have DNS support.<br><br>
@@ -130,9 +130,9 @@
                            regard to locality or remoteness of objects, it is very important to remember
                            that any remote invocation can fail, or block for a very long time, if there
                            is a problem with the network, or the target machine is unresponsive. The
-                           invoke interface is declared to throw an exception for two good reasons; one
-                           is logical, i.e. the invocation is invalid, the other is genuinely
-                           exceptional, i.e. something unexpected happened.<br><br>
+                           invoke interface is declared to throw an exception for two good reasons: One
+                           is logical, i.e. the invocation is invalid; the other is genuinely
+                           exceptional, i.e. something genuinely unexpected happened.<br><br>
 
                            These realities can be managed in three different ways: First, when dealing
                            with a remote item reference, your code should be prepared for unexpected
@@ -145,7 +145,7 @@
 
                            Lastly, I find it extremely helpful to print, frame, memorize, and post
                            somewhere near your monitor, the eight
-                           <a href=http://web.archive.org/web/20030208015752/http://java.sun.com/people/jag/Fallacies.html>fallacies</a>
+                           <a href=http://weblogs.java.net/jag/Fallacies.html>fallacies</a>
                            of distributed computing.<br><br>
 
                            <b><u>4. Firewalled Clients:</u></b> Very often a client item is operating
@@ -161,8 +161,8 @@
                            <a href=https:files/documents/974/3598/ItemProxy.java>ItemProxy</a> from the
                            ClientProxy, to give to the client. The client registers itself as a listener
                            with this object, and will receive the asynchronous callbacks made by the
-                           server through its ClientProxy object. It allows object design without regard
-                           for the firewall issue.<br><br>
+                           server through it. This allows object design without regard for the firewall
+                           issue.<br><br>
 
                            <div align="center">
                               <font size="-2">
