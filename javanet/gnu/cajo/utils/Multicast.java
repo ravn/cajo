@@ -45,7 +45,7 @@ public final class Multicast implements Runnable {
    private static Registry registry;
    private static Multicast mcast;
    private final InetAddress host;
-   private Invoke callback;
+   private Object callback;
    private Thread thread;
    /**
     * A reference to the address on which this object is operating. It is
@@ -66,11 +66,11 @@ public final class Multicast implements Runnable {
     */
    public InetAddress iaddr;
    /**
-    * A reference to a received item, when the object is listening.  It is
-    * referenced by the called listener, and should be considered valid for
-    * the duration of the invocation only.
+    * A reference to a received remote item reference, when the object is
+    * listening.  It is referenced by the called listener, and should be
+    * considered valid for the duration of the invocation only.
     */
-   public Invoke item;
+   public RemoteInvoke item;
    /**
     * The default constructor sets the internal fields to default values which
     * should be sufficient for most purposes. The multicast socket address will
@@ -144,7 +144,7 @@ public final class Multicast implements Runnable {
     * @throws IllegalArgumentException If the object is actively listening, at
     * the time of the invocation.
     */
-   public void listen(Invoke callback) {
+   public void listen(Object callback) {
       if (thread == null) {
          this.callback = callback;
          thread = new Thread(this);
@@ -157,13 +157,12 @@ public final class Multicast implements Runnable {
     * remote item reference, from its zedmob encapsulation.  The item reference
     * will be saved into the public item member variable, also the calling
     * VM's address will be extracted into the public address member variable.
-    * The listener will be called next with a String of "multicast" and a
-    * reference to this object. The multicast reference is used to access its
-    * public member variables; the remote announcer's reference and IP address,
-    * as well as the multicast address and port on which it was received.  The
-    * second two members are of interest in the case where the same object is
-    * listening
-    * on multiple multicast objects. If the invocation returns null, the
+    * The listener's multicast method will be called next with a reference to
+    * this object. The multicast reference is used to access its public member
+    * variables; the remote announcer's reference and IP address, as well as
+    * the multicast address and port on which it was received.  The second two
+    * members are of interest in the case where the same object is listening
+    * on multiple multicast objects. If the method returns null, the
     * multicast listening will continue, otherwise it will be stopped. Once
     * stopped it can be restarted by the application as necessary, by invoking
     * the {@link #listen listen} method again.
@@ -178,9 +177,9 @@ public final class Multicast implements Runnable {
             ms.receive(dp);
             ByteArrayInputStream bais = new ByteArrayInputStream(dp.getData());
             try {
-               item = Remote.zedmob(bais);
+               item = (RemoteInvoke)Remote.zedmob(bais);
                iaddr = dp.getAddress();
-               if (callback.invoke("multicast", this) != null) break;
+               if (Remote.invoke(callback, "multicast", this) != null) break;
             } catch(Exception x) {}
             finally { bais.close(); }
          } catch(Exception x) { x.printStackTrace(System.err); }
@@ -233,8 +232,9 @@ public final class Multicast implements Runnable {
             System.setSecurityManager(new java.rmi.RMISecurityManager());
             System.setProperty("java.rmi.server.disableHttp", "true");
          } catch(SecurityException x) {}
-         Invoke proxy = Remote.getItem(args[0]);
-         if (args.length > 5) proxy.invoke("setItem", Remote.getItem(args[5]));
+         Object proxy = Remote.getItem(args[0]);
+         if (args.length > 5)
+            Remote.invoke(proxy, "setItem", Remote.getItem(args[5]));
          Multicast.proxy = new Remote(proxy);
          registry = LocateRegistry.
             createRegistry(Remote.getServerPort(), Remote.rcsf, Remote.rssf);
