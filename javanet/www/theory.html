@@ -94,7 +94,8 @@
                               <b>Inside the cajo framework.</b><br><br>
                            </font>
 
-                           <b>Introduction</b><br>
+                           <b>Introduction:</b><br><br>
+
                            Every remotely accessible object in the framework is known as an
                            <a href=item.html>Item</a>. An application can host one or more items
                            within its virtual machine. Items can call other items (local or remote)
@@ -123,7 +124,8 @@
                            can be of type Object[] indicating more than one object is being transferred,
                            they can even be null, indicating no object transfer.<br><br>
 
-                           <b>Remoting Items</b><br>
+                           <b>Remoting Items:</b><br><br>
+
                            The invocation of a method on a remote object using the Invoke interface is
                            made possible using the
                            <a href=docs/gnu/cajo/invoke/Remote.html>Remote</a> class.  It utilizes
@@ -137,7 +139,8 @@
                            makes all public methods of the internal object remotely callable. Naturally,
                            excepting those using primitive types.<br><br>
 
-                           <b>Contacting Items</b><br>
+                           <b>Contacting Items:</b><br><br>
+
                            Items, i.e. objects wrapped by a Remote object, are made remotely
                            accessible in two distinct ways. First, it is generally useful to bind the
                            object with the <a href=docs/gnu/cajo/utils/ItemServer.html>ItemServer</a>
@@ -161,7 +164,8 @@
                            announcements using the listen method of Multicast.  This allows items to
                            dynamically link to form item networks of functionality.<br><br>
 
-                           <b>Mobile Code</b><br>
+                           <b>Mobile Code:</b><br><br>
+
                            An item can send mobile code, complex objects, and proxy items to clients
                            using the <a href=docs/gnu/cajo/utils/CodebaseServer.html>CodebaseServer</a>
                            class.  CodebaseServer will create a specialized http server on the specified
