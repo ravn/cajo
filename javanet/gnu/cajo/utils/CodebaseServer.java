@@ -34,10 +34,7 @@ import gnu.cajo.invoke.Remote;
  * from any available free port at runtime, or it can be explicitly specified,
  * usually to operate through a firewall. A given VM instance can only have one
  * codebase, therefore construction of a second instance will result in an
- * IllegalStateException being thrown by its constructor.<br><br>
- * <i>Note:</i> if the Remote class needs {@link gnu.cajo.invoke.Remote#config
- * configuration}, this must be done <b>before</b> binding any proxy serving item,
- * since the binding will use the server's name and port number.
+ * IllegalStateException being thrown by its constructor.
  * 
  * @version 1.0, 01-Nov-99 Initial release
  * @author John Catherino
@@ -181,6 +178,7 @@ public final class CodebaseServer extends Thread {
          while(!isInterrupted()) {
             Socket s = ss.accept();
             try {
+               s.setSoTimeout(1500);
                InputStream  is = s.getInputStream();
                OutputStream os = s.getOutputStream();
                int ix = is.read(msg);
@@ -293,12 +291,12 @@ public final class CodebaseServer extends Thread {
                os.flush();
                os.close();
                is.close();
-            } catch (Exception x) { x.printStackTrace(System.err); }
+            } catch (Exception x) { x.printStackTrace(); }
             try { s.close(); }
-            catch (Exception x) { x.printStackTrace(System.err); }
+            catch (Exception x) { x.printStackTrace(); }
          }
-      } catch(Exception x) { x.printStackTrace(System.err); }
+      } catch(Exception x) { x.printStackTrace(); }
       try { ss.close(); }
-      catch(Exception x) { x.printStackTrace(System.err); }
+      catch(Exception x) { x.printStackTrace(); }
    }
 }
