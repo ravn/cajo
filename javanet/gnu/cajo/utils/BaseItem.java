@@ -32,19 +32,20 @@ import java.rmi.MarshalledObject;
  * @version 1.0, 01-Nov-99 Initial release
  * @author John Catherino
  */
-public class BaseItem implements Invoke {
+public class BaseItem {
    /**
     * A reference to the item's processing code.  If non-null, it will be
     * started automatically binding in the rmiregistry.  Its thread can be
     * accessed through the thread member.
     */
-   protected Runnable runnable;
+   protected MainThread runnable;
    /**
     * A reference to the proxy served by this item.  It is assigned by the
     * {@link ItemServer ItemServer} during its bind operation. It is
-    * otherwise it will contain a remote reference to the item itself.
+    * the item's proxy, if it has one, otherwise a remote reference to itself,
+    * encased in a {@link java.rmi.MarshalledObject MarshalledObject}
     */
-   public MarshalledObject mob;
+   protected MarshalledObject mob;
    /**
     * A reference to the item's processing thread. It can be
     * {@link java.lang.Thread#interrupted interrupted}, to signal the item to
@@ -54,34 +55,23 @@ public class BaseItem implements Invoke {
    /**
     * The main processing thread of this Item.  An item can be either entirely,
     * event driven, i.e. executing only when its methods are being invoked,
-    * or can have a thread of its own.  When the BaseItem is constructed,
-    * if its <code>thread</code> argument is non-null, the thread will be
-    * instantiated and started.  It is highly recommended that it loop on the
-    * BaseItem's thread member's {@link java.lang.Thread#isInterrupted
-    * isInterrupted} method.  Either the item, or its hosting application would
-    * invoke {@link java.lang.Thread#interrupt interrupt} on the reference, to
-    * signal that the item should perform an orderly shutdown.<br><br>
+    * or can also have a thread of its own. If non-null, it will be started
+    * upon its binding by the {@link ItemServer ItemServer}, where its
+    * {@link #startThread startThread} method will be invoked.<br><br>
     * This is an an inner class of BaseItem, to allow its implementations
-    * access to its item's private and protected members and methods.
+    * access to the item's private and protected members and methods.
     * This is critical because <b>all</b> public methods of BaseItem can be
-    * invoked by remote objects, just as for local objects.
+    * invoked by remote objects, just like with local objects.
     */
    public abstract class MainThread implements Runnable {
       /**
-       * The constructor performs no function, as the class is abstract.
-       * These details are left to application specific subclasses.
+       * Nothing is performed in the constructor. Construction and
+       * configuration are generally performed by a builder application.
        */
       public MainThread() {}
       /**
-       * The run method is exectued by the Thread created for the BaseItem,
-       * and runs until it returns.  It typically loops, and should use the
-       * BaseItem's thread member, which represents this thread, to see if
-       * its {@link java.lang.Thread#isInterrupted isInterrupted} method
-       * returns true.  If so, this indicates that the item is being taken
-       * offline, and should close out any of its critical resources in an
-       * orderly fashion, and exit the loop. This would be done by the server,
-       * calling {@link java.lang.Thread#interrupt interrupt} on the item's
-       * public thread member.
+       * The run method is exectued by the thread created for the BaseItem
+       * at its binding on the server, and runs until it returns.
        */
       public abstract void run();
    }
@@ -91,82 +81,56 @@ public class BaseItem implements Invoke {
     */
    public BaseItem() {}
    /**
-    * This method is called by remote clients to install a proxy in this VM.
-    * This invocation will only succeed if acceptProxies was true when it
-    * was bound.  The received proxy's init method will be invoked with a
-    * reference to itself, remoted in the context of this VM.  This remote
-    * reference will be returned, providing the calling item with an interface
-    * on which to asynchronously call its proxy back.
+    * This method is called by remote clients to install their proxies in
+    * this VM. This invocation will only succeed if acceptProxies was true
+    * when it, or any of this application's items, were bound. The received
+    * proxy's init method will be invoked with a reference to itself, remoted
+    * in the context of this VM.  This is to initialize the proxy, and provide
+    * it with a handle to pass to other remote items, on which they can
+    * contact this item.  This remote reference will also be returned to the 
+    * caller, providing an interface on which to asynchronously call its proxy.
     * @param proxy The proxy to run in this VM.
     * @return A reference to the proxy remoted within this context.
     * @throws ClassNotFoundException If the item does not accept proxies.
-    * @throws Exception If the init invocation rejected the initialization
-    * invocation.
+    * @throws IllegalArgumentException If the item provided is a remote
+    * reference.
+    * @throws Exception If the proxy rejected the initialization invocation.
     */
    public Remote setProxy(Invoke proxy) throws Exception {
+      if (proxy instanceof RemoteInvoke)
+         throw new IllegalArgumentException("Proxy must be local");
       Remote ref = new Remote(proxy);
-      proxy.invoke("init", new Remote(proxy));
+      proxy.invoke("init", ref);
       return ref;
    }
    /**
     * This method is called by the remote clients, to request the item's
-    * proxy item, if it supports one. If it does not, it will receive a
-    * remote reference to the item itself.
-    * @return A reference to the proxy serving this item, encased in a
-    * {@link java.rmi.MarshalledObject MarshalledObject}, if the item
-    * has a proxy interface, otherwise a remote self-reference.
+    * proxy, if it supports one. If it does not, it will return null.
+    * @return A the proxy serving this item, encased in a
+    * {@link java.rmi.MarshalledObject MarshalledObject}, if the item has a
+    * proxy interface, otherwise null.
     */
-   public final MarshalledObject getProxy() { return mob; }
+   public MarshalledObject getProxy() { return mob; }
    /**
-    * This function may be called reentrantly, so critical methods <i>must</i>
-    * be synchronized. It will invoke the specified method with the provided
-    * arguments, if any, using the Java reflection mechanism. This allows
-    * subclasses to define methods and signatures of their own liking.  This
-    * method will connect to that method based on its name, and argument types.
-    * However, the argument types unfortunately must match exactly, as the
-    * reflection mechansim does not recognize polymorphism. It is called the
-    * first time by by the {@link ItemServer ItemServer}, to signal the item
-    * to start its processing thread.  If the item has a {@link BaseProxy Proxy}
-    * object, it will be invoked a second time, with a the proxy object
-    * encased in a MarshalledObject.
-    * @param  method The method to invoke in this item.
-    * @param args The arguments to provide to the method for its invocation.
-    * @return The sychronous data, if any, resulting from the invocation.
-    * @throws java.rmi.RemoteException For network communication related
-    * reasons.
-    * @throws IllegalArgumentException If the method argument is null.
-    * @throws NoSuchMethodException If no matching method can be found.
-    * @throws Exception If the method rejects the invocation, for any
-    * application specific reason.
-    * @throws ClassCastException If the first invocation is not with a
-    * {@link java.rmi.MarshalledObject MarshalledObject} of its proxy.
+    * This method is called by the {@link ItemServer ItemServer} during a
+    * bind operation, if the item has a proxy interface.
+    * @param mob The item's proxy object, if it supports one, otherwise a
+    * remote referenced to itself, either way, encased in a
+    * {@link java.rmi.MarshalledObject MarshalledObject}
     */
-   public final Object invoke(String method, Object args) throws Exception {
-      if (runnable != null) {
+   public void setProxy(MarshalledObject mob) {
+      if (this.mob ==  null) this.mob = mob;
+   }
+   /**
+    * This method is called by the {@link ItemServer ItemServer} during a
+    * bind operation. If the item has a processing thread, meaning its
+    * runnable member is not null, the thread will be started, and its
+    * reference stored in the thread member.
+    */
+   public void startThread() {
+      if (thread == null && runnable != null) {
          thread = new Thread(runnable);
          thread.start();
-         runnable = null;
-         return null;
       }
-      if (mob == null) {
-         if (args instanceof MarshalledObject){
-            mob = (MarshalledObject)args;
-            return null;
-         } else mob = new MarshalledObject(new Remote(this));
-      }
-      if (method == null)
-         throw new IllegalArgumentException("Method cannot be null");
-      Class types[] = null;
-      if (args instanceof Object[]) {
-         types = new Class[((Object[])args).length];
-         for (int i = 0; i < types.length; i++)
-            types[i] = ((Object[])args)[i] instanceof Invoke ?
-               Invoke.class : ((Object[])args)[i].getClass();
-      } else if (args != null) {
-         types = new Class[] {
-            args instanceof Invoke ? Invoke.class : args.getClass() };
-         args = new Object[] { args };
-      }
-      return getClass().getMethod(method, types).invoke(this, (Object[])args);
    }
 }
