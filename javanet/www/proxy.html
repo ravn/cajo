@@ -170,6 +170,15 @@
 
                            <h3>Conclusion</h3><br>
 
+                           One of the most important features of a proxy is to mitigate network latency.
+                           This can be of critical importance, if the remote item is very far away, or
+                           linked over a slow network. Generally it is a recommended practice for
+                           remote items to support a proxy. At a minimum, it would serve to minimize
+                           network traffic, and pre-fetch objects contextually.  Effectively this type
+                           of proxy would be considered a <i>'smart'</i> remote reference. Clients
+                           would then have the option to use the proxy, or to manipulate the remote
+                           object directly over the network.<br><br>
+
                            Both the proxy, and its serving item, can in turn give their remote
                            references to other items.  As a result, an item calling another item does not
                            know, or need even care, if it is invoking a local item, a remote item, a
