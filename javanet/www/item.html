@@ -6,6 +6,7 @@
       <meta name="Author" content="John Catherino">
    </head>
    <body bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800000" alink="#FF0000">
+<div id="projecthome" class="app">
       <table width="100%" cellspacing="0" cellpadding="0" border="0">
          <tr>
             <td><img src="images/topl.gif" width="17" height="17" border="0"></td>
@@ -128,7 +129,9 @@
                            arguments, or returned, rather they must be sent using their object
                            representations, in this case <code>Integer</code> or <code>Character</code>.
                            This means all argument and return typechecking will be done at runtime
-                           instead of compiletime.<br><br>
+                           instead of compiletime.
+
+                           <h3>Using items</h3><br>
 
                            All invocations on any item should be made using its Invoke interface.  While
                            technically this technique isn't necessary when the item is local, i.e. in
@@ -168,6 +171,7 @@
       foo = Remote.getItem("/beans/foo.ser");
    }
 </pre></code>
+                           <h3>Remote Transparency</h3><br>
 
                            By handling items using their Invoke interface, calling objects need not know
                            or even care, if the items are local or remote. However, should it be
@@ -183,7 +187,9 @@
                            This is the sole purpose of the
                            <a href=docs/gnu/cajo/invoke/RemoteInvoke.html>RemoteInvoke</a> interface,
                            testing locality, as it is otherwise a bodyless interface. In general
-                           however, locality testing should be a discouraged practice.<br><br>
+                           however, locality testing should be a discouraged practice.
+
+                           <h3>Base Items</h3><br>
 
                            A BaseItem can optionally define a
                            <a href= docs/gnu/cajo/utils/BaseItem.MainThread.html>MainThread</a> object,
@@ -196,7 +202,9 @@
                            and perform an orderly shutdown. An item can optionally have no main thread.
                            This would be known as an <i>event-driven</i> item, meaning it executes only
                            when called by a client. <i>Note:</i> having multiple clients can cause an
-                           Item's public methods to be invoked reentrantly.<br><br>
+                           Item's public methods to be invoked reentrantly.
+
+                           <h3>Conclusion</h3><br>
 
                            Ultimately that's all there is to an item. To make an item reference
                            <u>statically</u> accessible to other virtual machines, it is passed to the
