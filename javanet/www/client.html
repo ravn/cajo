@@ -98,49 +98,47 @@
                            <a href=docs/gnu/cajo/invoke/Client.html>Client</a> class operates in two
                            fundamentally different, but functionally complementary ways.<br><br>
 
-                           One way it runs is as an applet.  The applet, upon loading by a Java
+                           One way it runs is as an Applet.  The applet, upon loading by a Java
                            enabled browser, will connect back to its host and request either the
-                           default proxy, or the one specified in the applet tag.  It will store the
-                           reference to the proxy returned, to prevent it from being garbage collected.
-                           Next it will initialize the proxy, calling its invoke method with an argument
-                           of "init" and providing a reference to the proxy, remoted within the context
-                           of the plug-in's VM.  Finally, the return of this proxy invocation,
-                           cannonically a descendant of java.awt.Component, is added to the applet's
-                           panel.  This allows a single client to host an unlimited variety of
-                           graphical application proxies, with all code provided by the server.<br><br>
+                           default proxy, or one specified in the applet tag. Next it will initialize
+                           the proxy, by calling its init method, providing a reference to the proxy
+                           remoted within the context of the plug-in's VM.  Finally, the return of this
+                           proxy invocation, cannonically a descendant of java.awt.Container, is added
+                           to the applet's panel.  This allows a single client to host an unlimited
+                           variety of graphical application proxies, with all of the code provided by
+                           the server.<br><br>
 
-                           The server can fully configure the applet using its parameters, specified in
-                           the tag.  The client can provide three of the optional configuration
-                           parameters:
+                           The server fully configures the applet using the parameters specified in
+                           its tag.  The client can provide three of the optional configuration
+                           parameters however:
                            <ul>
+                              <li><b>proxyName</b>:  The name of the proxy to request from the server
                               <li><b>clientPort</b>: The port on which to communicate with the proxy
                               <li><b>localPort</b>:  The client's internal port number, if translated
-                              <li><b>proxyName</b>:  The name of the proxy to request from the server
                            </ul>
                            Normally the default settings will work fine, unless either the client is
-                           behind NAT/Firewall, or wants a specific proxy other than the default.
-                           The client can tell the server how to set these items via the URL it uses to
-                           request the applet. It uses the following syntax:
-                           <pre><code>   http://host[:port]/[clientPort][:localPort][-proxyName]</code></pre>
+                           behind a firewall, or wants a specific proxy, other than the default.
+                           The client can tell the server how to set these parameters, via the URL it
+                           uses to request the applet. It would use the following syntax:
+                           <pre><code><b>   http://host[:port]/[clientPort][:localPort][-proxyName]</b></code></pre>
                            The parameters in brackets can be selectively omitted, but the order of
                            arguments is required.<br><br>
 
-                           The class also can operate as an application. In this case, it provides two
+                           The class can also operate as an application. In this case, it provides two
                            distinct capabilities. First it creates a remotely accessible proxy hosting
-                           item.  This item accepts invocations with an argument of either a proxy, or
-                           a remote reference.  If the item is a proxy, it will initialize it in a
-                           similar manner as the applet does, and if the invocation result is derived
-                           from either Component or JComponent, it will create a frame on the client
-                           displaying the result.  It the provided argument is a remote item, it
-                           will invoke a "getProxy" request, with no argument, if the result is a
-                           graphical component, it will display it in a frame on the client. The second
-                           optional function, provided by the client is to additionally go to load an
-                           initial proxy item.<br><br>
+                           item.  This item accepts invocations with an argument of either a remote
+                           reference, or a proxy. If the provided argument is a remote item, it will
+                           first invoke getProxy() on it, to receive its proxy item. Either way, it will
+                           initialize it in the identical manner as the applet does, and if the
+                           initialization returns a Component (or JComponent), it will create a frame
+                           (or JFrame) on the client machine, displaying the result. The second optional
+                           function, provided by the client is to additionally go to load an initial
+                           proxy item at startup.<br><br>
 
-                           The application takes up to five optional
-                           parameters.  They are in order, from  most often changed, to least often,
-                           because to change an option, all of the  previous options must also be
-                           specified; both order and precedence count. Here are the options:
+                           The application can take up to five optional parameters.  They are in order,
+                           from  most often changed, to least often; because to change an option, all of
+                           the  previous options must also be specified, i.e. both order and precedence
+                           count. Here are the options:
                            <ul>
                               <li> The client's external host name, if it's using NAT
                               <li> The client's external port number, if it's behind a firewall
@@ -160,12 +158,12 @@
                            </ul>
 
                            <b><u>Very Important:</u></b> This class, when run as an application, is
-                           intended for testing and development purposes. In an untrusted environment
-                           it is <u>extremely unsafe</u> to run by default. To make its use for
-                           development easier; the client application employs a
+                           intended for testing and development purposes in a trusted enviornment.
+                           It is <u>extremely unsafe</u> to run on the Internet. To make its use
+                           for development purposes simpler, the client application employs a
                            <a href=docs/gnu/cajo/invoke/NoSecurityManager.html>NoSecurityManager</a>.
-                           As its name implies, this allows any loaded proxy to do anything it wants on
-                           the host's physical machine. Under some circumstances granting proxy
+                           As its name implies, this allows any loaded proxy to do anything it wants, on
+                           the host's physical machine! Under some circumstances granting proxy
                            items full permissions may be exactly what is needed; on kiosks, or thin client
                            machines, on a protected newtork, for example.  It has an advantage it that
                            it allows the client to run simply as a single jar file, no security policy
@@ -175,43 +173,41 @@
                            start this application with a security policy installed. This would require
                            an invocation such as the following:
 
-                           <pre><code> java -jar -Djava.security.manager -Djava.security.policy=someURL client.jar</pre></code>
+                           <pre><code><b> java -jar -Djava.security.manager -Djava.security.policy=someURL client.jar</b></pre></code>
 
                            The file referenced by the URL (or simply path/filename) would clearly define
-                           what permissions the downloaded proxies would have.  For example, the
+                           what permissions the downloaded proxies would have.  For example; the
                            following policy file, is highly restrictive, but suitable for most proxies:<code><pre>
 grant {
    permission java.net.SocketPermission "*:1024-", "accept;
    permission java.net.SocketPermission "*", connect;
 };</code></pre>
-                           This only allows loaded proxies to create server sockets on any available
+                           This only allows loaded proxies to create server sockets on any unused
                            port over 1023, and connect to any server on any port.  It's a little
-                           more generous than the applet sandbox, but still safe for untrusted code.
+                           more generous than an Applet sandbox, but still safe for untrusted code.
                            <i>Note:</i> be very sure to use the first -D argument, you don't want to
                            make the same
                            <a href=http://developer.java.sun.com/developer/bugParade/bugs/4915879.html>
-                           mistake</a> I did. (essentially, omission of the first, negates the second
-                           argument)<br><br>
+                           mistake</a> I did. (essentially, omission of the first argument, negates the
+                           second)<br><br>
 
                            One more detail; by design, the client is vulnerable to a denial of service
-                           attack.  While unlikely, a malicious server could flood the virtual machine
-                           with so many proxies that it crashes.  However with proper security
-                           installed, no harm would come to the host machine. Nothing can be done
-                           about this; it's an inherent risk of hosting untrusted foreigh code... just
-                           so you know.<br><br>
+                           attack.  Though unlikely, a malicious server could flood the client's
+                           Virtual Machine with so many proxies that it crashes.  However with proper
+                           security installed, no real harm would come to the host machine. It's an
+                           inherent risk of hosting untrusted foreigh code... just so you know.<br><br>
 
-                           Lastly, as with all classes in the invoke package, they have no knowlege of
-                           the existence of the <a href=docs/gnu/cajo/utils/package-summary.html>utils</a>
-                           package. All that is required to build a client of your own, is the invoke
-                           package, and those application specific classes to your extension.  The utils
-                           package exists solely for the purpose of creating server and proxy items,
-                           and their server applications.<br><br>
+                           Lastly, all classes in the <a href=docs/gnu/cajo/invoke/package-summary.html>
+                           invoke</a> package have no knowlege of the existence of the
+                           <a href=docs/gnu/cajo/utils/package-summary.html>utils</a> package. All that
+                           is required to build a client of your own, is the invoke package, and your
+                           application specific classes.  The utils package exists solely for the purpose
+                           of creating server and proxy items, and their server applications.<br><br>
 
-                           <br>
                            <div align="center">
                               <font face="Verdana, Helvetica" size="-2">
                                  <hr width="80%">
-                                 A useful utility in its own right, it is especially handy during development.
+                                 Client, a useful utility in its own right, especially handy during development.
                               </font>
                            </div>
 <!-- end main.html -->
