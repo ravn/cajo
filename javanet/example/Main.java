@@ -30,9 +30,11 @@ public class Main { // General purpose server startup pattern
 // start up the codebase and applet service:
          new CodebaseServer("proxy.jar", httpPort);
 // here's the crux:
-         item = ItemServer.bind(item, "main", true, mc, pl);
+         item = ItemServer.bind(item, "main", pl);
 // multicast our startup, just for fun:
          mc.announce((Remote)item, 16);
+// accept proxies, just for fun:
+         ItemServer.acceptProxies();
 // listen for announcements, just for fun:
          mc.listen(new Invoke() {  // any announcers will receive a proxy
             public Object invoke(String method, Object args) {
