@@ -95,15 +95,15 @@
                               <b>Proxy cajo items distribute server functionality to the client.</b>
                            </font><br><br>
 
-                           If you haven't read the page on items yet, you really should first; since
+                           If you haven't read the page on items yet, you really should first, since
                            a proxy is just another type of an <a href=item.html>Item</a>. Proxies can
                            be any object, though they generally derive from
                            <a href=docs/gnu/cajo/utils/BaseProxy.html>BaseProxy</a>.
-                           Proxies are sent to a client by a server item. BaseProxy subclasses will
-                           arrive with a remote link back to its server item, on which it can
-                           asynchronously communicate with it.  Proxies are often used to pre-process
-                           method invocations made by the client, using the computing resources of the
-                           client, rather than those of the server.
+                           Proxies are sent to a client by, and on behalf of, a server item. BaseProxy
+                           subclasses will arrive with a remote link back to its server item, on which
+                           it can asynchronously communicate with it.  Proxies are often used to
+                           pre-process method invocations made by the client, using the computing
+                           resources of the client, rather than those of the server.
 
                            <h3>Base Proxies</h3><br>
 
@@ -117,11 +117,11 @@
                            interface, used to route local and remote invocations to its public methods,
                            returning the results, if any. It also has a string table, which can be
                            automatically loaded with the language appropriate to the locale of the
-                           client.<br><br>
+                           client, if defined.<br><br>
 
                            Each proxy is served by, and services a specific server item. A server item
                            binds itself and serves its proxy object using the static
-                           <a href=docs/gnu/cajo/utils/ItemServer.html#bind(java.lang.Object,%20java.lang.String,%20boolean,%20gnu.cajo.utils.Multicast,%20java.lang.Object)>
+                           <a href=docs/gnu/cajo/utils/ItemServer.html#bind(java.lang.Object,%20java.lang.String,%20java.lang.Object)>
                            bind</a> method of the <a href=docs/gnu/cajo/utils/ItemServer.html>ItemServer</a>
                            class .  It is generally necessary to start up a
                            <a href=docs/gnu/cajo/utils/CodebaseServer.html>CodebaseServer</a>, on which
@@ -130,7 +130,7 @@
                            communication with the server item itself, and another for sending the proxy
                            codebase via the CodebaseServer.  If a server does not use proxies, it only
                            needs one port. The CodebaseServer can also be used to send complex objects
-                           to an item, which would require the necessary class definitions.
+                           to an client, who would in turn require the necessary class definitions.
 
                            <h3>Accepting Proxies</h3><br>
 
@@ -144,8 +144,8 @@
                            setProxy</a> method. Where the returned value from this invocation will be a
                            remote reference to the installed proxy, over which the sending item can
                            communicate with it. The setProxy method is often overridden, to provide the
-                           proxy with additional local resources, on which it may operate.  A
-                           <code>ClassNotFoundException</code> will be automatically thrown by the
+                           arriving proxy with additional local resources, on which it may operate.  A
+                           <u>ClassNotFoundException</u> will be automatically thrown by the
                            remote server, if it is not accepting proxies.
 
                            <h3>Requesting Proxies</h3><br>
@@ -155,7 +155,7 @@
                            The returned item will be its default proxy, if it supports one. Once a proxy
                            item is received, the otrhodox initialization procedure is to:
 
-                           <code><pre>   proxy.invoke("init", new Remote(proxy));</pre></code>
+                           <pre>   proxy.invoke("init", new Remote(proxy));</pre>
 
                            This will cause the proxy to load its string table, create its main thread,
                            and begin operating.  It can use the provided remote reference to itself,
@@ -176,8 +176,8 @@
                            local proxy, or a remote proxy.<br><br>
 
                            The next section <a href=multicast.html>multicast</a> will show how items
-                           can send, or receive, their own and other remote references, using a method
-                           similar to a radio broadcast.<br<br>
+                           can send, or receive, remote item references using a method analogous to a
+                           radio broadcast.<br<br>
 
                            <div align="center">
                               <font face="Verdana, Helvetica" size="-2">
