@@ -119,6 +119,8 @@ public class ItemServer {
       }
       if (item instanceof Invoke) ((Invoke)item).invoke("startThread", null);
       Remote handle = item instanceof Remote ? (Remote)item : new Remote(item);
+      if (item instanceof Invoke)
+         ((Invoke)item).invoke("setProxy", new MarshalledObject(handle));
       registry.rebind(name, handle);
       if (mcast != null) mcast.announce(handle, 16);
       return handle;
@@ -129,7 +131,9 @@ public class ItemServer {
     * bind in it the local rmiregistry under the name provided. If the item
     * implements {@link gnu.cajo.invoke.Invoke Invoke} it will be called with a
     * method string of "setProxy" and a {@link java.rmi.MarshalledObject
-    * MarshalledObject} containing the proxy item.
+    * MarshalledObject} containing the proxy item. If the proxy implements
+    * Invoke, it will be called with a remote reference to the serving item,
+    * with a method argument of "setProxy".
     * @param item The item to be bound.  It may be either local to the machine,
     * or remote, it can even be a proxy for a remote server, that is, if a
     * suitable SecurityManager was already installed.
@@ -161,11 +165,18 @@ public class ItemServer {
     */
    public static Remote bind(Object item, String name, boolean acceptProxies,
       Multicast mcast, Object proxy) throws Exception {
-      Remote ref = bind(item, name, acceptProxies, mcast);
-      if (proxy instanceof Invoke) ((Invoke)proxy).invoke(null, ref);
+      if (registry == null) {
+         registry = LocateRegistry.
+            createRegistry(Remote.getServerPort(), Remote.rcsf, Remote.rssf);
+      }
+      if (item instanceof Invoke) ((Invoke)item).invoke("startThread", null);
+      Remote handle = item instanceof Remote ? (Remote)item : new Remote(item);
+      if (proxy instanceof Invoke) ((Invoke)proxy).invoke("setItem", handle);
       if (item instanceof Invoke)
          ((Invoke)item).invoke("setProxy", new MarshalledObject(proxy));
-      return ref;
+      registry.rebind(name, handle);
+      if (mcast != null) mcast.announce(handle, 16);
+      return handle;
    }
    /**
     * The application loads either a zipped marshalled object (zedmob) from a
