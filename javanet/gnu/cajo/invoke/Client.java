@@ -43,6 +43,7 @@ import java.util.zip.GZIPOutputStream;
 public final class Client extends java.applet.Applet {
    private static final String TITLE = "CaJo Proxy Viewer";
    private static Object proxy;
+   private static Frame frame;
    private static final class CFrame extends Frame implements WindowListener {
       public CFrame(String title) {
          super(title);
@@ -152,6 +153,30 @@ public final class Client extends java.applet.Applet {
       } catch (Exception x) { x.printStackTrace(System.err); }
    }
    /**
+    * This method is used by items to create a frame containing the AWT
+    * component.
+    * @param component The AWT/Swing component, typically returned from a
+    * proxy initialization, to be framed.
+    * @return the AWT Frame or Swing JFrame containing the component, already
+    * visible.
+    */
+   public static Frame frame(Component component) {
+      if (component instanceof JComponent) {
+         JFrame frame = new JFrame(TITLE);
+         frame.setDefaultCloseOperation(frame.EXIT_ON_CLOSE);
+         frame.setVisible(true);
+         frame.getContentPane().add((JComponent)component);
+         frame.pack();
+         return frame;
+      } else {
+         CFrame frame = new CFrame(TITLE);
+         frame.setVisible(true);
+         frame.add((Component)component);
+         frame.pack();
+         return frame;
+      }
+   }
+   /**
     * The application creates a graphical proxy hosting VM.
     * With the URL argument provided, it will use the static {@link Remote#getItem getItem}
     * method of the {@link Remote Remote} class to contact the server. It will then
@@ -187,18 +212,7 @@ public final class Client extends java.applet.Applet {
             proxy = ((MarshalledObject)proxy).get();
          if (proxy instanceof Invoke && !(proxy instanceof RemoteInvoke))
             proxy = ((Invoke)proxy).invoke("init", new Remote(proxy));
-         if (proxy instanceof JComponent) {
-            JFrame frame = new JFrame(TITLE);
-            frame.setDefaultCloseOperation(frame.EXIT_ON_CLOSE);
-            frame.setVisible(true);
-            frame.getContentPane().add((JComponent)proxy);
-            frame.pack();
-         } else if (proxy instanceof Component) {
-            CFrame frame = new CFrame(TITLE);
-            frame.setVisible(true);
-            frame.add((Component)proxy);
-            frame.pack();
-         }
+         if (proxy instanceof Component) frame = frame((Component)proxy);
       } catch (Exception x) { x.printStackTrace(System.err); }
    }
 }
