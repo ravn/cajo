@@ -2,6 +2,10 @@ package gnu.cajo.utils;
 
 import gnu.cajo.invoke.*;
 import java.rmi.MarshalledObject;
+import java.rmi.RemoteException;
+import java.rmi.NotBoundException;
+import java.io.IOException;
+import java.net.MalformedURLException;
 
 /*
  * Server Item Base Class
@@ -143,5 +147,39 @@ public class BaseItem {
          thread.start();
          runnable = null;
       }
+   }
+   /**
+    * A method will load either an item, or a zipped marshalled object
+    * (zedmob) of an item, from a URL, file, or from a remote rmiregistry.
+    * If the item is in a local file, it can be either inside the server's
+    * jar file, or on its local file system.<p> Loading an item from a file
+    * can be specified in one of three ways:<p><ul>
+    * <li>As a URL; in the format file://path/name.
+    * <li>As a class file; in the format path/name
+    * <li>As a serialized item; in the format /path/name</ul><p>
+    * @param url The URL where to get the object: file://, http://, ftp://,
+    * /path/name, path/name, or //[host][:port]/[name]. The host, port,
+    * and name, are all optional. If missing the host is presumed local, the
+    * port 1099, and the name "main". The referenced resource can be
+    * returned as a MarshalledObject, it will be extracted automatically.
+    * If the URL is null, it will be assumed to be ///.
+    * @return A remote reference to the item contained in the URL. It may be
+    * either local, or remote to this VM.
+    * @throws RemoteException if the remote registry could not be reached,
+    * or the remote instance could not be be created.
+    * @throws NotBoundException if the requested name is not in the registry.
+    * @throws IOException if the zedmob format is invalid.
+    * @throws ClassNotFoundException if a proxy was sent to the VM, and
+    * proxy hosting was not enabled.
+    * @throws InstantiationException when the URL specifies a class name
+    * which cannot be instantiated at runtime.
+    * @throws IllegalAccessException when the url specifies a class name
+    * and it does not support a no-arg constructor.
+    * @throws MalformedURLException if the URL is not in the format explained
+    */
+   public Remote getItem(String url) throws RemoteException,
+      NotBoundException, IOException, ClassNotFoundException,
+      InstantiationException, IllegalAccessException, MalformedURLException {
+      return new Remote(Remote.getItem(url));
    }
 }
