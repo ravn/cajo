@@ -108,7 +108,7 @@
                            provide a fairly complete introduction to the use of the project.<br><br>
 
                            The purpose of the example is to illustrate the structure of building servers,
-                           and to the feature set of the architecture.  It should provide you with enough
+                           and the feature set of the architecture.  It should provide you with enough
                            insight to build and deploy your own servers, without any additional research
                            on your part. However, if you are curious, you might want to visit the
                            <a href=theory.html>theory</a> page. Its purpose is to explain how the
@@ -157,12 +157,12 @@
                            outside the scope of this project, as a proxy is free to use the AWT, or
                            Swing, in any manner. By all means, please don't think this is the graphical
                            toolkit you have to use, it is only used for the purposes of this example,
-                           and doesn't even require any detailed examination.<br><br>
+                           and doesn't even merit any detailed examination.<br><br>
 
                            The <b>gnu/cajo/invoke</b> directory houses the core paradigm of this
                            framework.  Its files are described at length in the javadoc pages.
-                           For now suffice it to say that it defines the single standard interface
-                           between which clients and servers communicate.<br><br>
+                           For now suffice it to say that it defines the single standard interface,
+                           between which all items communicate.<br><br>
 
                            The <b>gnu/cajo/utils</b> directory applies the invoke paradigm to create
                            several useful utilities. Likewise, these files are covered in detail in
@@ -173,13 +173,14 @@
                            auto-generated documentation goes.  Initially it is empty, in fact it does
                            not even exist in the source repository.  You have to make this directory
                            yourself. Then when you run the documentation generating batch file, it will
-                           create the files on your drive. (don't worry, the documentation is not huge)
+                           create the files on your drive. (don't worry, the documentation is not huge,
+                           about 370kB)
                            <br><br>
 
                            <b><a href=tutorial.html#building name=building>Building the example:</a></b><br><br>
                            There are three fundamental ways to build the example, represented by the
                            three batch files; make1.bat, make2.bat, and make3.bat. Each builds the
-                           server, with identical functionality, simply packaged in different ways.<br><br>
+                           server, with identical functionality; simply packaged in different ways.<br><br>
 
                            The <b>make1</b> batch creates the server in a single monolithic jar file.
                            Everything is contained inside it, the server itself, the test item, the test
@@ -194,13 +195,13 @@
                            separate directories.<br><br>
 
                            The <b>make2</b> batch creates two files; server.jar and client.jar. The
-                           client.jar is a stand-alone standard client application in addition to
+                           client.jar is a stand-alone standard client application, in addition to
                            being a a standard applet used by the browser to host the example proxy.
                            Deployment now consists of the server jar, the client jar (since the server
-                           references it), and the policy file. All servers built this way need
-                           reference only one client jar, in much the same way as they all reference the
+                           references it), and the policy file. All servers built this way reference the
+                           same client jar, in much the same way as they all reference the
                            same policy file. A stand-alone client not only reduces the server jar file
-                           size, which can be helpful if there are many servers in a directory, but it
+                           size, which can be helpful if there are many servers in a directory. It
                            is also very useful in its own right. Using the standard
                            <a href=client.html>client</a> is a topic of its own, and gets its own page.<br><br>
 
@@ -209,9 +210,9 @@
                            jars, and the policy file. The reason to use make3, is if you want to take
                            advantage of the <i>"hot plugging"</i> capability of the framework.  This
                            means you can modify the proxy, or proxies, recompile their jar file, and
-                           overwrite the proxy.jar file where the server is running.  All subsequent
-                           clients will automatically receive the updated functionality, and the server
-                           need never be shut down!<br><br>
+                           overwrite the proxy.jar file, all while the server is still running.  All
+                           subsequent clients will automatically receive the updated functionality, and
+                           the server need never be shut down!<br><br>
                            
                            <b><a href=tutorial.html#launching name=launching>Launching the example:</a></b><br><br>
                            Once you have built the example, launching it can be as simple as executing
@@ -223,8 +224,9 @@
                               <li>hostname is identical both inside and outside subnet
                               <li>default network interface is used
                               <li>the server port is the same both inside and outside the subnet
-                           </ul>This should suffice for many users. The options above progress from most
-                           likely to need overriding, to least likely.<br><br>
+                           </ul>This should suffice for many users, however these options can be
+                           overridden. The options above progress from most likely to need overriding,
+                           to least.<br><br>
 
                            Typically the first problem hit by most users is that port 80 is not
                            available. This can be for a variety of reasons; there is already an http
@@ -247,8 +249,8 @@
                            This means that clients connect to this server on port 1234. <i>Note:</i>
                            the order and precedence of the arguments is required, meaning that if you
                            want to specify the server port, you must also specify the http port. (yes,
-                           arguments could be handled in a more sophisticated fashion, but this is an
-                           example program)<br><br>
+                           arguments could be handled in a more sophisticated fashion, but this is only
+                           an <i>example</i> program)<br><br>
 
                            The next most common problem is that your server is behind a NAT router.
                            This happens, for example, when you want to share a single connection to the
@@ -259,25 +261,26 @@
                            programs to tell you your actual IP address.  For example, a nice one can be
                            found at <a href=http://www.ipmonster.com>ipmonster</a>. Another highly
                            recommended option, if you are going to be serving a lot, is to get a domain
-                           name.  This is not nearly as difficult as it sounds, if you are willing to
+                           name.  This is not nearly as difficult as it sounds. If you are willing to
                            share one, it is easy to get one for free.  One handy place to do this is
                            <a href=http://www.dyndns.org>dyndns</a>.  There you can register a name,
                            something like yourhost.dyndns.com, and they even have a variety of utilities
                            you can run to make sure that name always resolves to your address, even if
                            your network provider is constantly changing it!  If you want to get
-                           <u><i>really</i></u> fancy, you can always buy a domain name. Anyway, now you
+                           <i>really</i> fancy, you can always buy a domain name. Anyway, now you
                            will have a command line that looks something like this:
-                           <pre>    <code>java -jar server.jar 8080 1234 host.dyndns.com</code></pre>
+                           <pre>    <code>java -jar server.jar 8080 1234 yourhost.dyndns.com</code></pre>
                            -or-
                            <pre>    <code>java -jar server.jar 8080 1234 123.123.123.123</code></pre>
                            Now clients will correctly connect to you on your actual address, and not use
-                           the phony one that the NAT router is giving you.<br><br>
+                           the phony one that the NAT router gave your host.<br><br>
 
                            Next, lets assume your computer has two network adapters; a wired
-                           connection to your LAN, and a wireless connection to the internet.  You may
-                           need to specify which IP address, in this case network adapter, on which
-                           you want to run.  This time you would specify the local machine address, even
-                           if you are running behind NAT.  This would be your command line now:
+                           connection to your LAN, and a wireless connection to the internet.  You are
+                           going to want to specify which IP address, in this case network adapter, on
+                           which you want to run.  This time you would specify the local machine
+                           address, even if you are running behind NAT.  This would be your command
+                           line now:
                            <pre>    <code>java -jar server.jar 8080 1234 123.123.123.123 100.100.100.100</code></pre>
                            This would also be required if your machine is multi-homed, i.e. has multiple
                            logical network interfaces.  Multi-homing is guru magic. Generally speaking,
@@ -286,41 +289,45 @@
                            The final, and most <i>obscure</i> option, is used to support port translation.
                            Essentially, this means that a router is taking connections, on your behalf
                            on one port, and routing it to your machine, on a another one. In this case
-                           you would specify the outside port. As the last option, you can imagine PT is
-                           <u><i>advanced</i></u> guru magic. If you are doing this, you already know
-                           what the command line would look like, but just for the rest of us, here it is:
+                           you would specify the outside port. As the last option, you have probably
+                           guessed it, PT is <i>advanced</i> guru magic. If you are doing this, you
+                           already know what the command line would look like, but just for the rest of
+                           us, here it is:
                            <pre>    <code>java -jar server.jar 8080 1234 guru.org 100.100.100.100 4321</code></pre>
-                           Here a client connecting on port 4321 of the public address actually connects
-                           to an internal machine on its port 1234. In this case, if none of this makes
-                           sense, if definitely doesn't apply to you.<br><br>
+                           Here a client connecting on port 4321 of the public address guru.org actually
+                           connects to some internal machine at 100.100.100.100 on its port 1234. In this
+                           case, if none of this makes any sense, it <u>definitely</u> doesn't apply to
+                           you.<br><br>
 
                            <b><a href=tutorial.html#connecting name=connecting>Connecting to the server:</a></b><br><br>
                            Connecting to this example is generally done using a browser.  You will need
                            to have the Java Plug-In installed, if you don't, the server will cause your
-                           browser ask you if it can install it. This is done to make connections easy
-                           for client users, who may be technically unsophisticated.  As with launching
-                           the application, connection could be as simple as pointing your browser to:
+                           browser prompt you if it can install it automatically. This is done to make
+                           connections easy for client users, who may be technically unsophisticated.
+                           Just as with launching the application, connecting could be as simple as
+                           pointing your browser to:
                            <pre>    <code>http://yourserver</code></pre>
-                           This proxy, which is graphical, should load and appear inside your browser.
-                           If you were not able to use port 80, you will need to specify the port on
-                           which your server is providing the proxy code, using the example from the
-                           previous section, you would use:
+                           This proxy, which is graphical, should load and appear inside your browser,
+                           full screen. If you were not able to use port 80 for your server, you will
+                           need to specify the port on which your server is providing the proxy code.
+                           Following the example from the previous section, you would use:
                            <pre>    <code>http://yourserver:8080</code></pre>
                            Where 8080 was the port on which http service was started.  The server
-                           will even correctly configure proxy communications when the client is behind
-                           NAT!<br><br>
+                           will correctly configure proxy communications settings wven when the client
+                           is operating behind a NAT router.<br><br>
 
                            <u><b>Conclusion:</b></u><br><br>
                            This is the proverbial tip of the iceberg, but should get you started.  If
-                           you have further questions, there is a
-                           <a href=https://cajo.dev.java.set/servlets/ProjectForumView>forum</a> for
-                           the project, also there is a  more general RMI
-                           <a href=http://forum.java.sun.com/forum.jsp?forum=58>forum</a>.  Before
+                           you have further questions, there is a forum for this
+                           <a href=https://cajo.dev.java.set/servlets/ProjectForumView>project</a>,
+                           also there is a  more general
+                           <a href=http://forum.java.sun.com/forum.jsp?forum=58>RMI</a> forum.  Before
                            posting however, please do your
                            <a href=http://catb.org/~esr/faqs/smart-questions.html>homework</a>.
                            (<i>Please note:</i> the previously cited link is <b>not</b> affiliated with
-                           this project, only for insight.) Often the answer you are seeking can can be
-                           found in the source documentation, or on this site, and much faster.<br><br>
+                           this project, but provided only for insight.) Often the answer you are seeking
+                           can can be found in the source documentation, or on this site, and typically
+                           much faster.<br><br>
 
                            but by all means, enjoy...<br><br><br>
 
