@@ -9,22 +9,26 @@ import java.rmi.MarshalledObject;
 
 /*
  * Graphical Proxy Loader Applet / Application
+ * Copyright (c) 1999 John Catherino
  *
  * For issues or suggestions mailto:cajo@dev.java.net
  *
  * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License, as published
- * by the Free Software Foundation; either version 2 of the license, or
- * (at your option) any later version.
+ * it under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, at version 2.1 of the license, or any
+ * later version.  The license differs from the GNU General Public License
+ * (GPL) to allow this library to be used in proprietary applications. The
+ * standard GPL would forbid this.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
- * To receive a copy of the GNU General Public License visit their website
- * at http://www.gnu.org or via snail mail at Free Software Foundation Inc.,
- * 59 Temple Place Suite 330, Boston MA 02111-1307 USA
+ * To receive a copy of the GNU Lesser General Public License visit their
+ * website at http://www.fsf.org/licenses/lgpl.html or via snail mail at Free
+ * Software Foundation Inc., 59 Temple Place Suite 330, Boston MA 02111-1307
+ * USA
  */
 
 /**

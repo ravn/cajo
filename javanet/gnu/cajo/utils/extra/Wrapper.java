@@ -12,6 +12,7 @@ import gnu.cajo.invoke.RemoteInvoke;
 
 /*
  * Generic Object Invocation Wrapper
+ * Copyright (c) 2004 John Catherino
  *
  * For issues or suggestions mailto:cajo@dev.java.net
  *
@@ -27,9 +28,10 @@ import gnu.cajo.invoke.RemoteInvoke;
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
- * To receive a copy of the GNU General Public License visit their website at
- * http://www.gnu.org or via snail mail at Free Software Foundation Inc.,
- * 59 Temple Place Suite 330, Boston MA 02111-1307 USA
+ * To receive a copy of the GNU Lesser General Public License visit their
+ * website at http://www.fsf.org/licenses/lgpl.html or via snail mail at Free
+ * Software Foundation Inc., 59 Temple Place Suite 330, Boston MA 02111-1307
+ * USA
  */
 
 /**
