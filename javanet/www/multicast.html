@@ -119,7 +119,10 @@
                to using separate channels for each specific meaning. A server performs a
                broadcast by passing a reference to any object to a multicast object's
                <a href=docs/gnu/cajo/utils/Multicast.html#announce(java.lang.Object,%20int)>
-               announce</a> method.<br><br>
+               announce</a> method. <u>Note</u>: before the first item can be announced, a
+               call to configure network settings must be made to the static <a href=https://cajo.dev.java.net/nonav/docs/gnu/cajo/invoke/Remote.html#config(java.lang.String,%20int,%20java.lang.String,%20int)>
+               config</a> method of the Remote class. It need only be called once, in the
+               lifetime of the server.<br><br>
 
                The framework defines a default channel, which can be useful for spontaneous
                inter-networking.  To use a <b><i>Star Trek</i></b> metaphor; it could be

@@ -130,7 +130,11 @@
                method of <a href=docs/gnu/cajo/invoke/Remote.html>Remote</a>,  by providing
                the host name and item name. This is called <i>static</i> linking in the
                context of this framework. By <i>de facto</i> convention, the primary item
-               served by a VM is bound under the name <i>"main"</i>.<br><br>
+               served by a VM is bound under the name <i>"main"</i>. <u>Note</u>: before
+               the first item can be remoted, a call to configure network settings must
+               be made to the static <a href=https://cajo.dev.java.net/nonav/docs/gnu/cajo/invoke/Remote.html#config(java.lang.String,%20int,%20java.lang.String,%20int)>
+               config</a> method of the Remote class. It need only be called once, in the
+               lifetime of the server.<br><br>
 
                The remote object reference can be broadcasted to all listening VMs. This
                technique is covered in the <a href=multicast.html>multicast</a> section.
