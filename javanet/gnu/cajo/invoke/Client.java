@@ -142,7 +142,7 @@ public final class Client extends java.applet.Applet {
          Remote.config(null, lPort, clientHost, cPort);
          proxy = LocateRegistry.getRegistry(getCodeBase().getHost(), pPort);
          proxy = ((Registry)proxy).lookup(proxyName);
-         proxy = ((Invoke)proxy).invoke("getProxy", null);
+         proxy = Remote.invoke(proxy, "getProxy", null);
          if (proxy instanceof MarshalledObject)
             proxy = ((MarshalledObject)proxy).get();
          if (!(proxy instanceof RemoteInvoke)) try {
@@ -211,7 +211,7 @@ public final class Client extends java.applet.Applet {
          String localHost  = args.length > 4 ? args[4] : null;
          Remote.config(localHost, localPort, clientHost, clientPort);
          proxy = Remote.getItem(args[0]);
-         proxy = ((Invoke)proxy).invoke("getProxy", null);
+         proxy = Remote.invoke(proxy, "getProxy", null);
          if (proxy instanceof MarshalledObject)
             proxy = ((MarshalledObject)proxy).get();
          if (!(proxy instanceof RemoteInvoke)) try {
