@@ -50,6 +50,7 @@
                            <li><a href=#3>Network Realities</a>
                            <li><a href=#4>Firewalled Clients</a>
                            <li><a href=#5>Marshalling Objects</a>
+                           <li><a href=#6>Sending Proxies</a>
                            </ol>
 
                            
@@ -142,6 +143,18 @@
                            failure during transmission. The reason why this failure occurs, and even why
                            this technique helps to fix it, is still a mystery.<br><br>
 
+                           <a id="6"></a><b><u>6. Sending Proxies:</u></b> Proxy objects, when sent
+                           from remote objects, nearly always arrive in a Marshalled Object. There is a
+                           <i>very</i> important reason for this. A proxy is an object, whose codebase
+                           is typically foreign to its hosting VM. When a proxy is extracted,
+                           via the <tt>get</tt> method of MarshalledObject, its remote codebase will
+                           be automatically loaded to instantiate the proxy, the location is
+                           contained <i>within</i> the MarshalledObject. The proxy now exists, but no longer
+                           has information about where its codebase came from. If you try to send the
+                           proxy object itself to another VM, the receiver will most likely suffer a
+                           <tt>ClassNotFoundException</tt>. However sending the MarshalledObject
+                           instead, will work correctly. MarshalledObjects are handy containers in which
+                           proxy objects can be freely sent between remote objects.<br><br>
 
                            <div align="center">
                               <font size="-2">
