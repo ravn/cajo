@@ -71,8 +71,10 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
       private int port;
       private String host;
       public Socket createSocket(String host, int port) throws IOException {
-         return RMISocketFactory.getDefaultSocketFactory().
+         Socket s = RMISocketFactory.getDefaultSocketFactory().
             createSocket(this.host, this.port != 0 ? this.port : port);
+         s.setSoTimeout(60000);
+         return s;
       }
       public boolean equals(Object o) {
          return o != null && o instanceof RCSF &&
