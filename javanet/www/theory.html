@@ -114,11 +114,14 @@
                            Aside from these minor differences, object interaction can behave identically.
                            Often, a small wrapper is placed around an item reference; to give it the
                            identical semantics, and type-safety, of a local method invocation.  Consider
-                           these examples:<code>
-                              <b><pre>   void baker() { someItem.invoke("baker", null); } </pre></b>
-                              <b><pre>   Able baker(Charlie c) { return (Able)someItem.invoke("baker", c); } </pre></b>
-                              <b><pre>   Able[] baker(Charlie c, Delta d) { return (Able[])someItem.invoke("baker", new Object[] { c, d }); } </pre></b>
-                           </code>
+                           these examples:<code>,<b><pre>
+   void baker() { someItem.invoke("baker", null); }
+   Able baker(Charlie c) {
+      return (Able)someItem.invoke("baker", c);
+   }
+   Able[] baker(Charlie c, Delta d) {
+      return (Able[])someItem.invoke("baker", new Object[] { c, d });
+   } </pre></b></code>
                            Now, whether an object is invoking a method directly, through the invoke
                            interface to a local object, a remote object, or proxy, is completely
                            hidden, and ultimately irrelevant to the external software.<br><br>
@@ -135,7 +138,7 @@
                            <div align="center">
                               <font face="Verdana, Helvetica" size="-2">
                                  <hr width="80%">
-                                 Here find the science, behind the magic.
+                                 All objects are local, whether virtual, or physical; machine barriers are only an illusion.
                               </font>
                            </div>
 <!-- end main.html -->
