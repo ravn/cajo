@@ -233,13 +233,13 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
    private final Object item;
    private final Class itemClass;
    /**
-    * The constructor takes an object, and remotes it for calling.  If the
-    * object implements the {@link Invoke Invoke} interface, (i.e. it is an
-    * 'item') it will simply route all remote invocations to it. Otherwise it
-    * will use Java reflection to attempt to invoke the remote calls directly
-    * on the object.
-    * @param  item The object to export remotely.  It may be an arbitrary
-    * object of any type, or an item (either local or remote).
+    * The constructor takes an object, and allows it to be remotely invoked.
+    * If the object implements the {@link Invoke Invoke} interface, (i.e. it
+    * is an 'item') it will simply route all remote invocations to it.
+    * Otherwise it will use Java reflection to attempt to invoke the remote
+    * calls directly on the object.
+    * @param  item The object to make remotely callable.  It may be an
+    * arbitrary object of any type, or an item (either local or remote).
     * @throws RemoteExcepiton If the remote instance could not be be created.
     */
    public Remote(Object item) throws RemoteException {
@@ -247,6 +247,28 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
       this.item = item;
       this.itemClass = item.getClass();
    }
+   /**
+    * This method checks if two wrappers holding an equavilent inner item.
+    * It short-circuit's the invocation, returning the result of the internal
+    * item's equals invocation.
+    * @param object A reference to another object to compare for equality.
+    * @return The result of the equals method called on the internal item. 
+    */
+   public boolean equals(Object object) { return item.equals(object); }
+   /**
+    * This method is used to identify the internal item.  It short-circuit's
+    * the invocation, returning the result of the internal item's toString
+    * invocation.
+    * @return The result of the toString method called on the internal item. 
+    */
+   public String toString() { return item.toString(); }
+   /**
+    * This method is used to identify the internal item.  It short-circuit's
+    * the invocation, returning the result of the internal item's hashCode
+    * invocation.
+    * @return The semi-unique integer identifier for the internal object.
+    */
+   public int hashCode() { return item.hashCode(); }
    /**
     * The sole generic, multi-purpose interface for communication between VMs.
     * This function may be called reentrantly, so the inner item <i>must</i>
