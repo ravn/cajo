@@ -6,6 +6,8 @@ import java.rmi.*;
 import java.util.zip.*;
 import java.rmi.server.*;
 import java.rmi.registry.*;
+import java.util.ArrayList;
+import java.lang.reflect.Method;
 
 /*
  * Generic Item Interface Exporter
@@ -234,6 +236,99 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
       }
       return item;
    }
+   /**
+    * This method attempts to resolve the polymorphism blindness in Java
+    * reflection. It has been most graceously submitted by <b>Fredrik
+    * Larsen</b>, with help from <b>Li Ma</b>! If more than one matching
+    * method is found on the internal item, based on polymorphism, it will
+    * try to determine the most applicable one to call. It works quite well,
+    * if the inheritence tree for the argument is small, it does not extend
+    * deem interface trees.
+    * @param item The object on which to find the most applicable public
+    * method.
+    * @param method The name of the method, which is to be invoked.
+    * @param args The class representations of the arguments to be
+    * provided to the argument.
+    * @return The most applicable method, which will accept all of these
+    * arguments.
+    */
+   public static Method findBestMethod(
+      Object item, String method, Class[] args) {
+      ArrayList match_list = new ArrayList();
+      Method[] ms = item.getClass().getMethods();
+      // Find any matching methods in the item and put them in a list:
+      list: for(int i = 0; i < ms.length; i++) {
+         if (ms[i].getName().equals(method) &&
+            ms[i].getParameterTypes().length == args.length) {
+            for (int j = 0; j < args.length; j++)
+               if (!ms[i].getParameterTypes()[j].isAssignableFrom(args[j]))
+                  continue list;
+               match_list.add(ms[i]);
+         }
+      }
+      if(match_list.size() > 1) { // if more than one method matches:
+         int goodness = 0;
+         Method m_selected = (Method)match_list.get(0);
+         for (int i = 1; i < match_list.size(); i++) {
+            int closeness = 0;
+            Method m = (Method)match_list.get(i);
+            for (int j = 0; j < args.length; j++) {
+               // If next method argument is a superclass of the
+               // corresponding argument in the current "best match
+               // method"  -> Increase closeness count. If it is a
+               // subclass -> Decrease closeness count. If it is a
+               // peer     -> Leave closeness count unchanged. This
+               // will handle implemented interfaces in addition to
+               // extended classes of the argument
+               Class best = m_selected.getParameterTypes()[j];
+               Class next = m.getParameterTypes()[j];
+               if (!next.isAssignableFrom(best))closeness++;
+               if (!best.isAssignableFrom(next))closeness--;
+            }
+            if (closeness > goodness) {
+               m_selected = m;
+               goodness = closeness;
+            }
+         }
+         return m_selected;
+      }
+      return match_list.size() == 1 ? (Method)match_list.get(0) : null;
+   }
+   /**
+    * This function may be called reentrantly, so the item object <i>must</i>
+    * synchronize its critical sections as necessary. The specified method
+    * will be invoked, with the provided arguments if any, on the internal
+    * object's public method via the framework Java reflection mechanism, and
+    * the result returned, if any. The method is declared static to centralize
+    * the implementation, and allow other derived classes to use this
+    * mechanism without having to reimplement it.
+    * @param item The object on which to invoke the method.
+    * @param method The method name to be invoked.
+    * @param args The arguments to provide to the method for its invocation.
+    * @return The sychronous data, if any, resulting from the invocation.
+    * @throws IllegalArgumentException If the method argument is null.
+    * @throws NoSuchMethodException If no matching method can be found.
+    * @throws Exception If the item rejected the invocation, for application
+    * specific reasons.
+    */
+   public static Object invoke
+      (Object item, String method, Object args) throws Exception {
+      if (method == null) throw
+         new IllegalArgumentException("Method argument cannot be null");
+      if(args instanceof Object[]) {
+         Object[] o_args = (Object[])args;
+         Class[]  c_args = new Class[o_args.length];
+         for(int i = 0; i < o_args.length; i++)
+            c_args[i] = o_args[i].getClass();
+         Method m = findBestMethod(item, method,c_args);
+         if (m!= null) return m.invoke(item, o_args);
+      } else if (args != null) {
+         Method m =
+            findBestMethod(item, method, new Class[]{ args.getClass() });
+         if (m != null) return m.invoke(item, new Object[]{ args });
+      } else return item.getClass().getMethod(method, null).invoke(item, null);
+      throw new NoSuchMethodException();
+   }
    private final Object item;
    /**
     * The constructor takes <i>any</i> object, and allows it to be remotely
@@ -279,16 +374,9 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
     * forwarded to the internal implementation's method.  Otherwise, the
     * method specified will be invoked, with the provided arguments if any,
     * on the internal object's public method via the Java reflection mechanism,
-    * and the result returned, if any.
-    * <p><i>Note:</i> reflection will only invoke a method whose argument
-    * types match exactly.  Unfortunately polymorphism is not recognized.
-    * Therefore as <b>a special case</b>, all arguments implementing the
-    * Invoke interface, will be forcibly cast as being type Invoke. Therefore
-    * application specific methods must declare the argument type as Invoke;
-    * however they could easily test the actual type at runtime if it matters.
-    * In general, this is a recommended practice for this paradigm, to
-    * reinforce local/remote transparency.
-    * @param  method The method to invoke on the internal object.
+    * and the result returned, if any. Technically, it simply passes the call
+    * to this class' static invoke method.
+    * @param method The method to invoke on the internal object.
     * @param args The arguments to provide to the method for its invocation.
     * It can be a single object, an array of objects, or even null.
     * @return The sychronous data, if any, resulting from the invocation.
@@ -301,21 +389,8 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
     * application specific reasons.
     */
    public Object invoke(String method, Object args) throws Exception {
-      if (item instanceof Invoke) return ((Invoke)item).invoke(method, args);
-      if (method == null)
-         throw new IllegalArgumentException("Method argument cannot be null");
-      Class types[] = null;
-      if (args instanceof Object[]) {
-         types = new Class[((Object[])args).length];
-         for (int i = 0; i < types.length; i++)
-            types[i] = ((Object[])args)[i] instanceof Invoke ?
-               Invoke.class : ((Object[])args)[i].getClass();
-      } else if (args != null) {
-         types = new Class[] {
-            args instanceof Invoke ? Invoke.class : args.getClass() };
-         args = new Object[] { args };
-      }
-      return item.getClass().getMethod(method, types).invoke(item, (Object[])args);
+      return (item instanceof Invoke) ?
+         ((Invoke)item).invoke(method, args): invoke(item, method, args);
    }
    /**
     * This method sends its remote reference to another item, either from a
@@ -381,7 +456,8 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
     * http:// ftp:// ..., //host:port/name (rmiregistry), /path/name
     * (serialized), or path/name (class).  It will be passed into the loaded
     * proxy as the sole argument to a setItem method invoked on the loaded item.
-    * </ul>@see NoSecurityManager
+    * </ul>
+    * @see NoSecurityManager
     */
    public static void main(String args[]) {
       try {
