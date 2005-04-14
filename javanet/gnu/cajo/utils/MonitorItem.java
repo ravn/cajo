@@ -165,7 +165,9 @@ public class MonitorItem implements Invoke {
                         ps.print("\n\t[");
                         ps.print(i);
                         ps.print("] =\t");
-                        ps.print(((Object[])args)[i].toString());
+                        if (((Object[])args)[i] != null)
+                           ps.print(((Object[])args)[i].toString());
+                        else ps.print("null");
                      }
                   } else ps.print(args != null ? args.toString() : "null");
                   ps.print("\nResult data = ");
@@ -179,7 +181,9 @@ public class MonitorItem implements Invoke {
                         ps.print("\n\t[");
                         ps.print(i);
                         ps.print("] =\t");
-                        ps.print(((Object[])result)[i].toString());
+                        if (((Object[])result)[i] != null)
+                           ps.print(((Object[])result)[i].toString());
+                        else ps.print("null");
                      }
                   } else ps.print(result != null ? result.toString() : "null");
                   ps.print("\nIdle time   = ");
