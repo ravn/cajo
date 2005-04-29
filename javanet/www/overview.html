@@ -98,7 +98,6 @@ public class SomeObject {
 }
 </tt></pre></blockquote>
 
-
                                     </span>
                                  </td>
                               </tr>
@@ -146,9 +145,9 @@ public class SomeObject {
                         Static binding and linking would look something like this:
 
                         <blockquote><tt>
-                           Itemserver.bind(someObject, "someName");<br><br>
+                           Itemserver.bind(someObject, "someName"); // server side<br><br>
 
-                           Object someObject = Remote.getItem("//serverName/someName");
+                           Object someObject = Remote.getItem("//serverName/someName"); // client side
                         </blockquote></tt><br>
 
                         Dynamic binding is accomplished simply by calling the <tt><a href=docs/gnu/cajo/utils/Multicast.html#announce(java.lang.Object,%20int)>
@@ -161,9 +160,9 @@ public class SomeObject {
                         Dynamic binding and linking would look something like this:
 
                         <blockquote><tt>
-                           Multicast.announce(someObject, 16);<br><br>
+                           Multicast.announce(someObject, 16); // server side<br><br>
 
-                           Multicast.listen(someListener);
+                           Multicast.listen(someListener); // client side
                         </blockquote></tt><br>
 
                         In either case; once a remote reference to an object is obtained, it can be
@@ -174,7 +173,7 @@ public class SomeObject {
                         the static <tt><a href=docs/gnu/cajo/invoke/Remote.html#zedmob(java.io.OutputStream,%20java.lang.Object)>
                         zedmob</a></tt> method of the Remote class, for later use, even by a
                         different program.  The key to all this power is the static <tt><a href=docs/gnu/cajo/invoke/Remote.html#invoke(java.lang.Object,%20java.lang.String,%20java.lang.Object)>
-                        invoke</a></tt> method of the Remote class, described next.<br>
+                        invoke</a></tt> method of the Remote class.<br>
 
                      </span>
                   </td>
@@ -326,7 +325,12 @@ public class WrapperObject {
 
                <center><img src=ventro/diagram_overview.jpeg alt="cajo object linking"
                   title="overview of the cajo project"></center>
-                           
+
+               With a little practise, you will find it so easy to distribute your
+               applications, that you will practically forget the framework is even there!
+               The simplicity, flexibility, and performance, offer quite an exciting
+               advantage over all the enormous, complex, and heavyweight distributed
+               frameworks out there.
             </span>
          </td>
       </tr>
