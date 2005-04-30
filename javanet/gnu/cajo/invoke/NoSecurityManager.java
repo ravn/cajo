@@ -47,8 +47,8 @@ package gnu.cajo.invoke;
  * attempt to install a SecurityManager should enclose the operation in a
  * try/catch block, as the operation may be forbidden by the user via the
  * technique described above. The assignment would then result in the throwing
- * of a <b>SecurityException</b>. <p>If the <b>client</b> code is fully trusted,
- * then a more flexible policy file could be used such as:<p><pre>
+ * of a <b>SecurityException</b>. <p>If the server code is fully trusted,
+ * a more flexible policy file could be used such as:<p><pre>
  * grant codeBase "file:${java.class.path}" {
  *    permission java.security.AllPermission;
  * };
