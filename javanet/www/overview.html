@@ -75,8 +75,8 @@
 
                                  <td valign="top">
                                     <span class="spacing style4 style7 style9">
-                                      It is very easy to incorporate the cajo framework into existing
-                                      applications. Hopefully this overview will clarlify the process. As you will
+                                      It is very easy to incorporate the cajo framework into applications.
+                                      This overview is intended to clarlify the process. As you will
                                       see very shortly; making an object in your application remotely accessible,
                                       or obtaining a reference to an object in a remote application, can be done
                                       with as little as <i><u>one</u></i> additional line of code!<br><br>
@@ -203,7 +203,7 @@ public class SomeObject {
                   <td valign="top">
                      <span class="spacing style4 style7 style9">
                         Invoke is the cajo architecture approach to dynamic method invocation,
-                        supplemented by use of Java reflection. It is a foundation of the
+                        supplemented by the use of Java reflection. It is the foundation of the
                         framework. It can be used to invoke <i>any</i> public method, on <i>any</i>
                         object; on both local <u>and</u> remote objects.<br><br>
 
@@ -255,7 +255,7 @@ public class SomeObject {
                         run time. If there is no mappable signature, the invocation will result in
                         a <tt>NoSuchMethodException</tt>.<br><br>
 
-                        There is however, an <u>extremely</u> useful technique, to restore compile
+                        There is however, an <i>extremely</i> useful technique, to restore compile
                         time typechecking; it is called a <tt><a href=docs/gnu/cajo/utils/extra/Wrapper.html>
                         wrapper</a></tt> class.<br><br>
 
@@ -289,17 +289,17 @@ public class WrapperObject {
 }
 </pre></tt></blockquote>
 
-                        The wrapper architecture also supports the simple insertion of very powerful
-                        <i>supplemental</i> functionality; such as retry, caching, monitoring,
-                        logging, measurement, debug, testing, validation, load balancing, fail-over,
-                        etc.<br><br>
+                        The wrapper architecture also supports the simple insertion of <i>extremely</i>
+                        powerful supplemental functionality; such as retry, caching,
+                        monitoring, notification, logging, measurement, debug, testing, validation,
+                        load balancing, fail-over, etc.<br><br>
 
                         It is important to remember that since the Remote.invoke method works
                         on <u>both</u> local, <i>and</i> remote objects; the wrapper technique
-                        provides the ability to <i>transparently</i> scale; from local object
-                        interaction, to remote, <i>without</i> affecting the remaining source code.
-                        It even provides the flexibility to change its wrapped object from local
-                        to remote, or to a different server, even at runtime.
+                        provides the ability to <i>transparently</i> scale, from local object
+                        interaction, to remote; <i>without</i> affecting the remaining source code.
+                        It even provides the flexibility to change its wrapped object from local,
+                        to remote, or to a different server; <i>even</i> at runtime.
                      </span>
                   </td>
                </tr>
@@ -331,10 +331,10 @@ public class WrapperObject {
                <center><img src=ventro/diagram_overview.jpeg alt="cajo object linking"
                   title="overview of the cajo project"></center>
 
-               With a little practise, you will find it so easy to distribute your
-               applications, that you will practically forget the framework is even there!
-               The simplicity, flexibility, and performance, offer quite an exciting
-               advantage over the enormous, complex, and heavyweight, distributed
+               Given the transparency of this framework, you will soon find it so easy to
+               distribute your applications, that you will practically forget the framework
+               is even there. Its simplicity, flexibility, and performance, offer quite an
+               exciting change; from the enormous, complex, and heavyweight, distributed
                frameworks out there.
             </span>
          </td>
