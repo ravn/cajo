@@ -221,7 +221,7 @@ public class SomeObject {
                         result is the object returned from the method invocation, if any. The method
                         declares that it throws <i>Exception</i>, to allow the called method the
                         freedom to throw any type of Exception; including none at all. It is
-                        <u>also</u> used to cover network related failures, for invocations on remote
+                        <i>also</i> used to cover network related failures for invocations on remote
                         objects.<br>
                      </span>
                   </td>
@@ -250,7 +250,7 @@ public class SomeObject {
                   <td valign="top">
                      <span class="spacing style4 style7 style9">
                         It might appear that all type safety has been completely abandoned; looking
-                        somewhat like a return to the C language. However, what has really happened,
+                        somewhat like a return to the C language. However, what has really happened
                         is that strong typechecking had to move, necessarily, from compile time, to
                         run time. If there is no mappable signature, the invocation will result in
                         a <tt>NoSuchMethodException</tt>.<br><br>
@@ -289,15 +289,17 @@ public class WrapperObject {
 }
 </pre></tt></blockquote>
 
-                        Wrappers can also provide <i>supplemental</i> functionality; such as retry,
-                        caching, monitoring, logging, measurement, debug, testing, validation, etc.
-                        It is very important to remember that since the Remote.invoke method works
-                        on <u>both</u> local, <i>and</i> remote objects; the wrapper paradigm
+                        The wrapper architecture also supports the simple insertion of very powerful
+                        <i>supplemental</i> functionality; such as retry, caching, monitoring,
+                        logging, measurement, debug, testing, validation, load balancing, fail-over,
+                        etc.<br><br>
+
+                        It is important to remember that since the Remote.invoke method works
+                        on <u>both</u> local, <i>and</i> remote objects; the wrapper technique
                         provides the ability to <i>transparently</i> scale; from local object
                         interaction, to remote, <i>without</i> affecting the remaining source code.
-                        It even provides the <u>ultimate</u> flexibility: The wrapped object can
-                        easily be changed, from local to remote, even to a different server;
-                        at <i>runtime</i>!
+                        It even provides the flexibility to change its wrapped object from local
+                        to remote, or to a different server, even at runtime.
                      </span>
                   </td>
                </tr>
@@ -332,7 +334,7 @@ public class WrapperObject {
                With a little practise, you will find it so easy to distribute your
                applications, that you will practically forget the framework is even there!
                The simplicity, flexibility, and performance, offer quite an exciting
-               advantage over all the enormous, complex, and heavyweight distributed
+               advantage over the enormous, complex, and heavyweight, distributed
                frameworks out there.
             </span>
          </td>
