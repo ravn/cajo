@@ -1,0 +1,38 @@
+<body>
+
+The cajo package is used for transparent distributed computing between
+remote Virtual Machines.<p>
+
+It provides two primary services:<p>
+
+<ul>
+<li> To make objects remotely callable with no structural changes to the
+objects themselves.<p>
+
+<li> To allow applications to remote their user interfaces transparently,
+as both applets, and via WebStart.<p>
+</ul>
+
+It allows Virtual Machines to dynamically distribute their functionality
+across the network. It essentially creates a seamless continuum between
+cooperating remote Virtual Machines, or in other words, creates a
+composite <i>Virtual Virtual Machine</i>. (VVM)<p>
+
+The <a href=gnu/cajo/invoke/package-summary.html>invoke</a> package is
+common to all cooperating virtual machines. It allows one Virtual Machine to
+<i>use</i> the functionality of another. While it consists of five classes,
+only three are necessary in most cases. Two of these are interfaces, each
+with less than five lines of code! <p>
+
+The <a href=gnu/cajo/utils/package-summary.html>utils</a> package is a
+collection of eight classes used to <i>furnish</i> functionality to remote
+Virtual Machines. A typical application will use most, if not all, of these
+classes.<p>
+
+The <a href=gnu/cajo/utils/extra/package-summary.html> extra</a> package
+provides some techniques for applying the framework. It is not critical to
+understanding the framework, and as such should be reviewed last. It will
+provide however, both useful supplemental functionality, and a set of
+interesting examples of the power inherent in this architecture.<p>
+
+</body>
