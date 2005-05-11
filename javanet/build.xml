@@ -125,7 +125,8 @@
     <target name="doc">
        <mkdir dir="docs" />
        <javadoc destdir="docs" author="true" version="true"
-           nodeprecated="true" windowtitle="The cajo project" >
+           nodeprecated="true" windowtitle="The cajo project"
+           overview="gnu/cajo/overview.html" >
            <fileset dir="gnu/cajo" />
        </javadoc>
     </target>
