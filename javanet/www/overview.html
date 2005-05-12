@@ -130,15 +130,15 @@ public class SomeObject {
                         One of the most important aspects of the cajo framework is that it does not
                         require any changes to <u>your</u> objects, in order to use them remotely.
                         Even if your application already uses some other distributed framework; it
-                        is very easy to <i>drop in</i> cajo support, to increase your distributed
+                        is very easy to <i>drop in</i> cajo support, and increase your distributed
                         user base. To make an object remotely accessible, the framework provides two
                         distinct options; these are known collectively as <i>static</i>, and
                         <i>dynamic</i> binding. Both may even be used on the same object.<br><br>
 
-                        Static binding is accomplished simply by calling the static <tt><a href=docs/gnu/cajo/utils/ItemServer.html#bind(java.lang.Object,%20java.lang.String)>
+                        Static binding is accomplished by calling the static <tt><a href=docs/gnu/cajo/utils/ItemServer.html#bind(java.lang.Object,%20java.lang.String)>
                         bind</a></tt> method, of the <tt><a href=docs/gnu/cajo/utils/ItemServer.html>
                         ItemServer</a></tt> class. This type of binding will require the client to
-                        know the address of the server, in order to obtain a reference to the object.
+                        know the address of the server in order to obtain a reference to the object.
                         Clients statically link to a remote object using the static <tt><a href=docs/gnu/cajo/invoke/Remote.html#getItem(java.lang.String)>
                         getItem</a></tt> method of the <tt><a href=docs/gnu/cajo/invoke/Remote.html>Remote</a>
                         class</tt>.<br><br>
@@ -151,7 +151,7 @@ public class SomeObject {
                            Object someObject = Remote.getItem("//serverName/someName"); // client side
                         </blockquote></tt><br>
 
-                        Dynamic binding is accomplished simply by calling the <tt><a href=docs/gnu/cajo/utils/Multicast.html#announce(java.lang.Object,%20int)>
+                        Dynamic binding is accomplished by calling the <tt><a href=docs/gnu/cajo/utils/Multicast.html#announce(java.lang.Object,%20int)>
                         announce</a></tt> method, of the <tt><a href=docs/gnu/cajo/utils/Multicast.html>
                         Multicast</a></tt> class. This will <i>'broadcast'</i> the remote object reference
                         to <u>all</u> listening Virtual Machines. Clients dynamically link to a
@@ -166,7 +166,7 @@ public class SomeObject {
                            Multicast.listen(someListener); // client side
                         </blockquote></tt><br>
 
-                        In either case; once a remote reference to an object is obtained, it can be
+                        In either case, once a remote reference to an object is obtained, it can be
                         used to invoke its <i>public</i> methods. The reference can also be passed to other
                         objects, including remote ones, as either an argument, or a return. It could
                         even be thrown in an Exception. Any object receiving this reference, can also
@@ -216,12 +216,12 @@ public class SomeObject {
                         The <i>object</i> argument is the object on which to operate. The
                         <i>method</i> argument is the name of the public method to be invoked.
                         The <i>args</i> argument represents the argument(s) to be provided to the
-                        method; if any. Multiple arguments are represented when <i>args</i> is an
+                        method, if any. Multiple arguments are represented when <i>args</i> is an
                         Object array. A null <i>args</i> value indicates no arguments. The method's
                         result is the object returned from the method invocation, if any. The method
                         declares that it throws <i>Exception</i>, to allow the called method the
-                        freedom to throw any type of Exception; including none at all. It is
-                        <i>also</i> used to cover network related failures for invocations on remote
+                        freedom to throw any type of Exception, <i>including</i> none at all. This
+                        is also used to cover network related failures for invocations on remote
                         objects.<br>
                      </span>
                   </td>
@@ -260,7 +260,7 @@ public class SomeObject {
                         wrapper</a></tt> class.<br><br>
 
                         If a client already knows the interface to a remote object; it can define
-                        a wrapper class, to take the remote reference, and provide a compile time
+                        a wrapper class, to wrap the remote reference, and provide a compile time
                         type safe interface to it.<br><br>
 
                         Wrapping our previous example:
@@ -289,15 +289,15 @@ public class WrapperObject {
 }
 </pre></tt></blockquote>
 
-                        The wrapper architecture also supports the simple insertion of <i>extremely</i>
-                        powerful supplemental functionality; such as retry, caching,
-                        monitoring, notification, logging, measurement, debug, testing, validation,
-                        load balancing, fail-over, etc.<br><br>
+                        The wrapper architecture also facilitates the simple insertion of
+                        <i>extremely</i> powerful supplemental functionality; such as retry,
+                        caching, monitoring, notification, logging, measurement, debug, testing,
+                        validation, roll back, load balancing, fail-over, etc.<br><br>
 
                         It is important to remember that since the Remote.invoke method works
                         on <u>both</u> local, <i>and</i> remote objects; the wrapper technique
                         provides the ability to <i>transparently</i> scale, from local object
-                        interaction, to remote; <i>without</i> affecting the remaining source code.
+                        interaction, to remote; <i>without</i> affecting the remaining source code!
                         It even provides the flexibility to change its wrapped object from local,
                         to remote, or to a different server; <i>even</i> at runtime.
                      </span>
@@ -325,17 +325,17 @@ public class WrapperObject {
       <tr>
          <td valign="top">
             <span class="spacing style4 style7 style9">
-               The diagram below illustrates the fundamental options for receiving and
-               exposing object references from a Virtual Machine:<br><br>
+               The diagram below illustrates the options for receiving and exposing object
+               references from a Virtual Machine:<br><br>
 
                <center><img src=ventro/diagram_overview.jpeg alt="cajo object linking"
                   title="overview of the cajo project"></center>
 
-               Given the transparency of this framework, you will soon find it so easy to
-               distribute your applications, that you will practically forget the framework
-               is even there. Its simplicity, flexibility, and performance, offer quite an
-               exciting change; from the enormous, complex, and heavyweight, distributed
-               frameworks out there.
+               Given the transparency of this framework, you will quickly find it so easy
+               to distribute your applications, that you will practically forget the
+               framework is even there! Its simplicity, flexibility, and performance,
+               offer quite an exciting change; from the more enormous, complex, and
+               heavyweight, distributed frameworks out there.
             </span>
          </td>
       </tr>
