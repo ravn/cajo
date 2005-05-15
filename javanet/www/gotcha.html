@@ -84,6 +84,7 @@
                                         <li><a href=#5>Marshalling Objects</a>
                                         <li><a href=#6>Sending Proxies</a>
                                         <li><a href=#7>Configuring Remote</a>
+                                        <li><a href=#8>Excessive Decomposition</a>
                                      </ol>
 
                            
@@ -192,7 +193,14 @@
                                      configures the TCP settings for network communication. If you attempt to
                                      remote an object, either through ItemServer.<a href=https://cajo.dev.java.net/nonav/docs/gnu/cajo/utils/ItemServer.html#bind(java.lang.Object,%20java.lang.String)>bind</a>,
                                      or Multicast.<a href=https://cajo.dev.java.net/nonav/docs/gnu/cajo/utils/Multicast.html#announce(java.lang.Object,%20int)>announce</a>,
-                                     <i>before</i> doing this; a <tt>NullPointerException</tt> <u>will</u> occur.
+                                     <i>before</i> doing this; a <tt>NullPointerException</tt> <u>will</u> occur.<br><br>
+
+                                     <a id="8"></a><b><u>8. Excessive Decomposition:</u></b> The interfaces to
+                                     remote objects should tend to favor functional richnes, over logical
+                                     abstraction. Unlike an all-local object application, a remote procedure call
+                                     is a temporally expensive activity. This <i>strongly</i> favors the creation
+                                     of much <i>fewer</i> interface objects, with more functionally complete
+                                     methods, to be used when remoting.
 
                                     </span>
                                  </td>
