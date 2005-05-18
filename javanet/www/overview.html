@@ -75,11 +75,10 @@
 
                                  <td valign="top">
                                     <span class="spacing style4 style7 style9">
-                                      It is very easy to incorporate the cajo framework into applications.
-                                      This overview is intended to clarlify the process. As you will
-                                      see very shortly; making an object in your application remotely accessible,
-                                      or obtaining a reference to an object in a remote application, can be done
-                                      with as little as <i><u>one</u></i> additional line of code!<br><br>
+                                      It is very easy to incorporate the cajo framework into applications. As you
+                                      will see very shortly; making an object in your application remotely
+                                      accessible, or obtaining a reference to an object in a remote application,
+                                      can be done with as little as <i>one</i> additional line of code!<br><br>
 
                                       Take for example, the following simple object:
 
@@ -130,7 +129,7 @@ public class SomeObject {
                         One of the most important aspects of the cajo framework is that it does not
                         require any changes to <u>your</u> objects, in order to use them remotely.
                         Even if your application already uses some other distributed framework; it
-                        is very easy to <i>drop in</i> cajo support, and increase your distributed
+                        is very easy to <i>drop-in</i> cajo support, and increase your distributed
                         user base. To make an object remotely accessible, the framework provides two
                         distinct options; these are known collectively as <i>static</i>, and
                         <i>dynamic</i> binding. Both may even be used on the same object.<br><br>
@@ -173,8 +172,8 @@ public class SomeObject {
                         invoke its public methods. The reference can even be written to a file, using
                         the static <tt><a href=docs/gnu/cajo/invoke/Remote.html#zedmob(java.io.OutputStream,%20java.lang.Object)>
                         zedmob</a></tt> method of the Remote class, for later use, even by a
-                        different program.  The key to all this power is the static <tt><a href=docs/gnu/cajo/invoke/Remote.html#invoke(java.lang.Object,%20java.lang.String,%20java.lang.Object)>
-                        invoke</a></tt> method of the Remote class.<br>
+                        different program.  The key to all this power is the static <i>invoke</i>
+                        method of the Remote class.<br>
 
                      </span>
                   </td>
@@ -190,7 +189,7 @@ public class SomeObject {
                      <table width="100%" height="31" border="0" cellpadding="0" cellspacing="0">
                         <tr>
                            <td style="vertical-align:middle">
-                              <span class="style8"><b>Transparent method invocation</b></span>
+                              <span class="style8"><b>Dynamic method invocation</b></span>
                            </td>
                         </tr>
                      </table>
@@ -202,10 +201,11 @@ public class SomeObject {
                <tr>
                   <td valign="top">
                      <span class="spacing style4 style7 style9">
-                        Invoke is the cajo architecture approach to dynamic method invocation,
-                        supplemented by the use of Java reflection. It is the foundation of the
-                        framework. It can be used to invoke <i>any</i> public method, on <i>any</i>
-                        object; on both local <u>and</u> remote objects.<br><br>
+                        <tt><a href=docs/gnu/cajo/invoke/Remote.html#invoke(java.lang.Object,%20java.lang.String,%20java.lang.Object)>
+                        Invoke</a></tt> is the cajo architecture approach to dynamic method
+                        invocation, supplemented by the use of Java reflection. It is the foundation
+                        of the framework. It can be used to invoke <i>any</i> public method, on
+                        <i>any</i> object; on both local <u>and</u> remote objects.<br><br>
 
                         The static method has the following signature:
 
@@ -222,7 +222,15 @@ public class SomeObject {
                         declares that it throws <i>Exception</i>, to allow the called method the
                         freedom to throw any type of Exception, <i>including</i> none at all. This
                         is also used to cover network related failures for invocations on remote
-                        objects.<br>
+                        objects.<br><br>
+
+                        Consider for a moment just this one small example of the power in dynamic
+                        method invocation:
+                        <blockquote>
+                        A GUI could allow the user to select arguments from a collection, and
+                        type in the name of the host, the object, and the method; then view the
+                        results. <u><i>All</i></u> at runtime!
+                        </blockquote>
                      </span>
                   </td>
                </tr>
@@ -249,7 +257,7 @@ public class SomeObject {
                <tr>
                   <td valign="top">
                      <span class="spacing style4 style7 style9">
-                        It might appear that all type safety has been completely abandoned; looking
+                        Now it might appear that all type safety has been completely abandoned; looking
                         somewhat like a return to the C language. However, what has really happened
                         is that strong typechecking had to move, necessarily, from compile time, to
                         run time. If there is no mappable signature, the invocation will result in
@@ -292,7 +300,7 @@ public class WrapperObject {
                         The wrapper architecture also facilitates the simple insertion of
                         <i>extremely</i> powerful supplemental functionality; such as retry,
                         caching, monitoring, notification, logging, measurement, debug, testing,
-                        validation, roll back, load balancing, fail-over, etc.<br><br>
+                        validation, rollback, load balancing, fail-over, etc.<br><br>
 
                         It is important to remember that since the Remote.invoke method works
                         on <u>both</u> local, <i>and</i> remote objects; the wrapper technique
@@ -349,7 +357,7 @@ public class WrapperObject {
             <div align="center">
                <hr width=90%">
                <span class="spacing style4 style7 style9">
-                  The cajo framework does not dictate your architecture: It <i>simply</i> drops in!
+                  The cajo framework does not dictate your architecture: It <i>simply</i> drops-in!
                </span>
             </div>
          </td>
