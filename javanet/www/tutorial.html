@@ -412,8 +412,8 @@
                full screen and dynamically resizable.<br><br>
 
                Just as with the server, there are a similar set of options to configure the
-               client. This time let's start with the complete command, then explain its
-               optional components:
+               client. This time let's start with the complete URL, then explain its optional
+               components:
 
                <pre>    <code>http://serverHost[:serverPort]/[clientPort][:localPort][-proxyName][!]</code></pre>
 
@@ -425,7 +425,7 @@
                   <li>The <b>clientPort</b> value would indicate the inbound TCP port on which
                       the client would like to receive the server callbacks.  This would need to be
                       specified if the client was behind a firewall.  Unspecified it would be
-                      anonymous, meaning randomly chosen by the server, at runtime.
+                      anonymous, meaning randomly chosen by the client, at runtime.
 
                   <li>The <b>:localPort</b> value would be the client's internal port number if
                       it is being translated from the external port number.  Unspecified it will be
