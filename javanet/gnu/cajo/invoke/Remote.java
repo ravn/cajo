@@ -100,6 +100,16 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
     * VMs.
     */
    public static final RSSF rssf = new RSSF();
+   static { // provide a default configuration; anonymous port & local name:
+      try { // equivalent of a Remote.config(null, 0, null, 0);
+         rssf.host = InetAddress.getLocalHost().getHostName();
+         rcsf.host = rssf.host;
+         rssf.port = 0;
+         rcsf.port = 0;
+         System.setProperty("java.rmi.server.useLocalHostname", "true");
+         System.setProperty("java.rmi.server.hostname", rcsf.host);
+      } catch(Exception x) {}
+   }
    /**
     * This method is provided to obtain the server's host name.
     * This is useful when the host can have one of multiple addresses, either
@@ -138,10 +148,10 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
     * control how the sockets will be configured locally, the second two
     * control how a remote object's sockets will be configured to communicate
     * with this server.
-    * <p><i>Note:</i> If this class is to be configured, it must be done
-    * <b>before</b> any items are remoted.
+    * <p><i><U>Note</u>:</i> If this class is to be configured, it must be
+    * done <b>before</b> any items are remoted.
     * @param serverHost The local domain name, or IP address of this host.
-    * If null, it will all network interfaces.  Typically it is only
+    * If null, it will use all network interfaces.  Typically it is
     * specified when the server has multiple phyisical network interfaces, or
     * is multi-homed, i.e. having multiple logical network interfaces.
     * @param serverPort Specifies the local port on which the server is
