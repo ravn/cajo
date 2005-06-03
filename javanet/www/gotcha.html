@@ -190,15 +190,19 @@
 
                                      <a id="7"></a><b><u>7. Configuring Remote:</u></b> You must call Remote.<a href=https://cajo.dev.java.net/nonav/docs/gnu/cajo/invoke/Remote.html#config(java.lang.String,%20int,%20java.lang.String,%20int)>config</a>
                                      once, in the lifetime of the server, typically shortly after startup. It
-                                     configures the TCP settings for network communication. If you attempt to
-                                     remote an object, either through ItemServer.<a href=https://cajo.dev.java.net/nonav/docs/gnu/cajo/utils/ItemServer.html#bind(java.lang.Object,%20java.lang.String)>bind</a>,
+                                     configures the TCP settings for network communication. <strike>If you
+                                     attempt to remote an object, either through ItemServer.<a href=https://cajo.dev.java.net/nonav/docs/gnu/cajo/utils/ItemServer.html#bind(java.lang.Object,%20java.lang.String)>bind</a>,
                                      or Multicast.<a href=https://cajo.dev.java.net/nonav/docs/gnu/cajo/utils/Multicast.html#announce(java.lang.Object,%20int)>announce</a>,
-                                     <i>before</i> doing this; a <tt>NullPointerException</tt> <u>will</u> occur.<br><br>
+                                     <i>before</i> doing this; a <tt>NullPointerException</tt> <u>will</u>
+                                     occur.</strike><br><br>
 
-                                     <u>Update</u>: A mechanism to provide a <i>best-guess</i> at TCP
-                                     configuration has been added. If you do not explicitly configure Remote, it
-                                     will now remote the server, and the client, on the same anonymous port. It
-                                     is effectively an implicit call to Remote.config(null, 0, null, 0);<br><br>
+                                     &nbsp&nbsp&nbsp&nbsp<b>*<u>Update</u>:</b> (01-Jun-05) A convenience
+                                     mechanism to provide a <i>useful-guess</i> at TCP configuration has now
+                                     been added. If you do not explicitly configure Remote, it will now
+                                     remote automatically, on an <i>anonymous</i> port. The actual port, selected
+                                     from the unused pool by the OS at runtime, can be identified by calling
+                                     Remote.<a href=https://cajo.dev.java.net/nonav/docs/gnu/cajo/invoke/Remote.html#getServerPort>getServerPort</a>.
+                                     It is effectively an implicit call to Remote.<a href=https://cajo.dev.java.net/nonav/docs/gnu/cajo/invoke/Remote.html#config(java.lang.String,%20int,%20java.lang.String,%20int)>config(null, 0, null, 0)</a>.<br><br>
 
                                      <a id="8"></a><b><u>8. Excessive Decomposition:</u></b> The interfaces to
                                      remote objects should tend to favor functional richnes, over logical
