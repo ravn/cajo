@@ -272,6 +272,14 @@
                Clients would then have the option to use the proxy, or to manipulate the
                remote object directly, over the network.<br><br>
 
+               Another major benefit to this proxy hosting client architecture, is that it
+               allows multiple remote servers to provide their graphical user interfaces
+               to operate within a <i>single</i> JVM. This provides both a tremendous
+               reduction in compute requirements, and memory consumption; vs. hosting each
+               server's proxy in a <i>separate</i> virtual machine. Similarly, this would
+               also greatly enhance the overall performance of the aggregated graphical
+               proxies.<br><br>
+
                Both the proxy, and its serving item, can in turn give their remote
                references to other items.  As a result, an item calling another item does
                not know, or need even care, if it is invoking a local item, a remote item,
