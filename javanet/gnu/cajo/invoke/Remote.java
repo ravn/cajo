@@ -425,24 +425,24 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
     */
    public static Object invoke(Object item, String method, Object args)
       throws Exception {
-      if (item instanceof Invoke) args = ((Invoke)item).invoke(method, args);
-      else if (method == null)
+      if (item instanceof Invoke) return ((Invoke)item).invoke(method, args);
+      if (method == null)
          throw new IllegalArgumentException("Method argument cannot be null");
-      else if (args instanceof Object[]) {
+      if (args instanceof Object[]) {
+         if (((Object[])args).length == 0) 
+            return item.getClass().getMethod(method, null).invoke(item, null);
          Object[] o_args = (Object[])args;
          Class[]  c_args = new Class[o_args.length];
          for(int i = 0; i < o_args.length; i++)
             c_args[i] = o_args[i].getClass();
          Method m = findBestMethod(item, method,c_args);
-         if (m!= null) args = m.invoke(item, o_args);
-         else throw new NoSuchMethodException();
+         if (m!= null) return m.invoke(item, o_args);
       } else if (args != null) {
          Method m =
             findBestMethod(item, method, new Class[]{ args.getClass() });
-         if (m != null) args = m.invoke(item, new Object[]{ args });
-         else throw new NoSuchMethodException();
-      } else args = item.getClass().getMethod(method, null).invoke(item, null);
-      return args;
+         if (m != null) return m.invoke(item, new Object[]{ args });
+      } else return item.getClass().getMethod(method, null).invoke(item, null);
+      throw new NoSuchMethodException();
    }
    private final Object item;
    /**
