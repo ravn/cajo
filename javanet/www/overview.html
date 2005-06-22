@@ -130,7 +130,7 @@ public class SomeObject {
                         require any changes to <u>your</u> objects, in order to use them remotely.
                         Even if your application already uses some other distributed framework; it
                         is very easy to <i>drop-in</i> cajo support, and increase your distributed
-                        user base. To make an object remotely accessible, the framework provides two
+                        user base. To make an object remotely available, the framework provides two
                         distinct options; these are known collectively as <i>static</i>, and
                         <i>dynamic</i> binding. Both may even be used on the same object.<br><br>
 
@@ -307,10 +307,13 @@ public class WrapperObject {
 
                         It is important to remember that since the Remote.invoke method works
                         on <u>both</u> local, <i>and</i> remote objects; the wrapper technique
-                        provides the ability to <i>transparently</i> scale, from local object
-                        interaction, to remote; <i>without</i> affecting the remaining source code!
-                        It even provides the flexibility to change its wrapped object from local,
-                        to remote, or to a different server; <i>even</i> at runtime.
+                        provides a client the ability to <i>transparently</i> scale, from local
+                        object interaction, to remote; <i>without</i> affecting the remaining source
+                        code. It even provides the flexibility to change its wrapped object from
+                        local, to remote, or to a different server; <i>even</i> at runtime. It
+                        <i>also</i> allows the server the flexibility to return a remote reference,
+                        a locally running proxy, or a completely local object, without breaking the
+                        client's code. It is powerful stuff!
                      </span>
                   </td>
                </tr>
@@ -349,8 +352,8 @@ public class WrapperObject {
                complex, and heavyweight, distributed frameworks out there.<br><br>
 
                Then, once you are up to speed, you will be delighted to discover that
-               the framework is also <i>completely</i> <a href=http://wiki.java.net/bin/view/Communications/CajoScripting>
-               scriptable</a>!
+               the framework is <i>completely</i> <a href=http://wiki.java.net/bin/view/Communications/CajoScripting>
+               scriptable!</a>
             </span>
          </td>
       </tr>
