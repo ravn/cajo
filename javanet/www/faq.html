@@ -86,6 +86,7 @@
                                          <li><a href=#9>Can my application put proxies in an Applet sandbox?</a>
                                          <li><a href=#10>Why is the framework named cajo?</a>
                                          <li><a href=#11>Can I use the example's TileLayout manager?</a>
+                                         <li><a href=#12>Does cajo pass objects by reference, or by value?</a>
                                       </ol>
 
                                       <a id="1"></a><b><u>1. Why doesn't the example work in Appletviewer?</u></b>
@@ -241,8 +242,23 @@
                                       overlaying capability, it is unmached by any of the standard layout managers.
                                       A link to the fully documented version can be found <a href=https://cajo.dev.java.net/source/browse/cajo/TileLayout.java>
                                       here</a>. Definitely run javadoc on it; while short, it is more than half
-                                      comments, which are very much needed. Have fun with it!
+                                      comments, which are very much needed. Have fun with it!<br><br>
                                       
+                                      <a id="12"></a><b><u>12. Does cajo pass objects by reference, or by value?</u></b>
+                                      To provide the <i>ultimate</i> in flexibility, the answer is: <u><i>Either</u>!</i>
+                                      The Java language <i>only</i> allows passing objects by reference; meaning
+                                      that when you provide an object to a method as an argument, any changes the
+                                      method makes to that object are actually changes to <i>your</i> object. In
+                                      cajo an object is passed by reference to a remote Virtual Machine, by
+                                      wrapping it in a <a href=https://cajo.dev.java.net/nonav/docs/gnu/cajo/invoke/Remote.html>
+                                      Remote</a> object. However unlike Java, and  more like C++, cajo <i>also</i>
+                                      allows you to pass an object by value; meaning the receiving method gets an
+                                      exact <i>copy</i> of the object, and anything it does to it, has <i>no</i>
+                                      affect on your object. This is accomplished very simply, by passing the
+                                      object <u><i>without</i></u> wrapping it in a Remote wrapper. (<i><u>Note</u>:</i>
+                                      If the client receiving this object does not have the class file for this
+                                      object, then you will need to run something like a <a href=server.html>
+                                      CodebaseServer</a> to provide it.)
 
                                     </span>
                                  </td>
