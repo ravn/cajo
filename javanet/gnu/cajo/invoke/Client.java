@@ -45,7 +45,6 @@ import java.rmi.MarshalledObject;
 public final class Client extends java.applet.Applet {
    private static final String TITLE = "CaJo Proxy Viewer";
    private static Object proxy;
-   private static Frame frame;
    private static final class CFrame extends Frame implements WindowListener {
       public CFrame(String title) {
          super(title);
@@ -213,10 +212,9 @@ public final class Client extends java.applet.Applet {
          proxy = Remote.invoke(proxy, "getProxy", null);
          if (proxy instanceof MarshalledObject)
             proxy = ((MarshalledObject)proxy).get();
-         if (!(proxy instanceof RemoteInvoke)) try {
+         if (!(proxy instanceof RemoteInvoke))
             proxy = Remote.invoke(proxy, "init", new Remote(proxy));
-         } catch(Exception x) {}
-         if (proxy instanceof Component) frame = frame((Component)proxy);
+         if (proxy instanceof Component) proxy = frame((Component)proxy);
       } catch (Exception x) { x.printStackTrace(); }
    }
 }
