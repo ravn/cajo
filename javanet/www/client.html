@@ -204,6 +204,10 @@
 
                <pre><code>   java -jar client.jar //someHost/</code></pre>
 
+               or to use the codebase jar directly:
+
+               <pre><code>   java -cp cajo.jar gnu.cajo.invoke.Client //someHost/</code></pre>
+
                This will connect from yourHost, to someHost, and get the item "main", using
                any available port, not currently in use.
             </span>
@@ -271,10 +275,10 @@ grant {
                mistake</a> I did. (Essentially, omission of the first argument,
                <i>completely</i> negates the effect of the second.)<br><br>
 
-               <i>Note:</i> when web started, the client requires no policy file, as it
-               already runs in an Applet sandbox, meaning it has no access to the hosting
-               machine's hard disc, and can communicate only back to the host from which it
-               was sent.
+               <i>Note:</i> when launched via WebStart, the client requires no policy file,
+               as it already runs in an Applet sandbox, meaning it has no access to the
+               hosting machine's hard disc, and can communicate only back to the host from
+               which it was sent.
             </span>
          </td>
       </tr>
@@ -297,18 +301,18 @@ grant {
          <td width="3%"><img src="ventro/bar_Right.gif" width="10" height="35"></td>
       </tr>
    </table>
-   <table width="98%" height="96" border="0" align="center" cellpadding="9" cellspacing="0">
+   <table width="98%" border="0" align="center" cellpadding="9" cellspacing="0">
       <tr>
          <td valign="top">
             <span class="spacing style4 style7 style9">
                The client application runs quite nicely on small Java capable <a href=http://www.pdabuyersguide.com/sharp_zaurus_SL6000.htm target=_blank>
-               PDAs</a>. With integrated wireless networking, these make excellent control
-               devices. As their processing and display capability continue to improve,
-               their value as user interface hosts to a distributed computing collective
-               become even more attractive. Perhaps one day soon these may become the
-               <i>primary</i> tools to interface to computer networks. The best part is that
-               for now you can very accurately model, and develop for, these future devices
-               using standard desktop, and laptop computers.
+               PDAs</a>. With integrated wireless networking, these make excellent user
+               interface devices. As their processing and display capability continue to
+               improve, their value as user interface hosts to a distributed computing
+               collective become even more attractive. Perhaps one day soon these may become
+               the <i>primary</i> tools to interface to computer networks. The best part
+               is, that now you can very accurately model, and develop for, these future
+               devices, using standard desktop and laptop computers.
             </span>
          </td>
       </tr>
