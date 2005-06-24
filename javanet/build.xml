@@ -10,8 +10,11 @@
         <javac srcdir="." includes="gnu/cajo/utils/extra/*.java"/> 
         <rmic stubversion="1.2" classname="gnu.cajo.invoke.Remote" base="."/>
         <delete>
-            <fileset dir="." includes="gnu/cajo/utils/ProxyLoader.class"/>
-            <!-- ProxyLoader must be a dynamically loaded class -->  
+            <fileset dir="." includes="
+                gnu/cajo/utils/ProxyLoader.class
+                gnu/cajo/utils/BaseProxy*.class
+            "/>
+            <!-- ProxyLoader and BaseProxy must be dynamically loaded -->  
         </delete>
         <jar basedir="."
             jarfile="cajo.jar"
