@@ -5,7 +5,7 @@ import java.net.*;
 import gnu.cajo.invoke.Remote;
 
 /*
- * RMI Codebase Server Utility
+ * RMI Codebase and Graphical Proxy Server
  * Copyright (c) 1999 John Catherino
  *
  * For issues or suggestions mailto:cajo@dev.java.net
@@ -29,17 +29,21 @@ import gnu.cajo.invoke.Remote;
  */
 
 /**
- * The standard mechanism to send proxies, and other complex objects to remote
- * VMs. It requires one outbound port. The port can be anonymous, i.e. selected
- * from any available free port at runtime, or it can be explicitly specified,
- * usually to operate through a firewall. A given VM instance can only have one
- * codebase, therefore construction of a second instance will result in an
- * IllegalStateException being thrown by its constructor.
+ * The standard mechanism to send proxies, and other complex objects to
+ * remote VMs. It requires one outbound port. The port can be anonymous, i.e.
+ * selected from any available free port at runtime, or it can be explicitly
+ * specified, usually to operate through a firewall. A given VM instance can
+ * only have one codebase, therefore construction of a second instance will
+ * result in an IllegalStateException being thrown by its constructor. It
+ * also provides the generic graphical proxy host client service, as an
+ * Applet, and via WebStart.
  * 
  * @version 1.0, 01-Nov-99 Initial release
  * @author John Catherino
  */
 public final class CodebaseServer extends Thread {
+   private static CodebaseServer self;
+   private static boolean anyFile;
    private static final byte[]
       bye = (
          "HTTP/1.0 404 Object not found\r\n" +
@@ -94,32 +98,40 @@ public final class CodebaseServer extends Thread {
    private static ServerSocket ss;
    /**
     * This is the inbound {@link java.net.ServerSocket ServerSocket}
-    * port number providing both the HTTP client tag and codebase jar service.
-    * If the server is behind a firewall, this port, or its translated one,
-    * must be made accessible from outside.  It can be zero, to use an
-    * anonymous port; i.e. one selected by the OS from any ports available at
-    * runtime. In that case, the port actually offered by the operating system
-    * will be stored here automatically, following construction.
+    * port number providing both the HTTP client tag and codebase jar
+    * service. If the server is behind a firewall, this port, or its
+    * translated one, must be made accessible from outside.  It can be zero,
+    * to use an anonymous port; i.e. one selected by the OS from any ports
+    * available at runtime. In that case, the port actually offered by the
+    * operating system will be stored here automatically, following
+    * construction.
     */
    public static int port;
    /**
     * Construction will start up the server's codebase transport mechanism
-    * on the specified port.
-    * @param base The path and name of the file containing the codebase jar
-    * file.  The server will first search for it in its own executable jar
+    * on the specified port. To shut the service down, call its inherited
+    * interrupt method.
+    * @param base The path and name of the file containing the proxy codebase
+    * jar file. The server will first search for it in its own executable jar
     * file, if that fails, then it will check the local filesystem.<p>
-    * This server determines the name of the jar file in which it is running
+    * The server determines the name of the jar file in which it is running
     * courtesy of a very cool hack published by Laird Nelson in his
     * weblog: http://weblogs.java.net/pub/wlg/1874 Thanks Laird! This is
     * used to allow the server to serve all the jar files in its working
-    * directory tree <i>except</i> its own.
+    * directory tree <i>except</i> its own.<p>
+    * <i><u>Note</u>:</i> if this value is null, it indicates that the proxy
+    * codebase is <i>not</i> in a jar. The server will then look first in its
+    * own jar file for the class files to send, and if not found, it will
+    * next look in its working directory. This feature provides an extremely
+    * simple, essentially zero-configuration, approach to proxy codebase
+    * service. It also provides complete general-purpose web service as well,
+    * supporting documentaions pages, images, and even a favicon.ico.
     * @param port The TCP port on which to serve the codebase, and client
     * applet. It can be zero, to use an anonymous port. If zero, the actual
     * port selected by the OS at runtime will be stored in the
-    * {@link #port port} member. To shut the service down, call its inherited
-    * interrupt method.
-    * @throws IOException If the HTTP socket providing the codebase and applet
-    * tag service could not be created.
+    * {@link #port port} member.
+    * @throws IOException If the HTTP socket providing the codebase and
+    * applet tag service could not be created.
     * @throws IllegalStateException If a second instance of this class is
     * constructed, since each VM can have only one codebase server.
     */
@@ -130,12 +142,14 @@ public final class CodebaseServer extends Thread {
          if (thisJar.indexOf('!') != -1) {
             thisJar = thisJar.substring(thisJar.lastIndexOf(':'), thisJar.lastIndexOf('!'));
             thisJar = thisJar.substring(thisJar.lastIndexOf('/') + 1);
-         } else thisJar = "x"; // server not in a jar file
+         } else thisJar = "\""; // server not in a jar file
          ss = Remote.getServerHost() == null ? new ServerSocket(port) :
             new ServerSocket(port, 50, InetAddress.getByName(Remote.getServerHost()));
          CodebaseServer.port = port == 0 ? ss.getLocalPort() : port;
          System.setProperty("java.rmi.server.codebase",
-            "http://" + Remote.getClientHost() + ':' + port + '/' + base);
+            "http://" + Remote.getClientHost() + ':' + CodebaseServer.port +
+               '/' + (base != null ? base : ""));
+         anyFile = base == null;
          start();
       } else throw new IllegalStateException("Codebase currently served");
    }
@@ -157,26 +171,26 @@ public final class CodebaseServer extends Thread {
     * client is behind a firewall, or is using port translation.  Unspecified,
     * it will be the same as the localPort value, described next.
     * <li><i>localPort</i> The client's internal port number on which the
-    * remote proxy can be reached. Unspecified, it will be selected anonymously
-    * by the client at runtime.
+    * remote proxy can be reached. Unspecified, it will be selected
+    * anonymously by the client at runtime.
     * <li><i>proxyName</i> The registered name of the proxy serving item, by
     * default "main", however a single server can support multiple items.
     * <li><i>!</i> This operator causes the proxy to be sent using JNLP. This
     * will launch the proxy as an application on the client.</ul>
     * <p>To unspecify any optional item, simply omit it, from the URL, along
-    * with its preceeding delimiter, if any.  The <u>order</u> of the arguments
-    * must be maintained however.<p>
-    * <i>Note:</i> other item servers can share this instance, by placing their
-    * proxy jar files in the same working directory. However, those item
-    * servers will not be able to use the client service feature, as it is
-    * unique to the VM in which the CodebaseServer is running.<p>
+    * with its preceeding delimiter, if any.  The <u>order</u> of the
+    * arguments must be maintained however.<p>
+    * <i>Note:</i> other item servers can share this instance, by placing
+    * their proxy jar files in the same working directory. However, those
+    * item servers will not be able to use the client service feature, as it
+    * is unique to the VM in which the CodebaseServer is running.<p>
     * As a safety precaution, the server will send any requested jar file in
     * or below its working directory <i>except</i> the jar file of the server
     * itself! Typically people do not want to give this file out.
     */
    public void run() {
       try {
-         byte msg[] = new byte[256];
+         byte msg[] = new byte[8192];
          while(!isInterrupted()) {
             Socket s = ss.accept();
             try {
@@ -196,24 +210,7 @@ public final class CodebaseServer extends Thread {
                   }
                }
                if (itemName == null) os.write(bye);   // invalid request
-               else if (itemName.endsWith(".jar") &&  // code request
-                  !itemName.endsWith(thisJar)) {      // safety measure
-                  try {
-                     InputStream ris =
-                        getClass().getResourceAsStream(itemName);
-                     if (ris == null) ris =
-                        new FileInputStream('.' + itemName);
-                     BufferedInputStream bis = new BufferedInputStream(ris);
-                     msg = new byte[bis.available()];
-                     byte len[] = (msg.length + "\r\n\r\n").getBytes();
-                     bis.read(msg);
-                     bis.close();
-                     ris.close();
-                     os.write(jar);
-                     os.write(len);
-                     os.write(msg);
-                  } catch(Exception x) { os.write(bye); }
-               } else if (itemName.indexOf('/', 1) == -1) { // URL request
+               else if (itemName.indexOf('.') == -1 && itemName.indexOf('/', 1) == -1) { // URL request
                   try { // parse request arguments
                      int proxyPort = Remote.getClientPort();
                      int ia =
@@ -289,7 +286,22 @@ public final class CodebaseServer extends Thread {
                         os.write(xml);
                      }
                   } catch(Exception x) { os.write(bye); }
-               } else os.write(bye); // unsupported request
+               } else if ((anyFile || itemName.endsWith(".jar")) && !itemName.endsWith(thisJar)) {
+                  try {
+                     int flen;
+                     InputStream ris = getClass().getResourceAsStream(itemName);
+                     if (ris == null) {
+                        File file = new File('.' + itemName);
+                        flen = (int)file.length();
+                        ris = new FileInputStream(file);
+                     } else flen = ris.available();
+                     os.write(jar);
+                     os.write((flen + "\r\n\r\n").getBytes());
+                     for (int i = ris.read(msg); i != -1; i = ris.read(msg))
+                        os.write(msg, 0, i);
+                     ris.close();
+                  } catch(Exception x) { os.write(bye); }
+               } else os.write(bye);
                os.flush();
                os.close();
                is.close();
@@ -300,5 +312,22 @@ public final class CodebaseServer extends Thread {
       } catch(Exception x) { x.printStackTrace(); }
       try { ss.close(); }
       catch(Exception x) { x.printStackTrace(); }
+   }
+   /**
+    * The application creates a utility server to share al the classes in
+    * the in its working directory. It is extremely useful for application
+    * development. If a port number is provided as an argument, it will
+    * be used, otherwise it will be opened on an anonymous port.<p>
+    * <i><u>Note</u>:</i> in the Virtual Machine sharing its objects,
+    * its system property <tt>rmi.server.codebase</tt> will have to be set
+    * manually, to point to this host and port number.
+    */
+   public static void main(String args[]) {
+      try {
+         self = args.length == 0 ? new CodebaseServer(null, 0) :
+            new CodebaseServer(null, Integer.parseInt(args[0]));
+         if (args.length == 0)
+            System.out.println("Codebase service on port " + port);
+      } catch(IOException x) { x.printStackTrace(); }
    }
 }
