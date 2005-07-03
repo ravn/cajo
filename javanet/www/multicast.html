@@ -65,7 +65,7 @@
                                  <td width="3%"><img src="ventro/bar_Right.gif" width="10" height="35"></td>
                               </tr>
                            </table>
-                           <table width="95%" height="96" border="0" cellpadding="9" cellspacing="0">
+                           <table width="95%" border="0" cellpadding="9" cellspacing="0">
                               <tr>
                                  <td valign="top">
 <!-- title bar section -->         <span class="spacing style4 style7 style9">
@@ -137,15 +137,16 @@
                interest for its standardization. The official <i>suggestion</i> would be
                for objects to implement a <code>String getDescription()</code> method, which
                would return a description of the features and use of the object in detail,
-               with HTML markup allowed. Ideally, objects should also implement the
-               <code>getProxy()</code> method, to provide a local interface, which would in
-               turn provide a graphical user interface to the object, as described in the
-               <a href=proxy.html>proxy</a> tutorial, and demonstrated in the
-               <a href=example.html>example</a>. When an object announces its reference
-               on the hailing frequency, the <i>suggestion</i> would be for remote VMs to
-               invoke a method called <code>contact</code> on the received reference,
-               passing a string of the URL, typically in the form //host[:port]/[name], on
-               which its main object can be statically contacted, as the sole argument.
+               with HTML markup allowed. (one suggested template can be found <a href=https://cajo.dev.java.net/files/documents/974/12066/description.html>
+               here</a>) Ideally, objects should also implement the <code>getProxy()</code>
+               method, to provide a local interface, which would in turn provide a graphical
+               user interface to the object, as described in the <a href=proxy.html>proxy</a>
+               tutorial, and demonstrated in the <a href=example.html>example</a>. When an
+               object announces its reference on the hailing frequency, the <i>suggestion</i>
+               would be for remote VMs to invoke a method called <code>contact</code> on the
+               received reference, passing a string of the URL, typically in the form
+               //host[:port]/[name], on which its main object can be statically contacted,
+               as the sole argument.
             </span>
          </td>
       </tr>
