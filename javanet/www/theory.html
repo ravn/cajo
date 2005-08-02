@@ -82,7 +82,7 @@
                                       burdensome, especially if the interaction between objects becomes highly
                                       diverse; and is completely impossible when method signatures are unknown
                                       at compile time. To address these issues, the framework defines only one
-                                      remote interface; called <a href=docs/gnu/cajo/invoke/Invoke.html>
+                                      remote interface; called <a href=nonav/docs/gnu/cajo/invoke/Invoke.html>
                                       Invoke</a>. It defines a single method, to represent all object
                                       methods; it accepts a method name, the arguments to be provided to it,
                                       and the data to be returned; i.e.:
@@ -99,7 +99,7 @@
                                       indicating multiple objects are being transferred, or they can be null
                                       indicating no object transfer. Also, it is <i>highly</i> recommended that
                                       rather than using the invoke interface directly, always interact with an
-                                      object reference using the static invoke method of the <a href=docs/gnu/cajo/invoke/Remote.html>
+                                      object reference using the static invoke method of the <a href=nonav/docs/gnu/cajo/invoke/Remote.html>
                                       Remote</a> class.  It has the following signature:
 
                                       <pre>   Object Remote.invoke(Object object, String method, Object args);</pre>
@@ -174,14 +174,14 @@
          <td valign="top">
             <span class="spacing style4 style7 style9">
                An item can send mobile code, i.e. proxy items and complex object arguments
-               to clients using the <a href=docs/gnu/cajo/utils/CodebaseServer.html>CodebaseServer</a>
+               to clients using the <a href=nonav/docs/gnu/cajo/utils/CodebaseServer.html>CodebaseServer</a>
                class.  CodebaseServer will create a specialized http server on the
                designated TCP port. It serves the specified jar file containing the class
                files needed by the client, along with any other resources needed by the
                proxies. The resources are typically, images and string tables.  By default,
                a client VM <u>will not</u> accept mobile code. This is typically enabled by
-               calling the <a href=docs/gnu/cajo/utils/ItemServer.html#acceptProxies()>
-               acceptProxies</a> method of the <a href=docs/gnu/cajo/utils/ItemServer.html>
+               calling the <a href=nonav/docs/gnu/cajo/utils/ItemServer.html#acceptProxies()>
+               acceptProxies</a> method of the <a href=nonav/docs/gnu/cajo/utils/ItemServer.html>
                ItemServer</a> class.  This will install an RMISecurityManager to accept the
                code, and protect the client hardware and files, it effectively creates an
                applet-like sandbox around the incoming code.  In essence, <i>mobile code</i>
@@ -218,7 +218,7 @@
                and read back for use at some later time. However, obtaining initial
                references is done via two standard mechanisms:<br><br>
 
-               First, it is generally useful to <a href=docs/gnu/cajo/utils/ItemServer.html#bind(java.lang.Object,%20java.lang.String)>
+               First, it is generally useful to <a href=nonav/docs/gnu/cajo/utils/ItemServer.html#bind(java.lang.Object,%20java.lang.String)>
                bind</a> each item with the ItemServer class. ItemServer will automatically
                create an rmiregistry, and bind the item under the name provided. Other
                clients can now contact the registry, and obtain a remote reference to the
@@ -227,11 +227,11 @@
                an item using this mechanism is the server host name, port number, and the
                name under which the item is bound. Canonically, the default item for any
                server is bound under the name "<i>main</i>". Obtaining a reference to a
-               bound remote item is accomplished using the static <a href=docs/gnu/cajo/invoke/Remote.html#getItem(java.lang.String)>
+               bound remote item is accomplished using the static <a href=nonav/docs/gnu/cajo/invoke/Remote.html#getItem(java.lang.String)>
                getItem</a> method of the Remote class. This mechanism is called linking
                <u><i>statically</i></u>. <br><br>
 
-               The second mechanism to obtain a reference to a remote item is using the <a href=docs/gnu/cajo/utils/Multicast.html>
+               The second mechanism to obtain a reference to a remote item is using the <a href=nonav/docs/gnu/cajo/utils/Multicast.html>
                Multicast</a> class. Unlike the previous method which uses TCP/IP to obtain
                the reference, this technique uses UDP/IP.  Instead of needing to know the
                server's TCP address and port number, the client needs to know the UDP
@@ -239,10 +239,10 @@
                servers can pick their UDP addresses, and they are independent of their TCP
                address. Also, a server can use multiple UDP addresses if needed. Multiple
                servers will share the same address, to form <i>groups</i>. A server
-               <i>broadcasts</i> a remote reference to an item by calling the <a href=docs/gnu/cajo/utils/Multicast.html#announce(java.lang.Object,%20int)>
+               <i>broadcasts</i> a remote reference to an item by calling the <a href=nonav/docs/gnu/cajo/utils/Multicast.html#announce(java.lang.Object,%20int)>
                announce</a> method of Multicast.  This will send the reference to all
                clients listening in the <i>group</i>. Items listen for these announcements
-               using the <a href=docs/gnu/cajo/utils/Multicast.html#listen(java.lang.Object)>
+               using the <a href=nonav/docs/gnu/cajo/utils/Multicast.html#listen(java.lang.Object)>
                listen</a> method of Multicast. Use of UDP/IP, and multicasting, has proven
                to be unfamiliar to a lot of developers, so an entire tutorial <a href=multicast.html>
                page</a> has been dedicated to the use of the Multicast class. This mechanism

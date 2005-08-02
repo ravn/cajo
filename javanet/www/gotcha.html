@@ -153,11 +153,11 @@
                                      is operating behind a firewall that prohibits inbound socket connections. If
                                      server callbacks are necessary for the design, this posed a real problem. A
                                      solution to this issue is provided through two specialised classes in the
-                                     gnu.cajo.utils.extra package. The <a href=docs/gnu/cajo/utils/extra/ClientProxy.html>
+                                     gnu.cajo.utils.extra package. The <a href=nonav/docs/gnu/cajo/utils/extra/ClientProxy.html>
                                      ClientProxy</a> object is used to locally represent a callable reference to
                                      the client, item in the server address space. A server would instantiate a ClientProxy, and pass a remote
                                      reference to it to the client. The client would then combine that reference,
-                                     with a reference to the local item in an <a href=docs/gnu/cajo/utils/extra/ItemProxy.html>
+                                     with a reference to the local item in an <a href=nonav/docs/gnu/cajo/utils/extra/ItemProxy.html>
                                      ItemProxy</a> object. This transparent approach allows object design for both
                                      servers and clients, without regard for the firewall issue. To see a simple
                                      example application, please visit our <a href=http://wiki.java.net/bin/view/Communications/FirewalledClients>
@@ -188,11 +188,11 @@
                                      instead, will work correctly. MarshalledObjects are handy containers in which
                                      proxy objects can be freely sent between remote objects.<br><br>
 
-                                     <a id="7"></a><b><u>7. Configuring Remote:</u></b> You must call Remote.<a href=https://cajo.dev.java.net/nonav/docs/gnu/cajo/invoke/Remote.html#config(java.lang.String,%20int,%20java.lang.String,%20int)>config</a>
+                                     <a id="7"></a><b><u>7. Configuring Remote:</u></b> You must call Remote.<a href=nonav/docs/gnu/cajo/invoke/Remote.html#config(java.lang.String,%20int,%20java.lang.String,%20int)>config</a>
                                      once, in the lifetime of the server, typically shortly after startup. It
                                      configures the TCP settings for network communication. <strike>If you
-                                     attempt to remote an object, either through ItemServer.<a href=https://cajo.dev.java.net/nonav/docs/gnu/cajo/utils/ItemServer.html#bind(java.lang.Object,%20java.lang.String)>bind</a>,
-                                     or Multicast.<a href=https://cajo.dev.java.net/nonav/docs/gnu/cajo/utils/Multicast.html#announce(java.lang.Object,%20int)>announce</a>,
+                                     attempt to remote an object, either through ItemServer.<a href=nonav/docs/gnu/cajo/utils/ItemServer.html#bind(java.lang.Object,%20java.lang.String)>bind</a>,
+                                     or Multicast.<a href=nonav/docs/gnu/cajo/utils/Multicast.html#announce(java.lang.Object,%20int)>announce</a>,
                                      <i>before</i> doing this; a NullPointerException <u>will</u> occur.</strike><br><br>
 
                                      &nbsp&nbsp&nbsp&nbsp<b>*<u>Update</u>:</b> (01-Jun-05) A convenience
@@ -200,8 +200,8 @@
                                      been added. If you do not explicitly configure Remote, it will now
                                      remote automatically, on an <i>anonymous</i> port. The actual port, selected
                                      from the unused pool by the OS at runtime, can be identified by calling
-                                     Remote.<a href=https://cajo.dev.java.net/nonav/docs/gnu/cajo/invoke/Remote.html#getServerPort>getServerPort</a>.
-                                     It is effectively an implicit call to Remote.<a href=https://cajo.dev.java.net/nonav/docs/gnu/cajo/invoke/Remote.html#config(java.lang.String,%20int,%20java.lang.String,%20int)>config(null, 0, null, 0)</a>.<br><br>
+                                     Remote.<a href=nonav/docs/gnu/cajo/invoke/Remote.html#getServerPort>getServerPort</a>.
+                                     It is effectively an implicit call to Remote.<a href=nonav/docs/gnu/cajo/invoke/Remote.html#config(java.lang.String,%20int,%20java.lang.String,%20int)>config(null, 0, null, 0)</a>.<br><br>
 
                                      <a id="8"></a><b><u>8. Excessive Decomposition:</u></b> The interfaces to
                                      remote objects should tend to favor functional richnes, over logical
