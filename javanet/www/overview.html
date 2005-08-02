@@ -147,7 +147,7 @@ public class SomeObject {
                         <blockquote><tt>
                            Itemserver.bind(someObject, "someName"); // server side<br><br>
 
-                           Object someObject = Remote.getItem("//serverName/someName"); // client side
+                           Object someObject = Remote.getItem("//serverName:<a href=nonav/gotcha.html#7 title="see item #7">serverPort</a>/someName"); // client side
                         </blockquote></tt><br>
 
                         Dynamic binding is accomplished by calling the <tt><a href=docs/gnu/cajo/utils/Multicast.html#announce(java.lang.Object,%20int)>
@@ -277,25 +277,30 @@ public class SomeObject {
                         Wrapping our previous example:
 
 <blockquote><tt><pre>
+import java.rmi.RemoteException;
+
 public class WrapperObject {
    protected Object obj;
    public WrapperObject() {
       // obj = new SomeObject(); // when local, or...
 
       try { obj = Remote.getItem("//serverName/someName"); }
-      catch(Exception x) { /* remote object not available */ }
+      catch(RemoteException rx) { /* network exception */ }
    }
    public String foo() {
       try { return (String)Remote.invoke(obj, "foo", null); }
-      catch(Exception x) { /* invocation failure */ }
+      catch(RemoteException rx) { /* network exception */ }
+      catch(Exception x) { /* method exception */ }
    }
    public void bar(String string, Integer stuff) {
       try { Remote.invoke(obj, "bar", new Object[] { string, stuff }); }
-      catch(Exception x) { /* invocation failure */ }
+      catch(RemoteException rx) { /* network exception */ }
+      catch(Exception x) { /* method exception */ }
    }
    public String baz(String string) {
       try { return (String)Remote.invoke(obj, "baz", string); }
-      catch(Exception x) { /* invocation failure */ }
+      catch(RemoteException rx) { /* network exception */ }
+      catch(Exception x) { /* method exception */ }
    }
 }
 </pre></tt></blockquote>
