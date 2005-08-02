@@ -129,10 +129,10 @@
                server item has two primary components; a processing thread, and a callable
                interface.  While the processing thread is technically optional, a callable
                interface is logically essential. The processing thread, if defined, is
-               launched automatically, following binding of the object with the <a href=docs/gnu/cajo/utils/ItemServer.html>
+               launched automatically, following binding of the object with the <a href=nonav/docs/gnu/cajo/utils/ItemServer.html>
                ItemServer</a>. A server item can also be purely <i>event driven</i>; i.e.
                only executing when its callable methods are being invoked; in this case it
-               would not define a <a href=docs/gnu/cajo/utils/BaseItem.MainThread.html>
+               would not define a <a href=nonav/docs/gnu/cajo/utils/BaseItem.MainThread.html>
                MainThread</a> object. The callable interface to an item is simply its
                collection of publicly declared methods. (subject to the minor restrictions
                outlined in the <a href="theory.html#rules">theory</a> page)<br><br>
@@ -204,8 +204,8 @@
          <td valign="top">
             <span class="spacing style4 style7 style9">
                The TestProxy class is a small proxy item illustrating many features of the
-               framework.  It is sent to a client, as the return from the TestItem's <a href=docs/gnu/cajo/utils/BaseItem.html#getProxy()>
-               getProxy</a> method, inherited from <a href=docs/gnu/cajo/utils/BaseItem.html>
+               framework.  It is sent to a client, as the return from the TestItem's <a href=nonav/docs/gnu/cajo/utils/BaseItem.html#getProxy()>
+               getProxy</a> method, inherited from <a href=nonav/docs/gnu/cajo/utils/BaseItem.html>
                BaseItem</a>. The proxy automatically inherits a remote reference to the
                TestItem.  On arrival at the client, it is initialized (by the client) with
                the assignment of its remoteThis member with a reference to the proxy itself,
@@ -279,7 +279,7 @@
 
                The second function of the Builder class is to instantiate the proxy, then
                serialize its image to disc.  This serialized object will be included in the
-               proxy jar file, and referenced through a <a href=docs/gnu/cajo/utils/ProxyLoader.html>
+               proxy jar file, and referenced through a <a href=nonav/docs/gnu/cajo/utils/ProxyLoader.html>
                ProxyLoader</a> in the TestItem's runtime.  This is the <i>most elaborate</i>
                way to use a ProxyLoader. They can also be used to invoke a proxy's no-arg
                constructor, to create a new instance of the proxy, on its arrival at the
@@ -290,7 +290,7 @@
 
                The actual mechanics of what is going on inside the builder is not so
                important.  It is basically configuring graphical components, and putting
-               them into the graphical user interface member object <a href=docs/gnu/cajo/utils/BaseProxy.html#container>
+               them into the graphical user interface member object <a href=nonav/docs/gnu/cajo/utils/BaseProxy.html#container>
                container</a>. The proxy will return this graphical container to the hosting
                client as a result of its initialization invocation.  It also defines the
                keys of the string table, also loaded during initialization. It references a
@@ -344,7 +344,7 @@
 
                The server also does a few additional actions, to illustrate the operation of
                remaining parts of the framework.  It multicasts a remote reference to itself
-               to announce its startup.  It uses a <a href=docs/gnu/cajo/utils/MonitorItem.html>
+               to announce its startup.  It uses a <a href=nonav/docs/gnu/cajo/utils/MonitorItem.html>
                MonitorItem</a>, to log data about the remote invocations to its item to the
                system console.  It even listens for other item announcements; sending the
                announcers a remote reference the test proxy, invoked on their setProxy
@@ -399,7 +399,7 @@
                interfaces. These interfaces can be viewed with an ordinary web browser, or
                via Web Start.<br><br>
 
-               <i>Note:</i> The <a href=docs/gnu/cajo/utils/ZippedProxy.html>ZippedProxy</a>
+               <i>Note:</i> The <a href=nonav/docs/gnu/cajo/utils/ZippedProxy.html>ZippedProxy</a>
                class is the only utility class not used in the example. This is bacause the
                example demonstrates indirectly referencing a proxy, by the serving item.
                This is indicated when the server item, does not need to configure a proxy
