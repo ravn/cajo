@@ -297,6 +297,15 @@
                even across virtual machine boundaries, but then with the exception of
                local-to-local.<br><br>
 
+               It is crucial to keep in mind during application development: While this
+               framework makes the network appear <i>logically</i> transparent; it most
+               definitely is <u>not</u> <i>physically</i> transparent. A remote method call
+               can fail, or take a really long time, for a multitude of reasons, and at any
+               time. It is an inherent nature of the beast. It is very intuitive to treat
+               remote object usage like a telephone call: The line may be busy, the callee
+               may not answer, or the line may cut out unexpectedly. Be sure to include
+               work-arounds for these realities into your design.<br><br>
+
                Now relax; this has been a lot of material, presented in a <i>very</i> short
                time. It took <u>much</u> longer to come up with this, than it did to explain
                it. So now take a break, do something else, and let it all soak in. Soon a
