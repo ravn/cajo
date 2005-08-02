@@ -305,10 +305,12 @@ public class WrapperObject {
 }
 </pre></tt></blockquote>
 
-                        The wrapper architecture also facilitates the simple insertion of
-                        <i>extremely</i> powerful supplemental functionality; such as retry,
-                        caching, monitoring, notification, logging, measurement, debug, testing,
-                        validation, rollback, load balancing, fail-over, etc.<br><br>
+                        Note the network exception catch blocks. A remote invocation <i>can</i>
+                        fail unexpectedly; yet it <i>never</i> could occur when the wrapped
+                        object reference is local. The wrapper architecture facilitates the simple
+                        insertion of <i>extremely</i> powerful supplemental functionality; such as
+                        retry, caching, monitoring, notification, logging, measurement, debug,
+                        testing, validation, rollback, load balancing, fail-over, etc.<br><br>
 
                         It is important to remember that since the Remote.invoke method works
                         on <u>both</u> local, <i>and</i> remote objects; the wrapper technique
