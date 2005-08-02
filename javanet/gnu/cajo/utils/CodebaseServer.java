@@ -181,22 +181,23 @@ public final class CodebaseServer extends Thread {
     * with its preceeding delimiter, if any.  The <u>order</u> of the
     * arguments must be maintained however.<p>
     * <i>Note:</i> other item servers can share this instance, by placing
-    * their proxy jar files in the same working directory. However, those
-    * item servers will not be able to use the client service feature, as it
-    * is unique to the VM in which the CodebaseServer is running.<p>
-    * As a safety precaution, the server will send any requested jar file in
+    * their proxy classes or jar files in the same working directory.
+    * However, those item servers will not be able to use the client service
+    * feature, as it is unique to the VM in which the CodebaseServer is
+    * running.<p>
+    * As a safety precaution, the server will send any requested file in
     * or below its working directory <i>except</i> the jar file of the server
-    * itself! Typically people do not want to give this file out.
+    * itself. Typically people do not want to give this file out.
     */
    public void run() {
       try {
-         byte msg[] = new byte[8192];
+         byte msg[] = new byte[0xf000];
          while(!isInterrupted()) {
             Socket s = ss.accept();
             try {
                s.setSoTimeout(1500);
                InputStream  is = s.getInputStream();
-               OutputStream os = s.getOutputStream();
+               OutputStream os = new BufferedOutputStream(s.getOutputStream(), 0xf000);
                int ix = is.read(msg);
                String itemName = null;
                scan: for (int i = 0; i < ix; i++) {
@@ -314,10 +315,11 @@ public final class CodebaseServer extends Thread {
       catch(Exception x) { x.printStackTrace(); }
    }
    /**
-    * The application creates a utility server to share al the classes in
-    * the in its working directory. It is extremely useful for application
-    * development. If a port number is provided as an argument, it will
-    * be used, otherwise it will be opened on an anonymous port.<p>
+    * The application creates a utility server to share any files in
+    * the in its working directory and subdirectories. It is extremely
+    * useful for application development. If a port number is provided
+    * as an argument, it will be used, otherwise it will be opened on
+    * an anonymous port.<p>
     * <i><u>Note</u>:</i> in the Virtual Machine sharing its objects,
     * its system property <tt>rmi.server.codebase</tt> will have to be set
     * manually, to point to this host and port number.
