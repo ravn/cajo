@@ -69,7 +69,7 @@
                               <tr>
                                  <td valign="top">
 <!-- title bar section -->         <span class="spacing style4 style7 style9">
-                                      The <a href=docs/gnu/cajo/utils/Multicast.html>Multicast</a> class performs
+                                      The <a href=nonav/docs/gnu/cajo/utils/Multicast.html>Multicast</a> class performs
                                       two complimentary functions. First, it allows an object to <i>"broadcast"</i>
                                       a remote reference to itself over the network. Second, it allows an object to
                                       listen for, and <i>catch</i>, these reference broadcasts. Once caught, an
@@ -77,7 +77,8 @@
                                       functions operate entirely independently of each other; i.e. an object can
                                       broadcast without listening, and listen without broadcasting, it can even
                                       do both.  If it is listening when it broadcasts, a VM will even catch its
-                                      own reference.
+                                      own reference. Multicast allows objects to discover, and access each other;
+                                      spontaneously, <i>without</i> the need for static registries.
                                     </span>
                                  </td>
                               </tr>
@@ -126,7 +127,7 @@
                Applications can range from performing all multicasts on a single channel,
                to using separate channels for each specific meaning. A server performs a
                broadcast by passing a reference to any object to a multicast object's
-               <a href=docs/gnu/cajo/utils/Multicast.html#announce(java.lang.Object,%20int)>
+               <a href=nonav/docs/gnu/cajo/utils/Multicast.html#announce(java.lang.Object,%20int)>
                announce</a> method.<br><br>
 
                The framework defines a default channel, which can be useful for spontaneous
@@ -175,7 +176,7 @@
             <span class="spacing style4 style7 style9">
                An object can register itself with a multicast object to listen for these
                reference broadcasts.  It does this by invoking the multicast's
-               <a href=docs/gnu/cajo/utils/Multicast.html#listen(java.lang.Object)>
+               <a href=nonav/docs/gnu/cajo/utils/Multicast.html#listen(java.lang.Object)>
                listen</a> method, passing in a reference to itself.  When the multicast
                object receives a broadcast of a remote object reference, it will invoke the
                listener's public multicast method, passing a reference to itself, as
