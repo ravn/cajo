@@ -134,12 +134,12 @@ public class SomeObject {
                         distinct options; these are known collectively as <i>static</i>, and
                         <i>dynamic</i> binding. Both may even be used on the same object.<br><br>
 
-                        Static binding is accomplished by calling the static <tt><a href=docs/gnu/cajo/utils/ItemServer.html#bind(java.lang.Object,%20java.lang.String)>
-                        bind</a></tt> method, of the <tt><a href=docs/gnu/cajo/utils/ItemServer.html>
+                        Static binding is accomplished by calling the static <tt><a href=nonav/docs/gnu/cajo/utils/ItemServer.html#bind(java.lang.Object,%20java.lang.String)>
+                        bind</a></tt> method, of the <tt><a href=nonav/docs/gnu/cajo/utils/ItemServer.html>
                         ItemServer</a></tt> class. This type of binding will require the client to
                         know the address of the server in order to obtain a reference to the object.
-                        Clients statically link to a remote object using the static <tt><a href=docs/gnu/cajo/invoke/Remote.html#getItem(java.lang.String)>
-                        getItem</a></tt> method of the <tt><a href=docs/gnu/cajo/invoke/Remote.html>Remote</a>
+                        Clients statically link to a remote object using the static <tt><a href=nonav/docs/gnu/cajo/invoke/Remote.html#getItem(java.lang.String)>
+                        getItem</a></tt> method of the <tt><a href=nonav/docs/gnu/cajo/invoke/Remote.html>Remote</a>
                         class</tt>.<br><br>
 
                         Static binding and linking would look something like this:
@@ -150,11 +150,11 @@ public class SomeObject {
                            Object someObject = Remote.getItem("//serverName:<a href=nonav/gotcha.html#7 title="see item #7">serverPort</a>/someName"); // client side
                         </blockquote></tt><br>
 
-                        Dynamic binding is accomplished by calling the <tt><a href=docs/gnu/cajo/utils/Multicast.html#announce(java.lang.Object,%20int)>
-                        announce</a></tt> method, of the <tt><a href=docs/gnu/cajo/utils/Multicast.html>
+                        Dynamic binding is accomplished by calling the <tt><a href=nonav/docs/gnu/cajo/utils/Multicast.html#announce(java.lang.Object,%20int)>
+                        announce</a></tt> method, of the <tt><a href=nonav/docs/gnu/cajo/utils/Multicast.html>
                         Multicast</a></tt> class. This will <i>'broadcast'</i> the remote object reference
                         to <u>all</u> listening Virtual Machines. Clients dynamically link to a
-                        remote object using the <tt><a href=docs/gnu/cajo/utils/Multicast.html#listen(java.lang.Object)>
+                        remote object using the <tt><a href=nonav/docs/gnu/cajo/utils/Multicast.html#listen(java.lang.Object)>
                         listen</a></tt> method of the Multicast class.<br><br>
 
                         Dynamic binding and linking would look something like this:
@@ -170,7 +170,7 @@ public class SomeObject {
                         objects, including remote ones, as either an argument, or a return. It could
                         even be thrown in an Exception. Any object receiving this reference, can also
                         invoke its public methods. The reference can even be written to a file, using
-                        the static <tt><a href=docs/gnu/cajo/invoke/Remote.html#zedmob(java.io.OutputStream,%20java.lang.Object)>
+                        the static <tt><a href=nonav/docs/gnu/cajo/invoke/Remote.html#zedmob(java.io.OutputStream,%20java.lang.Object)>
                         zedmob</a></tt> method of the Remote class, for later use, even by a
                         different program.  The key to all this power is the static <i>invoke</i>
                         method of the Remote class.<br><br>
@@ -204,7 +204,7 @@ public class SomeObject {
                <tr>
                   <td valign="top">
                      <span class="spacing style4 style7 style9">
-                        <tt><a href=docs/gnu/cajo/invoke/Remote.html#invoke(java.lang.Object,%20java.lang.String,%20java.lang.Object)>
+                        <tt><a href=nonav/docs/gnu/cajo/invoke/Remote.html#invoke(java.lang.Object,%20java.lang.String,%20java.lang.Object)>
                         Invoke</a></tt> is the cajo architecture approach to dynamic method
                         invocation, supplemented by the use of Java reflection. It is the foundation
                         of the framework. It can be used to invoke <i>any</i> public method, on
@@ -267,7 +267,7 @@ public class SomeObject {
                         a <tt>NoSuchMethodException</tt>.<br><br>
 
                         There is however, an <i>extremely</i> useful technique, to restore compile
-                        time typechecking; it is called a <tt><a href=docs/gnu/cajo/utils/extra/Wrapper.html>
+                        time typechecking; it is called a <tt><a href=nonav/docs/gnu/cajo/utils/extra/Wrapper.html>
                         wrapper</a></tt> class.<br><br>
 
                         If a client already knows the interface to a remote object; it can define
