@@ -172,8 +172,11 @@ public class SomeObject {
                         invoke its public methods. The reference can even be written to a file, using
                         the static <tt><a href=nonav/docs/gnu/cajo/invoke/Remote.html#zedmob(java.io.OutputStream,%20java.lang.Object)>
                         zedmob</a></tt> method of the Remote class, for later use, even by a
-                        different program.  The key to all this power is the static <i>invoke</i>
-                        method of the Remote class.<br><br>
+                        different program. Note however; the exposed object's public methods are
+                        <i>not</i> synchronized, meaning that they can be invoked reentrantly by
+                        clients. Just as with local objects; synchronizing methods can cause
+                        significant client performance impacts. It is best to synchronize only the
+                        smallest possible blocks of code that require protection to be threadsafe.<br><br>
 
                         Consider for a moment the useful network resource created simply by a
                         <i>single-line</i> of code remoting a <a href=http://java.sun.com/j2se/1.4.2/docs/api/java/util/Hashtable.html>
@@ -274,7 +277,7 @@ public class SomeObject {
                         a wrapper class, to wrap the remote reference, and provide a compile time
                         type safe interface to it.<br><br>
 
-                        Wrapping our previous example:
+                        Generically wrapping our previous example:
 
 <blockquote><tt><pre>
 import java.rmi.RemoteException;
@@ -286,6 +289,7 @@ public class WrapperObject {
 
       try { obj = Remote.getItem("//serverName/someName"); }
       catch(RemoteException rx) { /* network exception */ }
+      catch(Exception x) { /* instantiation exception */ }
    }
    public String foo() {
       try { return (String)Remote.invoke(obj, "foo", null); }
@@ -306,11 +310,11 @@ public class WrapperObject {
 </pre></tt></blockquote>
 
                         Note the network exception catch blocks. A remote invocation <i>can</i>
-                        fail unexpectedly; yet it <i>never</i> could occur when the wrapped
-                        object reference is local. The wrapper architecture facilitates the simple
-                        insertion of <i>extremely</i> powerful supplemental functionality; such as
-                        retry, caching, monitoring, notification, logging, measurement, debug,
-                        testing, validation, rollback, load balancing, fail-over, etc.<br><br>
+                        fail unexpectedly; yet it would not occur when the wrapped object reference
+                        is local. The wrapper architecture facilitates the simple insertion of
+                        <i>extremely</i> powerful supplemental functionality; such as retry, caching,
+                        monitoring, notification, logging, measurement, debug, testing, validation,
+                        rollback, load balancing, fail-over, etc.<br><br>
 
                         It is important to remember that since the Remote.invoke method works
                         on <u>both</u> local, <i>and</i> remote objects; the wrapper technique
