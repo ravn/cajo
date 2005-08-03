@@ -72,16 +72,17 @@
                                       The client class is a generic, general purpose graphical proxy host. It can
                                       be used to display and interact with any graphical proxy, without need for
                                       any customization. It can operate in two fundamentally different, but
-                                      functionally complementary ways; as an applet or as an application.<br><br>
+                                      functionally complementary ways; as an applet or as an application. The
+                                      client uses only the classes in the gnu.cajo.invoke package.<br><br>
 
                                       As an applet, on loading by a Java enabled browser, it will connect back to
                                       its host and request either the default proxy, or one specified in the
                                       browser URL. Next it will initialize the proxy, by calling its init method,
                                       providing a reference to the proxy remoted within the context of the plug-in's
-                                      VM.  Finally, the return of this proxy invocation, cannonically a descendant
+                                      VM.  Finally, the return of this proxy invocation, canonically a descendant
                                       of java.awt.Container, is added to the applet's panel. This allows a single
                                       client to host an unlimited variety of graphical application proxies, using
-                                      only one applet class. Best yes, all of the code is provided by the server.
+                                      only one applet class. Best yet, all of the code is provided by the server.
                                     </span>
                                  </td>
                               </tr>
@@ -139,11 +140,9 @@
                The parameters in brackets can be selectively omitted, but the order of
                arguments is required. Unspecified, the port value will be 80, the
                clientPort 0 = anonymous (chosen form those free at startup), localPort will
-               be same as clientPort, and proxyName will be "main".<br><br>
-
-               *You can also WebStart the client application! Simply append an exclamation
-               point (!) to the end of the URL!  It's very cool, try it! We call it;
-               <i>starting the application with a bang!</i>
+               be same as clientPort, and proxyName will be "main". You can also WebStart
+               the client application; simply append an exclamation point (!) to the end of
+               the URL.  We call it: <i>Starting the application with a bang!</i>
             </span>
          </td>
       </tr>
@@ -174,8 +173,8 @@
                and development purposes. It is also the fastest and most efficient means to
                host a remote graphical proxy. It connects to a remote item, requests its
                proxy, initializes it in the identical manner as the applet does, and if the
-               initialization returns a Component (or a JComponent), it will create a frame
-               (or a JFrame) on the client machine, displaying the result.<br><br>
+               initialization returns an awt Component (or a swing JComponent), it will
+               create a Frame (or a JFrame) on the client machine, displaying the result.<br><br>
 
                The application can take up to five optional parameters.  They are in order,
                from  most often changed, to least often, because to change an option, all of
@@ -278,7 +277,8 @@ grant {
                <i>Note:</i> when launched via WebStart, the client requires no policy file,
                as it already runs in an Applet sandbox, meaning it has no access to the
                hosting machine's hard disc, and can communicate only back to the host from
-               which it was sent.
+               which it was sent. This is the best option for running completely untrusted
+               code.
             </span>
          </td>
       </tr>
