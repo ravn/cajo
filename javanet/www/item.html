@@ -92,15 +92,13 @@
                                       result in a <code>NoSuchMethodException</code> being thrown at the caller.<br><br>
 
                                       Item objects are free to implement any public, in this case meaning remotely
-                                      callable, methods of any type. The only requirement is that the calling
+                                      callable methods, of any type. The only requirement is that the calling
                                       object from a different machine, virtual <i>or</i> physical, must know the
-                                      item's method signature. This is no different than for local objects, with
-                                      two exceptions. First there is no compile time typechecking; all argument
-                                      and return typechecking will be done at runtime. Second, primitive types
-                                      such as <code>int</code> or <code>char</code> for example, cannot be sent
-                                      as arguments, nor returned, rather they must be sent in their object wrappers,
-                                      in this case <code>Integer</code> or <code>Character</code>. Essentially,
-                                      only objects may be passed between items.
+                                      item's method signature. This is no different then for local objects, except
+                                      that clients do not need to know the signature at <i>compile time</i>. This
+                                      opens a lot of interesting dynamic interaction possiblities. Naturally,
+                                      there can be no compile time typechecking; all argument and return
+                                      typechecking will be done at runtime.
                                    </span>
                                  </td>
                               </tr>
