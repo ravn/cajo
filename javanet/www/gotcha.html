@@ -104,9 +104,15 @@
                                      <i>significant</i> improvement to the project codebase was uploaded, which
                                      <u>eliminates</u> this <i>"gotcha"</i>. It was most generously proposed by
                                      project member <b>frelars</b> (aka Fredrik Larsen), with assistance by project
-                                     member <b>li_ma</b> (aka Li Ma). It will traverse argument inheritance trees
-                                     to find the best fitting method. It is a <i>stunning</i> improvement, and
-                                     removes the most <u>common</u> problem encountered by users. Well done!<br><br>
+                                     member <b>li_ma</b> (aka Li Ma). It will now traverse method argument
+                                     inheritance trees, to find a properly fitting method: Well done Guys!<br><br>
+
+                                     &nbsp&nbsp&nbsp&nbsp<b>*<u>Update</u>:</b> (06-Aug-05) Prior to today; server
+                                     methods could only accept object arguments, and provide object returns. A
+                                     very significant improvement was proposed by project member <b>zacwolfe</b>
+                                     (aka Zac Wolfe). It provides implicit autoboxing during reflective method
+                                     lookup: Server objects can now use primitive types in its arguments,
+                                     <i>and</i> returns: Thanks Zac!<br><br>
 
                                      <a id="2"></a><b><u>2. Long delays:</u></b> When each remote invocation takes
                                      a really long time to execute, there is a common problem.  RMI attempts to
@@ -193,7 +199,10 @@
                                      configures the TCP settings for network communication. <strike>If you
                                      attempt to remote an object, either through ItemServer.<a href=nonav/docs/gnu/cajo/utils/ItemServer.html#bind(java.lang.Object,%20java.lang.String)>bind</a>,
                                      or Multicast.<a href=nonav/docs/gnu/cajo/utils/Multicast.html#announce(java.lang.Object,%20int)>announce</a>,
-                                     <i>before</i> doing this; a NullPointerException <u>will</u> occur.</strike><br><br>
+                                     <i>before</i> doing this; a NullPointerException <u>will</u> occur.</strike>
+                                     <i><u>Note</u>:</i> Specifying port 1099, which is the <i>default</i> port
+                                     for the Java RMIRegistry, would eliminate the need to explicitly specify a
+                                     port number, in a server lookup URL.<br><br>
 
                                      &nbsp&nbsp&nbsp&nbsp<b>*<u>Update</u>:</b> (01-Jun-05) A convenience
                                      mechanism to provide a <i>useful-guess</i> at TCP configuration has now
