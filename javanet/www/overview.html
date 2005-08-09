@@ -85,9 +85,9 @@
 <blockquote><tt><pre>
 public class SomeObject {
    protected String string;
-   protected Integer stuff;
+   protected int stuff;
    public String foo() { return string; }
-   public void bar(String string, Integer stuff) {
+   public void bar(String string, int stuff) {
       this.string = string;
       this.stuff = stuff;
    }
@@ -287,7 +287,7 @@ public class WrapperObject {
    public WrapperObject() {
       // obj = new SomeObject(); // when local, or...
 
-      try { obj = Remote.getItem("//serverName/someName"); }
+      try { obj = Remote.getItem("//serverName:serverPort/someName"); }
       catch(RemoteException rx) { /* network exception */ }
       catch(Exception x) { /* instantiation exception */ }
    }
@@ -296,7 +296,7 @@ public class WrapperObject {
       catch(RemoteException rx) { /* network exception */ }
       catch(Exception x) { /* method exception */ }
    }
-   public void bar(String string, Integer stuff) {
+   public void bar(String string, int stuff) {
       try { Remote.invoke(obj, "bar", new Object[] { string, stuff }); }
       catch(RemoteException rx) { /* network exception */ }
       catch(Exception x) { /* method exception */ }
@@ -358,12 +358,14 @@ public class WrapperObject {
 
                Given the transparency of this framework, you will quickly find it <i>so</i>
                easy to distribute your applications; you will practically forget the
-               framework is even there! Its simplicity, flexibility, and
-               <i>performance</i>, offer quite an exciting change from the more enormous,
-               complex, and heavyweight, distributed frameworks out there.<br><br>
+               framework is even there!<bt><br>
 
                All this functionality; and a <u><i>lot</i></u> more: &nbsp;From a codebase
-               of less than 40 <b><u>k</u></b>B!<br><br>
+               of less than 40<b><u>k</u></b>B!<br><br>
+
+               Its simplicity, flexibility, and
+               <i>performance</i>, offer quite an exciting change from the more enormous,
+               complex, and heavyweight, distributed frameworks out there.<br><br>
 
                Then, once you are up to speed; You will be delighted to discover, that
                the framework is <i>completely</i> <a href=http://wiki.java.net/bin/view/Communications/CajoScripting>
