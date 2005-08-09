@@ -38,7 +38,7 @@ import java.lang.reflect.Method;
  * remote VMs. This class eliminates the need to maintain multiple
  * specialized rmic interface compilations for multiple, application specific
  * objects. It effectively allows any object to become a remotely callable
- * <b>Item</b>, in terms of this paradigm, and makes all of the object's
+ * <tt>Item</tt>, in terms of this paradigm, and makes all of the object's
  * public methods remotely callable. It also contains several useful utility
  * methods, to further support the invoke package paradigm.<p> It can also be run
  * as an application, to load an object from a URL, and remote it within a VM.
@@ -142,13 +142,14 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
    /**
     * This method configures the server's TCP parameters for RMI.  It allows
     * complete specification of client-side and server-side ports and
-    * hostnames.  It used to override the default values.  It is necessary
+    * hostnames.  It used to override the default values, which are anonymous,
+    * meaning from an unused pool, selected by the OS.  It is necessary
     * when either VM is either operating behind a firewall, has multiple network
     * interfaces, is multi-addressed, or is using NAT. The first two parameters
     * control how the sockets will be configured locally, the second two
     * control how a remote object's sockets will be configured to communicate
     * with this server.
-    * <p><i><U>Note</u>:</i> If this class is to be configured, it must be
+    * <p><i><u>Note</u>:</i> If this class is to be configured, it must be
     * done <b>before</b> any items are remoted.
     * @param serverHost The local domain name, or IP address of this host.
     * If null, it will use all network interfaces.  Typically it is
@@ -197,8 +198,8 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
     * specified, instead it will listen on <i>all</i> network interfaces.
     * It is probably not a problem for most, but is probably not desirable for
     * multi-homed hosts.
-    * <p><i>Note:</i> If this class is to be configured, it must be done
-    * <b>before</b> any items are remoted.
+    * <p><i><u>Note</u>:</i> If this class is to be configured, it must be
+    * done <b>before</b> any items are remoted.
     * @param serverPort Specifies the local inbound port on which the server is
     * serving clients. It can be zero, to use an anonymous port.  This must
     * are being used, it must be an accessible port, into this server. If this
@@ -255,10 +256,11 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
    }
    /**
     * A utility method to reconstitute a zipped marshalled object (zedmob)
-    * into a remote item reference, proxy object, or local object. <i>Note:</i>
-    * on completion of reading the item from the stream, the stream will be
-    * automatically closed. Typically a file containing a zedmob has the file
-    * extension .zedmob as an identifier.
+    * into a remote item reference, proxy object, or local object.
+    * Typically a file containing a zedmob has the file extension .zmob as
+    * an identifier.<p>
+    * <i><u>Note</u>:</i> on completion of reading the item from the stream,
+    * the stream will be automatically closed.
     * @param is The input stream containing the zedmob of the item reference.
     * @return A reconstituted reference to the item.
     * @throws IOException if the zedmob format is invalid.
@@ -278,10 +280,10 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
     * to an output stream as a zipped marshalled object (zedmob). A zedmob is
     * the standard serialized format in this paradigm. This can be used to
     * <i>'freeze-dry'</i> the object to a file for later use, to send it over
-    * the network, or to an object archival service, for example. <i>Note:</i>
-    * on completion of writing the item, or reference, the stream will be
-    * closed. Typically, when saved to a file, a zedmob has the file extension
-    * .zmob to provide obvious identification.
+    * the network, or to an object archival service, for example.
+    * <i><u>Note</u>:</i> on completion of writing the item, or reference, the
+    * stream will be closed. Typically, when saved to a file, a zedmob has the
+    * file extension .zmob to provide obvious identification.
     * @param os The output stream on which to write the reference.  It may be
     * a file stream, a socket stream, or any other type of stream.
     * @param ref The item or reference to be serialized.
@@ -305,12 +307,12 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
     * <li>As a class file; in the format path/name
     * <li>As a serialized item; in the format /path/name</ul><p>
     * File loading will first be attempted from within the server's jar file,
-    * if that fails, it will then look in the local filesystem. <i>Note:</i>
-    * any socket connections made by the incoming item cannot be known at
-    * compile time, therefore proper operation if this VM is behind a firewall
-    * could be blocked. Use behind a firewall would require knowing all the
-    * ports that would be needed in advance, and enabling them before
-    * loading the proxy.
+    * if that fails, it will then look in the local filesystem.<p>
+    * <i><u>Note</u>:</i> any socket connections made by the incoming item
+    * cannot be known at compile time, therefore proper operation if this VM
+    * is behind a firewall could be blocked. Use behind a firewall would
+    * require knowing all the ports that would be needed in advance, and
+    * enabling them before loading the proxy.
     * @param url The URL where to get the object: file://, http://, ftp://,
     * /path/name, path/name, or //[host][:port]/[name]. The host, port,
     * and name, are all optional. If missing the host is presumed local, the
@@ -353,20 +355,41 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
       return item;
    }
    /**
+    * This method emulates server J5SE argument autoboxing.It is used by
+    * {@link #findBestMethod findBestMethod}. This technique has been most graciously championed by
+    * project member <b>Zac Wolfe</b>, to allow public server methods to use
+    * primitive types for arguments, <i>and</i> return values.
+    * @param arg The the argument class to test for boxing. If the argument
+    * type is primitive, it will be substituted with the corresponding
+    * primitive class representation.
+    * @return The corresponding class matching the primitive type, or the
+    * original input class, if it is not primitive.
+    */
+   public static Class autobox(Class arg) {
+      return arg.isPrimitive() ?
+         arg == Boolean.TYPE   ? Boolean.class   :
+         arg == Byte.TYPE      ? Byte.class      :
+         arg == Character.TYPE ? Character.class :
+         arg == Short.TYPE     ? Short.class     :
+         arg == Integer.TYPE   ? Integer.class   :
+         arg == Long.TYPE      ? Long.class      :
+         arg == Float.TYPE     ? Float.class     : Double.class : arg;
+   }
+   /**
     * This method attempts to resolve the argument inheritance blindness in
-    * Java reflection-based method selection. It has been most graceously
+    * Java reflection-based method selection. It has been most graciously
     * championed by project member <b>Fredrik Larsen</b>, with help from
     * project member <b>Li Ma</b>. If more than one matching method is found,
     * based on argument polymorphism, it will try to select the most
     * applicable one. It works very well if the inheritence trees for the
     * arguments are short. However, it will <i>not</i> always pick the best
     * method, if the arguments have deep inheritance trees. Fortunately it
-    * works for <i>both</i> classes <u>and</u> interfaces.
+    * works for classes, <i>and</i> interfaces.
     * @param item The object on which to find the most applicable public
     * method.
     * @param method The name of the method, which is to be invoked.
     * @param args The class representations of the arguments to be
-    * provided to the argument.
+    * provided to the method.
     * @return The most applicable method, which will accept all of these
     * arguments, or null, if none match.
     */
@@ -379,8 +402,9 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
          if (ms[i].getName().equals(method) &&
             ms[i].getParameterTypes().length == args.length) {
             for (int j = 0; j < args.length; j++)
-               if (!ms[i].getParameterTypes()[j].isAssignableFrom(args[j]))
-                  continue list;
+               if (!autobox(ms[i].getParameterTypes()[j]).
+                  isAssignableFrom(args[j]))
+                     continue list;
             matchList.add(ms[i]);
          }
       }
@@ -391,8 +415,9 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
             int closeness = 0;
             Method m = (Method)matchList.get(i);
             for (int j = 0; j < args.length; j++)
-               if (args[j].isAssignableFrom(m.getParameterTypes()[j]))
-                  closeness++;
+               if (args[j].
+                  isAssignableFrom(autobox(m.getParameterTypes()[j])))
+                     closeness++;
             if (closeness == args.length) return m;
             if (closeness > goodness) {
                best = m;
@@ -435,8 +460,8 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
          Class[]  c_args = new Class[o_args.length];
          for(int i = 0; i < o_args.length; i++)
             c_args[i] = o_args[i].getClass();
-         Method m = findBestMethod(item, method,c_args);
-         if (m!= null) return m.invoke(item, o_args);
+         Method m = findBestMethod(item, method, c_args);
+         if (m != null) return m.invoke(item, o_args);
       } else if (args != null) {
          Method m =
             findBestMethod(item, method, new Class[]{ args.getClass() });
@@ -544,9 +569,10 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
     * the {@link #getItem getItem} method to load the item.  Following loading
     * of the item, it will also create an rmiregistry, and bind a remote
     * reference to it under the name "main".  This will also allow remote
-    * clients to connect to, and interact with it.  <i>Note:</i>It will
-    * require a security policy, to define what permissions the loaded item
-    * will be allowed. There are six optional configuration parameters:<ul>
+    * clients to connect to, and interact with it.<p>
+    * <i><u>Note</u>:</i>It will require a security policy, to define what
+    * permissions the loaded item will be allowed. There are six optional
+    * configuration parameters:<ul>
     * <li> args[0] The optional URL where to get the object: file:// http://
     * ftp:// ..., /path/name <serialized>, path/name <class>, or alternatively;
     * //[host][:port]/[name].  If no arguments are provided, the URL will be
