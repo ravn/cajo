@@ -37,11 +37,11 @@ import java.lang.reflect.Method;
  * This class takes any object, and allows it to be called from
  * remote VMs. This class eliminates the need to maintain multiple
  * specialized rmic interface compilations for multiple, application specific
- * objects. It effectively allows any object to become a remotely callable
- * <tt>Item</tt>, in terms of this paradigm, and makes all of the object's
- * public methods remotely callable. It also contains several useful utility
- * methods, to further support the invoke package paradigm.<p> It can also be run
- * as an application, to load an object from a URL, and remote it within a VM.
+ * objects. It effectively allows any object to be remoted, and makes all of
+ * the object's public methods remotely callable. It also contains several
+ * very useful utility methods, to further support the invoke package
+ * paradigm.<p> It can also be run as an application, to load an object from
+ * a URL, and remote it within a VM.
  *
  * @version 1.0, 01-Nov-99 Initial release
  * @author John Catherino
@@ -96,8 +96,7 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
    public static final RCSF rcsf = new RCSF();
    /**
     * A global reference to the remote server socket factory.  This is the
-    * factory the local items use to asynchronously communicate with remote
-    * VMs.
+    * factory the local items use to communicate with remote VMs.
     */
    public static final RSSF rssf = new RSSF();
    static { // provide a default configuration; anonymous port & local name:
@@ -280,7 +279,7 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
     * to an output stream as a zipped marshalled object (zedmob). A zedmob is
     * the standard serialized format in this paradigm. This can be used to
     * <i>'freeze-dry'</i> the object to a file for later use, to send it over
-    * the network, or to an object archival service, for example.
+    * the network, or to an object archival service, for example.<p>
     * <i><u>Note</u>:</i> on completion of writing the item, or reference, the
     * stream will be closed. Typically, when saved to a file, a zedmob has the
     * file extension .zmob to provide obvious identification.
@@ -355,15 +354,16 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
       return item;
    }
    /**
-    * This method emulates server J5SE argument autoboxing.It is used by
-    * {@link #findBestMethod findBestMethod}. This technique has been most graciously championed by
-    * project member <b>Zac Wolfe</b>, to allow public server methods to use
-    * primitive types for arguments, <i>and</i> return values.
+    * This method emulates server J5SE argument autoboxing. It is used by
+    * {@link #findBestMethod findBestMethod}. This technique has been most
+    * graciously championed by project member <b>Zac Wolfe</b>. It allows
+    * public server methods to use primitive types for arguments, <i>and</i>
+    * return values.
     * @param arg The the argument class to test for boxing. If the argument
-    * type is primitive, it will be substituted with the corresponding
-    * primitive class representation.
+    * <i>type</i> is primitive, it will be substituted with the corresponding
+    * primitive <i>class</i> representation.
     * @return The corresponding class matching the primitive type, or the
-    * original input class, if it is not primitive.
+    * original argument class, if it is not primitive.
     */
    public static Class autobox(Class arg) {
       return arg.isPrimitive() ?
@@ -382,9 +382,9 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
     * project member <b>Li Ma</b>. If more than one matching method is found,
     * based on argument polymorphism, it will try to select the most
     * applicable one. It works very well if the inheritence trees for the
-    * arguments are short. However, it will <i>not</i> always pick the best
-    * method, if the arguments have deep inheritance trees. Fortunately it
-    * works for classes, <i>and</i> interfaces.
+    * arguments are shallow. However, it may <i>not</i> always pick the best
+    * method if the arguments have deep inheritance trees. Fortunately it
+    * works for both classes, <i>and</i> interfaces.
     * @param item The object on which to find the most applicable public
     * method.
     * @param method The name of the method, which is to be invoked.
@@ -408,6 +408,7 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
             matchList.add(ms[i]);
          }
       }
+      // now pick the closest match, if any:
       if (matchList.size() > 1) {
          Method best  = null;
          int goodness = -1;
@@ -418,7 +419,7 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
                if (args[j].
                   isAssignableFrom(autobox(m.getParameterTypes()[j])))
                      closeness++;
-            if (closeness == args.length) return m;
+            if (closeness == args.length) return m; // closest fit
             if (closeness > goodness) {
                best = m;
                goodness = closeness;
@@ -461,7 +462,7 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
          for(int i = 0; i < o_args.length; i++)
             c_args[i] = o_args[i].getClass();
          Method m = findBestMethod(item, method, c_args);
-         if (m != null) return m.invoke(item, o_args);
+         if (m!= null) return m.invoke(item, o_args);
       } else if (args != null) {
          Method m =
             findBestMethod(item, method, new Class[]{ args.getClass() });
@@ -473,9 +474,10 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
    /**
     * The constructor takes <i>any</i> object, and allows it to be remotely
     * invoked. If the object implements the {@link Invoke Invoke} interface,
-    * (i.e. it is an <b>Item</b>) it will simply route all remote invocations
-    * directly to it. Otherwise it will use Java reflection to attempt to
-    * invoke the remote calls directly on the object's public interface.
+    * (i.e. it is an <tt>Item</tt>) it will simply route all remote
+    * invocations directly to it. Otherwise it will use Java reflection to
+    * attempt to invoke the remote calls directly on the object's public
+    * methods.
     * @param  item The object to make remotely callable.  It may be an
     * arbitrary object of any type, or an <b>Item</b> (either local or remote).
     * @throws RemoteExcepiton If the remote instance could not be be created.
