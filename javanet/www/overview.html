@@ -147,7 +147,7 @@ public class SomeObject {
                         <blockquote><tt>
                            Itemserver.bind(someObject, "someName"); // server side<br><br>
 
-                           Object someObject = Remote.getItem("//serverName:<a href=nonav/gotcha.html#7 title="see item #7">serverPort</a>/someName"); // client side
+                           Object someObject = Remote.getItem("//serverName:<a href=nonav/gotcha.html title="see item #7">serverPort</a>/someName"); // client side
                         </blockquote></tt><br>
 
                         Dynamic binding is accomplished by calling the <tt><a href=nonav/docs/gnu/cajo/utils/Multicast.html#announce(java.lang.Object,%20int)>
@@ -323,8 +323,8 @@ public class WrapperObject {
                         code. It even provides the flexibility to change its wrapped object from
                         local, to remote, or to a different server; <i>even</i> at runtime. It
                         <i>also</i> allows the server the flexibility to return a remote reference,
-                        a locally running proxy, or a completely local object, without breaking the
-                        client's code. It is powerful stuff!
+                        a locally running <a href=proxy.html>proxy</a>, or a completely local
+                        object, without breaking the client's code. It is powerful stuff!
                      </span>
                   </td>
                </tr>
