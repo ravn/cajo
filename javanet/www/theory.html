@@ -89,17 +89,9 @@
 
                                       <pre>   Object invoke(String method, Object args);</pre>
 
-                                      </a><i>Note:</i> this mechanism operates slightly differently
-                                      from standard Java method invocation in two distinct ways.  First the
-                                      return type must be of type Object or a derived type.  This means an
-                                      invocation cannot return a primitive type, such as <tt>int</tt> or
-                                      <tt>char</tt>. Second, the argument type must also be of type Object,
-                                      meaning it too cannot be a primitive type. However, just as with conventional
-                                      invocations, both the argument and the return can be of type Object[]
-                                      indicating multiple objects are being transferred, or they can be null
-                                      indicating no object transfer. Also, it is <i>highly</i> recommended that
-                                      rather than using the invoke interface directly, always interact with an
-                                      object reference using the static invoke method of the <a href=nonav/docs/gnu/cajo/invoke/Remote.html>
+                                      </a><i><u>Note</u>:</i> it is <i>highly</i> recommended that rather than using
+                                      the invoke interface directly, always interact with an object reference
+                                      using the static invoke method of the <a href=nonav/docs/gnu/cajo/invoke/Remote.html>
                                       Remote</a> class.  It has the following signature:
 
                                       <pre>   Object Remote.invoke(Object object, String method, Object args);</pre>
@@ -144,9 +136,7 @@
                any. If it is found, it executes that method, and returns the result, or
                exception, if any. If no matching method can be found on the internal object,
                a <tt>NoSuchMethodException</tt> is thrown. This technique effectively
-               makes all public methods of the internal object remotely callable;
-               except those using primitive types, such as int and char, in arguments,
-               or as returns.
+               makes <i>all</i> public methods of the internal object remotely callable.
             </span>
          </td>
       </tr>
