@@ -173,14 +173,14 @@ public class SomeObject {
                         the static <tt><a href=nonav/docs/gnu/cajo/invoke/Remote.html#zedmob(java.io.OutputStream,%20java.lang.Object)>
                         zedmob</a></tt> method of the Remote class, for later use, even by a
                         different program. Note however; the exposed object's public methods are
-                        <i>not</i> synchronized, meaning that they can be invoked reentrantly by
-                        clients. Just as with local objects; synchronizing methods can cause
-                        significant client performance impacts. It is best to synchronize only the
+                        <i>not</i> synchronised, meaning that they can be invoked re-entrantly by
+                        clients. Just as with local objects; synchronising methods can cause
+                        significant client performance impacts. It is best to synchronise only the
                         smallest possible blocks of code that require protection to be threadsafe.<br><br>
 
                         Consider for a moment the useful network resource created simply by a
                         <i>single-line</i> of code remoting a <a href=http://java.sun.com/j2se/1.4.2/docs/api/java/util/Hashtable.html>
-                        Hashtable</a> for instance...
+                        Hashtable</a> for instance.
                      </span>
                   </td>
                </tr>
@@ -266,8 +266,8 @@ public class SomeObject {
                         Now it might appear that all type safety has been completely abandoned; looking
                         somewhat like a return to the C language. However, what has really happened
                         is that strong typechecking had to move, necessarily, from compile time, to
-                        run time. If there is no mappable signature, the invocation will result in
-                        a <tt>NoSuchMethodException</tt>.<br><br>
+                        runtime. If there is no mappable signature, the invocation will result in
+                        a <tt>java.lang.NoSuchMethodException</tt>.<br><br>
 
                         There is however, an <i>extremely</i> useful technique, to restore compile
                         time typechecking; it is called a <tt><a href=nonav/docs/gnu/cajo/utils/extra/Wrapper.html>
@@ -309,8 +309,8 @@ public class WrapperObject {
 }
 </pre></tt></blockquote>
 
-                        Note the network exception catch blocks. A remote invocation <i>can</i>
-                        fail unexpectedly; yet it would not occur when the wrapped object reference
+                        Note the network exception catch blocks. A remote invocation <i>can</i> fail
+                        unexpectedly; in a way that could not occur when the wrapped object reference
                         is local. The wrapper architecture facilitates the simple insertion of
                         <i>extremely</i> powerful supplemental functionality; such as retry, caching,
                         monitoring, notification, logging, measurement, debug, testing, validation,
@@ -324,7 +324,7 @@ public class WrapperObject {
                         local, to remote, or to a different server; <i>even</i> at runtime. It
                         <i>also</i> allows the server the flexibility to return a remote reference,
                         a locally running <a href=proxy.html>proxy</a>, or a completely local
-                        object, without breaking the client's code. It is powerful stuff!
+                        object, without breaking the client's code. This is powerful stuff!
                      </span>
                   </td>
                </tr>
@@ -350,7 +350,7 @@ public class WrapperObject {
       <tr>
          <td valign="top">
             <span class="spacing style4 style7 style9">
-               The diagram below illustrates the options for receiving and exposing object
+               The diagramme below illustrates the options for receiving and exposing object
                references from a Virtual Machine:<br><br>
 
                <center><img src=ventro/diagram_overview.jpeg alt="cajo object linking"
@@ -369,8 +369,8 @@ public class WrapperObject {
 
                Then, once you are up to speed: You will be delighted to discover that the
                framework is also completely <a href=http://wiki.java.net/bin/view/Communications/CajoScripting>
-               scriptable</a>; and has a simple, yet very powerful, mobile <a href=http://wiki.java.net/bin/view/Communications/ProxyUsage>
-               proxy</a> mechansim!</a>
+               scriptable</a>; and has a simple, yet very powerful, <a href=http://wiki.java.net/bin/view/Communications/ProxyUsage>
+               mobile object</a> technology!</a>
             </span>
          </td>
       </tr>
