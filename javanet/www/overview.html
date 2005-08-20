@@ -263,11 +263,11 @@ public class SomeObject {
                <tr>
                   <td valign="top">
                      <span class="spacing style4 style7 style9">
-                        Now it might appear that all type safety has been completely abandoned; looking
-                        somewhat like a return to the C language. However, what has really happened
-                        is that strong typechecking had to move, necessarily, from compile time, to
-                        runtime. If there is no mappable signature, the invocation will result in
-                        a <tt>java.lang.NoSuchMethodException</tt>.<br><br>
+                        Now it might appear that all type safety has been completely abandoned;
+                        looking somewhat like a return to the C language. However, what has really
+                        happened is that strong typechecking had to move, necessarily, from compile
+                        time, to run time. If there is no mappable signature, the invocation will
+                        result in a <tt>java.lang.NoSuchMethodException</tt>.<br><br>
 
                         There is however, an <i>extremely</i> useful technique, to restore compile
                         time typechecking; it is called a <tt><a href=nonav/docs/gnu/cajo/utils/extra/Wrapper.html>
@@ -275,7 +275,7 @@ public class SomeObject {
 
                         If a client already knows the interface to a remote object; it can define
                         a wrapper class, to wrap the remote reference, and provide a compile time
-                        type safe interface to it.<br><br>
+                        typesafe interface to it.<br><br>
 
                         Generically wrapping our previous example:
 
@@ -309,9 +309,9 @@ public class WrapperObject {
 }
 </pre></tt></blockquote>
 
-                        Note the network exception catch blocks. A remote invocation <i>can</i> fail
-                        unexpectedly; in a way that could not occur when the wrapped object reference
-                        is local. The wrapper architecture facilitates the simple insertion of
+                        Note the network exception catch blocks: A remote invocation can <i>fail</i>
+                        unexpectedly; in a way that would not occur when the wrapped object reference
+                        is local. The wrapper architecture also facilitates the simple insertion of
                         <i>extremely</i> powerful supplemental functionality; such as retry, caching,
                         monitoring, notification, logging, measurement, debug, testing, validation,
                         rollback, load balancing, fail-over, etc.<br><br>
@@ -358,7 +358,7 @@ public class WrapperObject {
 
                Given the transparency of this framework, you will quickly find it <i>so</i>
                easy to distribute your applications; you will practically forget the
-               framework is even there!<bt><br>
+               framework is even there!<br><br>
 
                All this functionality; and a <u><i>lot</i></u> more: &nbsp;From a codebase
                of less than 40<b><u>k</u></b>B!<br><br>
