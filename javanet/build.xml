@@ -5,9 +5,9 @@
     </description>
     <target name="library">
         <!-- the standard library deployment package -->  
-        <javac srcdir="." includes="gnu/cajo/invoke/*.java"/> 
-        <javac srcdir="." includes="gnu/cajo/utils/*.java"/> 
-        <javac srcdir="." includes="gnu/cajo/utils/extra/*.java"/> 
+        <javac srcdir="." target="1.2" source="1.2" includes="gnu/cajo/invoke/*.java"/> 
+        <javac srcdir="." target="1.2" source="1.2" includes="gnu/cajo/utils/*.java"/> 
+        <javac srcdir="." target="1.2" source="1.2" includes="gnu/cajo/utils/extra/*.java"/> 
         <rmic stubversion="1.2" classname="gnu.cajo.invoke.Remote" base="."/>
         <delete>
             <fileset dir="." includes="
@@ -32,7 +32,7 @@
         </delete>
     </target>
     <target name="client">
-        <javac srcdir="." includes="gnu/cajo/invoke/Client.java"/> 
+        <javac srcdir="." target="1.2" source="1.2" includes="gnu/cajo/invoke/Client.java"/> 
         <rmic stubversion="1.2" classname="gnu.cajo.invoke.Remote" base="."/>
         <jar basedir="."
              jarfile="client.jar"
@@ -47,8 +47,8 @@
          </delete>
     </target>
     <target name="proxy">
-        <javac srcdir="." includes="example/Builder.java"/> 
-        <javac srcdir="." includes="gnu/cajo/utils/ProxyLoader.java"/> 
+        <javac srcdir="." target="1.2" source="1.2" includes="example/Builder.java"/> 
+        <javac srcdir="." target="1.2" source="1.2" includes="gnu/cajo/utils/ProxyLoader.java"/> 
         <java fork="true" classname="example.Builder"/> 
         <jar basedir="."
              jarfile="proxy.jar"
@@ -69,7 +69,7 @@
         </delete>
     </target>
     <target name="server" depends="client, proxy">
-        <javac srcdir="." includes="example/Main.java"/> 
+        <javac srcdir="." target="1.2" source="1.2" includes="example/Main.java"/> 
         <rmic stubversion="1.2" classname="gnu.cajo.invoke.Remote" base="."/>
     </target>
     <target name="make1" depends="client, proxy, server">
