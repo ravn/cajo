@@ -87,7 +87,7 @@
                                          <li><a href=#10>Why is the framework named cajo?</a>
                                          <li><a href=#11>Can I use the example's TileLayout manager?</a>
                                          <li><a href=#12>Does cajo pass objects by reference, or by value?</a>
-                                         <li><a href=#13>Is there an official cajo internet port number?</a>
+                                         <li><a href=#13>Why do the build scripts target JRE 1.2?</a>
                                       </ol>
 
                                       <a id="1"></a><b><u>1. Why doesn't the example work in Appletviewer?</u></b>
@@ -101,7 +101,8 @@
                                       <a id="2"></a><b><u>2. What if someone forks this code?</u></b> A fork; i.e.
                                       an alternative development, is something I would not like to see happen, as
                                       it could divide the community. Besides, in this type of project, there is
-                                      <i>much</i> more to be gained through cooperation.<br><br>
+                                      <i>much</i> more to be gained through cooperation. It is a necessary freedom
+                                      however; to prevent technological lock-in.<br><br>
 
                                       <a id="3"></a><b><u>3. What is a zedmob?</u></b> A zedmob first off, is a
                                       contraction of the two words <i><u>Z</u></i>ipp<i><u>ed</u></i>
@@ -261,14 +262,13 @@
                                       object, then you will need to run something like a <a href=server.html>
                                       CodebaseServer</a> to provide it.)<br><br>
 
-                                      <a id="13"></a><b><u>13. Is there an official cajo internet port number?</u></b>
-                                      Yes! On <a href=servlets/NewsItemView?newsItemID=2539>5-August-05</a>, after
-                                      detailed inspection, the Internet Asigned Numbers Authority (IANA) officially
-                                      recognised the cajo project as part of the internet core infrastructure. It
-                                      registered port <b><a href=http://www.iana.org/assignments/port-numbers>
-                                      1198</a></b>, for <i>both</i> TCP <u>and</u> UDP, exclusively to our project.
-                                      This was an unexpected honour; particularly considering how very few ports are
-                                      left.
+                                      <a id="13"></a><b><u>13. Why do the build scripts target JRE 1.2?</u></b>
+                                      By using the lowest practical target JRE, the cajo project ensures
+                                      compatibility with all <i>higher</i> versions. Note that this in no way
+                                      <i>restricts</i> application code from targeting whatever JRE target is
+                                      needed. In general, the lower the JRE version a Java application can
+                                      successfuly target; the more JREs, and subsequently larger installed base,
+                                      on which it can run.
 
                                     </span>
                                  </td>
