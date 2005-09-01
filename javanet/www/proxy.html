@@ -72,12 +72,12 @@
                                       In this framework; technically a proxy is <i>any</i> object, sent from one
                                       VM to another, typically as a method argument, or result. (though they can
                                       also be sent in exceptions) In this page, we will look at proxies that
-                                      usually derive from <a href=nonav/docs/gnu/cajo/utils/BaseProxy.html>
-                                      BaseProxy</a>. These proxies are sent to a client by, and on behalf of, a
-                                      server item. A BaseProxy subclass will arrive with a remote link back to its
-                                      server item, on which it can asynchronously communicate with it.  Proxies are
-                                      often used to pre-process method invocations made by the client, using the
-                                      computing resources of the client, rather than those of the server.
+                                      derive from <a href=nonav/docs/gnu/cajo/utils/BaseProxy.html> BaseProxy</a>.
+                                      These proxies are sent to a client by, and on behalf of, a server item. A
+                                      BaseProxy subclass will arrive with a remote link back to its server item,
+                                      on which it can asynchronously communicate with it.  Proxies are often used
+                                      to pre-process method invocations made by the client, using the computing
+                                      resources of the client, rather than those of the server.
                                    </span>
                                 </td>
                              </tr>
@@ -118,8 +118,8 @@
                automatically loaded with the language appropriate to the locale of the
                client, when defined.<br><br>
 
-               Each proxy is served by, and services a specific server item. A server item
-               binds itself and serves its proxy object using the static
+               Each proxy is served by, and typically services, one specific server item. A
+               server item binds itself and serves its proxy object using the static
                <a href=nonav/docs/gnu/cajo/utils/ItemServer.html#bind(java.lang.Object,%20java.lang.String,%20java.lang.Object)>
                bind</a> method of the <a href=nonav/docs/gnu/cajo/utils/ItemServer.html>ItemServer</a>
                class.  The server item can also announce its availablity to a collection of
@@ -165,19 +165,19 @@
 
                <pre>   proxy.invoke("init", new Remote(proxy));</pre>
 
-               This will cause the proxy to load its string table, create its main thread,
+               This would cause the proxy to load its string table, create its main thread,
                and begin operating.  It can use the provided remote reference to itself,
                to pass back to its server item, or to other remote items, on which they
-               may asynchronously communicate with it. The return of this invocation, if
-               non-null, will be the proxy's default graphical user interface.  The client
+               may asynchronously communicate with the proxy. The return of this invocation,
+               if non-null, will be the proxy's default graphical user interface.  The client
                can display this if it wishes. The framework specifies only the method to
                obtain the default proxy. If an item serves multiple proxies, the method or
                methods to obtain them are application specific.  A <i>suggestion</i> would
                be to use a string argument in a getProxy invocation, to specify the desired
                proxy. <i>Note:</i> as a general rule, it is considered elegant practice for
-               an item to support both a proxy interface to itself, and for that proxy to
-               support a graphical interface. Minimally, an item should at least support a
-               <code>String getDescription()</code> method to describe its use and features.
+               a server item to support both a proxy interface to itself, and for that proxy
+               to support a graphical interface. Minimally, an item should at least support
+               a <code>String getDescription()</code> method to describe its use and features.
                <i>Note:</i> you can save proxies to disc for later use, possibly in a
                diffent VM session. However, you will need to reinitialize the proxy, each
                time it is deserialized. The most common storage format used within the
