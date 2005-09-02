@@ -265,6 +265,7 @@ public final class CodebaseServer extends Thread {
                            "  href=\"" + clientPort + ':' + localPort + '-'+ proxyName + "!\">\r\n" +
                            "  <information>\r\n" +
                            "    <title>CajoViewer - " + title + "</title>\r\n" +
+                           "    <shortcut><desktop/></shortcut>\r\n" +
                            "    <vendor>John Catherino</vendor>\r\n" +
                            "    <homepage href=\"https://cajo.dev.java.net\"/>\r\n" +
                            "    <description>Graphical cajo proxy client</description>\r\n" +
