@@ -121,15 +121,15 @@
                                      trying to match IP addresses to host names, a DNS timeout can add up to
                                      several minutes to each invocation. If you do not have a DNS server to
                                      resolve the addresses to names, say on a private LAN for instance, it will be
-                                     necessary to revert back to the <i>'old way'</i>, i.e. the hosts file.  This
-                                     is a text file containing address/host name pairs, which the operating system
-                                     will check first, before attempting a DNS lookup.<br><br>
+                                     necessary to revert back to the <i>'old way'</i> of the pre-DNS internet,
+                                     i.e. the hosts file.  This is a text file containing address/host name pairs,
+                                     which the operating system will check first, before attempting a DNS lookup.<br><br>
 
                                      On *nix-type boxes (Solaris/Linux/BSD/OSX...) the file is typically:
                                      /etc/hosts<br>
-                                     On Windows boxes, it is usually: \WINDOWS\system32\drivers\etc\hosts<br><br>
+                                     On Windows boxes, it is typically: \WINDOWS\system32\drivers\etc\hosts<br><br>
 
-                                     Here you would put the IP address/host name pairs for the machines, which do
+                                     Here you would put the IP address/host name pairs for the machines that do
                                      not have DNS support.<br><br>
 
                                      <a id="3"></a><b><u>3. Network Realities:</u></b> While it is very simple to
@@ -194,30 +194,30 @@
                                      instead, will work correctly. MarshalledObjects are handy containers in which
                                      proxy objects can be freely sent between remote objects.<br><br>
 
-                                     <a id="7"></a><b><u>7. Configuring Remote:</u></b> You must call Remote.<a href=nonav/docs/gnu/cajo/invoke/Remote.html#config(java.lang.String,%20int,%20java.lang.String,%20int)>config</a>
+                                     <a id="7"></a><b><u>7. Configuring Remote:</u></b> You should call Remote.<a href=nonav/docs/gnu/cajo/invoke/Remote.html#config(java.lang.String,%20int,%20java.lang.String,%20int)>config</a>
                                      once, in the lifetime of the server, typically shortly after startup. It
-                                     configures the TCP settings for network communication. <strike>If you
-                                     attempt to remote an object, either through ItemServer.<a href=nonav/docs/gnu/cajo/utils/ItemServer.html#bind(java.lang.Object,%20java.lang.String)>bind</a>,
+                                     configures the TCP settings for network communication. Specifying port
+                                     1099, which is the <i>default</i> port for the Java RMIRegistry,
+                                     eliminates the need to explicitly specify a port number, in a server lookup
+                                     URL. <strike>If you attempt to remote an object, either through ItemServer.
+                                     <a href=nonav/docs/gnu/cajo/utils/ItemServer.html#bind(java.lang.Object,%20java.lang.String)>bind</a>,
                                      or Multicast.<a href=nonav/docs/gnu/cajo/utils/Multicast.html#announce(java.lang.Object,%20int)>announce</a>,
                                      <i>before</i> doing this; a NullPointerException <u>will</u> occur.</strike>
-                                     <i><u>Note</u>:</i> Specifying port 1099, which is the <i>default</i> port
-                                     for the Java RMIRegistry, would eliminate the need to explicitly specify a
-                                     port number, in a server lookup URL.<br><br>
+                                     <br><br>
 
                                      &nbsp&nbsp&nbsp&nbsp<b>*<u>Update</u>:</b> (01-Jun-05) A convenience
                                      mechanism to provide a <i>useful-guess</i> at TCP configuration has now
                                      been added. If you do not explicitly configure Remote, it will now
-                                     remote automatically, on an <i>anonymous</i> port. The actual port, selected
-                                     from the unused pool by the OS at runtime, can be identified by calling
-                                     Remote.<a href=nonav/docs/gnu/cajo/invoke/Remote.html#getServerPort>getServerPort</a>.
-                                     It is effectively an implicit call to Remote.<a href=nonav/docs/gnu/cajo/invoke/Remote.html#config(java.lang.String,%20int,%20java.lang.String,%20int)>config(null, 0, null, 0)</a>.<br><br>
+                                     remote on an <i>anonymous</i> port. The actual port selected from the unused
+                                     pool by the OS at runtime, can be determined by calling Remote.<a href=nonav/docs/gnu/cajo/invoke/Remote.html#getServerPort>getServerPort</a>.
+                                     It is effectively an default call to Remote.<a href=nonav/docs/gnu/cajo/invoke/Remote.html#config(java.lang.String,%20int,%20java.lang.String,%20int)>config(null, 0, null, 0)</a>.<br><br>
 
                                      <a id="8"></a><b><u>8. Excessive Decomposition:</u></b> The interfaces to
                                      remote objects should tend to favor functional richnes, over logical
-                                     abstraction. Unlike an all-local object application, a remote procedure call
+                                     abstraction. Unlike an all-local object application; a remote procedure call
                                      is a temporally expensive activity. This <i>strongly</i> favors the creation
                                      of much <i>fewer</i> interface objects, with more functionally complete
-                                     methods, to be used when remoting. In other words: <i>Export trees,
+                                     methods, to be used when remoting. In other words: <i>"Export trees,
                                      <u>not</u> leaves."</a>
 
                                     </span>
