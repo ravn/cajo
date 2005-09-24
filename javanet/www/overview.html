@@ -265,17 +265,17 @@ public class SomeObject {
                      <span class="spacing style4 style7 style9">
                         Now it might appear that all type safety has been completely abandoned;
                         looking somewhat like a return to the C language. However, what has really
-                        happened is that strong typechecking had to move, necessarily, from compile
+                        happened is that strong typechecking had to move, necessarily from compile
                         time, to run time. If there is no mappable signature, the invocation will
                         result in a <tt>java.lang.NoSuchMethodException</tt>.<br><br>
 
-                        There is however, an <i>extremely</i> useful technique, to restore compile
+                        However, there is an <i>extremely</i> useful technique, to restore compile
                         time typechecking; it is called a <tt><a href=nonav/docs/gnu/cajo/utils/extra/Wrapper.html>
                         wrapper</a></tt> class.<br><br>
 
-                        If a client already knows the interface to a remote object; it can define
-                        a wrapper class, to wrap the remote reference, and provide a compile time
-                        typesafe interface to it.<br><br>
+                        If a client already knows how to use a remote object, it can define a
+                        wrapper class to provide a compile time typesafe interface to the remote
+                        reference.<br><br>
 
                         Generically wrapping our previous example:
 
@@ -309,22 +309,27 @@ public class WrapperObject {
 }
 </pre></tt></blockquote>
 
-                        Note the network exception catch blocks: A remote invocation can <i>fail</i>
+                        Note the network exception catch blocks: Any remote invocation can <i>fail</i>
                         unexpectedly; in a way that would not occur when the wrapped object reference
-                        is local. The wrapper architecture also facilitates the simple insertion of
+                        is local. The wrapper architecture facilitates the simple insertion of
                         <i>extremely</i> powerful supplemental functionality; such as retry, caching,
                         monitoring, notification, logging, measurement, debug, testing, validation,
                         rollback, load balancing, fail-over, etc.<br><br>
 
+                        Note how this object interface is not a Java <tt>interface</tt>, nor is the
+                        remote reference to a Java <tt>interface</tt>; so to pre-empt any confusion
+                        of terminology, we will refer to this practise via the term: Programming
+                        to <i>Contract</i>.<br><br>
+
                         It is important to remember that since the Remote.invoke method works
-                        on <u>both</u> local, <i>and</i> remote objects; the wrapper technique
+                        on <u>both</u> local <i>and</i> remote objects; the wrapper technique
                         provides a client the ability to <i>transparently</i> scale, from local
                         object interaction, to remote; <i>without</i> affecting the remaining source
-                        code. It even provides the flexibility to change its wrapped object from
+                        code. It also provides the flexibility to change its wrapped object from
                         local, to remote, or to a different server; <i>even</i> at runtime. It
-                        <i>also</i> allows the server the flexibility to return a remote reference,
-                        a locally running <a href=proxy.html>proxy</a>, or a completely local
-                        object, without breaking the client's code. This is powerful stuff!
+                        also allows the server the flexibility to return a remote reference, or a
+                        locally running <a href=proxy.html>proxy</a>, or a completely local object;
+                        all without affecting the client's code!
                      </span>
                   </td>
                </tr>
@@ -360,8 +365,8 @@ public class WrapperObject {
                easy to distribute your applications; you will practically forget the
                framework is even there!<br><br>
 
-               All this functionality; and a <u><i>lot</i></u> more: &nbsp;From a codebase
-               of less than 40<b><u>k</u></b>B!<br><br>
+               All of this functionality; and quite a <u><i>lot</i></u> more: From a
+               codebase of less than 40<b><u>k</u></b>B!<br><br>
 
                Its simplicity, flexibility, and
                <i>performance</i>, offer quite an exciting change from the more enormous,
