@@ -51,7 +51,7 @@
                            <table width="100%" height="35" border="0" cellpadding="0" cellspacing="0">
                               <tr>
                                  <td width="2%" background="ventro/bar_bg.gif"><img src="ventro/arrowed.gif" width="30" height="35"></td>
-                                 <td width="100%" background="ventro/bar_bg.gif">
+                                 <td background="ventro/bar_bg.gif">
                                     <table width="100%" height="31" border="0" cellpadding="0" cellspacing="0">
                                        <tr>
                                           <td style="vertical-align:middle">
@@ -65,7 +65,7 @@
                                  <td width="3%"><img src="ventro/bar_Right.gif" width="10" height="35"></td>
                               </tr>
                            </table>
-                           <table width="95%" height="96" border="0" cellpadding="9" cellspacing="0">
+                           <table border="0" cellpadding="9" cellspacing="0">
                               <tr>
                                  <td valign="top">
 <!-- title bar section -->         <span class="spacing style4 style7 style9">
@@ -88,11 +88,11 @@
 
 
 <!-- begin regular section -->
-   <table width="98%" height="35" border="0" align="center" cellpadding="0" cellspacing="0">
+   <table border="0" align="center" cellpadding="0" cellspacing="0">
       <tr>
          <td width="2%" background="ventro/bar_bg.gif"><img src="ventro/arrowed.gif" width="30" height="35"></td>
-         <td width="98%" valign="top" background="ventro/bar_bg.gif">
-            <table width="100%" height="31" border="0" cellpadding="0" cellspacing="0">
+         <td valign="top" background="ventro/bar_bg.gif">
+            <table height="31" border="0" cellpadding="0" cellspacing="0">
                <tr><a id="directory"></a>
                   <td style="vertical-align:middle">
                      <span class="style8"><b>Directory Structure</b></span>
@@ -126,17 +126,17 @@
 
                In the <b>install directory</b>, you will find several files, all of these
                will be covered in the course of this tutorial.  For now, the most important
-               file is the doc batch. Invoking it, either via its batch file, or its Ant
-               script, will scan the project source, and create highly detailed javadoc
-               hypertext documents in the docs subdirectory.  This will be a <u>very</u>
-               valuable resource in your development activities. Nearly half of the source
-               code is documentation comments! You can view this helpful resource by
-               opening the file docs/index.html with your favorite browser.<br><br>
+               file is either doc.bat, or build.xml. Invoking either the batch file, or
+               the doc Ant target, will scan the project source, and create highly detailed
+               javadoc hypertext documents in the docs subdirectory.  This will be a
+               <u>very</u> valuable resource in your development activities. Nearly half of
+               the source code is documentation comments! You can view this helpful resource
+               by opening the file docs/index.html with your favorite browser.<br><br>
 
                The <b>gnu/cajo/invoke</b> directory houses the three core classes of this
                framework's architecture.  Its files are described at length in the javadoc
                pages. For now suffice it to say that it defines the standard interface
-               between which all cajo objects communicate.<br><br>
+               through which all cajo objects communicate.<br><br>
 
                The <b>gnu/cajo/utils</b> directory applies the invoke package to create the
                framework. Likewise, these files are covered in detail in the javadoc pages.
@@ -166,15 +166,13 @@
                The <b>gui directory</b> contains a small collection of graphical widgets
                used by the proxy to create its user interface on hosting clients. They are
                outside the scope of this project as a proxy is free to use the AWT, or
-               Swing, or anything else. <i>By all means</i>, don't think this is the
-               graphical toolkit you have to use, it is here only for the purposes of
-               this example, and doesn't even merit detailed examination.<br><br>
+               Swing, or anything else. Please don't think this is the graphical toolkit you
+               have to use, it is here only for the purposes of this example, and doesn't
+               even merit more detailed examination.<br><br>
 
                The <b>docs</b> directory, as mentioned previously, is where the
                auto-generated documentation goes.  To save space, initially it is empty. You
-               can then run either the documentation generating batch file, or its Ant
-               target. This will create the documentation files in your directory. You can
-               also view the documentation online <a href=https://cajo.dev.java.net/nonav/docs/index.html target=_blank>
+               can also view the documentation online <a href=https://cajo.dev.java.net/nonav/docs/index.html target=_blank>
                here</a>.<br><br>
 
                <i><u>Note</u>:</i> there is also a directory called extra, located beneath
@@ -190,11 +188,11 @@
 <!-- end regular section -->
 
 <!-- begin regular section -->
-   <table width="98%" height="35" border="0" align="center" cellpadding="0" cellspacing="0">
+   <table border="0" align="center" cellpadding="0" cellspacing="0">
       <tr>
          <td width="2%" background="ventro/bar_bg.gif"><img src="ventro/arrowed.gif" width="30" height="35"></td>
-         <td width="98%" valign="top" background="ventro/bar_bg.gif">
-            <table width="100%" height="31" border="0" cellpadding="0" cellspacing="0">
+         <td valign="top" background="ventro/bar_bg.gif">
+            <table height="31" border="0" cellpadding="0" cellspacing="0">
                <tr><a id="building"></a>
                   <td style="vertical-align:middle">
                      <span class="style8"><b>Building the example</b></span>
@@ -205,18 +203,18 @@
          <td width="3%"><img src="ventro/bar_Right.gif" width="10" height="35"></td>
       </tr>
    </table>
-   <table width="98%" height="96" border="0" align="center" cellpadding="9" cellspacing="0">
+   <table border="0" align="center" cellpadding="9" cellspacing="0">
       <tr>
          <td valign="top">
             <span class="spacing style4 style7 style9">
-               There are three fundamental ways to build the example, represented by the
-               three batch files; make1.bat, make2.bat, and make3.bat, or their
-               corresponding targets in the build.xml Ant script. Each builds the
-               server with identical functionality; simply packaged in different ways.<br><br>
+               There are three ways to build the example, represented by the three batch
+               files; make1, make2, and make3, or their corresponding targets in the
+               build.xml Ant script. Each builds the server with identical functionality;
+               however packaged in fundamentally different ways.<br><br>
 
                The <b>make1</b> creates the server in a single monolithic jar file.
                Everything is contained inside it, the server itself, the test item, the test
-               proxy, and even a client applet, which allows browsers to host the proxy!
+               proxy, and even a client applet, which allows browsers to host the prox.
                This file, and the security.policy file are all that is needed to deploy
                the server.  All servers use the same policy file by default, so a deployment
                directory could consist of many server jars, and a single policy
@@ -226,31 +224,30 @@
                each server, simply place each server jar and its associated policy into
                separate directories.<br><br>
 
-               The <b>make2</b> batch creates the server in two files; server.jar and
-               client.jar. The client.jar is a stand-alone standard client application, in
-               addition to being a standard applet used by browsers to host the example
-               proxy. Deployment now consists of the server jar, the client jar (since the
-               server references it), and the policy file. All servers built this way
-               reference the same client jar, in the same way as they all reference the
-               same policy file. A stand-alone client not only reduces the server jar file
-               size, which can be helpful if there are many servers in the same directory,
-               it is also very useful in its own right. Using the standard
+               The <b>make2</b> creates the server in two files: server.jar and client.jar.
+               The client.jar is a stand-alone generic client application, in addition, it
+               is <i>also</i> a generic proxy hosting applet, used by browsers. Deployment
+               now consists of the server jar, the client jar, and the policy file. All
+               servers built this way reference the same client jar, in the same way as they
+               all reference the same policy file. A stand-alone client not only reduces the
+               server jar file size, which can be helpful if there are many servers in the
+               same directory, it is also very useful in its own right. Using the standard
                <a href=client.html>client</a> is a topic of its own, and as such gets its
                own page.<br><br>
 
-               The <b>make3</b> batch creates the server as three files; server.jar
-               client.jar, and proxy.jar. Now deployment consists of four files, the three
-               jars, and the policy file. The reason to use make3, is if you want to take
-               advantage of the <i>"hot plugging"</i> capability of the framework.  This
-               means you can modify the proxy, or proxies, recompile their jar file, and
-               overwrite the existing proxy.jar file, all while the server is still running.
-               All subsequent clients will receive the updated functionality automatically,
-               and the server need never be shut down!<br><br>
+               The <b>make3</b> creates the server as three files: server.jar, client.jar,
+               and proxy.jar. Now deployment consists of four files, the three jars, and the
+               policy file. The reason to use make3, is if you want to take advantage of the
+               <i>'hot plugging'</i> capability of the framework.  This means you can modify
+               the proxy, or proxies, recompile their jar file, and overwrite the existing
+               proxy.jar file, all while the server is <i>still</i> running! All subsequent
+               clients will receive the updated functionality automatically, and the server
+               need not be shut down.<br><br>
 
                <i><u>Note</u>:</i> there is a fourth batch file, and build target in the Ant
                script, called <b>library</b>. It compiles the project source code only,
                and creates a binary image called cajo.jar. Its purpose is to provide the
-               framework functionality for multi-jar classpaths, used by many applications.<br>
+               framework functionality for multi-jar application classpaths.<br>
 
             </span>
          </td>
@@ -259,10 +256,10 @@
 <!-- end regular section -->
 
 <!-- begin regular section -->
-   <table width="98%" height="35" border="0" align="center" cellpadding="0" cellspacing="0">
+   <table border="0" align="center" cellpadding="0" cellspacing="0">
       <tr>
          <td width="2%" background="ventro/bar_bg.gif"><img src="ventro/arrowed.gif" width="30" height="35"></td>
-         <td width="98%" valign="top" background="ventro/bar_bg.gif">
+         <td valign="top" background="ventro/bar_bg.gif">
             <table width="100%" height="31" border="0" cellpadding="0" cellspacing="0">
                <tr><a id="launching"></a>
                   <td style="vertical-align:middle">
@@ -274,7 +271,7 @@
          <td width="3%"><img src="ventro/bar_Right.gif" width="10" height="35"></td>
       </tr>
    </table>
-   <table width="98%" height="96" border="0" align="center" cellpadding="9" cellspacing="0">
+   <table border="0" align="center" cellpadding="9" cellspacing="0">
       <tr>
          <td valign="top">
             <span class="spacing style4 style7 style9">
@@ -380,7 +377,7 @@
 <!-- end regular section -->
 
 <!-- begin regular section -->
-   <table width="98%" height="35" border="0" align="center" cellpadding="0" cellspacing="0">
+   <table border="0" align="center" cellpadding="0" cellspacing="0">
       <tr>
          <td width="2%" background="ventro/bar_bg.gif"><img src="ventro/arrowed.gif" width="30" height="35"></td>
          <td width="98%" valign="top" background="ventro/bar_bg.gif">
@@ -395,7 +392,7 @@
          <td width="3%"><img src="ventro/bar_Right.gif" width="10" height="35"></td>
       </tr>
    </table>
-   <table width="98%" height="96" border="0" align="center" cellpadding="9" cellspacing="0">
+   <table border="0" align="center" cellpadding="9" cellspacing="0">
       <tr>
          <td valign="top">
             <span class="spacing style4 style7 style9">
@@ -436,9 +433,9 @@
                       registry. Unspecified the name "main" will be used, as servers typically bind
                       their default item under that name.
 
-                  <li>The <b>!</b> option is super cool. It will cause the client application
-                      to launch as a WebStart application! Around here, we call it starting the
-                      application with a bang! ;-)
+                  <li>The <b>!</b> option will cause the client application to launch as a WebStart
+                      application. Around here, we like to call it starting the application with a
+                      bang! ;-)
                </ul>
 
                The server will correctly configure the client's remaining communications
@@ -454,11 +451,11 @@
 <!-- end regular section -->
 
 <!-- begin regular section -->
-   <table width="98%" height="35" border="0" align="center" cellpadding="0" cellspacing="0">
+   <table border="0" align="center" cellpadding="0" cellspacing="0">
       <tr>
          <td width="2%" background="ventro/bar_bg.gif"><img src="ventro/arrowed.gif" width="30" height="35"></td>
          <td width="98%" valign="top" background="ventro/bar_bg.gif">
-            <table width="100%" height="31" border="0" cellpadding="0" cellspacing="0">
+            <table height="31" border="0" cellpadding="0" cellspacing="0">
                <tr>
                   <td style="vertical-align:middle"><span class="style8">
                      <b>Conclusion</b></span>
@@ -469,12 +466,12 @@
          <td width="3%"><img src="ventro/bar_Right.gif" width="10" height="35"></td>
       </tr>
    </table>
-   <table width="98%" height="96" border="0" align="center" cellpadding="9" cellspacing="0">
+   <table border="0" align="center" cellpadding="9" cellspacing="0">
       <tr>
          <td valign="top">
             <span class="spacing style4 style7 style9">
                The example will provide a client proxy looking something like this:<br><br>
-               <table width=100%>
+               <table>
                   <tr>
                      <td>
                         <img src="images/applet.gif" alt="cajo generic client applet"
@@ -496,10 +493,10 @@
                This is the proverbial tip of the iceberg, but it should get you started.
                If you have further questions, there are <a href=https://cajo.dev.java.net/servlets/ProjectForumView>
                fora</a> for this project. However, before posting, please do your <a href=http://catb.org/~esr/faqs/smart-questions.html target=_blank>
-               homework</a>! (<i><u>Note</u>:</i> the previously cited link is <u>not</u>
-               part of this project, rather it is provided purely for insight.) Often the
-               answer you are seeking can can be found in the source documentation, or
-               right here on this site, and typically <i>much</i> faster.
+               homework</a>! (<i><u>Note</u>:</i> the previously cited link is not part of
+               this project, rather it is provided purely for insight.) Often the answer you
+               are seeking can can be found in the source documentation, or right here on
+               this site, and typically <i>much</i> faster.
             </span>
          </td>
       </tr>
@@ -507,7 +504,7 @@
 <!-- end regular section -->
 
 <!-- footer: -->
-   <table width="95%" height="56" border="0" align="center" cellpadding="9" cellspacing="0">
+   <table width="95%" border="0" align="center" cellpadding="9" cellspacing="0">
       <tr>
          <td valign="top">
             <div align="center">
