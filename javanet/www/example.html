@@ -14,12 +14,12 @@
 
 <body>
 
-<table width="98%" border="0" cellpadding="0" cellspacing="0">
+<table border="0" cellpadding="0" cellspacing="0">
    <tr>
       <table width="100%" height="67"  border="0" cellpadding="4" cellspacing="0">
          <tr>
             <td background="ventro/vert_logobarbg.gif">
-               <table width="100%" height="47"  border="0" cellpadding="4" cellspacing="0">
+               <table  border="0" cellpadding="4" cellspacing="0">
                   <tr><br>
                      <td width="85" valign="bottom">
                         <div align="right">
@@ -45,14 +45,14 @@
          <tr>
             <td height="331" valign="top" bgcolor="#FFFFFF">
                <td width="100%" valign="top" bgcolor="#FFFFFF">
-                  <table width="100%" border="0" cellpadding="4" cellspacing="0" bgcolor="#FFFFFF">
+                  <table border="0" cellpadding="4" cellspacing="0" bgcolor="#FFFFFF">
                      <tr>
                         <td>
-                           <table width="100%" height="35" border="0" cellpadding="0" cellspacing="0">
+                           <table border="0" cellpadding="0" cellspacing="0">
                               <tr>
                                  <td width="2%" background="ventro/bar_bg.gif"><img src="ventro/arrowed.gif" width="30" height="35"></td>
                                  <td width="100%" background="ventro/bar_bg.gif">
-                                    <table width="100%" height="31" border="0" cellpadding="0" cellspacing="0">
+                                    <table border="0" cellpadding="0" cellspacing="0">
                                        <tr>
                                           <td style="vertical-align:middle">
                                              <span class="style8 style12">
@@ -65,7 +65,7 @@
                                  <td width="3%"><img src="ventro/bar_Right.gif" width="10" height="35"></td>
                               </tr>
                            </table>
-                           <table width="95%" height="96" border="0" cellpadding="9" cellspacing="0">
+                           <table border="0" cellpadding="9" cellspacing="0">
                               <tr>
                                  <td valign="top">
 <!-- title bar section -->         <span class="spacing style4 style7 style9">
@@ -75,7 +75,7 @@
                                       of the document, as well as why it was not part of the example.<br><br>
                                       The four example classes are as follows:<br><br>
 
-                                      <table>
+                                      <table cellpadding="3">
                                          <tr>
                                             <td><b><a href="#TestItem">TestItem</a></b></td>
                                             <td>An introductory server item</td>
@@ -106,11 +106,11 @@
 
 
 <!-- begin regular section -->
-   <table width="98%" height="35" border="0" align="center" cellpadding="0" cellspacing="0">
+   <table border="0" align="center" cellpadding="0" cellspacing="0">
       <tr>
          <td width="2%" background="ventro/bar_bg.gif"><img src="ventro/arrowed.gif" width="30" height="35"></td>
-         <td width="98%" valign="top" background="ventro/bar_bg.gif">
-            <table width="100%" height="31" border="0" cellpadding="0" cellspacing="0">
+         <td valign="top" background="ventro/bar_bg.gif">
+            <table height="31" border="0" cellpadding="0" cellspacing="0">
                <tr><a id="TestItem"></a>
                   <td style="vertical-align:middle">
                      <span class="style8"><b>Test Item</b></span>
@@ -121,21 +121,19 @@
          <td width="3%"><img src="ventro/bar_Right.gif" width="10" height="35"></td>
       </tr>
    </table>
-   <table width="98%" height="96" border="0" align="center" cellpadding="9" cellspacing="0">
+   <table border="0" align="center" cellpadding="9" cellspacing="0">
       <tr>
          <td valign="top">
             <span class="spacing style4 style7 style9">
                The TestItem class demonstrates the basic functionality of a server item. A
-               server item has two primary components; a processing thread, and a callable
-               interface.  While the processing thread is technically optional, a callable
-               interface is logically essential. The processing thread, if defined, is
-               launched automatically, following binding of the object with the <a href=nonav/docs/gnu/cajo/utils/ItemServer.html>
+               server item has two primary components; a callable interface, and an optional
+               processing thread. The processing thread, if defined, is launched
+               automatically, following binding of the object with the <a href=nonav/docs/gnu/cajo/utils/ItemServer.html>
                ItemServer</a>. A server item can also be purely <i>event driven</i>; i.e.
                only executing when its callable methods are being invoked; in this case it
                would not define a <a href=nonav/docs/gnu/cajo/utils/BaseItem.MainThread.html>
                MainThread</a> object. The callable interface to an item is simply its
-               collection of publicly declared methods. (subject to the minor restrictions
-               outlined in the <a href="theory.html#rules">theory</a> page)<br><br>
+               collection of publicly declared methods.<br><br>
 
                The thread in the example item performs the <i>highly recommended</i>
                practice of looping on its <tt>thread.isInterrupted()</tt> method. The
@@ -163,20 +161,19 @@
                then prints the message provided by the invoking item, and returns a string
                indicating synchronous acknowlegement. Again, the critical point is; every
                public method an item declares will be invokable from remote items, no
-               differently than if it was being interfaced  by local objects. <i>Note:</i>
-               this implementation also intentionally illustrates the importance of
-               reentrancy consideration with regard to an item's public interface. If many
-               items invoke this method simultaneously, only the last caller will get called
-               back by the item's main thread.  Making the example's callback method
-               threadsafe is left as a mental excercise for the reader.<br><br>
+               differently than if it was being interfaced  by local objects.
+               <i><u>Note</u>:</i> this implementation also intentionally illustrates the
+               importance of reentrancy consideration with regard to an item's public
+               interface. If many items invoke this method simultaneously, only the last
+               caller will get called back by the item's main thread.  Making the example's
+               callback method threadsafe is left as a mental excercise for the reader.<br><br>
 
                Lastly, the item implements the <tt>toString</tt> method, inherited from
                <tt>Object</tt>.  This is also a <i>highly recommended</i> practice.  In
                this case, it is used when monitoring the item, which is covered in the
                upcoming section on <a href="#Main">Main</a>, and also greatly aids in
                debugging. Being public, note that the method is also remotely callable, to
-               identify the object at the other end of the remote reference.  That's all
-               there is to the TestItem example.
+               identify the object at the other end of the remote reference.
             </span>
          </td>
       </tr>
@@ -184,11 +181,11 @@
 <!-- end regular section -->
 
 <!-- begin regular section -->
-   <table width="98%" height="35" border="0" align="center" cellpadding="0" cellspacing="0">
+   <table border="0" align="center" cellpadding="0" cellspacing="0">
       <tr>
          <td width="2%" background="ventro/bar_bg.gif"><img src="ventro/arrowed.gif" width="30" height="35"></td>
          <td width="98%" valign="top" background="ventro/bar_bg.gif">
-            <table width="100%" height="31" border="0" cellpadding="0" cellspacing="0">
+            <table height="31" border="0" cellpadding="0" cellspacing="0">
                <tr><a id="TestProxy"></a>
                   <td style="vertical-align:middle">
                      <span class="style8"><b>Test Proxy</b></span>
@@ -199,7 +196,7 @@
          <td width="3%"><img src="ventro/bar_Right.gif" width="10" height="35"></td>
       </tr>
    </table>
-   <table width="98%" height="96" border="0" align="center" cellpadding="9" cellspacing="0">
+   <table border="0" align="center" cellpadding="9" cellspacing="0">
       <tr>
          <td valign="top">
             <span class="spacing style4 style7 style9">
@@ -213,22 +210,21 @@
                proxy's main thread to start, if it has one. As with server items; a proxy
                need not define a main thread, i.e. it can also be purely <i>event driven</i>.<br><br>
 
-               The example demonstrates the Internationalization feature of proxies.
+               The example also demonstrates the Internationalization feature of proxies.
                When the proxy is initialized, it will load its string table, if defined,
                from a properties file, most closely matching the locale of the receiving VM.
                This allows the proxy's user interface to be in German on an Austrian machine,
                and Spanish on a Mexican one, for example.  Of course, all of these
-               translated string tables must be provided.  The properties file, and all
+               translated string tables must be included.  The properties file, and all
                other non-class resources are generally placed in a support directory.  In
                this case it is called include. The reason for the separate directory, is to
                simplify the proxy's jar creation, as the build script can then include all
-               the files in the directory blindly.<br><br>
+               the files in the directory blindly (i.e. *.*).<br><br>
 
                Since this is a graphical proxy example, it's initialization invocation also
                returns a non-null graphical component that the client can display on its
                monitor. The purpose of the component is to provide a graphical user
-               interface to a remote server item, however offloading as much processing as
-               necessary, to the client's runtime.<br><br>
+               interface to a remote server item.<br><br>
 
                When the proxy's processing thread starts, it writes out an arrival notice
                to the client's user interface.  Next, it invokes the method named callback
@@ -238,9 +234,9 @@
                main processing thread to terminate.<br><br>
 
                The proxy has a public method named callback. When called, in this case by
-               the TestProxy, it will display the incoming text argument, and send back a
-               synchronous text acknowlegement of its own. Just as with server items, all
-               of a proxy's public methods, can be called by remote items, or proxies,
+               the TestProxy, it will display the incoming text argument, and return a
+               synchronous text acknowlegement of its own. Just as with server items; all
+               of a proxy's public methods can be called by remote items, or proxies,
                having a reference to the proxy.
             </span>
          </td>
@@ -249,11 +245,11 @@
 <!-- end regular section -->
 
 <!-- begin regular section -->
-   <table width="98%" height="35" border="0" align="center" cellpadding="0" cellspacing="0">
+   <table border="0" align="center" cellpadding="0" cellspacing="0">
       <tr>
          <td width="2%" background="ventro/bar_bg.gif"><img src="ventro/arrowed.gif" width="30" height="35"></td>
          <td width="98%" valign="top" background="ventro/bar_bg.gif">
-            <table width="100%" height="31" border="0" cellpadding="0" cellspacing="0">
+            <table height="31" border="0" cellpadding="0" cellspacing="0">
                <tr><a id="Builder"></a>
                   <td style="vertical-align:middle">
                      <span class="style8"><b>Builder</b></span>
@@ -264,7 +260,7 @@
          <td width="3%"><img src="ventro/bar_Right.gif" width="10" height="35"></td>
       </tr>
    </table>
-   <table width="98%" height="96" border="0" align="center" cellpadding="9" cellspacing="0">
+   <table border="0" align="center" cellpadding="9" cellspacing="0">
       <tr>
          <td valign="top">
             <span class="spacing style4 style7 style9">
@@ -274,19 +270,19 @@
                proxy's constructor.  Why do this? Because all of the construction code,
                which can be quite sizeable if the proxy is elaborate, can be left out of
                the proxy's jar file.  This reduces the proxy jar size, and also adds the
-               additional security that the proxy becomes much more difficult to
-               <i>reverse-engineer</i>, if such protection is important to you.<br><br>
+               additional security that the proxy becomes <i>much</i> more difficult to
+               reverse-engineer, if such protection is important to you.<br><br>
 
                The second function of the Builder class is to instantiate the proxy, then
                serialize its image to disc.  This serialized object will be included in the
                proxy jar file, and referenced through a <a href=nonav/docs/gnu/cajo/utils/ProxyLoader.html>
                ProxyLoader</a> in the TestItem's runtime.  This is the <i>most elaborate</i>
-               way to use a ProxyLoader. They can also be used to invoke a proxy's no-arg
+               way to use a ProxyLoader. It can also be used to invoke a proxy's no-arg
                constructor, to create a new instance of the proxy, on its arrival at the
                host VM. In that case, all of the construction code would have to be passed
-               to the client VM. Use of a ProxyLoader is optional, but it is a <i>highly
-               recommended</i> optimization as it prevents having to load full proxies into
-               the server item runtime.<br><br>
+               to the client VM. Use of a ProxyLoader is optional, but it is a <i>highly</i>
+               recommended optimization, as it prevents having to load proxies into the
+               server JVM runtime.<br><br>
 
                The actual mechanics of what is going on inside the builder is not so
                important.  It is basically configuring graphical components, and putting
@@ -307,11 +303,11 @@
 <!-- end regular section -->
 
 <!-- begin regular section -->
-   <table width="98%" height="35" border="0" align="center" cellpadding="0" cellspacing="0">
+   <table border="0" align="center" cellpadding="0" cellspacing="0">
       <tr>
          <td width="2%" background="ventro/bar_bg.gif"><img src="ventro/arrowed.gif" width="30" height="35"></td>
          <td width="98%" valign="top" background="ventro/bar_bg.gif">
-            <table width="100%" height="31" border="0" cellpadding="0" cellspacing="0">
+            <table height="31" border="0" cellpadding="0" cellspacing="0">
                <tr><a id="Main"></a>
                   <td style="vertical-align:middle">
                      <span class="style8"><b>Main</b></span>
@@ -322,7 +318,7 @@
          <td width="3%"><img src="ventro/bar_Right.gif" width="10" height="35"></td>
       </tr>
    </table>
-   <table width="98%" height="96" border="0" align="center" cellpadding="9" cellspacing="0">
+   <table border="0" align="center" cellpadding="9" cellspacing="0">
       <tr>
          <td valign="top">
             <span class="spacing style4 style7 style9">
@@ -359,11 +355,11 @@
 <!-- end regular section -->
 
 <!-- begin regular section -->
-   <table width="98%" height="35" border="0" align="center" cellpadding="0" cellspacing="0">
+   <table border="0" align="center" cellpadding="0" cellspacing="0">
       <tr>
          <td width="2%" background="ventro/bar_bg.gif"><img src="ventro/arrowed.gif" width="30" height="35"></td>
          <td width="98%" valign="top" background="ventro/bar_bg.gif">
-            <table width="100%" height="31" border="0" cellpadding="0" cellspacing="0">
+            <table height="31" border="0" cellpadding="0" cellspacing="0">
                <tr><a id="Conclusion"></a>
                   <td style="vertical-align:middle">
                      <span class="style8"><b>Conclusion</b></span>
@@ -374,11 +370,11 @@
          <td width="3%"><img src="ventro/bar_Right.gif" width="10" height="35"></td>
       </tr>
    </table>
-   <table width="98%" height="96" border="0" align="center" cellpadding="9" cellspacing="0">
+   <table border="0" align="center" cellpadding="9" cellspacing="0">
       <tr>
          <td valign="top">
             <span class="spacing style4 style7 style9">
-               The example illustrates a common use of the cajo framework:
+               The example illustrates a very common use of the cajo framework:
                <blockquote>
                <i>String -> remote reference -> local proxy -> GUI</i>
                </blockquote>
@@ -396,12 +392,12 @@
                This allows the provision of sophisticated visual modules, which can be
                <i>composed</i> to yield even richer functionality. The components are neatly
                modularised by server. A single server may serve <i>several</i> graphical
-               interfaces. These interfaces can be viewed with an ordinary web browser, or
-               via Web Start.<br><br>
+               interfaces. These interfaces can also be viewed with an ordinary web browser,
+               or via Web Start.<br><br>
 
-               <i>Note:</i> The <a href=nonav/docs/gnu/cajo/utils/ZippedProxy.html>ZippedProxy</a>
+               <i><u>Note</u>:</i> The <a href=nonav/docs/gnu/cajo/utils/ZippedProxy.html>ZippedProxy</a>
                class is the only utility class not used in the example. This is bacause the
-               example demonstrates indirectly referencing a proxy, by the serving item.
+               example demonstrates indirectly referencing a proxy, through a ProxyLoader.
                This is indicated when the server item, does not need to configure a proxy
                before sending it.  This can save a lot of space in the server item's runtime,
                especially if the proxy is very large, or if a single VM is serving many
@@ -435,11 +431,11 @@
       </tr>
    </table>
 
-   <table width="98%" height="35" border="0" align="center" cellpadding="0" cellspacing="0">
+   <table border="0" align="center" cellpadding="0" cellspacing="0">
       <tr>
          <td width="2%" background="ventro/bar_bg.gif"><img src="ventro/arrowed.gif" width="30" height="35"></td>
          <td width="95%" valign="top" background="ventro/bar_bg.gif">
-            <table width="100%" height="31" border="0" cellpadding="0" cellspacing="0">
+            <table border="0" cellpadding="0" cellspacing="0">
                <tr>
                   <td style="vertical-align:middle"><span class="style11">&copy; 2004 GNU FDL</span></td>
                   <td width="53%"><div align="right"></div></td></tr></table></td>
