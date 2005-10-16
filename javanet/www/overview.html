@@ -130,17 +130,17 @@ public class SomeObject {
                         require any changes to <u>your</u> objects, in order to use them remotely.
                         Even if your application already uses some other distributed framework; it
                         is very easy to <i>drop-in</i> cajo support, and increase your distributed
-                        user base. To make an object remotely available, the framework provides two
+                        user base. To make an object remotely accessible, the framework provides two
                         distinct options; these are known collectively as <i>static</i>, and
                         <i>dynamic</i> binding. Both may even be used on the same object.<br><br>
 
-                        Static binding is accomplished by calling the static <tt><a href=nonav/docs/gnu/cajo/utils/ItemServer.html#bind(java.lang.Object,%20java.lang.String)>
-                        bind</a></tt> method, of the <tt><a href=nonav/docs/gnu/cajo/utils/ItemServer.html>
-                        ItemServer</a></tt> class. This type of binding will require the client to
-                        know the address of the server in order to obtain a reference to the object.
-                        Clients statically link to a remote object using the static <tt><a href=nonav/docs/gnu/cajo/invoke/Remote.html#getItem(java.lang.String)>
-                        getItem</a></tt> method of the <tt><a href=nonav/docs/gnu/cajo/invoke/Remote.html>Remote</a>
-                        class</tt>.<br><br>
+                        Static binding is accomplished by calling the static <a href=nonav/docs/gnu/cajo/utils/ItemServer.html#bind(java.lang.Object,%20java.lang.String)>
+                        bind</a> method, of the <a href=nonav/docs/gnu/cajo/utils/ItemServer.html>
+                        ItemServer</a> class. This type of binding will require the client to
+                        know the address of the server, in order to obtain a reference to the object.
+                        Clients statically link to a remote object, using the static <a href=nonav/docs/gnu/cajo/invoke/Remote.html#getItem(java.lang.String)>
+                        getItem</a> method of the <a href=nonav/docs/gnu/cajo/invoke/Remote.html>Remote</a>
+                        class.<br><br>
 
                         Static binding and linking would look something like this:
 
@@ -148,14 +148,14 @@ public class SomeObject {
                            Itemserver.bind(someObject, "someName"); // server side<br><br>
 
                            Object someObject = Remote.getItem("//serverName:<a href=gotcha.html#7 title="see item #7">serverPort</a>/someName"); // client side
-                        </blockquote></tt><br>
+                        </blockquote></tt>
 
-                        Dynamic binding is accomplished by calling the <tt><a href=nonav/docs/gnu/cajo/utils/Multicast.html#announce(java.lang.Object,%20int)>
-                        announce</a></tt> method, of the <tt><a href=nonav/docs/gnu/cajo/utils/Multicast.html>
-                        Multicast</a></tt> class. This will <i>'broadcast'</i> the remote object reference
+                        Dynamic binding is accomplished by calling the <a href=nonav/docs/gnu/cajo/utils/Multicast.html#announce(java.lang.Object,%20int)>
+                        announce</a> method, of the <a href=nonav/docs/gnu/cajo/utils/Multicast.html>
+                        Multicast</a> class. This will <i>'broadcast'</i> the remote object reference
                         to <u>all</u> listening Virtual Machines. Clients dynamically link to a
-                        remote object using the <tt><a href=nonav/docs/gnu/cajo/utils/Multicast.html#listen(java.lang.Object)>
-                        listen</a></tt> method of the Multicast class.<br><br>
+                        remote object, using the <a href=nonav/docs/gnu/cajo/utils/Multicast.html#listen(java.lang.Object)>
+                        listen</a> method of the Multicast class.<br><br>
 
                         Dynamic binding and linking would look something like this:
 
@@ -163,16 +163,16 @@ public class SomeObject {
                            Multicast.announce(someObject, 16); // server side<br><br>
 
                            Multicast.listen(someListener); // client side
-                        </blockquote></tt><br>
+                        </blockquote></tt>
 
                         In either case, once a remote reference to an object is obtained, it can be
                         used to invoke its <i>public</i> methods. The reference can also be passed to other
                         objects, including remote ones, as either an argument, or a return. It could
                         even be thrown in an Exception. Any object receiving this reference, can also
                         invoke its public methods. The reference can even be written to a file, using
-                        the static <tt><a href=nonav/docs/gnu/cajo/invoke/Remote.html#zedmob(java.io.OutputStream,%20java.lang.Object)>
-                        zedmob</a></tt> method of the Remote class, for later use, even by a
-                        different program. Note however; the exposed object's public methods are
+                        the static <a href=nonav/docs/gnu/cajo/invoke/Remote.html#zedmob(java.io.OutputStream,%20java.lang.Object)>
+                        zedmob</a> method of the Remote class, for later use, even by a
+                        different program. Note however, the exposed object's public methods are
                         <i>not</i> synchronised, meaning that they can be invoked re-entrantly by
                         clients. Just as with local objects; synchronising methods can cause
                         significant client performance impacts. It is best to synchronise only the
@@ -207,11 +207,11 @@ public class SomeObject {
                <tr>
                   <td valign="top">
                      <span class="spacing style4 style7 style9">
-                        <tt><a href=nonav/docs/gnu/cajo/invoke/Remote.html#invoke(java.lang.Object,%20java.lang.String,%20java.lang.Object)>
-                        Invoke</a></tt> is the cajo architecture approach to dynamic method
-                        invocation, supplemented by the use of Java reflection. It is the foundation
-                        of the framework. It can be used to invoke <i>any</i> public method, on
-                        <i>any</i> object; on both local <u>and</u> remote objects.<br><br>
+                        <a href=nonav/docs/gnu/cajo/invoke/Remote.html#invoke(java.lang.Object,%20java.lang.String,%20java.lang.Object)>
+                        Invoke</a> is the cajo architecture approach to dynamic method invocation,
+                        supplemented by the use of Java reflection. It is the foundation of the
+                        framework. It can be used to invoke <i>any</i> public method, on <i>any</i>
+                        object; on both local <u>and</u> remote objects!<br><br>
 
                         The static method has the following signature:
 
@@ -223,12 +223,12 @@ public class SomeObject {
                         <i>method</i> argument is the name of the public method to be invoked.
                         The <i>args</i> argument represents the argument(s) to be provided to the
                         method, if any. Multiple arguments are represented when <i>args</i> is an
-                        Object array. A null <i>args</i> value indicates no arguments. The method's
-                        result is the object returned from the method invocation, if any. The method
-                        declares that it throws <i>Exception</i>, to allow the called method the
-                        freedom to throw any type of Exception, <i>including</i> none at all. This
-                        is also used to cover network related failures for invocations on remote
-                        objects.<br><br>
+                        Object array. A null <i>args</i> value, or less preferably an empty array,
+                        indicates no arguments. The method's result is the object returned from the
+                        method invocation, if any. The method declares that it throws
+                        <i>Exception</i>, to allow the called method the freedom to throw any type of
+                        Exception, <i>including</i> none at all. This is also used to cover network
+                        related failures for invocations on remote objects.<br><br>
 
                         Consider for a moment just this one small example of the power in dynamic
                         method invocation:
@@ -270,8 +270,8 @@ public class SomeObject {
                         result in a <tt>java.lang.NoSuchMethodException</tt>.<br><br>
 
                         However, there is an <i>extremely</i> useful technique, to restore compile
-                        time typechecking; it is called a <tt><a href=nonav/docs/gnu/cajo/utils/extra/Wrapper.html>
-                        wrapper</a></tt> class.<br><br>
+                        time typechecking; it is called a <a href=nonav/docs/gnu/cajo/utils/extra/Wrapper.html>
+                        wrapper</a> class.<br><br>
 
                         If a client already knows how to use a remote object, it can define a
                         wrapper class to provide a compile time typesafe interface to the remote
@@ -310,16 +310,17 @@ public class WrapperObject {
 </pre></tt></blockquote>
 
                         Note the network exception catch blocks: Any remote invocation can <i>fail</i>
-                        unexpectedly; in a way that would not occur when the wrapped object reference
-                        is local. The wrapper architecture facilitates the simple insertion of
-                        <i>extremely</i> powerful supplemental functionality; such as retry, caching,
+                        unexpectedly, in a way that would not occur when the wrapped object reference
+                        is local. The wrapper architecture also facilitates the simple insertion of
+                        <i>extremely</i> powerful supplemental functionality such as; retry, caching,
                         monitoring, notification, logging, measurement, debug, testing, validation,
                         rollback, load balancing, fail-over, etc.<br><br>
 
                         Note how this object interface is not a Java <tt>interface</tt>, nor is the
-                        remote reference to a Java <tt>interface</tt>; so to pre-empt any confusion
-                        of terminology, we will refer to this practise via the term: Programming
-                        to <i>Contract</i>.<br><br>
+                        remote reference to a Java <tt>interface</tt>; to pre-empt any confusion of
+                        terminology, we will refer to this practise via the term: Programming to
+                        <i>Contract</i>. The remote object is free to add new methods, for newer
+                        clients, but simply in a manner compatible with the existing clients.<br><br>
 
                         It is important to remember that since the Remote.invoke method works
                         on <u>both</u> local <i>and</i> remote objects; the wrapper technique
@@ -327,9 +328,9 @@ public class WrapperObject {
                         object interaction, to remote; <i>without</i> affecting the remaining source
                         code. It also provides the flexibility to change its wrapped object from
                         local, to remote, or to a different server; <i>even</i> at runtime. It
-                        also allows the server the flexibility to return a remote reference, or a
-                        locally running <a href=proxy.html>proxy</a>, or a completely local object;
-                        all without affecting the client's code!
+                        similarly allows the server the flexibility to return a remote reference, or
+                        a locally running <a href=proxy.html>proxy</a>, or a completely local object;
+                        all without affecting the client's remaining code!
                      </span>
                   </td>
                </tr>
@@ -368,9 +369,9 @@ public class WrapperObject {
                All of this functionality; and quite a <u><i>lot</i></u> more: From a
                codebase of less than 40<b><u>k</u></b>B!<br><br>
 
-               Its simplicity, flexibility, and
-               <i>performance</i>, offer quite an exciting change from the more enormous,
-               complex, and heavyweight, distributed frameworks out there.
+               Its simplicity, flexibility, ease of use, and <i>performance</i>; offer quite
+               an exciting change from the more complex, and heavyweight distributed
+               frameworks out there.
 
             </span>
          </td>
