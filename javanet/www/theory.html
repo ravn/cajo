@@ -14,12 +14,12 @@
 
 <body>
 
-<table width="98%" border="0" cellpadding="0" cellspacing="0">
+<table border="0" cellpadding="0" cellspacing="0">
    <tr>
-      <table width="100%" height="67"  border="0" cellpadding="4" cellspacing="0">
+      <table border="0" cellpadding="4" cellspacing="0">
          <tr>
             <td background="ventro/vert_logobarbg.gif">
-               <table width="100%" height="47"  border="0" cellpadding="4" cellspacing="0">
+               <table border="0" cellpadding="4" cellspacing="0">
                   <tr><br>
                      <td width="85" valign="bottom">
                         <div align="right">
@@ -45,10 +45,10 @@
          <tr>
             <td height="331" valign="top" bgcolor="#FFFFFF">
                <td width="100%" valign="top" bgcolor="#FFFFFF">
-                  <table width="100%" border="0" cellpadding="4" cellspacing="0" bgcolor="#FFFFFF">
+                  <table border="0" cellpadding="4" cellspacing="0" bgcolor="#FFFFFF">
                      <tr>
                         <td>
-                           <table width="100%" height="35" border="0" cellpadding="0" cellspacing="0">
+                           <table height="35" border="0" cellpadding="0" cellspacing="0">
                               <tr>
                                  <td width="2%" background="ventro/bar_bg.gif"><img src="ventro/arrowed.gif" width="30" height="35"></td>
                                  <td width="100%" background="ventro/bar_bg.gif">
@@ -65,15 +65,15 @@
                                  <td width="3%"><img src="ventro/bar_Right.gif" width="10" height="35"></td>
                               </tr>
                            </table>
-                           <table width="95%" height="96" border="0" cellpadding="9" cellspacing="0">
+                           <table border="0" cellpadding="9" cellspacing="0">
                               <tr>
                                  <td valign="top">
 <!-- title bar section -->         <span class="spacing style4 style7 style9">
-                                      Every remotely accessible object in the framework is known as an <a href=item.html>
+                                      Every remotely accessible object in the framework is called an <a href=item.html>
                                       Item</a>. An application can host one or more items within its Virtual
                                       Machine. Items can call other items, and an item can also be called by other
                                       items. A special type of item is known as a <a href=proxy.html>Proxy</a>.
-                                      Proxies are items sent from one virtual machine, to execute in the context of
+                                      Proxies are objects sent from one virtual machine, to execute in the context of
                                       another. Proxies can also call, or be called, by other items, and even by
                                       other proxies.<br><br>
 
@@ -108,7 +108,7 @@
                      </table>
 
 <!-- begin regular section -->
-   <table width="98%" height="35" border="0" align="center" cellpadding="0" cellspacing="0">
+   <table height="35" border="0" align="center" cellpadding="0" cellspacing="0">
       <tr>
          <td width="2%" background="ventro/bar_bg.gif"><img src="ventro/arrowed.gif" width="30" height="35"></td>
          <td width="98%" valign="top" background="ventro/bar_bg.gif">
@@ -123,7 +123,7 @@
          <td width="3%"><img src="ventro/bar_Right.gif" width="10" height="35"></td>
       </tr>
    </table>
-   <table width="98%" height="96" border="0" align="center" cellpadding="9" cellspacing="0">
+   <table border="0" align="center" cellpadding="9" cellspacing="0">
       <tr>
          <td valign="top">
             <span class="spacing style4 style7 style9">
@@ -144,11 +144,11 @@
 <!-- end regular section -->
 
 <!-- begin regular section -->
-   <table width="98%" height="35" border="0" align="center" cellpadding="0" cellspacing="0">
+   <table height="35" border="0" align="center" cellpadding="0" cellspacing="0">
       <tr>
          <td width="2%" background="ventro/bar_bg.gif"><img src="ventro/arrowed.gif" width="30" height="35"></td>
          <td width="98%" valign="top" background="ventro/bar_bg.gif">
-            <table width="100%" height="31" border="0" cellpadding="0" cellspacing="0">
+            <table height="31" border="0" cellpadding="0" cellspacing="0">
                <tr>
                   <td style="vertical-align:middle">
                      <span class="style8"><b>Mobile Code</b></span>
@@ -159,24 +159,27 @@
          <td width="3%"><img src="ventro/bar_Right.gif" width="10" height="35"></td>
       </tr>
    </table>
-   <table width="98%" height="96" border="0" align="center" cellpadding="9" cellspacing="0">
+   <table border="0" align="center" cellpadding="9" cellspacing="0">
       <tr>
          <td valign="top">
             <span class="spacing style4 style7 style9">
                An item can send mobile code, i.e. proxy items and complex object arguments
                to clients using the <a href=nonav/docs/gnu/cajo/utils/CodebaseServer.html>CodebaseServer</a>
-               class.  CodebaseServer will create a specialized http server on the
+               class.  CodebaseServer will create a very specialized http server on the
                designated TCP port. It serves the specified jar file containing the class
                files needed by the client, along with any other resources needed by the
                proxies. The resources are typically, images and string tables.  By default,
-               a client VM <u>will not</u> accept mobile code. This is typically enabled by
+               a client VM will <u>not</u> accept mobile code. This is typically enabled by
                calling the <a href=nonav/docs/gnu/cajo/utils/ItemServer.html#acceptProxies()>
                acceptProxies</a> method of the <a href=nonav/docs/gnu/cajo/utils/ItemServer.html>
                ItemServer</a> class.  This will install an RMISecurityManager to accept the
                code, and protect the client hardware and files, it effectively creates an
                applet-like sandbox around the incoming code.  In essence, <i>mobile code</i>
                means the client's VM is using classes from a codebase provided to it by the
-               server, over the network.
+               server, over the network. The reason it is not enabled by default, is that
+               one or more proxies, or their complex arguments, could load a JVM
+               <i>significantly</i>. The acceptance of mobile code is an important
+               application specific design decision.
             </span>
          </td>
       </tr>
@@ -184,11 +187,11 @@
 <!-- end regular section -->
 
 <!-- begin regular section -->
-   <table width="98%" height="35" border="0" align="center" cellpadding="0" cellspacing="0">
+   <table height="35" border="0" align="center" cellpadding="0" cellspacing="0">
       <tr>
          <td width="2%" background="ventro/bar_bg.gif"><img src="ventro/arrowed.gif" width="30" height="35"></td>
          <td width="98%" valign="top" background="ventro/bar_bg.gif">
-            <table width="100%" height="31" border="0" cellpadding="0" cellspacing="0">
+            <table height="31" border="0" cellpadding="0" cellspacing="0">
                <tr>
                   <td style="vertical-align:middle">
                      <span class="style8"><b>Obtaining References</b></span>
@@ -199,7 +202,7 @@
          <td width="3%"><img src="ventro/bar_Right.gif" width="10" height="35"></td>
       </tr>
    </table>
-   <table width="98%" height="96" border="0" align="center" cellpadding="9" cellspacing="0">
+   <table border="0" align="center" cellpadding="9" cellspacing="0">
       <tr>
          <td valign="top">
             <span class="spacing style4 style7 style9">
@@ -225,19 +228,20 @@
                Multicast</a> class. Unlike the previous method which uses TCP/IP to obtain
                the reference, this technique uses UDP/IP.  Instead of needing to know the
                server's TCP address and port number, the client needs to know the UDP
-               address and port number the server will be using. The difference is that
-               servers can pick their UDP addresses, and they are independent of their TCP
-               address. Also, a server can use multiple UDP addresses if needed. Multiple
-               servers will share the same address, to form <i>groups</i>. A server
-               <i>broadcasts</i> a remote reference to an item by calling the <a href=nonav/docs/gnu/cajo/utils/Multicast.html#announce(java.lang.Object,%20int)>
+               address and port number the server will be using. The important difference
+               here is that servers can <i>pick</i> their UDP addresses, and they are
+               completely independent of their TCP address. Also, a server can use
+               <i>multiple</i> UDP addresses if needed. Multiple servers use the same
+               address, to form <i>groups</i>. A server <i>broadcasts</i> a remote reference
+               to an item by calling the <a href=nonav/docs/gnu/cajo/utils/Multicast.html#announce(java.lang.Object,%20int)>
                announce</a> method of Multicast.  This will send the reference to all
                clients listening in the <i>group</i>. Items listen for these announcements
                using the <a href=nonav/docs/gnu/cajo/utils/Multicast.html#listen(java.lang.Object)>
-               listen</a> method of Multicast. Use of UDP/IP, and multicasting, has proven
-               to be unfamiliar to a lot of developers, so an entire tutorial <a href=multicast.html>
-               page</a> has been dedicated to the use of the Multicast class. This mechanism
-               allows items to spontaneously form networks of functionality by linking
-               <u><i>dynamically</i></u>.
+               listen</a> method of Multicast. Use of UDP/IP, and multicasting in general,
+               has proven to be unfamiliar to a lot of developers, so an entire tutorial <a href=multicast.html>
+               page</a> has been dedicated to the use of the Multicast class. Most
+               importantly, this mechanism allows JVMs to spontaneously form networks of
+               functionality by linking <u><i>dynamically</i></u>.
             </span>
          </td>
       </tr>
@@ -245,11 +249,11 @@
 <!-- end regular section -->
 
 <!-- begin regular section -->
-   <table width="98%" height="35" border="0" align="center" cellpadding="0" cellspacing="0">
+   <table height="35" border="0" align="center" cellpadding="0" cellspacing="0">
       <tr>
          <td width="2%" background="ventro/bar_bg.gif"><img src="ventro/arrowed.gif" width="30" height="35"></td>
          <td width="98%" valign="top" background="ventro/bar_bg.gif">
-            <table width="100%" height="31" border="0" cellpadding="0" cellspacing="0">
+            <table height="31" border="0" cellpadding="0" cellspacing="0">
                <tr>
                   <td style="vertical-align:middle">
                      <span class="style8"><b>Conclusion</b></span>
@@ -260,11 +264,11 @@
          <td width="3%"><img src="ventro/bar_Right.gif" width="10" height="35"></td>
       </tr>
    </table>
-   <table width="98%" height="96" border="0" align="center" cellpadding="9" cellspacing="0">
+   <table border="0" align="center" cellpadding="9" cellspacing="0">
       <tr>
          <td valign="top">
             <span class="spacing style4 style7 style9">
-               Essentially, any Java application is just a collection of objects, used by a
+               Essentially, any Java application is simply a collection of objects, used by a
                virtual machine, to accomplish a specific purpose. This framework
                transparently provides developers the object resources of other remote
                virtual machines, with which to create applications.<br><br>
@@ -284,24 +288,24 @@
                They can even interact with remote proxy objects. Proxies have the same
                connection options as local objects. In fact, every type of object can
                freely interact with any other type of object within a virutal machine, and
-               even across virtual machine boundaries, but then with the exception of
-               local-to-local.<br><br>
+               even across virtual machine boundaries, with the exception of local objects
+               interacting with remote local objects.<br><br>
 
-               It is crucial to keep in mind during application development: While this
+               It is important to keep in mind during application development: While this
                framework makes the network appear <i>logically</i> transparent; it most
                definitely is <u>not</u> <i>physically</i> transparent. A remote method call
                can fail, or take a really long time, for a multitude of reasons, and at any
-               time. It is an inherent nature of the beast. It is very intuitive to treat
-               remote object usage like a telephone call: The line may be busy, the callee
-               may not answer, or the line may cut out unexpectedly. Be sure to include
-               work-arounds for these realities into your design.<br><br>
+               time. It is an inherent <a href=http://weblogs.java.net/jag/Fallacies.html>
+               nature</a> of the network. It is very intuitive to treat remote object usage
+               like a telephone call: The line may be busy, the callee may not answer, or
+               the line may cut out unexpectedly. Be sure to include work-arounds for these
+               realities into your design.<br><br>
 
                Now relax; this has been a lot of material, presented in a <i>very</i> short
-               time. It took <u>much</u> longer to come up with this, than it did to explain
-               it. So now take a break, do something else, and let it all soak in. Soon a
-               profound <i>revelation</i> will occur... Then, let me be the first to welcome
-               you to: The <a href=http://weblogs.java.net/pub/wlg/1715>World Wide Virtual
-               Machine</a>!
+               time. It took much longer to come up with this, than it did to explain it. So
+               now take a break, do something else, and let it soak in. Soon a profound
+               <i>revelation</i> will occur... Then, let me be the first to welcome you to:
+               The <a href=http://weblogs.java.net/pub/wlg/1715>World Wide Virtual Machine</a>!
             </span>
          </td>
       </tr>
@@ -309,25 +313,25 @@
 <!-- end regular section -->
 
 <!-- footer: -->
-   <table width="95%" height="56" border="0" align="center" cellpadding="9" cellspacing="0">
+   <table width="95%" border="0" align="center" cellpadding="9" cellspacing="0">
       <tr>
          <td valign="top">
             <div align="center">
                <hr width=90%">
                <span class="spacing style4 style7 style9">
-                  All objects are <u>local</u>: machine boundaries, whether virtual or
-                  physical, are merely conceptual.
+                  All objects are local: machine boundaries, whether virtual or physical,
+                  are merely conceptual.
                </span>
             </div>
          </td>
       </tr>
    </table>
 
-   <table width="98%" height="35" border="0" align="center" cellpadding="0" cellspacing="0">
+   <table height="35" border="0" align="center" cellpadding="0" cellspacing="0">
       <tr>
          <td width="2%" background="ventro/bar_bg.gif"><img src="ventro/arrowed.gif" width="30" height="35"></td>
          <td width="95%" valign="top" background="ventro/bar_bg.gif">
-            <table width="100%" height="31" border="0" cellpadding="0" cellspacing="0">
+            <table height="31" border="0" cellpadding="0" cellspacing="0">
                <tr>
                   <td style="vertical-align:middle"><span class="style11">&copy; 2004 GNU FDL</span></td>
                   <td width="53%"><div align="right"></div></td></tr></table></td>
