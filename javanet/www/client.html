@@ -14,12 +14,12 @@
 
 <body>
 
-<table width="98%" border="0" cellpadding="0" cellspacing="0">
+<table border="0" cellpadding="0" cellspacing="0">
    <tr>
-      <table width="100%" height="67"  border="0" cellpadding="4" cellspacing="0">
+      <table border="0" cellpadding="4" cellspacing="0">
          <tr>
             <td background="ventro/vert_logobarbg.gif">
-               <table width="100%" height="47"  border="0" cellpadding="4" cellspacing="0">
+               <table border="0" cellpadding="4" cellspacing="0">
                   <tr><br>
                      <td width="85" valign="bottom">
                         <div align="right">
@@ -45,14 +45,14 @@
          <tr>
             <td height="331" valign="top" bgcolor="#FFFFFF">
                <td width="100%" valign="top" bgcolor="#FFFFFF">
-                  <table width="100%" border="0" cellpadding="4" cellspacing="0" bgcolor="#FFFFFF">
+                  <table border="0" cellpadding="4" cellspacing="0" bgcolor="#FFFFFF">
                      <tr>
                         <td>
-                           <table width="100%" height="35" border="0" cellpadding="0" cellspacing="0">
+                           <table height="35" border="0" cellpadding="0" cellspacing="0">
                               <tr>
                                  <td width="2%" background="ventro/bar_bg.gif"><img src="ventro/arrowed.gif" width="30" height="35"></td>
                                  <td width="100%" background="ventro/bar_bg.gif">
-                                    <table width="100%" height="31" border="0" cellpadding="0" cellspacing="0">
+                                    <table height="31" border="0" cellpadding="0" cellspacing="0">
                                        <tr>
                                           <td style="vertical-align:middle">
                                              <span class="style8 style12">
@@ -65,7 +65,7 @@
                                  <td width="3%"><img src="ventro/bar_Right.gif" width="10" height="35"></td>
                               </tr>
                            </table>
-                           <table width="95%" height="96" border="0" cellpadding="9" cellspacing="0">
+                           <table border="0" cellpadding="9" cellspacing="0">
                               <tr>
                                  <td valign="top">
 <!-- title bar section -->         <span class="spacing style4 style7 style9">
@@ -83,6 +83,7 @@
                                       of java.awt.Container, is added to the applet's panel. This allows a single
                                       client to host an unlimited variety of graphical application proxies, using
                                       only one applet class. Best yet, all of the code is provided by the server.
+                                      The client can <i>also</i> be run as a WebStart applciation!
                                     </span>
                                  </td>
                               </tr>
@@ -92,11 +93,11 @@
 
 
 <!-- begin regular section -->
-   <table width="98%" height="35" border="0" align="center" cellpadding="0" cellspacing="0">
+   <table height="35" border="0" align="center" cellpadding="0" cellspacing="0">
       <tr>
          <td width="2%" background="ventro/bar_bg.gif"><img src="ventro/arrowed.gif" width="30" height="35"></td>
          <td width="98%" valign="top" background="ventro/bar_bg.gif">
-            <table width="100%" height="31" border="0" cellpadding="0" cellspacing="0">
+            <table height="31" border="0" cellpadding="0" cellspacing="0">
                <tr>
                   <td style="vertical-align:middle">
                      <span class="style8"><b>Applet configuration</b></span>
@@ -107,7 +108,7 @@
          <td width="3%"><img src="ventro/bar_Right.gif" width="10" height="35"></td>
       </tr>
    </table>
-   <table width="98%" height="96" border="0" align="center" cellpadding="9" cellspacing="0">
+   <table border="0" align="center" cellpadding="9" cellspacing="0">
       <tr>
          <td valign="top">
             <span class="spacing style4 style7 style9">
@@ -115,7 +116,7 @@
                its tag.  The client can provide three of the optional configuration
                parameters however via its URL when requesting the applet:<br><br>
 
-               <table>
+               <table cellpadding="3">
                   <tr>
                      <td><b>proxyName</b></td>
                      <td>The name of the proxy to request from the server</td>
@@ -140,9 +141,9 @@
                The parameters in brackets can be selectively omitted, but the order of
                arguments is required. Unspecified, the port value will be 80, the
                clientPort 0 = anonymous (chosen form those free at startup), localPort will
-               be same as clientPort, and proxyName will be "main". You can also WebStart
-               the client application; simply append an exclamation point (!) to the end of
-               the URL.  We call it: <i>Starting the application with a bang!</i>
+               be same as clientPort, and proxyName will be "main". To WebStart the client
+               application; simply append an exclamation point (!) to the end of the URL.
+                We like to call it: Starting the application with a <i>bang!</i>
             </span>
          </td>
       </tr>
@@ -150,11 +151,11 @@
 <!-- end regular section -->
 
 <!-- begin regular section -->
-   <table width="98%" height="35" border="0" align="center" cellpadding="0" cellspacing="0">
+   <table height="35" border="0" align="center" cellpadding="0" cellspacing="0">
       <tr>
          <td width="2%" background="ventro/bar_bg.gif"><img src="ventro/arrowed.gif" width="30" height="35"></td>
          <td width="98%" valign="top" background="ventro/bar_bg.gif">
-            <table width="100%" height="31" border="0" cellpadding="0" cellspacing="0">
+            <table height="31" border="0" cellpadding="0" cellspacing="0">
                <tr>
                   <td style="vertical-align:middle">
                      <span class="style8"><b>Application configuration</b></span>
@@ -165,16 +166,17 @@
          <td width="3%"><img src="ventro/bar_Right.gif" width="10" height="35"></td>
       </tr>
    </table>
-   <table width="98%" height="96" border="0" align="center" cellpadding="9" cellspacing="0">
+   <table border="0" align="center" cellpadding="9" cellspacing="0">
       <tr>
          <td valign="top">
             <span class="spacing style4 style7 style9">
-               The class can also operate as an application. This is very useful for testing
-               and development purposes. It is also the fastest and most efficient means to
-               host a remote graphical proxy. It connects to a remote item, requests its
-               proxy, initializes it in the identical manner as the applet does, and if the
-               initialization returns an awt Component (or a swing JComponent), it will
-               create a Frame (or a JFrame) on the client machine, displaying the result.<br><br>
+               The class can also operate as a local application. This is very useful for
+               testing and development purposes. It is also the fastest and most efficient
+               means to host a remote graphical proxy. It connects to a remote item,
+               requests its proxy, initializes it in the identical manner as the applet
+               does, and if the initialization returns an awt Component (or a swing
+               JComponent), it will create a Frame (or a JFrame) on the client machine,
+               displaying the result.<br><br>
 
                The application can take up to five optional parameters.  They are in order,
                from  most often changed, to least often, because to change an option, all of
@@ -207,8 +209,8 @@
 
                <pre><code>   java -cp cajo.jar gnu.cajo.invoke.Client //someHost/</code></pre>
 
-               This will connect from yourHost, to someHost, and get the item "main", using
-               any available port, not currently in use.
+               This will connect to someHost, and get the item "main", using any available
+               port, not currently in use.
             </span>
          </td>
       </tr>
@@ -216,11 +218,11 @@
 <!-- end regular section -->
 
 <!-- begin regular section -->
-   <table width="98%" height="35" border="0" align="center" cellpadding="0" cellspacing="0">
+   <table height="35" border="0" align="center" cellpadding="0" cellspacing="0">
       <tr>
          <td width="2%" background="ventro/bar_bg.gif"><img src="ventro/arrowed.gif" width="30" height="35"></td>
          <td width="98%" valign="top" background="ventro/bar_bg.gif">
-            <table width="100%" height="31" border="0" cellpadding="0" cellspacing="0">
+            <table height="31" border="0" cellpadding="0" cellspacing="0">
                <tr>
                   <td style="vertical-align:middle">
                      <span class="style8"><b>Important details</b></span>
@@ -231,12 +233,12 @@
          <td width="3%"><img src="ventro/bar_Right.gif" width="10" height="35"></td>
       </tr>
    </table>
-   <table width="98%" height="96" border="0" align="center" cellpadding="9" cellspacing="0">
+   <table border="0" align="center" cellpadding="9" cellspacing="0">
       <tr>
          <td valign="top">
             <span class="spacing style4 style7 style9">
-               This client, when run as an application, is excellent for testing and
-               development purposes in a trusted enviornment. To make its use for
+               This client, when run as local a application, is excellent for testing
+               and development purposes in a trusted enviornment. To make its use for
                development purposes simpler, the client application employs a <a href=docs/gnu/cajo/invoke/NoSecurityManager.html>
                NoSecurityManager</a>. As its name implies, this allows any loaded proxy to
                do anything it wants, on the host's physical machine. Under some
@@ -252,33 +254,32 @@
                <pre><code>   java -jar -Djava.security.manager -Djava.security.policy=someURL client.jar ...</b></pre></code>
 
                The first -D argument places the entire VM, and therefore all its loaded
-               proxies, in an Applet sandbox. The second -D argument could be to a policy
-               file, referenced by a URL (or simply [path/]filename). If needed, it would
-               clearly define what permissions the downloaded proxies would get.<br><br>
+               proxies, in an Applet sandbox. The second -D argument is optional. It could
+               be to a policy file, referenced by a URL (or simply [path/]filename). If
+               needed, it would define what additional permissions the downloaded proxies
+               would get.<br><br>
 
-               For example; the following policy file is highly restrictive, but suitable
-               for many proxies: (although spammers could abuse it)
+               For example; the following policy file is not as restrictive as the sandbox,
+               it is suitable for many proxies:
 <blockquote><code><pre>
 grant {
    permission java.net.SocketPermission "*:1024-", "accept;
    permission java.net.SocketPermission "*", connect;
 };</code></pre></blockquote>
-               This allows loaded proxies to create server sockets on any unused
-               port over 1023, and connect to <u>any</u> server on any port.  It's a little
-               more generous than an Applet sandbox, but still fairly safe for untrusted
-               code. Further clarification on this topic can be found in the answer to
-               question #9 in the <a href=faq.html#9>FAQ section</a>.<br><br>
 
-               Be <i>very</i> sure to use the first -D argument, you don't want to make the same
-               same <a href=http://developer.java.sun.com/developer/bugParade/bugs/4915879.html target=_blank>
+               This allows loaded proxies to create server sockets on any unused port over
+               1023, and connect to <u>any</u> server on any port. Additional information
+               on this topic can be found in the answer to question #9 in the <a href=faq.html#9>
+               FAQ section</a>.<br><br>
+
+               <i><u>Note</u>:</i> be very sure to use the first -D argument, you don't want
+               to make the same same <a href=http://developer.java.sun.com/developer/bugParade/bugs/4915879.html target=_blank>
                mistake</a> I did. (Essentially, omission of the first argument,
                <i>completely</i> negates the effect of the second.)<br><br>
 
-               <i>Note:</i> when launched via WebStart, the client requires no policy file,
-               as it already runs in an Applet sandbox, meaning it has no access to the
-               hosting machine's hard disc, and can communicate only back to the host from
-               which it was sent. This is the best option for running completely untrusted
-               code.
+               When launched as an application via WebStart, the client runs in an Applet
+               sandbox, meaning it has no access to the hosting machine's hard disc, and can
+               communicate only back to the host from which it was sent.
             </span>
          </td>
       </tr>
@@ -286,11 +287,11 @@ grant {
 <!-- end regular section -->
 
 <!-- begin regular section -->
-   <table width="98%" height="35" border="0" align="center" cellpadding="0" cellspacing="0">
+   <table height="35" border="0" align="center" cellpadding="0" cellspacing="0">
       <tr>
          <td width="2%" background="ventro/bar_bg.gif"><img src="ventro/arrowed.gif" width="30" height="35"></td>
          <td width="98%" valign="top" background="ventro/bar_bg.gif">
-            <table width="100%" height="31" border="0" cellpadding="0" cellspacing="0">
+            <table height="31" border="0" cellpadding="0" cellspacing="0">
                <tr>
                   <td style="vertical-align:middle">
                      <span class="style8"><b>Conclusion</b></span>
@@ -301,7 +302,7 @@ grant {
          <td width="3%"><img src="ventro/bar_Right.gif" width="10" height="35"></td>
       </tr>
    </table>
-   <table width="98%" border="0" align="center" cellpadding="9" cellspacing="0">
+   <table border="0" align="center" cellpadding="9" cellspacing="0">
       <tr>
          <td valign="top">
             <span class="spacing style4 style7 style9">
@@ -320,7 +321,7 @@ grant {
 <!-- end regular section -->
 
 <!-- footer: -->
-   <table width="95%" height="56" border="0" align="center" cellpadding="9" cellspacing="0">
+   <table width="95%" border="0" align="center" cellpadding="9" cellspacing="0">
       <tr>
          <td valign="top">
             <div align="center">
@@ -333,11 +334,11 @@ grant {
       </tr>
    </table>
 
-   <table width="98%" height="35" border="0" align="center" cellpadding="0" cellspacing="0">
+   <table height="35" border="0" align="center" cellpadding="0" cellspacing="0">
       <tr>
          <td width="2%" background="ventro/bar_bg.gif"><img src="ventro/arrowed.gif" width="30" height="35"></td>
          <td width="95%" valign="top" background="ventro/bar_bg.gif">
-            <table width="100%" height="31" border="0" cellpadding="0" cellspacing="0">
+            <table height="31" border="0" cellpadding="0" cellspacing="0">
                <tr>
                   <td style="vertical-align:middle"><span class="style11">&copy; 2004 GNU FDL</span></td>
                   <td width="53%"><div align="right"></div></td></tr></table></td>
