@@ -14,12 +14,12 @@
 
 <body>
 
-<table width="98%" border="0" cellpadding="0" cellspacing="0">
+<table border="0" cellpadding="0" cellspacing="0">
    <tr>
-      <table width="100%" height="67"  border="0" cellpadding="4" cellspacing="0">
+      <table border="0" cellpadding="4" cellspacing="0">
          <tr>
             <td background="ventro/vert_logobarbg.gif">
-               <table width="100%" height="47"  border="0" cellpadding="4" cellspacing="0">
+               <table border="0" cellpadding="4" cellspacing="0">
                   <tr><br>
                      <td width="85" valign="bottom">
                         <div align="right">
@@ -45,14 +45,14 @@
          <tr>
             <td height="331" valign="top" bgcolor="#FFFFFF">
                <td width="100%" valign="top" bgcolor="#FFFFFF">
-                  <table width="100%" border="0" cellpadding="4" cellspacing="0" bgcolor="#FFFFFF">
+                  <table border="0" cellpadding="4" cellspacing="0" bgcolor="#FFFFFF">
                      <tr>
                         <td>
-                           <table width="100%" height="35" border="0" cellpadding="0" cellspacing="0">
+                           <table height="35" border="0" cellpadding="0" cellspacing="0">
                               <tr>
                                  <td width="2%" background="ventro/bar_bg.gif"><img src="ventro/arrowed.gif" width="30" height="35"></td>
                                  <td width="100%" background="ventro/bar_bg.gif">
-                                    <table width="100%" height="31" border="0" cellpadding="0" cellspacing="0">
+                                    <table height="31" border="0" cellpadding="0" cellspacing="0">
                                        <tr>
                                           <td style="vertical-align:middle">
                                              <span class="style8 style12">
@@ -65,20 +65,21 @@
                                  <td width="3%"><img src="ventro/bar_Right.gif" width="10" height="35"></td>
                               </tr>
                            </table>
-                           <table width="95%" border="0" cellpadding="9" cellspacing="0">
+                           <table border="0" cellpadding="9" cellspacing="0">
                               <tr>
                                  <td valign="top">
 <!-- title bar section -->         <span class="spacing style4 style7 style9">
-                                      In this framework, a proxy is simply <i>any</i> object, sent from one
-                                      VM to another, typically as a method argument, or result. (though they can
-                                      also be sent in exceptions) In this page, we will look at proxies that
+                                      In this framework, a proxy is actually <i>any</i> ordinary object, sent from
+                                      one JVM to another, typically as a method argument, or result. (though they
+                                      can also be sent in exceptions) In this page, we will look at proxies that
                                       derive from the utility class <a href=nonav/docs/gnu/cajo/utils/BaseProxy.html>
                                       BaseProxy</a>, though any serialisable class can be used as a proxy. Proxy
                                       objects are sent to a client by, and on behalf of, a server item. A BaseProxy
                                       subclass will arrive with a remote link back to its server item, on which it
                                       can asynchronously communicate with it.  Proxies are often used to pre-process
                                       method invocations made by the client, using the computing resources of the
-                                      client, rather than those of the server.
+                                      client, rather than those of the server. They can most aptly be thought-of
+                                      as <i>"smart"</i> references to remote objects.
                                    </span>
                                 </td>
                              </tr>
@@ -92,7 +93,7 @@
       <tr>
          <td width="2%" background="ventro/bar_bg.gif"><img src="ventro/arrowed.gif" width="30" height="35"></td>
          <td width="98%" valign="top" background="ventro/bar_bg.gif">
-            <table width="100%" height="31" border="0" cellpadding="0" cellspacing="0">
+            <table height="31" border="0" cellpadding="0" cellspacing="0">
                <tr>
                   <td style="vertical-align:middle">
                      <span class="style8"><b>Base proxies</b></span>
@@ -103,7 +104,7 @@
          <td width="3%"><img src="ventro/bar_Right.gif" width="10" height="35"></td>
       </tr>
    </table>
-   <table width="98%" height="96" border="0" align="center" cellpadding="9" cellspacing="0">
+   <table border="0" align="center" cellpadding="9" cellspacing="0">
       <tr>
          <td valign="top">
             <span class="spacing style4 style7 style9">
@@ -112,10 +113,8 @@
                BaseProxy is very similar to a <a href=nonav/docs/gnu/cajo/utils/BaseItem.html>
                BaseItem</a>. It has an optional <a href=nonav/docs/gnu/cajo/utils/BaseProxy.MainThread.html#BaseProxy.MainThread()>
                MainThread</a>, which is cannonically launched by the client, on its arrival.
-               It has a final implementation of the <a href=nonav/docs/gnu/cajo/invoke/Invoke.html>
-               Invoke</a> interface, to route local and remote invocations to its public
-               methods. It also has string tables, which can be automatically loaded with
-               the language appropriate to the locale of the client.<br><br>
+               It also has string tables, which can be automatically loaded with the
+               language appropriate to the locale of the client.<br><br>
 
                Each proxy is served by, and typically services, one server item. The
                server item binds itself and provides its proxy object using the static
@@ -126,11 +125,11 @@
                mechanism, described in the next section. It is generally necessary to start
                up a<a href=nonav/docs/gnu/cajo/utils/CodebaseServer.html>CodebaseServer</a>,
                on which the client will automatically request, and receive the proxy class
-               files. When a VM serves proxies, it will require two TCP ports; one for
+               files. Whenever a VM serves proxies, it will require two TCP ports; one for
                communication with the server item itself, and another for sending the proxy
                codebase via the CodebaseServer.  If a server does not use proxies, it only
                needs one port. A CodebaseServer can also be used to send complex objects
-               to an client, which would transparently use it to load the necessary class
+               to an client, which would use it to transparently load the necessary class
                definitions.
             </span>
          </td>
@@ -143,7 +142,7 @@
       <tr>
          <td width="2%" background="ventro/bar_bg.gif"><img src="ventro/arrowed.gif" width="30" height="35"></td>
          <td width="98%" valign="top" background="ventro/bar_bg.gif">
-            <table width="100%" height="31" border="0" cellpadding="0" cellspacing="0">
+            <table height="31" border="0" cellpadding="0" cellspacing="0">
                <tr>
                   <td style="vertical-align:middle">
                      <span class="style8"><b>Requesting proxies</b></span>
@@ -154,7 +153,7 @@
          <td width="3%"><img src="ventro/bar_Right.gif" width="10" height="35"></td>
       </tr>
    </table>
-   <table width="98%" height="96" border="0" align="center" cellpadding="9" cellspacing="0">
+   <table border="0" align="center" cellpadding="9" cellspacing="0">
       <tr>
          <td valign="top">
             <span class="spacing style4 style7 style9">
@@ -174,11 +173,13 @@
                can display this if it wishes. The framework specifies only the method to
                obtain the default proxy. If an item serves multiple proxies, the method or
                methods to obtain them are application specific.  A <i>suggestion</i> would
-               be to use a string argument in a getProxy invocation, to specify the desired
+               be, to use a string argument in a getProxy invocation, to specify the desired
                proxy. <i>Note:</i> as a general rule, it is considered elegant practice for
                a server item to support both a proxy interface to itself, and for that proxy
-               to support a graphical interface. Minimally, an item should at least support
-               a <code>String getDescription()</code> method to describe its use and features.
+               to support a graphical interface. Clients then have the option to use the
+               proxy, its user interface, or to manipulate the remote object directly.
+               Minimally, an item should at least support a <tt>String getDescription()</tt>
+               method, to describe its use and features.
             </span>
          </td>
       </tr>
@@ -190,7 +191,7 @@
       <tr>
          <td width="2%" background="ventro/bar_bg.gif"><img src="ventro/arrowed.gif" width="30" height="35"></td>
          <td width="98%" valign="top" background="ventro/bar_bg.gif">
-            <table width="100%" height="31" border="0" cellpadding="0" cellspacing="0">
+            <table height="31" border="0" cellpadding="0" cellspacing="0">
                <tr>
                   <td style="vertical-align:middle">
                      <span class="style8"><b>Sending proxies</b></span>
@@ -201,13 +202,13 @@
          <td width="3%"><img src="ventro/bar_Right.gif" width="10" height="35"></td>
       </tr>
    </table>
-   <table width="98%" height="96" border="0" align="center" cellpadding="9" cellspacing="0">
+   <table border="0" align="center" cellpadding="9" cellspacing="0">
       <tr>
          <td valign="top">
             <span class="spacing style4 style7 style9">
                If a remote machine is willing to host proxies, another item can typically
-               install a proxy, by invoking a remote item's <a href=nonav/docs/gnu/cajo/utils/BaseItem.html#setProxy(gnu.cajo.invoke.Invoke)>
-               setProxy</a> method, passing its proxy, as the argument. The default
+               install a proxy, by invoking a remote item's <a href= nonav/docs/gnu/cajo/utils/BaseItem.html#installProxy(java.lang.Object)>
+               installProxy</a> method, passing its proxy as the argument. The default
                implementation will invoke the proxy's init method, passing a reference to
                the proxy, remoted within the context of the BaseItem's VM, to start its
                operation. It will then return the same reference back to the calling VM, on
@@ -219,7 +220,7 @@
                being automatically thrown to the sender. BaseItem's setProxy method is often
                extended, to provide additional application specific resources to the arriving
                proxy. Proxies offer an exciting dynamic approach to what is popularly called
-               <i>grid</i> computing these days.
+               <i>grid</i> and <i>agent</i> computing these days.
             </span>
          </td>
       </tr>
@@ -231,7 +232,7 @@
       <tr>
          <td width="2%" background="ventro/bar_bg.gif"><img src="ventro/arrowed.gif" width="30" height="35"></td>
          <td width="98%" valign="top" background="ventro/bar_bg.gif">
-            <table width="100%" height="31" border="0" cellpadding="0" cellspacing="0">
+            <table height="31" border="0" cellpadding="0" cellspacing="0">
                <tr>
                   <td style="vertical-align:middle">
                      <span class="style8"><b>Conclusion</b></span>
@@ -242,11 +243,11 @@
          <td width="3%"><img src="ventro/bar_Right.gif" width="10" height="35"></td>
       </tr>
    </table>
-   <table width="98%" height="96" border="0" align="center" cellpadding="9" cellspacing="0">
+   <table border="0" align="center" cellpadding="9" cellspacing="0">
       <tr>
          <td valign="top">
             <span class="spacing style4 style7 style9">
-               The diagram below illustrates the four step process to using proxies:<ol>
+               The diagramme below illustrates the four step process to using proxies:<ol>
                   <li>Client requests remote item reference
                   <li>Client receives remote item reference
                   <li>Client requests proxy from remote item
@@ -265,10 +266,9 @@
                This can be of critical importance, if the remote item is very far away, or
                linked over a slow network. Generally it is a recommended practice for remote
                items to provide a proxy. At a minimum, it would serve to reduce network
-               traffic, and possibly pre-fetch needed objects contextually.  Effectively
-               this type of proxy would be considered a <i>'smart'</i> remote reference.
-               Clients would then have the option to use the proxy, or to manipulate the
-               remote object directly, over the network.<br><br>
+               traffic, and possibly pre-fetch needed objects contextually. It also allows
+               server functionally to scale more easily, by using proxies to offload more
+               of the individual clients computational requirements to the client.<br><br>
 
                Another major benefit to this proxy hosting architecture, is that it allows
                multiple remote servers to provide their graphical user interfaces to operate
@@ -282,11 +282,9 @@
                Both the proxy, and its serving item, can in turn give their remote
                references to other items.  As a result, an item calling another item does
                not know, or need even care, if it is invoking a local item, a remote item,
-               a local proxy, or a remote proxy. Ideally, every remote object should support
-               an optional proxy interface, to optimize performance, preferably supporting
-               a graphical interface to the item as well.<br><br>
+               a local proxy, or a remote proxy.<br><br>
 
-               The next section <a href=multicast.html>multicast</a> will show how items
+               The next section <a href=multicast.html>multicast</a>, will show how items
                can send or receive, remote item references, using a method analogous to a
                <i>radio</i> broadcast!
             </span>
@@ -296,7 +294,7 @@
 <!-- end regular section -->
 
 <!-- footer: -->
-   <table width="95%" height="56" border="0" align="center" cellpadding="9" cellspacing="0">
+   <table width="95%" border="0" align="center" cellpadding="9" cellspacing="0">
       <tr>
          <td valign="top">
             <div align="center">
@@ -309,11 +307,11 @@
       </tr>
    </table><br>
 
-   <table width="98%" height="35" border="0" align="center" cellpadding="0" cellspacing="0">
+   <table height="35" border="0" align="center" cellpadding="0" cellspacing="0">
       <tr>
          <td width="2%" background="ventro/bar_bg.gif"><img src="ventro/arrowed.gif" width="30" height="35"></td>
          <td width="95%" valign="top" background="ventro/bar_bg.gif">
-            <table width="100%" height="31" border="0" cellpadding="0" cellspacing="0">
+            <table height="31" border="0" cellpadding="0" cellspacing="0">
                <tr>
                   <td style="vertical-align:middle"><span class="style11">&copy; 2004 GNU FDL</span></td>
                   <td width="53%"><div align="right"></div></td></tr></table></td>
