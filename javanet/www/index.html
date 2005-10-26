@@ -1,6 +1,11 @@
 <html>
    <head>
-      <title>cajo - The cajo project</title>
+      <style>
+         .app H3  { clear:   none; }
+         .axial   { display: none; }
+         #apphead { display: none; }
+      </style>
+      <title>The cajo Project</title>
       <meta name="Keywords" content="cajo, rmi, java, distributed computing,
          Transparent Distributed Computing, network computing, cajo project,
          cajo framework, wwvm, John Catherino">
@@ -10,6 +15,15 @@
       <link href="ventro/css.css" rel="stylesheet" type="text/css">
    </head>
    <body>
+      <script>
+         ld = document.getElementById("longdescription");
+         for (n=ld.firstChild; n!=null; n=n.nextSibling) {
+            if (n.nodeType==1 && n.innerHTML=="Description") {
+               n.parentNode.removeChild(n);
+               break;
+            }
+         }
+      </script>
       <div id="projecthome" class="app">
       <table width="100%">
          <tr>
