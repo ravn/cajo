@@ -274,17 +274,17 @@
                                       <a id="14"></a><b><u>14. Can my item have public methods that are only locally invokable?</u></b>
                                       Yes. This brings up a very important feature in the design of of cajo
                                       transparent remote invocation. If an object implements the gnu.cajo.invoke.Invoke
-                                      interface, any invocation through Remote.invoke will automatically be
-                                      passed to <i>its</i> interface, rather than being performed on its public
-                                      methods directly. This feature makes things like <a href=https://cajo.dev.java.net/docs/gnu/cajo/utils/MonitorItem.html>
-                                      MonitorItem</a>, and <a href=https://cajo.dev.java.net/docs/gnu/cajo/utils/extra/AuditorItem.html>
+                                      interface, any invocation through Remote.invoke will automatically be passed
+                                      to its interface, rather than being performed on its public methods directly.
+                                      This feature makes things like <a href=https://cajo.dev.java.net/docs/gnu/cajo/utils/MonitorItem.html>
+                                      MonitorItem</a> and <a href=https://cajo.dev.java.net/docs/gnu/cajo/utils/extra/AuditorItem.html>
                                       AuditorItem</a> possible. It can also allow your item to have public methods
                                       which can be invoked only by objects within the same Virtual Machine. You
-                                      would simply implement invoke, and manually route calls only to those methods
-                                      you wish to make remotely invokable. Normally this can be avoided completely
-                                      by designing an object expressly for remote invocation from the outset.
-                                      However, this can sometimes become necessary, when remoting a derived object,
-                                      one that implements java.lang.Runnable for example.
+                                      would simply implement Invoke, and manually route calls only to those methods
+                                      you wish to make remotely callable. Normally this can <i>(and should)</i> be
+                                      avoided completely, by designing an object expressly for remote invocation
+                                      from the outset. However this is sometimes helpful, when remoting a derived
+                                      object, one that implements java.lang.Runnable for example.
                                       
                                     </span>
                                  </td>
