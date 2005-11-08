@@ -88,6 +88,7 @@
                                          <li><a href=#11>Can I use the example's TileLayout manager?</a>
                                          <li><a href=#12>Does cajo pass objects by reference, or by value?</a>
                                          <li><a href=#13>Why do the build scripts target JRE 1.2?</a>
+                                         <li><a href=#14>Can my item have public methods that are only locally invokable?</a>
                                       </ol>
 
                                       <a id="1"></a><b><u>1. Why doesn't the example work in Appletviewer?</u></b>
@@ -101,8 +102,8 @@
                                       <a id="2"></a><b><u>2. What if someone forks this code?</u></b> A fork; i.e.
                                       an alternative development, is something I would not like to see happen, as
                                       it could divide the community. Besides, in this type of project, there is
-                                      <i>much</i> more to be gained through cooperation. It is an essential freedom
-                                      however; to prevent technological lock-in.<br><br>
+                                      <i>much</i> more to be gained through cooperation. However, it is an
+                                      essential freedom; to forever prevent technological lock-in.<br><br>
 
                                       <a id="3"></a><b><u>3. What is a zedmob?</u></b> A zedmob first off, is a
                                       contraction of the two words <i><u>Z</u></i>ipp<i><u>ed</u></i>
@@ -268,8 +269,23 @@
                                       <i>restricts</i> application code from targeting whatever JRE target is
                                       needed. In general, the lower the JRE version a Java application can
                                       successfuly target; the more JREs, and subsequently larger installed base,
-                                      on which it can run.
+                                      on which it can run.<br><br>
 
+                                      <a id="14"></a><b><u>14. Can my item have public methods that are only locally invokable?</u></b>
+                                      Yes. This brings up a very important feature in the design of of cajo
+                                      transparent remote invocation. If an object implements the gnu.cajo.invoke.Invoke
+                                      interface, any invocation through Remote.invoke will automatically be
+                                      passed to <i>its</i> interface, rather than being performed on its public
+                                      methods directly. This feature makes things like <a href=https://cajo.dev.java.net/docs/gnu/cajo/utils/MonitorItem.html>
+                                      MonitorItem</a>, and <a href=https://cajo.dev.java.net/docs/gnu/cajo/utils/extra/AuditorItem.html>
+                                      AuditorItem</a> possible. It can also allow your item to have public methods
+                                      which can be invoked only by objects within the same Virtual Machine. You
+                                      would simply implement invoke, and manually route calls only to those methods
+                                      you wish to make remotely invokable. Normally this can be avoided completely
+                                      by designing an object expressly for remote invocation from the outset.
+                                      However, this can sometimes become necessary, when remoting a derived object,
+                                      one that implements java.lang.Runnable for example.
+                                      
                                     </span>
                                  </td>
                               </tr>
