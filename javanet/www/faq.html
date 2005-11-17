@@ -90,6 +90,7 @@
                                          <li><a href=#13>Why do the build scripts target JRE 1.2?</a>
                                          <li><a href=#14>Can my item have public methods that are only locally invokable?</a>
                                          <li><a href=#15>Why is cajo licensed under the GNU LGPL?</a>
+                                         <li><a href=#16>Why does each ItemServer create its own rmiregistry?</a>
                                       </ol>
 
                                       <a id="1"></a><b><u>1. Why doesn't the example work in Appletviewer?</u></b>
@@ -294,8 +295,16 @@
                                       its operation; the license requires full disclosure of these modifications,
                                       and complete source code, to anyone receiving the modified library. Aside
                                       from the GNU GPL, which would prohibit use in proprietary applications, no
-                                      other license <i>(that I know)</i> provides you this crucial guarantee.
+                                      other license <i>(that I know)</i> provides you this crucial guarantee.<br><br>
+
+                                      <a id="16"></a><b><u>16. Why does each ItemServer create its own rmiregistry?</u></b>
+                                      While it would perhaps be conceptually simpler to run a central rmiregistry
+                                      in its own JVM; this would represent a very unsatisfactory single point of
+                                      failure, for the entire server physical machine. The additional load of
+                                      carrying an individual rmiregistry within each server JVM is very small, but
+                                      the added stability it buys is very large.
                                       
+
                                     </span>
                                  </td>
                               </tr>
