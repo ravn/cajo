@@ -89,6 +89,7 @@
                                          <li><a href=#12>Does cajo pass objects by reference, or by value?</a>
                                          <li><a href=#13>Why do the build scripts target JRE 1.2?</a>
                                          <li><a href=#14>Can my item have public methods that are only locally invokable?</a>
+                                         <li><a href=#15>Why is cajo licensed under the GNU LGPL?</a>
                                       </ol>
 
                                       <a id="1"></a><b><u>1. Why doesn't the example work in Appletviewer?</u></b>
@@ -284,7 +285,16 @@
                                       you wish to make remotely callable. Normally this can <i>(and should)</i> be
                                       avoided completely, by designing an object expressly for remote invocation
                                       from the outset. However this is sometimes helpful, when remoting a derived
-                                      object, one that implements java.lang.Runnable for example.
+                                      object, one that implements java.lang.Runnable for example.<br><br>
+
+                                      <a id="15"></a><b><u>15. Why is cajo licensed under the GNU LGPL?</u></b>
+                                      The GNU LGPL gives you a very important guarantee. The way cajo works, to
+                                      enable cooperation between both free and proprietary applications, can never
+                                      be made proprietary itself. If someone were to modify the cajo semantics, or
+                                      its operation; the license requires full disclosure of these modifications,
+                                      and complete source code, to anyone receiving the modified library. Aside
+                                      from the GNU GPL, which would prohibit use in proprietary applications, no
+                                      other license <i>(that I know)</i> provides you this crucial guarantee.
                                       
                                     </span>
                                  </td>
