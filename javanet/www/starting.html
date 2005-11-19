@@ -75,21 +75,20 @@
 
                                  <td valign="top">
                                     <span class="spacing style4 style7 style9">
-                                      This short walkthrough will demonstrate both the ease of use of the
-                                      framework, as well as provide a practical template for building applications.
-                                      We will start with a server first, then move on to the construction of a
-                                      client. Once you understand this material, it will be possible for you to
-                                      successfully distribute <i>any</i> application that you can make work in a
-                                      single Virtual Machine. In fact, this is a highly recommended approach for
+                                      This short walkthrough will demonstrate both the ease of use of the framework,
+                                      as well as provide a practical template for building applications. We will
+                                      start with a server first, then move on to the construction of a client. Once
+                                      you understand this material, it will be possible for you to successfully
+                                      distribute <i>any</i> application that you can make work in a single Virtual
+                                      Machine! In fact, this is a highly recommended approach for
                                       application development; first get the whole thing working in a single JVM,
-                                      <i>then</i> add cajo, to distribute it.
-                                      <br><br>
+                                      <i>then</i> add cajo to distribute it.<br><br>
 
-                                      <i><u>Note</u>:</i> for this tutorial you will need the <a href=cajo.jar>
+                                      <i><u>Note</u>:</i> if you do not have it already, you will need the <a href=cajo.jar>
                                       cajo.jar</a> library.<br><br>
 
                                       Let's extend the simple object we learned about in the <a href=overview.html>
-                                      overview</a>: <i>(feel free to cut and paste)</i>
+                                      overview</a>: &nbsp; <i>(feel free to cut and paste)</i>
 
 <blockquote><tt><pre>
 import gnu.cajo.invoke.Remote;
@@ -119,17 +118,16 @@ public class SomeObject {
 
                                       Here we have a basic server. Quite intuitive already isn't it? The static
                                       main method will launch the server, operating on the cajo IANA assigned
-                                      TCP port of 1198.<br><br>
+                                      TCP port of <a href=https://cajo.dev.java.net/servlets/NewsItemView?newsItemID=2539>
+                                      1198</a>.<br><br>
 
                                       The next step would be to compile the server, it is done thus:
 
                                       <blockquote><tt>javac -classpath cajo.jar SomeObject.java</tt></blockquote>
 
-                                      It is now ready to be run, to do this type:
+                                      Now it is ready to be run, to do this type:
 
                                       <blockquote><tt>java -classpath cajo.jar;. SomeObject</tt></blockquote>
-
-                                      <i>(The ; is a : for you *nix crowd, but you already knew that! ;-)</i><br><br>
 
                                       This will start up the server. Believe it or not, we are finished with this
                                       phase!
@@ -161,8 +159,8 @@ public class SomeObject {
                <tr>
                   <td valign="top">
                      <span class="spacing style4 style7 style9">
-                        The client is a remote JVM that uses one or more served objects, as if they
-                        were local resources. Let's see just how easily this is done:
+                        A client is a remote application, that uses one or more served objects, as
+                        if they were local resources. Let's see just how easily this is done:
 
 
 <blockquote><tt><pre>
@@ -194,7 +192,7 @@ public class SomeClient {
 
                         <blockquote><tt>java -classpath cajo.jar;. SomeClient</tt></blockquote>
 
-                        The results should come out exactly as you would expect!
+                        The results should come out exactly as you expect!
                      </span>
                   </td>
                </tr>
@@ -221,11 +219,14 @@ public class SomeClient {
       <tr>
          <td valign="top">
             <span class="spacing style4 style7 style9">
-               Now feel free to expand on, and test with, this simple template. Then, when
-               you are ready to learn some more sophisticated techniques; the <a href=http://wiki.java.net/bin/view/Communications/ProxyUsage>
+               Now feel free to expand on, and test with, this simple template. If it hasn't
+               become apparent already; an application can be <i>both</i> a client <i>and</i>
+               a server!<br><br>
+
+               Next, when you are ready to learn some more sophisticated techniques; the <a href=http://wiki.java.net/bin/view/Communications/ProxyUsage>
                proxy</a>, <a href=http://wiki.java.net/bin/view/Communications/CajoScripting>
                scripting</a>, and <a href=http://wiki.java.net/bin/view/Communications/UsingMulticast>
-               multicast</a> turorials await you! :-)
+               multicast</a> turorials await you!
 
             </span>
          </td>
