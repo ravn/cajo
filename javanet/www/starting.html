@@ -79,10 +79,10 @@
                                       framework, as well as provide a practical template for building applications.
                                       We will start with a server first, then move on to the construction of a
                                       client. Once you understand this material, it will be possible for you to
-                                      successfully distribute any application that you can make work in a single
-                                      Virtual Machine. In fact, this is a highly recommended approach for
-                                      application development with cajo; first get the whole thing working in a
-                                      single JVM.
+                                      successfully distribute <i>any</i> application that you can make work in a
+                                      single Virtual Machine. In fact, this is a highly recommended approach for
+                                      application development; first get the whole thing working in a single JVM,
+                                      <i>then</i> add cajo, to distribute it.
                                       <br><br>
 
                                       <i><u>Note</u>:</i> for this tutorial you will need the <a href=cajo.jar>
@@ -127,7 +127,7 @@ public class SomeObject {
 
                                       It is now ready to be run, to do this type:
 
-                                      <blockquote><tt>java -cp cajo.jar;. SomeObject</tt></blockquote>
+                                      <blockquote><tt>java -classpath cajo.jar;. SomeObject</tt></blockquote>
 
                                       <i>(The ; is a : for you *nix crowd, but you already knew that! ;-)</i><br><br>
 
@@ -161,8 +161,8 @@ public class SomeObject {
                <tr>
                   <td valign="top">
                      <span class="spacing style4 style7 style9">
-                        The client is a remote JVM, which uses the served object, as if it were
-                        a local resource. Now let's see just how easily this is done:
+                        The client is a remote JVM that uses one or more served objects, as if they
+                        were local resources. Let's see just how easily this is done:
 
 
 <blockquote><tt><pre>
@@ -182,9 +182,9 @@ public class SomeClient {
 </tt></pre></blockquote>
 
                         <i><u>Note</u>:</i> The <u><b><tt>serverHost</tt></b></u> part in the getItem
-                        call <u>must</u> be replaced, with the actual IP address, or machine name on
-                        which <u>your</u> server is running. It is possible to run both the client
-                        and the server, on the same physical machine.<br><br>
+                        call <u>must</u> be replaced, with the actual IP address, or machine name, on
+                        which <u>your</u> server is running. Both the client, and the server, can
+                        run on the same physical machine.<br><br>
 
                         Let's compile the client:
 
@@ -192,7 +192,7 @@ public class SomeClient {
 
                         It is now ready to be run, just type:
 
-                        <blockquote><tt>java -cp cajo.jar;. SomeClient</tt></blockquote>
+                        <blockquote><tt>java -classpath cajo.jar;. SomeClient</tt></blockquote>
 
                         The results should come out exactly as you would expect!
                      </span>
@@ -224,8 +224,8 @@ public class SomeClient {
                Now feel free to expand on, and test with, this simple template. Then, when
                you are ready to learn some more sophisticated techniques; the <a href=http://wiki.java.net/bin/view/Communications/ProxyUsage>
                proxy</a>, <a href=http://wiki.java.net/bin/view/Communications/CajoScripting>
-               scripting</a> and <a href=http://wiki.java.net/bin/view/Communications/UsingMulticast>
-               multicast</a> turorials are waiting for you!
+               scripting</a>, and <a href=http://wiki.java.net/bin/view/Communications/UsingMulticast>
+               multicast</a> turorials await you! :-)
 
             </span>
          </td>
