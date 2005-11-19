@@ -200,8 +200,8 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
     * <p><i><u>Note</u>:</i> If this class is to be configured, it must be
     * done <b>before</b> any items are remoted.
     * @param serverPort Specifies the local inbound port on which the server is
-    * serving clients. It can be zero, to use an anonymous port.  This must
-    * are being used, it must be an accessible port, into this server. If this
+    * serving clients. It can be zero, to use an anonymous port.  If a firewall
+    * is being used, it must be an accessible port, into this server. If this
     * port is zero, and the ClientPort argument is non-zero, then the
     * ClientPort value will automatically substituted.
     * @param clientHost The domain name, or IP address the remote client will
