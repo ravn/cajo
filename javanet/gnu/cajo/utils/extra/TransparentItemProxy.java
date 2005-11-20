@@ -1,7 +1,7 @@
 package gnu.cajo.utils.extra;
 
+import gnu.cajo.invoke.*;
 import java.lang.reflect.*;
-import gnu.cajo.invoke.Remote;
 
 /*
  * Item Transparent Dynamic Proxy (requires JRE 1.3+)
@@ -28,11 +28,11 @@ import gnu.cajo.invoke.Remote;
  */
 
 /**
- * This class creates an object at runtime, representing a server item.
- * It uses a list of interfaces defined by the client. The interfaces are
- * completely independent of interfaces the server object implements, if
- * any; they are simply logical groupings, of interest to the client. The
- * interface methods <i>'should'</i> declare that they throw
+ * This class creates an object, representing a server item. The returned
+ * object will implement a list of interfaces defined by the client. The
+ * interfaces are completely independent of interfaces the server object
+ * implements, if any; they are simply logical groupings, of interest to
+ * the client. The interface methods <i>'should'</i> declare that they throw
  * <tt>java.lang.Exception</tt>. However, the Java dynamic proxy mechanism
  * very <i>doubiously</i> allows this to be optional.
  *
@@ -45,14 +45,14 @@ import gnu.cajo.invoke.Remote;
  * that the item proxy implements.
  *
  * <p>If an item can be best represented with a single interface, it would be
- * quite well to consider using a {@link Wrapper Wrapper} class instead. It
- * is conceptually much simpler.
+ * well to consider using a {@link Wrapper Wrapper} class instead. It is
+ * conceptually much simpler.
  *
  * <p><i><u>Note</u>:</i> Unfortunately, this class only works with JREs 1.3
- * and higher. Therefore I am reluctant to include it in the official
- * codebase. However, some very interesting <a href=https://cajo.dev.java.net/servlets/ProjectForumMessageView?forumID=475&messageID=10199>
+ * and higher. Therefore I was reluctant to include it in the official
+ * codebase. However, some very convincing <a href=https://cajo.dev.java.net/servlets/ProjectForumMessageView?forumID=475&messageID=10199>
  * discussion</a> in the cajo project Developer's forum, with project member
- * Bharavi Gade, has started me to seriously reconsider.
+ * Bharavi Gade, caused me to reconsider. :-)
  *
  * @version 1.1, 11-Nov-05 Support multiple interfaces
  * @author John Catherino
@@ -109,6 +109,27 @@ public final class TransparentItemProxy implements InvocationHandler {
       return Proxy.newProxyInstance(
          interfaces[0].getClassLoader(), interfaces,
          new TransparentItemProxy(Remote.getItem(url))
+      );
+   }
+   /**
+    * This generates a class definition for a remote object reference at
+    * runtime, and returns a local object instance. The resulting dynamic
+    * proxy object will implement all of the interfaces provided.
+    * @param item A reference to a remote server object.
+    * @param interfaces The list of interface classes for the dynamic proxy
+    * to implement. Typically, these are provided thus; <tt>new Class[] {
+    * Interface1.class, Interface2.class, ... }</tt>
+    * @return A reference to the server item, wrapped in the object created
+    * at runtime, implementing all of the interfaces provided. It can then
+    * be typecast into any of the interfaces, as needed by the client.
+    * @throws IllegalArgumentException if the any of the provided interface
+    * classes are not really interfaces.
+    */
+   public static Object getItem(RemoteInvoke item, Class interfaces[]) throws
+      IllegalArgumentException {
+      return Proxy.newProxyInstance(
+         interfaces[0].getClassLoader(), interfaces,
+         new TransparentItemProxy(item)
       );
    }
 }
