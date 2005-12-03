@@ -86,6 +86,27 @@ public final class TransparentItemProxy implements InvocationHandler {
       return Remote.invoke(item, method.getName(), args);
    }
    /**
+    * This generates a class definition for a remote object reference at
+    * runtime, and returns a local object instance. The resulting dynamic
+    * proxy object will implement all of the interfaces provided.
+    * @param item A reference to a remote server object.
+    * @param interfaces The list of interface classes for the dynamic proxy
+    * to implement. Typically, these are provided thus; <tt>new Class[] {
+    * Interface1.class, Interface2.class, ... }</tt>
+    * @return A reference to the server item, wrapped in the local object,
+    * created at runtime, implementing all of the interfaces provided. It can
+    * then be typecast into any of the interfaces, as needed by the client.
+    * @throws IllegalArgumentException if the any of the provided interface
+    * classes are not really interfaces.
+    */
+   public static Object getItem(Object item, Class interfaces[])
+      throws IllegalArgumentException {
+      return Proxy.newProxyInstance(
+         interfaces[0].getClassLoader(), interfaces,
+         new TransparentItemProxy(item)
+      );
+   }
+   /**
     * This method fetches a server item reference, generates a class
     * definition for it at runtime, and returns a local object instance.
     * The resulting dynamic proxy object will implement all of the interfaces
@@ -103,33 +124,11 @@ public final class TransparentItemProxy implements InvocationHandler {
     * @throws MalformedURLException if the URL is not in the format required.
     * @throws RemoteException if the rmiregistry could not be reached.
     * @throws NotBoundException if the requested name is not in the registry.
-    */
-   public static Object getItem(String url, Class interfaces[]) throws
-      Exception {
-      return Proxy.newProxyInstance(
-         interfaces[0].getClassLoader(), interfaces,
-         new TransparentItemProxy(Remote.getItem(url))
-      );
-   }
-   /**
-    * This generates a class definition for a remote object reference at
-    * runtime, and returns a local object instance. The resulting dynamic
-    * proxy object will implement all of the interfaces provided.
-    * @param item A reference to a remote server object.
-    * @param interfaces The list of interface classes for the dynamic proxy
-    * to implement. Typically, these are provided thus; <tt>new Class[] {
-    * Interface1.class, Interface2.class, ... }</tt>
-    * @return A reference to the server item, wrapped in the object created
-    * at runtime, implementing all of the interfaces provided. It can then
-    * be typecast into any of the interfaces, as needed by the client.
     * @throws IllegalArgumentException if the any of the provided interface
     * classes are not really interfaces.
     */
-   public static Object getItem(RemoteInvoke item, Class interfaces[]) throws
-      IllegalArgumentException {
-      return Proxy.newProxyInstance(
-         interfaces[0].getClassLoader(), interfaces,
-         new TransparentItemProxy(item)
-      );
+   public static Object getItem(String url, Class interfaces[])
+      throws Exception {
+      return getItem(Remote.getItem(url), interfaces);
    }
 }
