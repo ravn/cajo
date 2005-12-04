@@ -61,6 +61,16 @@ public class Wrapper implements Invoke {
     */
    protected String url;
    /**
+    * This method is used to support lazy loading of remote object
+    * references, only when needed. It also absorbs the checked
+    * RemoteException, which will cause an unchecked NullPointerException,
+    * for the calling method's subsequent operation on the wrapped object.
+    */
+   protected synchronized void load() {
+      if (object == null) try { object = Remote.getItem(url); }
+      catch(Exception x) {} 
+   }
+   /**
     * The no-arg constructor does nothing, it is protected for use only by
     * subclasses.
     */
@@ -99,8 +109,7 @@ public class Wrapper implements Invoke {
     * result in a NullPointerException on a load failure.
     */
    public int hashCode() {
-      if (object == null) try { object = Remote.getItem(url); }
-      catch(Exception x) {} 
+      if (object == null) load();
       return object.hashCode();
    }
    /**
@@ -113,8 +122,7 @@ public class Wrapper implements Invoke {
     * result in a NullPointerException on a load failure.
     */
    public boolean equals(Object o) {
-      if (object == null) try { object = Remote.getItem(url); }
-      catch(Exception x) {} 
+      if (object == null) load();
       return o.equals(object);
    }
    /**
@@ -127,8 +135,7 @@ public class Wrapper implements Invoke {
     * result in a NullPointerException on a load failure.
     */
    public String toString() {
-      if (object == null) try { object = Remote.getItem(url); }
-      catch(Exception x) {} 
+      if (object == null) load();
       return object.toString();
    }
    /**
@@ -141,8 +148,7 @@ public class Wrapper implements Invoke {
     * @return True if the inner object is remote, false otherwise.
     */
    public boolean isRemote() {
-      if (object == null) try { object = Remote.getItem(url); }
-      catch(Exception x) {} 
+      if (object == null) load();
       return object instanceof RemoteInvoke;
    }
    /**
@@ -156,7 +162,8 @@ public class Wrapper implements Invoke {
     * any application specific reasons.
     */
    public String getDescription() throws Exception {
-      return (String)invoke("getDescription", null);
+      if (object == null) load();
+      return (String)Remote.invoke(object, "getDescription", null);
    }
    /**
     * This method <u><i>must</i></u> be called by all interface methods of the
@@ -184,7 +191,7 @@ public class Wrapper implements Invoke {
     * any application specific reasons.
     */
    public Object invoke(String method, Object args) throws Exception {
-      if (object == null) Remote.getItem(url);
+      if (object == null) load();
       return Remote.invoke(object, method, args);
    }
 }
