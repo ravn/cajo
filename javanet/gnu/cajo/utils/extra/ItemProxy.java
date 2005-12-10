@@ -45,6 +45,12 @@ import gnu.cajo.invoke.*;
  * socket, thereby solving the firewall issue. The development of this
  * process was originally championed by project member Fredrik Larsen.<p>
  *
+ * <i><u>Note</u>:</i> The server could cut its connection to the client
+ * at any time, either intentionally by having its ClientProxy object
+ * garbage collected, or worse, by a server crash. If the client wishes to
+ * be notified of this event, it must define a null argument method called
+ * <tt>cutOff</tt>. This will be invoked by the ItemProxy, in that event.
+ *
  * @version 1.0, 28-Mar-04 Initial release
  */
 public final class ItemProxy extends Thread {
@@ -83,6 +89,9 @@ public final class ItemProxy extends Thread {
             try { args = Remote.invoke(client, method, args); }
             catch(Exception x) { args = x; }
          }
-      } catch(Exception x) { x.printStackTrace(); }
+      } catch(Exception x) {
+         try { Remote.invoke(client, "cutOff", null); }
+         catch(Exception x) {}
+      }
    }
 }
