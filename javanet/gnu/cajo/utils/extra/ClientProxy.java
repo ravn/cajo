@@ -1,6 +1,9 @@
 package gnu.cajo.utils.extra;
 
 import gnu.cajo.invoke.*;
+import java.rmi.RemoteException;
+import java.rmi.NoSuchObjectException;
+import java.rmi.server.UnicastRemoteObject;
 
 /*
  * Callback proxy for a firewalled client, used by a server item
@@ -41,7 +44,8 @@ import gnu.cajo.invoke.*;
  * <i>Note:</i> this paradigm is <u>not</u> threadsafe! It is expected that
  * callbacks to the remote client will <i>not</i> be invoked reentrantly.
  * Correspondingly, a unique instance of this object must be given to each
- * remote client object.
+ * remote client object. A practical usage <a href=http://wiki.java.net/bin/view/Communications/FirewalledClients>
+ * example</a> is available online.
  *
  * @version 1.0, 28-Mar-04 Initial release
  */
@@ -50,11 +54,35 @@ public final class ClientProxy implements Invoke {
    private Object args;
    private boolean done;
    /**
-    * A server creates this object, then provides a remote reference to it
-    * to the client. This creates the first half of the bridge, the {@link
-    * ItemProxy ItemProxy} class completes the second half.
+    * This is the remoted reference to the server's ClientProxy. It is passed
+    * back to the client, to be used int the {@link ItemProxy ItemProxy}
+    * constructor, to create a firewall traversing asynchronous callback link.
+    * In order to work, logically, it can only be passed to one remote client.
     */
-   public ClientProxy() {}
+   public final Remote remoteThis;
+   /**
+    * A server creates this object, then provides the remote reference member
+    * remoteThis to the client. This creates the first half of the bridge,
+    * the {@link ItemProxy ItemProxy} class completes the second half.
+    * @throws RemoteException If the remote reference creation fails.
+    */
+   public ClientProxy() throws RemoteException {
+      remoteThis = new Remote(this);
+   }
+   /**
+    * This method abruptly terminates the ClientProxy link to the server.
+    * The client can detect the detachment, if it wishes, by implementing a
+    * cutOff method with the identical signature. The client may also
+    * remotely invoke this method, if it wishes to sever its link to the
+    * server. Any subsequent invocations by the server will result in client
+    * timeout exceptions. <i><u>Note</u>:</i> it would not make sense to call
+    * this method more than once, ever, for a given object instance.
+    * @throws NoSuchObjectException Should this method ever be called more
+    * than once, on the same object.
+    */
+   public void cutOff() throws NoSuchObjectException {
+      UnicastRemoteObject.unexportObject(remoteThis, true);
+   }
    /**
     * This method serves two fundamentally different, but symmetrical
     * purposes. Initially a remote {@link ItemProxy ItemProxy} calls this
@@ -78,6 +106,10 @@ public final class ClientProxy implements Invoke {
          notify();              // wake the server item thread
          wait();                // suspend the client callback thread
          return new Object[] { this.method, this.args };
+      } else if (method.equals("cutOff") && (args == null ||
+         (args instanceof Object[] && ((Object[])args).length == 0))) {
+         cutOff();              // client or server wants to terminate
+         return null;           // connexion to client is now severed
       } else {                  // server callback invocation thread
          this.method = method;  // save the client method to be invoked
          this.args   = args;    // save the data to provide the invocation
