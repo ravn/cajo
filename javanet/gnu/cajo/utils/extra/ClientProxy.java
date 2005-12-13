@@ -54,6 +54,14 @@ public final class ClientProxy implements Invoke {
    private Object args;
    private boolean done;
    /**
+    * This is the longest value, in milliseconds, that the server will wait
+    * for a client invocation to execute before it aborts it. It is set
+    * by default to 5000 (5 seconds). Depending on the type of functionality
+    * being performed in the client methods, this time may require adjusting.
+    * When it is changed, the new value will apply for all subsequent calls.
+    */
+   public int timeout = 5000;
+   /**
     * This is the remoted reference to the server's ClientProxy. It is passed
     * back to the client, to be used int the {@link ItemProxy ItemProxy}
     * constructor, to create a firewall traversing asynchronous callback link.
@@ -115,7 +123,7 @@ public final class ClientProxy implements Invoke {
          this.args   = args;    // save the data to provide the invocation
          done = false;          // indicate callback pending
          notify();              // wake the client callback thread
-         wait(5000);            // suspend the server item thread
+         wait(timeout);            // suspend the server item thread
          if (!done) throw new InterruptedException("Callback Timeout");
          if (this.args instanceof Exception) throw (Exception)this.args;
          return this.args;      // return the callback result
