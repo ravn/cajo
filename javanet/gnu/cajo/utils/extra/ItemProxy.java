@@ -45,11 +45,18 @@ import gnu.cajo.invoke.*;
  * socket, thereby solving the firewall issue. The development of this
  * process was originally championed by project member Fredrik Larsen.<p>
  *
+ * Normally, a client would not invoke a method on the remote reference
+ * it receives to the server's ClientProxy object. However, if the client
+ * wishes to forcibly terminate its connection with the server, it can
+ * invoke a no-arg cutOff method on the reference. (See the note below)</p>
+ *
  * <i><u>Note</u>:</i> The server could cut its connection to the client
- * at any time, either intentionally by having its ClientProxy object
- * garbage collected, or worse, by a server crash. If the client wishes to
- * be notified of this event, it must define a null argument method called
- * <tt>cutOff</tt>. This will be invoked by the ItemProxy, in that event.
+ * at any time, either intentionally by invoking its cutOff method, or
+ * worse, by a server crash. If the client wishes to be notified of this
+ * event, it must define a null argument method called <tt>cutOff</tt>. This
+ * will be invoked by the ItemProxy, in that event. A practical usage
+ * <a href=http://wiki.java.net/bin/view/Communications/FirewalledClients>
+ * example</a> is available online.
  *
  * @version 1.0, 28-Mar-04 Initial release
  */
@@ -91,7 +98,7 @@ public final class ItemProxy extends Thread {
          }
       } catch(Exception x) {
          try { Remote.invoke(client, "cutOff", null); }
-         catch(Exception x) {}
+         catch(Exception y) {}
       }
    }
 }
