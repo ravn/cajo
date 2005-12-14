@@ -80,11 +80,11 @@ public final class ClientProxy implements Invoke {
    /**
     * This method abruptly terminates the ClientProxy link to the server.
     * The client can detect the detachment, if it wishes, by implementing a
-    * cutOff method with the identical signature. The client may also
-    * remotely invoke this method, if it wishes to sever its link to the
-    * server. Any subsequent invocations by the server will result in client
-    * timeout exceptions. <i><u>Note</u>:</i> it would not make sense to call
-    * this method more than once, ever, for a given object instance.
+    * similar cutOff method. The client may also remotely invoke this method,
+    * if it wishes to sever its link to the server. Any subsequent
+    * invocations by the server will result in client timeout exceptions.
+    * <i><u>Note</u>:</i> it would not make sense to call this method more
+    * than once, ever, for a given object instance.
     * @throws NoSuchObjectException Should this method ever be called more
     * than once, on the same object.
     */
