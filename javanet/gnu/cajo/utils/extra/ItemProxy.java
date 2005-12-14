@@ -54,8 +54,9 @@ import gnu.cajo.invoke.*;
  * at any time, either intentionally by invoking its cutOff method, or
  * worse, by a server crash. If the client wishes to be notified of this
  * event, it must define a null argument method called <tt>cutOff</tt>. This
- * will be invoked by the ItemProxy, in that event. A practical usage
- * <a href=http://wiki.java.net/bin/view/Communications/FirewalledClients>
+ * will be invoked by the ItemProxy, in that event the cutOff method must
+ * accept a single argument, of type Exception, it will describe the reason
+ * behind the disconnection. A practical usage <a href=http://wiki.java.net/bin/view/Communications/FirewalledClients>
  * example</a> is available online.
  *
  * @version 1.0, 28-Mar-04 Initial release
@@ -97,7 +98,7 @@ public final class ItemProxy extends Thread {
             catch(Exception x) { args = x; }
          }
       } catch(Exception x) {
-         try { Remote.invoke(client, "cutOff", null); }
+         try { Remote.invoke(client, "cutOff", x); }
          catch(Exception y) {}
       }
    }
