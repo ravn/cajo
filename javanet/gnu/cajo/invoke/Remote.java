@@ -77,7 +77,7 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
       public Socket createSocket(String host, int port) throws IOException {
          Socket s = RMISocketFactory.getDefaultSocketFactory().
             createSocket(this.host, this.port != 0 ? this.port : port);
-         s.setSoTimeout(60000);
+         s.setKeepAlive(true);
          return s;
       }
       public boolean equals(Object o) {
