@@ -71,8 +71,8 @@
                                  <td valign="top">
 <!-- title bar section -->         <span class="spacing style4 style7 style9">
                                       In this framework, a proxy is actually <i>any</i> ordinary object, sent from
-                                      one JVM to another, typically as a method argument, or result. (though they
-                                      can also be sent in exceptions) In this page, we will look at proxies that
+                                      one JVM to another, typically as a method argument, or result. (although they
+                                      can even be sent in exceptions) In this page, we will look at proxies that
                                       derive from the utility class <a href=nonav/docs/gnu/cajo/utils/BaseProxy.html>
                                       BaseProxy</a>, though any serialisable class can be used as a proxy. Proxy
                                       objects are sent to a client by, and on behalf of, a server item. A BaseProxy
@@ -124,7 +124,7 @@
                ItemServer</a> class.  The server item can also announce its availablity
                to a collection of listening VMs via the <a href=multicast.html>multicast</a>
                mechanism, described in the next section. It is generally necessary to start
-               up a<a href=nonav/docs/gnu/cajo/utils/CodebaseServer.html>CodebaseServer</a>,
+               up a <a href=nonav/docs/gnu/cajo/utils/CodebaseServer.html>CodebaseServer</a>,
                on which the client will automatically request, and receive the proxy class
                files. Whenever a VM serves proxies, it will require two TCP ports; one for
                communication with the server item itself, and another for sending the proxy
