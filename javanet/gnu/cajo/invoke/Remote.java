@@ -470,7 +470,13 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
       } else return item.getClass().getMethod(method, null).invoke(item, null);
       throw new NoSuchMethodException();
    }
-   private final Object item;
+   /**
+    * This is the reference to the local (or possibly remote) object
+    * reference being made remotely invokable by this Virtual Machine. It is
+    * declared public to provide the convenience to refer to both the
+    * wrapper, and its wrapped object, via a single reference.
+    */
+   public final Object item;
    /**
     * The constructor takes <i>any</i> object, and allows it to be remotely
     * invoked. If the object implements the {@link Invoke Invoke} interface,
