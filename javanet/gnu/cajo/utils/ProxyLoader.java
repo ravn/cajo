@@ -105,5 +105,5 @@ public final class ProxyLoader implements Invoke {
     * @return The path and filename of the proxy resource, either class or
     * object.
     */
-   public String toString() { return handle; }
+   public String toString() { return "ProxyLoader: " + handle; }
 }
