@@ -207,14 +207,14 @@
       <tr>
          <td valign="top">
             <span class="spacing style4 style7 style9">
-               There are three ways to build the example, represented by the three batch
-               files; make1, make2, and make3, or their corresponding targets in the
-               build.xml Ant script. Each builds the server with identical functionality;
-               however packaged in fundamentally different ways.<br><br>
+               There are four distinct ways to build the example, represented by the four
+               batch files: make1, make2, make3, and make4; and their corresponding targets
+               in the build.xml ant script. Each builds the server with identical
+               functionality, however, packaged in <i>fundamentally</i> different ways.<br><br>
 
-               The <b>make1</b> creates the server in a single monolithic jar file.
+               The <b>make1</b> creates the server in <u>one</u> monolithic jar file.
                Everything is contained inside it, the server itself, the test item, the test
-               proxy, and even a client applet, which allows browsers to host the prox.
+               proxy, and even a client applet, which allows browsers to host the proxy.
                This file, and the security.policy file are all that is needed to deploy
                the server.  All servers use the same policy file by default, so a deployment
                directory could consist of many server jars, and a single policy
@@ -224,30 +224,39 @@
                each server, simply place each server jar and its associated policy into
                separate directories.<br><br>
 
-               The <b>make2</b> creates the server in two files: server.jar and client.jar.
-               The client.jar is a stand-alone generic client application, in addition, it
-               is <i>also</i> a generic proxy hosting applet, used by browsers. Deployment
-               now consists of the server jar, the client jar, and the policy file. All
-               servers built this way reference the same client jar, in the same way as they
-               all reference the same policy file. A stand-alone client not only reduces the
+               The <b>make2</b> creates the server in <u>two</u> files: server.jar <i>and</i>
+               client.jar. The client.jar is a stand-alone generic client application, in
+               addition, it is <i>also</i> a generic proxy hosting Applet. Deployment now
+               consists of the server jar, the client jar, and the policy file. All servers
+               built this way reference the same client jar, in the same way as they all
+               reference the same policy file. A stand-alone client not only reduces the
                server jar file size, which can be helpful if there are many servers in the
                same directory, it is also very useful in its own right. Using the standard
                <a href=client.html>client</a> is a topic of its own, and as such gets its
                own page.<br><br>
 
-               The <b>make3</b> creates the server as three files: server.jar, client.jar,
-               and proxy.jar. Now deployment consists of four files, the three jars, and the
-               policy file. The reason to use make3, is if you want to take advantage of the
-               <i>'hot plugging'</i> capability of the framework.  This means you can modify
-               the proxy, or proxies, recompile their jar file, and overwrite the existing
-               proxy.jar file, all while the server is <i>still</i> running! All subsequent
-               clients will receive the updated functionality automatically, and the server
-               need not be shut down.<br><br>
+               The <b>make3</b> creates the server as <u>three</u> files: server.jar,
+               client.jar, <i>and</i> proxy.jar. Now deployment consists of four files, the
+               three jars, and the policy file. The reason to use make3, is if you want to
+               take advantage of the <i>'hot plugging'</i> capability of the framework.
+               This means you can modify the proxy, or proxies, recompile their jar file(s),
+               and overwrite the existing proxy jars, all while the server is <i>still</i>
+               running! All subsequent clients will receive the updated functionality
+               automatically, and the server need <u>not</u> be shut down.<br><br>
 
-               <i><u>Note</u>:</i> there is a fourth batch file, and build target in the Ant
-               script, called <b>library</b>. It compiles the project source code only,
-               and creates a binary image called cajo.jar. Its purpose is to provide the
-               framework functionality for multi-jar application classpaths.<br>
+               The <b>make4</b> creates the server as <u>four</u> files: server.jar,
+               client.jar, proxy.jar, <i>and</i> cajo.jar. The cajo.jar file is the standard
+               binary library for the cajo project. By using this jar file, all of the
+               standard functionality is stored in one central repository. This not only
+               reduces the size of the server jar files, but permits library updates
+               <i>without</i> affecting the server files. This is the most common method of
+               deployment.<br><br>
+
+               As you would expect, there is a fifth batch file, and default ant build
+               target; called <b>library</b>. It compiles the project source code and
+               creates the standard cajo.jar library image. Its purpose is to provide the
+               framework functionality to multi-jar classpaths, used by the majority of
+               applications.<br>
 
             </span>
          </td>
