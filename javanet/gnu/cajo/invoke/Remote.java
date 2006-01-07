@@ -75,8 +75,17 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
       private int port;
       private String host;
       public Socket createSocket(String host, int port) throws IOException {
-         Socket s = RMISocketFactory.getDefaultSocketFactory().
-            createSocket(this.host, this.port != 0 ? this.port : port);
+         Socket s;
+         try {
+            s = RMISocketFactory.getDefaultSocketFactory().
+               createSocket(this.host, this.port != 0 ? this.port : port);
+         } catch(IOException x) { // last ditch attempt try local
+            s = RMISocketFactory.getDefaultSocketFactory().
+               createSocket(InetAddress.getLocalHost().getHostName(),
+                  this.port != 0 ? this.port : port);
+            System.err.print("cajo.invoke.Remote redirecting to localhost ");
+            System.err.println("instead of " + this.host);
+         }
          s.setKeepAlive(true);
          return s;
       }
@@ -402,7 +411,7 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
          if (ms[i].getName().equals(method) &&
             ms[i].getParameterTypes().length == args.length) {
             for (int j = 0; j < args.length; j++)
-               if (!autobox(ms[i].getParameterTypes()[j]).
+               if (args[j] != null & !autobox(ms[i].getParameterTypes()[j]).
                   isAssignableFrom(args[j]))
                      continue list;
             matchList.add(ms[i]);
@@ -416,7 +425,7 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
             int closeness = 0;
             Method m = (Method)matchList.get(i);
             for (int j = 0; j < args.length; j++)
-               if (args[j].
+               if (args[j] != null && args[j].
                   isAssignableFrom(autobox(m.getParameterTypes()[j])))
                      closeness++;
             if (closeness == args.length) return m; // closest fit
@@ -460,7 +469,7 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
          Object[] o_args = (Object[])args;
          Class[]  c_args = new Class[o_args.length];
          for(int i = 0; i < o_args.length; i++)
-            c_args[i] = o_args[i].getClass();
+            c_args[i] = o_args[i] != null ? o_args[i].getClass() : null;
          Method m = findBestMethod(item, method, c_args);
          if (m!= null) return m.invoke(item, o_args);
       } else if (args != null) {
