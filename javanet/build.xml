@@ -56,7 +56,8 @@
                  example/*.class
                  example/include/*.*
                  example/gui/*.class
-                 gnu/cajo/utils/*.class
+                 gnu/cajo/utils/BaseProxy*.class
+                 gnu/cajo/utils/ProxyLoader.class
              "/>
         <delete>
             <fileset dir="." includes="
@@ -129,28 +130,7 @@
              "/>
         </delete>
     </target>
-    <target name="make4" depends="library, client">
-        <javac srcdir="." target="1.2" source="1.2" includes="example/Builder.java"/> 
-        <javac srcdir="." target="1.2" source="1.2" includes="gnu/cajo/utils/ProxyLoader.java"/> 
-        <java fork="true" classname="example.Builder"/> 
-        <jar basedir="."
-             jarfile="proxy.jar"
-             includes="
-                 example/*.class
-                 example/include/*.*
-                 example/gui/*.class
-                 gnu/cajo/utils/BaseProxy*.class
-                 gnu/cajo/utils/ProxyLoader.class
-             "/>
-        <delete>
-            <fileset dir="." includes="
-                 example/*.class
-                 example/gui/*.class
-                 example/include/proxy.ser
-                 gnu/cajo/invoke/*.class
-                 gnu/cajo/utils/*.class
-             "/>
-        </delete>
+    <target name="make4" depends="client, proxy, library">
         <javac srcdir="." target="1.2" source="1.2" includes="example/Main.java"/> 
         <jar basedir="."
              jarfile="server.jar"
@@ -158,7 +138,6 @@
              includes="
                  example/*.class
                  gnu/cajo/utils/ProxyLoader.class
-                 gnu/cajo/utils/CodebaseServer.class
              "/>
         <delete>
             <fileset dir="." includes="
