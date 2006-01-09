@@ -21,8 +21,7 @@ del   gnu\cajo\utils\*.class
 
 rem build the server:
 javac -target 1.2 -source 1.2 example\Main.java
-jar   cfm server.jar example\example.mft example\*.class gnu\cajo\utils\ProxyLoader.class gnu\cajo\utils\CodebaseServer.class
-rem I am still not sure why CodebaseServer MUST be included in the jar...
+jar   cfm server.jar example\example.mft example\*.class gnu\cajo\utils\ProxyLoader.class
 del   example\*.class
 del   gnu\cajo\invoke\*.class
 del   gnu\cajo\utils\*.class
