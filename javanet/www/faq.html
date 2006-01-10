@@ -91,6 +91,7 @@
                                          <li><a href=#14>Can my item have public methods that are only locally invokable?</a>
                                          <li><a href=#15>Why is cajo licensed under the GNU LGPL?</a>
                                          <li><a href=#16>Why does each ItemServer create its own rmiregistry?</a>
+                                         <li><a href=#17>Can I use null arguments in a remote method invocation?</a>
                                       </ol>
 
                                       <a id="1"></a><b><u>1. Why doesn't the example work in Appletviewer?</u></b>
@@ -304,8 +305,19 @@
                                       failure, for the entire server physical machine. The additional load of
                                       carrying an individual rmiregistry within each server JVM is quite small, but
                                       the added stability it buys is very large. Besides, if you really want to
-                                      use a central rmiregistry, you can still do that too!
+                                      use a central rmiregistry, you can still do that too!<br><br>
                                       
+                                      <a id="17"></a><b><u>17. Can I use null arguments in a remote method invocation?</u></b>
+                                      Yes. <i>However:</i> as mentioned in the <a href=overview.html>overview</a>;
+                                      with remote method invocations, typechecking has to move, from <i>compiletime</i>,
+                                      to <i>runtime</i>. This creates a <i>very</i> important detail to keep in
+                                      mind, when it comes to overloaded methods. With a local object, when passing
+                                      null arguments makes the selection of overloaded methods ambiguous, the
+                                      compiler <i>demands</i> specification; for example: <tt>x.doit((String)null);</tt>
+                                      vs. <tt>x.doIt((LinkedList)null);</tt>. Unfortunately, in the remote case,
+                                      one of the ambiguous overloaded methods would simply be selected
+                                      indeterminately. So use null arguments, but with care on methods that are
+                                      overloaded.
 
                                     </span>
                                  </td>
