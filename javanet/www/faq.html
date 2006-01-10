@@ -92,6 +92,7 @@
                                          <li><a href=#15>Why is cajo licensed under the GNU LGPL?</a>
                                          <li><a href=#16>Why does each ItemServer create its own rmiregistry?</a>
                                          <li><a href=#17>Can I use null arguments in a remote method invocation?</a>
+                                         <li><a href=#18>Can I include cajo classes in a proprietary application JAR?</a>
                                       </ol>
 
                                       <a id="1"></a><b><u>1. Why doesn't the example work in Appletviewer?</u></b>
@@ -317,7 +318,17 @@
                                       vs. <tt>x.doIt((LinkedList)null);</tt>. Unfortunately, in the remote case,
                                       one of the ambiguous overloaded methods would simply be selected
                                       indeterminately. So use null arguments, but with care on methods that are
-                                      overloaded.
+                                      overloaded.<br><br>
+
+
+                                      <a id="18"></a><b><u>18. Can I include cajo classes in a proprietary application JAR?</u></b>
+                                      Yes. Essentially, JAR is a standard file format. Your proprietary license
+                                      applies to your classes, and the GNU LGPL applies to the cajo classes.  Your
+                                      classes may even be obfuscated, however the cajo classes may not. Most
+                                      importantly, end users must be able to update the cajo classes in the
+                                      JAR, and the application must still operate normally. Normally means that the
+                                      application will not refuse to run, nor change its feature set, by detecting
+                                      changed cajo classes.
 
                                     </span>
                                  </td>
