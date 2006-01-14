@@ -39,7 +39,9 @@ import java.rmi.MarshalledObject;
  * take care of loading the proxy, and displaying its GUI, if it has one. If
  * the graphical proxy component implements WindowListener, it will be added
  * as a listener to its display frame automatically, before it is made
- * visible.
+ * visible. Note: closing the dialog will intentionally terminate the JVM,
+ * and consequently all of its loaded proxies.
+ * 
  *
  * @version 1.0, 02-Jan-06 Initial release
  * @author John Catherino
@@ -48,6 +50,7 @@ final class Loader extends Frame implements WindowListener, ActionListener {
    private static final long serialVersionUID = 1L;
    private static Button load;
    private static TextField host, port, item, status;
+   private boolean main;
    private final LinkedList proxies = new LinkedList();
    private Loader(String title, Object proxy) {
       super(title);
@@ -61,6 +64,7 @@ final class Loader extends Frame implements WindowListener, ActionListener {
    Loader() {
       super("Load cajo proxy");
       addWindowListener(this);
+      main = true;
       setLayout(null);
       final int WIDTH = 250, HEIGHT = 200, ROW1 = HEIGHT / 6,
          ROW2 = 2 * ROW1, ROW3 = 3 * ROW1, ROW4 = 4 * ROW1;
@@ -123,5 +127,5 @@ final class Loader extends Frame implements WindowListener, ActionListener {
    public void windowDeiconified(WindowEvent e) {}
    public void windowDeactivated(WindowEvent e) {}
    public void windowClosing(WindowEvent e)     { dispose(); }
-   public void windowClosed(WindowEvent e)      {}
+   public void windowClosed(WindowEvent e)      { if (main) System.exit(0); }
 }
