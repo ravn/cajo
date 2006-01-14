@@ -1,0 +1,127 @@
+package gnu.cajo.invoke;
+
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import java.util.LinkedList;
+import java.rmi.MarshalledObject;
+
+/*
+ * Generic Graphical Proxy Loader Dialog Box
+ * Copyright (c) 2006 John Catherino
+ *
+ * For issues or suggestions mailto:cajo@dev.java.net
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, at version 2.1 of the license, or any
+ * later version.  The license differs from the GNU General Public License
+ * (GPL) to allow this library to be used in proprietary applications. The
+ * standard GPL would forbid this.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * To receive a copy of the GNU Lesser General Public License visit their
+ * website at http://www.fsf.org/licenses/lgpl.html or via snail mail at Free
+ * Software Foundation Inc., 59 Temple Place Suite 330, Boston MA 02111-1307
+ * USA
+ */
+
+/**
+ * This package-internal helper monkey supports the operation of the generic
+ * Client. When the client is launched as an application, with no arguments,
+ * this graphical widget will be created. It allows the Java Virtual Machine
+ * to host multiple proxy items, from remote servers. The user gets a small
+ * AWT dialog box; into which to type the host, port, and item name. It will
+ * take care of loading the proxy, and displaying its GUI, if it has one. If
+ * the graphical proxy component implements WindowListener, it will be added
+ * as a listener to its display frame automatically, before it is made
+ * visible.
+ *
+ * @version 1.0, 02-Jan-06 Initial release
+ * @author John Catherino
+ */
+final class Loader extends Frame implements WindowListener, ActionListener {
+   private static final long serialVersionUID = 1L;
+   private static Button load;
+   private static TextField host, port, item, status;
+   private final LinkedList proxies = new LinkedList();
+   private Loader(String title, Object proxy) {
+      super(title);
+      add((Component)proxy);
+      if (proxy instanceof WindowListener)
+         addWindowListener((WindowListener)proxy);
+      addWindowListener(this);
+      pack();
+      setVisible(true);
+   }
+   Loader() {
+      super("Load cajo proxy");
+      addWindowListener(this);
+      setLayout(null);
+      final int WIDTH = 250, HEIGHT = 200, ROW1 = HEIGHT / 6,
+         ROW2 = 2 * ROW1, ROW3 = 3 * ROW1, ROW4 = 4 * ROW1;
+      setSize(WIDTH, HEIGHT);
+      Label label;
+      add(label = new Label("Host:"));
+      label.setBounds(WIDTH / 12, ROW1, 35, 20);
+      add(host = new TextField());
+      host.setBounds(WIDTH / 4, ROW1, 2 * WIDTH / 3, 20);
+      add(label = new Label("Port:"));
+      label.setBounds(WIDTH / 12, ROW2, 35, 20);
+      add(port = new TextField());
+      port.setBounds(7 * WIDTH / 12, ROW2, WIDTH / 3, 20);
+      add(label = new Label("Item:"));
+      label.setBounds(WIDTH / 12, ROW3, 35, 20);
+      add(item = new TextField("main"));
+      item.setBounds(WIDTH / 4, ROW3, 2 * WIDTH / 3, 20);
+      add(load  = new Button("Load"));
+      load.setBounds(WIDTH / 3, ROW4, WIDTH / 3, 25);
+      load.addActionListener(this);
+      add(status = new TextField("ready to load proxy"));
+      status.setBounds(1, HEIGHT - 21, WIDTH - 2, 20);
+      status.setEditable(false);
+      status.setBackground(getBackground());
+      setResizable(false);
+      setVisible(true);
+   }
+   public void actionPerformed(ActionEvent e) {
+      setCursor(Cursor.WAIT_CURSOR);
+      try {
+         String url = "//" + host.getText().trim() + ':' +
+            port.getText().trim() + '/'  + item.getText().trim();
+         Object proxy = Remote.getItem(url);
+         proxy = Remote.invoke(proxy, "getProxy", null);
+         if (proxy instanceof MarshalledObject)
+            proxy = ((MarshalledObject)proxy).get();
+         if (!(proxy instanceof RemoteInvoke))
+            proxy = Remote.invoke(proxy, "init", new Remote(proxy));
+         url = "cajo proxy - " + url;
+         if (proxy instanceof JComponent) {
+            JFrame frame = new JFrame(url);
+            if (proxy instanceof WindowListener)
+               frame.addWindowListener((WindowListener)proxy);
+            frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            frame.getContentPane().add((JComponent)proxy);
+            frame.pack();
+            frame.setVisible(true);
+         } else if (proxy instanceof Component) new Loader(url, proxy);
+         else proxies.add(proxy);
+         status.setText("proxy loaded");
+      } catch(Exception x) {
+         status.setText(x.toString());
+         Toolkit.getDefaultToolkit().beep();
+      }
+      setCursor(Cursor.DEFAULT_CURSOR);
+   }
+   public void windowOpened(WindowEvent e)      {}
+   public void windowActivated(WindowEvent e)   {}
+   public void windowIconified(WindowEvent e)   {}
+   public void windowDeiconified(WindowEvent e) {}
+   public void windowDeactivated(WindowEvent e) {}
+   public void windowClosing(WindowEvent e)     { dispose(); }
+   public void windowClosed(WindowEvent e)      {}
+}
