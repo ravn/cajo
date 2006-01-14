@@ -156,7 +156,8 @@ public final class Client extends java.applet.Applet {
    }
    /**
     * This method is used by items to create a frame containing the AWT
-    * component.
+    * or Swing component. If the component implements WindowListener, it
+    * will be added to its display frame, before being made visible.
     * @param component The AWT/Swing component, typically returned from a
     * proxy initialization, to be framed.
     * @return the AWT Frame or Swing JFrame containing the component, already
@@ -165,6 +166,8 @@ public final class Client extends java.applet.Applet {
    public static Frame frame(Component component) {
       if (component instanceof JComponent) {
          JFrame frame = new JFrame(TITLE);
+         if (component instanceof WindowListener)
+            frame.addWindowListener((WindowListener)component);
          frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
          frame.getContentPane().add((JComponent)component);
          frame.pack();
@@ -172,6 +175,8 @@ public final class Client extends java.applet.Applet {
          return frame;
       } else {
          CFrame frame = new CFrame(TITLE);
+         if (component instanceof WindowListener)
+            frame.addWindowListener((WindowListener)component);
          frame.add((Component)component);
          frame.pack();
          frame.setVisible(true);
@@ -184,16 +189,22 @@ public final class Client extends java.applet.Applet {
     * {@link Remote#getItem getItem} method of the {@link Remote Remote} class
     * to contact the server. It will then invoke a null-argument getProxy on
     * the resulting reference to request the primary proxy object of the item.<br><br>
-    * <i>Note:</i> When running as an application (except via JNLP) it will
-    * load a NoSecurityManager, therefore, if no external SecurityManager is
-    * specified in the startup command line options; the arriving proxies will
+    * <i>Note:</i> When running as an application (<i><u>except</u> via JNLP</i>)
+    * it will load a NoSecurityManager, therefore, if no external SecurityManager
+    * is specified in the startup command line options; the arriving proxies will
     * have <u><b>full permissions</b></u> on this machine.<br><br>
+    * To restrict client proxies permissions, use a startup invocation similar
+    * to the following:<br><br>
+    * <tt>java -jar -Djava.security.manager -Djava.security.policy=client.policy</tt>
+    * <br><br>
+    * See the project client <a href=https://cajo.dev.java.net/client.html>
+    * documentation</a>, for more details.<br><br>
     * The startup can take up to five additional optional configuration
     * parameters, in this order:<ul>
     * <li> args[0] The URL where to get the graphical proxy item:<br>
     * file:// http:// ftp:// ..., //host:port/name (rmiregistry), /path/name
-    * (serialized), or path/name (class). Unspecified, the server will be
-    * considered local, bound in an rmiregistry, under the name "main".
+    * (serialized), or path/name (class).<br>
+    * If <i>unspecified,</i> a graphical loader utility will be launched.
     * <li> args[1] The optional external client port number, if using NAT.
     * <li> args[2] The optional external client host name,   if using NAT.
     * <li> args[3] The optional internal client port number, if using NAT.
@@ -203,18 +214,20 @@ public final class Client extends java.applet.Applet {
       try {
          if (System.getSecurityManager() == null)
             System.setSecurityManager(new NoSecurityManager());
-         int clientPort    = args.length > 1 ? Integer.parseInt(args[1]) : 0;
-         String clientHost = args.length > 2 ? args[2] : null;
-         int localPort     = args.length > 3 ? Integer.parseInt(args[3]) : 0;
-         String localHost  = args.length > 4 ? args[4] : null;
-         Remote.config(localHost, localPort, clientHost, clientPort);
-         proxy = Remote.getItem(args.length > 0 ? args[0] : null);
-         proxy = Remote.invoke(proxy, "getProxy", null);
-         if (proxy instanceof MarshalledObject)
-            proxy = ((MarshalledObject)proxy).get();
-         if (!(proxy instanceof RemoteInvoke))
-            proxy = Remote.invoke(proxy, "init", new Remote(proxy));
-         if (proxy instanceof Component) proxy = frame((Component)proxy);
+         if (args.length > 0) {
+            int clientPort    = args.length > 1 ? Integer.parseInt(args[1]) : 0;
+            String clientHost = args.length > 2 ? args[2] : null;
+            int localPort     = args.length > 3 ? Integer.parseInt(args[3]) : 0;
+            String localHost  = args.length > 4 ? args[4] : null;
+            Remote.config(localHost, localPort, clientHost, clientPort);
+            proxy = Remote.getItem(args[0]);
+            proxy = Remote.invoke(proxy, "getProxy", null);
+            if (proxy instanceof MarshalledObject)
+               proxy = ((MarshalledObject)proxy).get();
+            if (!(proxy instanceof RemoteInvoke))
+               proxy = Remote.invoke(proxy, "init", new Remote(proxy));
+            if (proxy instanceof Component) proxy = frame((Component)proxy);
+         } else new Loader();
       } catch (Exception x) { x.printStackTrace(); }
    }
 }
