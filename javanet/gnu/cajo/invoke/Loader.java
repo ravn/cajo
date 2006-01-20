@@ -40,7 +40,10 @@ import java.rmi.MarshalledObject;
  * the graphical proxy component implements WindowListener, it will be added
  * as a listener to its display frame automatically, before it is made
  * visible. Note: closing the dialog will intentionally terminate the JVM,
- * and consequently all of its loaded proxies.
+ * and consequently all of its loaded proxies. If the returned proxy is an
+ * AWT component, it will be displayed in a double buffered frame, if it
+ * is a JComponent, its setDoubleBuffered(true) will be called, before it
+ * is displayed.
  * 
  *
  * @version 1.0, 02-Jan-06 Initial release
@@ -50,17 +53,11 @@ final class Loader extends Frame implements WindowListener, ActionListener {
    private static final long serialVersionUID = 1L;
    private static Button load;
    private static TextField host, port, item, status;
-   private boolean main;
    private final LinkedList proxies = new LinkedList();
-   private Loader(String title, Object proxy) {
-      super(title);
-      add((Component)proxy);
-      if (proxy instanceof WindowListener)
-         addWindowListener((WindowListener)proxy);
-      addWindowListener(this);
-      pack();
-      setVisible(true);
-   }
+   private boolean main;
+   private Graphics gbuffer;
+   private Image ibuffer;
+   private Loader(String title) { super(title); }
    Loader() {
       super("Load cajo proxy");
       addWindowListener(this);
@@ -93,10 +90,11 @@ final class Loader extends Frame implements WindowListener, ActionListener {
       setVisible(true);
    }
    public void actionPerformed(ActionEvent e) {
-      setCursor(Cursor.WAIT_CURSOR);
+      setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
       try {
          String url = "//" + host.getText().trim() + ':' +
             port.getText().trim() + '/'  + item.getText().trim();
+         status.setText("requesting proxy " + url);
          Object proxy = Remote.getItem(url);
          proxy = Remote.invoke(proxy, "getProxy", null);
          if (proxy instanceof MarshalledObject)
@@ -108,18 +106,36 @@ final class Loader extends Frame implements WindowListener, ActionListener {
             JFrame frame = new JFrame(url);
             if (proxy instanceof WindowListener)
                frame.addWindowListener((WindowListener)proxy);
+            ((JComponent)proxy).setDoubleBuffered(true);
             frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             frame.getContentPane().add((JComponent)proxy);
             frame.pack();
             frame.setVisible(true);
-         } else if (proxy instanceof Component) new Loader(url, proxy);
-         else proxies.add(proxy);
+         } else if (proxy instanceof Component) {
+            Loader frame = new Loader(url);
+            frame.add((Component)proxy);
+            if (proxy instanceof WindowListener)
+               frame.addWindowListener((WindowListener)proxy);
+            frame.addWindowListener(frame);
+            frame.pack();
+            frame.setVisible(true);
+         } else proxies.add(proxy);
          status.setText("proxy loaded");
       } catch(Exception x) {
          status.setText(x.toString());
          Toolkit.getDefaultToolkit().beep();
       }
-      setCursor(Cursor.DEFAULT_CURSOR);
+      setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+   }
+   public void setBounds(int x, int y, int width, int height) {
+      super.setBounds(x, y, width, height);
+      ibuffer = createImage(width, height);
+      if (ibuffer != null) gbuffer = ibuffer.getGraphics();
+   }
+   public void update(Graphics g) {
+      gbuffer.clearRect(0, 0, getWidth(), getHeight());
+      paint(gbuffer);
+      g.drawImage(ibuffer, 0, 0, null);
    }
    public void windowOpened(WindowEvent e)      {}
    public void windowActivated(WindowEvent e)   {}
