@@ -45,12 +45,25 @@ import java.rmi.MarshalledObject;
 public final class Client extends java.applet.Applet {
    private static final String TITLE = "CaJo Proxy Viewer";
    private static Object proxy;
+   private Graphics gbuffer;
+   private Image ibuffer;
    private static final class CFrame extends Frame implements WindowListener {
+      private Graphics gbuffer;
+      private Image ibuffer;
       public CFrame(String title) {
          super(title);
          addWindowListener(this);
       }
-      public void update(Graphics g) { paint(g); }
+      public void setBounds(int x, int y, int width, int height) {
+         super.setBounds(x, y, width, height);
+         ibuffer = createImage(width, height);
+         gbuffer = ibuffer.getGraphics();
+      }
+      public void update(Graphics g) {
+         gbuffer.clearRect(0, 0, getWidth(), getHeight());
+         paint(gbuffer);
+         g.drawImage(ibuffer, 0, 0, null);
+      }
       public void windowActivated(WindowEvent e)   {}
       public void windowDeactivated(WindowEvent e) {}
       public void windowOpened(WindowEvent e)      {}
@@ -65,13 +78,6 @@ public final class Client extends java.applet.Applet {
     * an application.
     */
    public Client() {}
-   /**
-    * The update method is short-circuited to directly execute the applet's
-    * paint method, to reduce flicker from the default background repainting.
-    * This will require the graphical proxy to repaint any opaque background
-    * of its own, however.
-    */
-   public void update(Graphics g) { paint(g); }
    /**
     * This method provides the standard mechanism to identify this applet.
     * @return The identification string for this applet.
@@ -155,9 +161,29 @@ public final class Client extends java.applet.Applet {
       } catch (Exception x) { x.printStackTrace(System.err); }
    }
    /**
+    * Since this applet is double buffered, when the size is changed, a new
+    * drawing buffer will be created here.
+    */
+   public void setBounds(int x, int y, int width, int height) {
+      super.setBounds(x, y, width, height);
+      ibuffer = createImage(width, height);
+      gbuffer = ibuffer.getGraphics();
+   }
+   /**
+    * The update method double buffers the applet's paint method, to reduce
+    * flicker from the default background repainting.
+    */
+   public void update(Graphics g) {
+      gbuffer.clearRect(0, 0, getWidth(), getHeight());
+      paint(gbuffer);
+      g.drawImage(ibuffer, 0, 0, null);
+   }
+   /**
     * This method is used by items to create a frame containing the AWT
     * or Swing component. If the component implements WindowListener, it
-    * will be added to its display frame, before being made visible.
+    * will be added to its display frame, before being made visible. For
+    * AWT components, the frame will be automatically double buffered,
+    * for JComponents, its setDoubleBuffered(true) method will be called.
     * @param component The AWT/Swing component, typically returned from a
     * proxy initialization, to be framed.
     * @return the AWT Frame or Swing JFrame containing the component, already
@@ -168,6 +194,7 @@ public final class Client extends java.applet.Applet {
          JFrame frame = new JFrame(TITLE);
          if (component instanceof WindowListener)
             frame.addWindowListener((WindowListener)component);
+         ((JComponent)component).setDoubleBuffered(true);
          frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
          frame.getContentPane().add((JComponent)component);
          frame.pack();
@@ -189,12 +216,12 @@ public final class Client extends java.applet.Applet {
     * {@link Remote#getItem getItem} method of the {@link Remote Remote} class
     * to contact the server. It will then invoke a null-argument getProxy on
     * the resulting reference to request the primary proxy object of the item.<br><br>
-    * <i>Note:</i> When running as an application (<i><u>except</u> via JNLP</i>)
-    * it will load a NoSecurityManager, therefore, if no external SecurityManager
-    * is specified in the startup command line options; the arriving proxies will
-    * have <u><b>full permissions</b></u> on this machine.<br><br>
-    * To restrict client proxies permissions, use a startup invocation similar
-    * to the following:<br><br>
+    * <i><u>Note</u>:</i> When running as an application (<i><u>except</u> via
+    * WebStart</i>) it will load a NoSecurityManager, therefore, if no external
+    * SecurityManager is specified in the startup command line; the arriving
+    * proxies will have <i><u><b>full permissions</b></u></i> on this machine!<br><br>
+    * To restrict client proxies permissions, use a startup invocation
+    * similar to the following:<br><br>
     * <tt>java -jar -Djava.security.manager -Djava.security.policy=client.policy</tt>
     * <br><br>
     * See the project client <a href=https://cajo.dev.java.net/client.html>
