@@ -93,6 +93,7 @@
                                          <li><a href=#16>Why does each ItemServer create its own rmiregistry?</a>
                                          <li><a href=#17>Can I use null arguments in a remote method invocation?</a>
                                          <li><a href=#18>Can I include cajo classes in a proprietary application JAR?</a>
+                                         <li><a href=#19>Can I tell if my method is being invoked remotely vs. locally?</a>
                                       </ol>
 
                                       <a id="1"></a><b><u>1. Why doesn't the example work in Appletviewer?</u></b>
@@ -219,8 +220,7 @@
                                       <blockquote><tt>
                                          grant codeBase "file:${java.class.path}" {<br>
                                          &nbsp&nbsp  permission java.security.AllPermission;<br>
-                                      };
-                                      </tt></blockquote>
+                                      };</tt></blockquote>
                                       This file gives full permissions, but <i>only</i> to classes that were loaded
                                       from <u>your</u> local filesystem.<br><br>
                            
@@ -238,7 +238,7 @@
                                       then went on to use it at University, and ever since. I hope he never found
                                       out the full extent; but he was the first person to let me <i>really</i>
                                       experiment with 'big-iron', and the 'then-called' <a href=http://en.wikipedia.org/wiki/Arpanet>
-                                      <tt>ARPANET</tt></a>... Thank-you cuto!<br><br>
+                                      <tt>ARPANET</tt></a>... Thank-you cuto! :-)<br><br>
 
                                       <a id="11"></a><b><u>11. Can I use the example's TileLayout manager?</u></b>
                                       Certainly, I am glad people like it! I have yet to see a frame that I could
@@ -292,13 +292,13 @@
 
                                       <a id="15"></a><b><u>15. Why is cajo licensed under the GNU LGPL?</u></b>
                                       The GNU LGPL gives you a very important guarantee. The way cajo works, to
-                                      enable cooperation between both free and proprietary applications, can never
-                                      be made proprietary itself. If someone were to modify the cajo semantics, or
-                                      its operation; the license requires full disclosure of these modifications,
-                                      and complete source code, to anyone receiving the modified library. Aside
-                                      from the GNU GPL, which does the same, but would prohibit use in proprietary
-                                      applications, no other license <i>(that I know)</i> provides you this crucial
-                                      guarantee.<br><br>
+                                      enable cooperation between both free and proprietary applications, can
+                                      <i>never</i> be made proprietary itself. If someone were to modify the cajo
+                                      semantics, or its operation; the license requires full disclosure of these
+                                      modifications, and complete source code, to anyone receiving the modified
+                                      library. Aside from the GNU GPL, which does the same, but would prohibit use
+                                      in proprietary applications; no other license <i>(that I know)</i> provides
+                                      you this crucial guarantee.<br><br>
 
                                       <a id="16"></a><b><u>16. Why does each ItemServer create its own rmiregistry?</u></b>
                                       While it would perhaps be conceptually simpler to run a central rmiregistry
@@ -306,29 +306,59 @@
                                       failure, for the entire server physical machine. The additional load of
                                       carrying an individual rmiregistry within each server JVM is quite small, but
                                       the added stability it buys is very large. Besides, if you really want to
-                                      use a central rmiregistry, you can still do that too!<br><br>
+                                      use a central rmiregistry; you can still do that too!<br><br>
                                       
                                       <a id="17"></a><b><u>17. Can I use null arguments in a remote method invocation?</u></b>
                                       Yes. <i>However:</i> as mentioned in the <a href=overview.html>overview</a>;
-                                      with remote method invocations, typechecking has to move, from <i>compiletime</i>,
+                                      with remote method invocations, typechecking has to move from <i>compiletime</i>,
                                       to <i>runtime</i>. This creates a <i>very</i> important detail to keep in
-                                      mind, when it comes to overloaded methods. With a local object, when passing
+                                      mind, when it comes to overloaded methods. With a local object; when passing
                                       null arguments makes the selection of overloaded methods ambiguous, the
-                                      compiler <i>demands</i> specification; for example: <tt>x.doit((String)null);</tt>
+                                      compiler <i>demands</i> specification. For example: <tt>x.doit((String)null);</tt>
                                       vs. <tt>x.doIt((LinkedList)null);</tt>. Unfortunately, in the remote case,
-                                      one of the ambiguous overloaded methods would simply be selected
-                                      indeterminately. So use null arguments, but with care on methods that are
-                                      overloaded.<br><br>
+                                      an ambiguous overloaded method will simply be selected indeterminately. So
+                                      use null arguments, but with care on methods that are overloaded.<br><br>
 
 
                                       <a id="18"></a><b><u>18. Can I include cajo classes in a proprietary application JAR?</u></b>
                                       Yes. Essentially, JAR is a standard file format. Your proprietary license
                                       applies to your classes, and the GNU LGPL applies to the cajo classes.  Your
                                       classes may even be obfuscated, however the cajo classes may not. Most
-                                      importantly, end users must be able to update the cajo classes in the
+                                      importantly; end users must be able to update the cajo classes in the
                                       JAR, and the application must still operate normally. Normally means that the
                                       application will not refuse to run, nor change its feature set, by detecting
-                                      changed cajo classes.
+                                      changed cajo classes.<br><br>
+
+                                      <a id="19"></a><b><u>19. Can I tell if my method is being invoked remotely vs. locally?</u></b>
+                                      Yes. Sometimes a server may want to process things differently when the
+                                      client is remote, rather than local. Fortunately this is extremely easy to
+                                      do, as the following code snippet illustrates:
+
+<tt><pre>
+    <b>try</b> {
+        java.rmi.server.RemoteServer.getClientHost();
+        <i>// the method invocation is remote...</i>
+    } <b>catch</b>(java.rmi.server.ServerNotActiveException x) {
+        <i>// the method invocation is local...</i>
+    }
+</pre></tt>
+
+                                      Put your remote specific functionality in the try block, and your local
+                                      specific stuff in the catch. The common functionality can be placed above and
+                                      below the test, or even in a finally block. This is the server side corollary
+                                      to the client side test, for server object remoteness vs. locality:
+
+<tt><pre>
+    <b>if</b> (object <b>instanceof</b> gnu.cajo.invoke.RemoteInvoke) {
+        <i>// the object reference is remote...</i>
+    } <b>else</b> {
+        <i>// the object reference is local...</i>
+    }
+</pre></tt>
+
+                                      This is used in cases where the <i>client</i> wishes to behave differently,
+                                      when the object is remote vs. local.
+
 
                                     </span>
                                  </td>
