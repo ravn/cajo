@@ -94,6 +94,7 @@
                                          <li><a href=#17>Can I use null arguments in a remote method invocation?</a>
                                          <li><a href=#18>Can I include cajo classes in a proprietary application JAR?</a>
                                          <li><a href=#19>Can I tell if my method is being invoked remotely vs. locally?</a>
+                                         <li><a href=#20>Can I make my server accessible both inside and outside a NAT subnet?</a>
                                       </ol>
 
                                       <a id="1"></a><b><u>1. Why doesn't the example work in Appletviewer?</u></b>
@@ -187,11 +188,12 @@
                                       and replaced the two socket factories in <tt>gnu.cajo.invoke.Remote</tt>;
                                       that just might get the system communicating over SSL. Of course I should
                                       <i>not</i> endorse any of this... <i>(cough* Patriot Act *cough).</i>
-                                      <u>Update:</u> If you are using J2SE5 (1.5.x) SSL/TLS socket factories are
-                                      now <a href=http://java.sun.com/j2se/1.5.0/docs/guide/rmi/relnotes.html>
-                                      included</a>. &nbsp; <i>Psst: if you want something a little <u>stronger</u>,
-                                      take a look <a href=https://cajo.dev.java.net/files/documents/974/6293/CryptObject.java>
-                                      here</a>.</i> ;-)<br><br>
+                                      <i>(Psst: if you want something a little <u>stronger</u>, take a look
+                                      <a href=https://cajo.dev.java.net/files/documents/974/6293/CryptObject.java>
+                                      here</a>.</i> ;-) <u>Update:</u> If you are using J2SE5 (1.5.x) SSL/TLS
+                                      socket factories are now <a href=http://java.sun.com/j2se/1.5.0/docs/guide/rmi/relnotes.html>
+                                      included</a>. Here is a very excellent <a href=http://www.cs.columbia.edu/~akonstan/rmi-ssl/>
+                                      example</a> of the whole process.<br><br>
 
                                       <a id="8"></a><b><u>8. Why is there no package version number?</u></b>
                                       This is an <u>excellent</u> question! In the cajo project, a release
@@ -357,7 +359,34 @@
 </pre></tt>
 
                                       This is used in cases where the <i>client</i> wishes to behave differently,
-                                      when the object is remote vs. local.
+                                      when the object is remote vs. local.<br><br>
+
+                                      <a id="20"></a><b><u>20. Can I make my server accessible both inside and outside a NAT subnet?</u></b>
+                                      This is a great question because the answer is yes, but it requires  a
+                                      sophisticated, yet surprisingly simple technique. First create your server so
+                                      it is visible within the NAT subnet, for example:<br><br>
+
+                                      <tt> &nbsp; Remote.config(192.168.0.101, 1234, null, 0);</tt><br><br>
+
+                                      Now for the interesting part; create a simple <i>wrapper</i> server, which is
+                                      accessible from outside the subnet. It would look something like this:
+
+<tt><pre>
+   <b>public static void</b> main(String args[]) {
+      <b>try</b> {
+         Remote.config(192.168.0.101, 1198, outsideIP, 1198);
+         Object o = Remote.getItem("//192.168.0.101:1234/");
+         ItemServer.bind(o, "main");
+      } <b>catch</b>(Exception x) { x.printStackTrace(); }
+   }
+</pre></tt>
+
+                                      In remoting a an already remote object, the framework will automatically
+                                      <i>forward</i> all of the external clients' invocations to the original
+                                      object. It is just as easy as that. You could also place a <a href=https://cajo.dev.java.net/docs/gnu/cajo/utils/MonitorItem.html>
+                                      MonitorItem</a> on the object for example, to get a detailed log of how
+                                      external clients are using the object. The wrapper need not even be running
+                                      on the same physical machine as the server.
 
 
                                     </span>
