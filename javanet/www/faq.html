@@ -94,7 +94,7 @@
                                          <li><a href=#17>Can I use null arguments in a remote method invocation?</a>
                                          <li><a href=#18>Can I include cajo classes in a proprietary application JAR?</a>
                                          <li><a href=#19>Can I tell if my method is being invoked remotely vs. locally?</a>
-                                         <li><a href=#20>Can I make my server accessible both inside and outside a NAT subnet?</a>
+                                         <li><a href=#20>Can I make my server accessible both inside <i>and</i> outside a NAT subnet?</a>
                                       </ol>
 
                                       <a id="1"></a><b><u>1. Why doesn't the example work in Appletviewer?</u></b>
@@ -361,15 +361,16 @@
                                       This is used in cases where the <i>client</i> wishes to behave differently,
                                       when the object is remote vs. local.<br><br>
 
-                                      <a id="20"></a><b><u>20. Can I make my server accessible both inside and outside a NAT subnet?</u></b>
+                                      <a id="20"></a><b><u>20. Can I make my server accessible both inside <i>and</i> outside a NAT subnet?</u></b>
                                       This is a great question because the answer is yes, but it requires  a
                                       sophisticated, yet surprisingly simple technique. First create your server so
-                                      it is visible within the NAT subnet, for example:<br><br>
+                                      it is accessible <i>inside</i> the NAT subnet, for example:<br><br>
 
                                       <tt> &nbsp; Remote.config(192.168.0.101, 1234, null, 0);</tt><br><br>
 
-                                      Now for the interesting part; create a simple <i>wrapper</i> server, which is
-                                      accessible from outside the subnet. It would look something like this:
+                                      Now for the interesting part; create a simple 'wrapper' server, which is
+                                      accessible from <i>outside</i> the subnet. It would look something like
+                                      this:
 
 <tt><pre>
    <b>public static void</b> main(String args[]) {
