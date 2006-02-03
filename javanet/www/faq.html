@@ -346,15 +346,15 @@
 </pre></tt>
 
                                       Put your remote specific functionality in the try block, and your local
-                                      specific stuff in the catch. The common functionality can be placed above and
-                                      below the test, or even in a finally block. This is the server side corollary
-                                      to the client side test, for server object remoteness vs. locality:
+                                      specific stuff in the catch. The common functionality can be placed above
+                                      and below the test, or even in a finally block. This is the server side
+                                      corollary to the client side test, for object remoteness vs. locality:
 
 <tt><pre>
     <b>if</b> (object <b>instanceof</b> gnu.cajo.invoke.RemoteInvoke) {
-        <i>// the object reference is remote...</i>
+        <i>// the object is remote...</i>
     } <b>else</b> {
-        <i>// the object reference is local...</i>
+        <i>// the object is local...</i>
     }
 </pre></tt>
 
