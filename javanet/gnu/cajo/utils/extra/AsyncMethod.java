@@ -1,6 +1,5 @@
 package gnu.cajo.utils.extra;
 
-import java.util.Vector;
 import gnu.cajo.invoke.Remote;
 
 /*
@@ -27,7 +26,7 @@ import gnu.cajo.invoke.Remote;
 
 /**
  * This class is used to asynchronously invoke methods on objects. Each time
- * the invoke method is called, it spawns a one-time thread, to perform the
+ * the invoke method is called, it spawns a one-use thread, to perform the
  * method invocation. From the perspective of the caller, the method returns
  * immediately. When the invocation is completed, it will callback the
  * provided listening object; invoking a method of the identical name as the
@@ -37,36 +36,37 @@ import gnu.cajo.invoke.Remote;
  * therfore define up to three methods; each having the name of the method
  * called. One method accepting no arguments, one receiving the expected
  * result object, and one accepting an Exception argument. The callback can
- * be null, in which case the asynchronous invocation result is silently
- * discarded.<p>
- * This class can be used in either of two fundamental ways:<ul>
+ * be null, in which case the asynchronous invocation result will be
+ * silently discarded.<p>
+ * This class can be used in either of two fundamentally different ways:<ul>
  * <li>An instance can be constructed for a given called object, and its
- * corresponding callback object, which is used repeatedly.
- * <li>Its static invoke method can be used for infrequent combinations of
+ * corresponding callback object, for repeated use.
+ * <li>The static invoke method can be used for infrequent combinations of
  * called objects and callbacks.</ul>
  * This class is intended for method invocations which require a
- * <i>significant</i> amount of time to complete. This design is completely
- * threadsafe.
+ * <i>significant</i> amount of time to complete. It can also be remoted,
+ * which would open some considerably interesting possibilities. It could
+ * even be passed <u>between</u> virtual machines, that is <i>really</i>
+ * something to think about.
  *
  * @version 1.0, 22-Jan-06 Initial release
  * @author John Catherino
  */
-public final class AsyncMethod {
-   private static final Vector threads = new Vector();
+public final class AsyncMethod implements gnu.cajo.invoke.Invoke {
+   private static final long serialVersionUID = 1L;
    /**
-    * This is the reference to the object, typically remote, on which to
-    * invoke asynchronously. Of course, it works interchangably with local
-    * objects.
+    * This is the reference to the object, usually remote, on which to
+    * invoke asynchronously. It works on local objects as well.
     */
    public final Object item;
    /**
-    * This is the reference to the object, local or remote, on which to call
-    * back asynchronously, when the invocation has completed. (when non-null)
+    * This is the reference to the object, local or remote, which to call
+    * back asynchronously, when the invocation has completed. (if non-null)
     */
    public final Object callback;
    /**
     * The constructor takes any object, and allows its methods to be
-    * invoked asynchronously; then calls back a listening object, with the
+    * invoked asynchronously; then calls back the listening object, with the
     * result of the invocation.
     * @param  item The object to make asynchronously callable.  It may be an
     * any arbitrary object, of any type, local or remote.
@@ -90,9 +90,12 @@ public final class AsyncMethod {
     * this method simply invokes the static invoke method of this class,
     * providing its local item and callback objects, to centralise the
     * asynchronous invocation processing.
+    * @return null No return is provided, it is required to fulfill the
+    * Invoke interface.
     */
-   public void invoke(String method, Object args) {
+   public Object invoke(String method, Object args) {
       invoke(item, method, args, callback);
+      return null;
    }
    /**
     * This method invokes the method specified, on the object specified,
@@ -112,7 +115,7 @@ public final class AsyncMethod {
     */
    public static void invoke(final Object item, final String method,
       final Object args, final Object callback) {
-      Thread thread = new Thread() {
+      new Thread() {
          public void run() {
             Object result;
             try { result = Remote.invoke(item, method, args); }
@@ -120,11 +123,7 @@ public final class AsyncMethod {
             if (callback != null)
                try { Remote.invoke(callback, method, result); }
                catch(Exception x) { x.printStackTrace(); }
-            threads.remove(this);
          }
-      };
-      threads.add(thread); // prevent premature garbage collection?
-      thread.setDaemon(true);
-      thread.start();
+      }.start();
    }
 }
