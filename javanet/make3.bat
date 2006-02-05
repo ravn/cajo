@@ -8,7 +8,7 @@ del   gnu\cajo\invoke\*.class
 
 rem build the proxy:
 javac -classpath . -g:none -target 1.2 -source 1.2 example\Builder.java
-java  example.Builder
+java  -classpath . example.Builder
 jar   cf proxy.jar example\*.class example\include\*.* example\gui\*.class gnu\cajo\utils\BaseProxy*.class gnu\cajo\utils\ProxyLoader.class
 del   example\*.class
 del   example\gui\*.class

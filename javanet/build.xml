@@ -49,7 +49,7 @@
     <target name="proxy">
         <javac srcdir="." target="1.2" source="1.2" includes="example/Builder.java"/> 
         <javac srcdir="." target="1.2" source="1.2" includes="gnu/cajo/utils/ProxyLoader.java"/> 
-        <java fork="true" classname="example.Builder"/> 
+        <java classpath="." classname="example.Builder" fork="true"/> 
         <jar basedir="."
              jarfile="proxy.jar"
              includes="
