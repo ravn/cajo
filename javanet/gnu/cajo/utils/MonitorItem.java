@@ -133,7 +133,23 @@ public class MonitorItem implements Invoke {
          int run = (int)(System.currentTimeMillis() - time);
          String clientHost = null;
          try { clientHost = RemoteServer.getClientHost(); }
-         catch(ServerNotActiveException x) { clientHost = "localhost"; }
+         catch(ServerNotActiveException x) {
+            StackTraceElement stes[] = x.getStackTrace();
+            StringBuffer sb = new StringBuffer("localhost");
+            for (int i = 4; i < stes.length; i++) {
+               sb.append("\n\tclass = ");
+               sb.append(stes[i].getClassName());
+               sb.append('.');
+               sb.append(stes[i].getMethodName());
+               if (stes[i].getLineNumber() != -1) { // debug info available
+                  sb.append("\n\tfile  = ");
+                  sb.append(stes[i].getFileName());
+                  sb.append(" line ");
+                  sb.append(stes[i].getLineNumber());
+               }
+            }
+            clientHost = sb.toString();
+         }
          Runtime rt = Runtime.getRuntime();
          int freeMemory =
             (int)((rt.freeMemory() * 100) / rt.totalMemory());
@@ -160,14 +176,13 @@ public class MonitorItem implements Invoke {
                   if (args instanceof java.rmi.MarshalledObject)
                      args = ((java.rmi.MarshalledObject)args).get();
                   if (args instanceof Object[]) {
-                     ps.print("<array>");
+                     ps.print("array");
                      for (int i = 0; i < ((Object[])args).length; i++) {
                         ps.print("\n\t[");
                         ps.print(i);
-                        ps.print("] =\t");
-                        if (((Object[])args)[i] != null)
-                           ps.print(((Object[])args)[i].toString());
-                        else ps.print("null");
+                        ps.print("] = ");
+                        ps.print(((Object[])args)[i] != null ?
+                           ((Object[])args)[i].toString() : "null");
                      }
                   } else ps.print(args != null ? args.toString() : "null");
                   ps.print("\nResult data = ");
@@ -180,7 +195,7 @@ public class MonitorItem implements Invoke {
                      for (int i = 0; i < ((Object[])result).length; i++) {
                         ps.print("\n\t[");
                         ps.print(i);
-                        ps.print("] =\t");
+                        ps.print("] = ");
                         if (((Object[])result)[i] != null)
                            ps.print(((Object[])result)[i].toString());
                         else ps.print("null");
