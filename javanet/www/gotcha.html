@@ -85,6 +85,7 @@
                                         <li><a href=#6>Sending Proxies</a>
                                         <li><a href=#7>Configuring Remote</a> &nbsp <i>(corrected)</i>
                                         <li><a href=#8>Excessive Decomposition</a>
+                                        <li><a href=#9>Method Visibility</a>
                                      </ol>
 
                            
@@ -95,7 +96,7 @@
                                      an argument of type A, you cannot send it an object of type B and have it
                                      work!-(  This results in the much dreaded <code>NoSuchMethodException</code>;
                                      if you haven't got one yet, you probably will soon.  This gotcha can be so
-                                     inconvienient that the framework makes a special case for Objects extending
+                                     inconvenient that the framework makes a special case for Objects extending
                                      the Invoke interface.  They are always typecast into Invoke. Therefore: to
                                      receive a local, remote, or proxy item reference, a method signature must
                                      declare the argument to be of type Invoke.</strike><br><br>
@@ -223,7 +224,18 @@
                                      is a temporally expensive activity. This <i>strongly</i> favors the creation
                                      of much <i>fewer</i> interface objects, with more functionally complete
                                      methods, to be used when remoting. In other words: <i>"Export trees,
-                                     <u>not</u> leaves."</a>
+                                     <u>not</u> leaves."</i></a><br><br>
+
+                                     <a id="9"></a><b><u>9. Method Visibility:</u></b> When an object is made
+                                     remotely accessible via <a href=docs/gnu/cajo/invoke/Remote.html>Remote</a>,
+                                     <i>all</i> of its public methods, <i>including</i> its static ones, can be
+                                     invoked by a remote JVM. This would make remoting an object that extended
+                                     Thread for instance, a questionable choice, as its <tt>run()</tt> method
+                                     could be repeatedly invoked remotely. Unless all possible clients are known
+                                     to be well behaved, an object should have <u><i>no</i></u> public methods it
+                                     does <u><i>not</i></u> want a client to be able to call. This gotcha is the
+                                     corollary to the <a href=faq.html#14>FAQ #14</a>.
+
 
                                     </span>
                                  </td>
