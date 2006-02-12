@@ -168,8 +168,8 @@
                                       Locality of Reference</a>. Basically it means how many adjacent resources are
                                       involved in any particular operation. I believe as developers improve, their
                                       locality of reference increases. I hear both noobs, and <i>soi-disant</i>
-                                      industry experts proclaim that no method should be longer than 9 to 12
-                                      lines: <u>rubbish</u>! Were that reasonable, no books should be written above
+                                      industry experts loudly proclaim that no method should be longer than 9 to 12
+                                      lines: <u>Rubbish</u>! Were that reasonable, no books should be written above
                                       the Grade 5 reading level. As you probably know, I have methods of 100 lines
                                       or more; but precisely as many as needed, no less, and <u>definitely</u> no
                                       more! Even when I print code, it is always 4 pages per sheet, ordered top to
@@ -185,9 +185,9 @@
                                       hurt to link to someone else's fine work. So, let's just say, hypothetically
                                       speaking, if you went <a href=http://java.sun.com/j2se/1.4.2/docs/guide/security/jsse/samples/index.html target=_blank>here</a>,
                                       and copied the sample <a href=http://java.sun.com/j2se/1.4.2/docs/guide/security/jsse/samples/jssesamples.zip>zip file</a>,
-                                      and replaced the two socket factories in <tt>gnu.cajo.invoke.Remote</tt>;
-                                      that just might get the system communicating over SSL. Of course I should
-                                      <i>not</i> endorse any of this... <i>(cough* Patriot Act *cough).</i>
+                                      and replaced the two socket factories in <a href=docs/gnu/cajo/invoke/Remote.html>
+                                      Remote</a>; that just might get the system communicating over SSL. Of course
+                                      I should <i>not</i> endorse any of this... <i>(cough* Patriot Act *cough).</i>
                                       <i>(Psst: if you want something a little <u>stronger</u>, take a look
                                       <a href=https://cajo.dev.java.net/files/documents/974/6293/CryptObject.java>
                                       here</a>.</i> ;-) <u>Update:</u> If you are using J2SE5 (1.5.x) SSL/TLS
@@ -259,12 +259,12 @@
                                       that when you provide an object to a method as an argument, any changes the
                                       method makes to that object are actually changes to <i>your</i> object. In
                                       cajo an object is passed by reference to a remote Virtual Machine, by
-                                      wrapping it in a <a href=https://cajo.dev.java.net/nonav/docs/gnu/cajo/invoke/Remote.html>
-                                      Remote</a> object. However unlike Java, and  more like C++, cajo <i>also</i>
-                                      allows you to pass an object by value; meaning the receiving method gets an
-                                      exact <i>copy</i> of the object, and anything it does to it, has <i>no</i>
-                                      affect on your object. This is accomplished very simply, by passing the
-                                      object <u><i>without</i></u> wrapping it in a Remote wrapper. (<i><u>Note</u>:</i>
+                                      wrapping it in a <a href=docs/gnu/cajo/invoke/Remote.html>Remote</a> object.
+                                      However unlike Java, and  more like C++, cajo <i>also</i> allows you to pass
+                                      an object by value; meaning the receiving method gets an exact <i>copy</i>
+                                      of the object, and anything it does to it, has <i>no</i> affect on your
+                                      object. This is accomplished very simply, by passing the object
+                                      <u><i>without</i></u> wrapping it in a Remote wrapper. (<i><u>Note</u>:</i>
                                       If the client receiving this object does not have the class file for this
                                       object, then you will need to run something like a <a href=server.html>
                                       CodebaseServer</a> to provide it.)<br><br>
@@ -279,10 +279,10 @@
 
                                       <a id="14"></a><b><u>14. Can my item have public methods that are only locally invokable?</u></b>
                                       Yes. This brings up a very important feature in the design of of cajo
-                                      transparent remote invocation. If an object implements the gnu.cajo.invoke.Invoke
-                                      interface, any invocation through Remote.invoke will automatically be passed
-                                      to its interface, rather than being performed on its public methods directly.
-                                      This feature makes things like <a href=https://cajo.dev.java.net/docs/gnu/cajo/utils/MonitorItem.html>
+                                      transparent remote invocation. If an object implements the <a href=docs/gnu/cajo/invoke/Invoke.html>
+                                      Invoke</a> interface, any invocation through Remote.invoke will automatically
+                                      be passed to its interface, rather than being performed on its public methods
+                                      directly. This feature makes things like <a href=https://cajo.dev.java.net/docs/gnu/cajo/utils/MonitorItem.html>
                                       MonitorItem</a> and <a href=https://cajo.dev.java.net/docs/gnu/cajo/utils/extra/AuditorItem.html>
                                       AuditorItem</a> possible. It can also allow your item to have public methods
                                       which can be invoked only by objects within the same Virtual Machine. You
