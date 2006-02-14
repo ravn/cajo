@@ -52,7 +52,7 @@ import java.io.ObjectOutputStream;
 public class MonitorItem implements Invoke {
    private final Object item;
    private final OutputStream os;
-   private long oldtime = System.currentTimeMillis();
+   private long count, oldtime = System.currentTimeMillis();
    /**
     * This creates the monitor object, to instrument the target object's use.
     * The the logging information is passed to the OutputStream, where it can
@@ -105,10 +105,11 @@ public class MonitorItem implements Invoke {
     * This method logs the incoming calls, passing the caller's data to the
     * internal item. It records the following information:<ul>
     * <li> The name of the item being called
-    * <li> The host address of the caller (or localhost)
+    * <li> The host address of the caller (or localhost w/trace)
     * <li> The method the caller is invoking
     * <li> The data the caller is sending
     * <li> The data resulting from the invocation, or the Exception
+    * <li> The number of times this method has been called
     * <li> The idle time between invocations, in milliseconds.
     * <li> The run time of the invocation time, in milliseconds
     * <li> The free memory percentage, following the invocation</ul>
@@ -135,7 +136,7 @@ public class MonitorItem implements Invoke {
          try { clientHost = RemoteServer.getClientHost(); }
          catch(ServerNotActiveException x) {
             StackTraceElement stes[] = x.getStackTrace();
-            StringBuffer sb = new StringBuffer("localhost");
+            StringBuffer sb = new StringBuffer("localhost <trace>");
             for (int i = 4; i < stes.length; i++) {
                sb.append("\n\tclass = ");
                sb.append(stes[i].getClassName());
@@ -161,8 +162,9 @@ public class MonitorItem implements Invoke {
                if (oos != null) {
                   oos.writeObject( new Object[] {
                      clientHost, item.toString(), // may not be serializable!
-                     method, args, result, new Long(time - oldtime),
-                     new Integer(run), new Integer(freeMemory)
+                     method, args, result, new Long(++count),
+                     new Long(time - oldtime), new Integer(run),
+                     new Integer(freeMemory)
                   });
                   oos.flush(); // just for good measure...
                } else if (ps != null) {
@@ -201,6 +203,8 @@ public class MonitorItem implements Invoke {
                         else ps.print("null");
                      }
                   } else ps.print(result != null ? result.toString() : "null");
+                  ps.print("\nCall count  = ");
+                  ps.print(++count);
                   ps.print("\nIdle time   = ");
                   ps.print(time - oldtime);
                   ps.print(" ms");
