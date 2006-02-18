@@ -42,8 +42,6 @@ import gnu.cajo.invoke.Remote;
  * @author John Catherino
  */
 public final class CodebaseServer extends Thread {
-   private static CodebaseServer self;
-   private static boolean anyFile;
    private static final byte[]
       bye = (
          "HTTP/1.0 404 Object not found\r\n" +
@@ -69,42 +67,37 @@ public final class CodebaseServer extends Thread {
          "Connection: close\r\n" +
          "Content-length: "
       ).getBytes(),
-      top = (
-         "<HTML><HEAD><TITLE>CaJo Proxy Viewer</TITLE>\r\n" +
-         "<META NAME=\"description\" content=\"Graphical cajo proxy client\"/>\r\n" +
-         "<META NAME=\"copyright\" content=\"Copyright &copy; 1999 by John Catherino\"/>\r\n" +
-         "<META NAME=\"author\" content=\"John Catherino\"/>\r\n" +
-         "<META NAME=\"generator\" content=\"ProxyServer\"/>\r\n" +
-         "</HEAD><BODY leftmargin=0 topmargin=0 marginheight=0 marginwidth=0 rightmargin=0>\r\n" +
-         "<CENTER><OBJECT classid = \"clsid:8AD9C840-044E-11D1-B3E9-00805F499D93\"\r\n" +
-         "WIDTH = 100% HEIGHT = 100%\r\n" +
-         "CODEBASE = \"http://java.sun.com/update/1.4.2/jinstall-1_4_2-windows-i586.cab#Version=1,4,0,0\">\r\n" +
-         "<PARAM NAME = \"archive\" VALUE = \"client.jar\">\r\n" +
-         "<PARAM NAME = \"type\" VALUE = \"application/x-java-applet;version=1.4\">\r\n" +
-         "<PARAM NAME = \"code\" VALUE = \"gnu/cajo/invoke/Client.class\">\r\n"
-      ).getBytes(),
-      mid = (
-         "<COMMENT><EMBED type = \"application/x-java-applet;version=1.4\"\r\n" +
-         "ARCHIVE = client.jar\r\n" +
-         "CODE = gnu/cajo/invoke/Client.class\r\n" +
-         "WIDTH = 100% HEIGHT = 100%\r\n"
-      ).getBytes(),
       end = (
          "PLUGINSPAGE = http://java.sun.com/j2se/1.4.2/download.html>\r\n" +
          "</EMBED></COMMENT></OBJECT></CENTER></BODY></HTML>"
       ).getBytes();
-   private static final int fixlen = top.length + mid.length + end.length;
-   private static String thisJar;
-   private static ServerSocket ss;
+   private final byte[] top, mid;
+   private final String thisJar, client;
+   private final ServerSocket ss;
+   private final boolean anyFile;
+   private final int fixlen;
    /**
-    * This is the inbound {@link java.net.ServerSocket ServerSocket}
-    * port number providing both the HTTP client tag and codebase jar
-    * service. If the server is behind a firewall, this port, or its
-    * translated one, must be made accessible from outside.  It can be zero,
-    * to use an anonymous port; i.e. one selected by the OS from any ports
-    * available at runtime. In that case, the port actually offered by the
-    * operating system will be stored here automatically, following
-    * construction.
+    * This is the inbound ServerSocket port number providing both the HTTP
+    * client tag and codebase jar service. If the server is behind a firewall,
+    * this port, must be made accessible from outside. If the port argument
+    * used in the constructor was zero, it will use an anonymous port; i.e. one
+    * selected by the OS from any ports available at runtime. In that case, the
+    * port actually offered by the operating system will be stored here
+    * automatically, following construction. <i><u>Note</u>:</i> this is the
+    * preferred access to the CodebaseServer port value. The static method is
+    * purely to maintain backward compatibility.
+    */
+   public final int serverPort;
+   /**
+    * This is the inbound ServerSocket port number providing both the HTTP
+    * client tag and codebase jar service. If the server is behind a firewall,
+    * this port, must be made accessible from outside. If the port argument
+    * used in the constructor was zero, it will use an anonymous port; i.e. one
+    * selected by the OS from any ports available at runtime. In that case, the
+    * port actually offered by the operating system will be stored here
+    * automatically, following construction. <i><u>Note</u>:</i> The preferred
+    * field to check the CodebaseServer port is <tt>serverPort</tt> this field
+    * remains purely to maintain backward compatibility.
     */
    public static int port;
    /**
@@ -130,28 +123,87 @@ public final class CodebaseServer extends Thread {
     * applet. It can be zero, to use an anonymous port. If zero, the actual
     * port selected by the OS at runtime will be stored in the
     * {@link #port port} member.
+    * @param client The name of the graphical client class to be furnished as
+    * an Applet, or via WebStart. For example, the generic cajo standard
+    * graphical proxy is: <tt>gnu.cajo.invoke.Client</tt>
     * @throws IOException If the HTTP socket providing the codebase and
     * applet tag service could not be created.
-    * @throws IllegalStateException If a second instance of this class is
-    * constructed, since each VM can have only one codebase server.
+    * @throws IllegalStateException If a instance of this class already exists,
+    * since each JVM can have only one codebase server.
     */
-   public CodebaseServer(String base, int port) throws IOException {
-      if (ss == null) {
-         thisJar = CodebaseServer.class.getName().replace('.', '/') + ".class";
-         thisJar = CodebaseServer.class.getClassLoader().getResource(thisJar).toString();
-         if (thisJar.indexOf('!') != -1) {
-            thisJar = thisJar.substring(thisJar.lastIndexOf(':'), thisJar.lastIndexOf('!'));
-            thisJar = thisJar.substring(thisJar.lastIndexOf('/') + 1);
-         } else thisJar = "\""; // server not in a jar file
+   public CodebaseServer(String base, int port, String client)
+      throws IOException {
+      if (System.getProperty("java.rmi.server.codebase") == null) {
+         this.client = client;
+         client = client.replace('.', '/') + ".class";
+         top = (
+            "<HTML><HEAD><TITLE>CaJo Proxy Viewer</TITLE>\r\n" +
+            "<META NAME=\"description\" content=\"Graphical cajo proxy client\"/>\r\n" +
+            "<META NAME=\"copyright\" content=\"Copyright &copy; 1999 John Catherino\"/>\r\n" +
+            "<META NAME=\"author\" content=\"John Catherino\"/>\r\n" +
+            "<META NAME=\"generator\" content=\"ProxyServer\"/>\r\n" +
+            "</HEAD><BODY leftmargin=0 topmargin=0 marginheight=0 marginwidth=0 rightmargin=0>\r\n" +
+            "<CENTER><OBJECT classid = \"clsid:8AD9C840-044E-11D1-B3E9-00805F499D93\"\r\n" +
+            "WIDTH = 100% HEIGHT = 100%\r\n" +
+            "CODEBASE = \"http://java.sun.com/update/1.4.2/jinstall-1_4_2-windows-i586.cab#Version=1,4,0,0\">\r\n" +
+            "<PARAM NAME = \"archive\" VALUE = \"client.jar\">\r\n" +
+            "<PARAM NAME = \"type\" VALUE = \"application/x-java-applet;version=1.4\">\r\n" +
+            "<PARAM NAME = \"code\" VALUE = \"" + client + "\">\r\n"
+         ).getBytes();
+         mid = (
+            "<COMMENT><EMBED type = \"application/x-java-applet;version=1.4\"\r\n" +
+            "ARCHIVE = client.jar\r\n" +
+            "CODE = " + client + "\r\n" +
+            "WIDTH = 100% HEIGHT = 100%\r\n"
+         ).getBytes();
+         fixlen = top.length + mid.length + end.length;
+         client = CodebaseServer.class.getName().replace('.', '/') + ".class";
+         client = CodebaseServer.class.getClassLoader().getResource(client).toString();
+         if (client.indexOf('!') != -1) {
+            client = client.substring(client.lastIndexOf(':'), client.lastIndexOf('!'));
+            client = client.substring(client.lastIndexOf('/') + 1);
+         } else client = "\""; // server not in a jar file
+         thisJar = client;
          ss = Remote.getServerHost() == null ? new ServerSocket(port) :
             new ServerSocket(port, 50, InetAddress.getByName(Remote.getServerHost()));
-         CodebaseServer.port = port == 0 ? ss.getLocalPort() : port;
+         serverPort = port == 0 ? ss.getLocalPort() : port;
+         CodebaseServer.port = serverPort; // legacy
          System.setProperty("java.rmi.server.codebase",
             "http://" + Remote.getClientHost() + ':' + CodebaseServer.port +
                '/' + (base != null ? base : ""));
          anyFile = base == null;
          start();
       } else throw new IllegalStateException("Codebase currently served");
+   }
+   /**
+    * This constructor simply calls the three parameter constructor, providing
+    * the standard cajo generic graphical client as the proxy viewer.
+    * @param base The path and name of the file containing the proxy codebase
+    * jar file. The server will first search for it in its own executable jar
+    * file, if that fails, then it will check the local filesystem.<p>
+    * The server determines the name of the jar file in which it is running
+    * courtesy of a very cool hack published by Laird Nelson in his
+    * weblog: http://weblogs.java.net/pub/wlg/1874 Thanks Laird! This is
+    * used to allow the server to serve all the jar files in its working
+    * directory tree <i>except</i> its own.<p>
+    * <i><u>Note</u>:</i> if this value is null, it indicates that the proxy
+    * codebase is <i>not</i> in a jar. The server will then look first in its
+    * own jar file for the class files to send, and if not found, it will
+    * next look in its working directory. This feature provides an extremely
+    * simple, essentially zero-configuration, approach to proxy codebase
+    * service. It also provides complete general-purpose web service as well,
+    * supporting documentaions pages, images, and even a favicon.ico.
+    * @param port The TCP port on which to serve the codebase, and client
+    * applet. It can be zero, to use an anonymous port. If zero, the actual
+    * port selected by the OS at runtime will be stored in the
+    * {@link #port port} member.
+    * @throws IOException If the HTTP socket providing the codebase and
+    * applet tag service could not be created.
+    * @throws IllegalStateException If a instance of this class already exists,
+    * since each JVM can have only one codebase server.
+    */
+   public CodebaseServer(String base, int port) throws IOException {
+      this(base, port, "gnu.cajo.invoke.Client");
    }
    /**
     * The server thread method, it will send the proxy codebase, and it will
@@ -261,7 +313,7 @@ public final class CodebaseServer extends Thread {
                         byte xml[] = (
                            "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n" +
                            "<jnlp spec=\"1.0+\"\r\n" +
-                           "  codebase=" + "\"http://" + Remote.getClientHost() + ':' + CodebaseServer.port + "\"\r\n" +
+                           "  codebase=" + "\"http://" + Remote.getClientHost() + ':' + port + "\"\r\n" +
                            "  href=\"" + clientPort + ':' + localPort + '-'+ proxyName + "!\">\r\n" +
                            "  <information>\r\n" +
                            "    <title>CajoViewer - " + title + "</title>\r\n" +
@@ -274,7 +326,7 @@ public final class CodebaseServer extends Thread {
                            "    <j2se version=\"1.2+\"/>\r\n" +
                            "    <jar href=\"client.jar\"/>\r\n" +
                            "  </resources>\r\n" +
-                           "  <application-desc main-class=\"gnu.cajo.invoke.Client\">\r\n" +
+                           "  <application-desc main-class=\"" + client + "\">\r\n" +
                            "    <argument>//" + title + "</argument>\r\n" +
                            "    <argument>" + clientPort + "</argument>\r\n" +
                            "    <argument>" + clientHost + "</argument>\r\n" +
@@ -327,10 +379,9 @@ public final class CodebaseServer extends Thread {
     */
    public static void main(String args[]) {
       try {
-         self = args.length == 0 ? new CodebaseServer(null, 0) :
-            new CodebaseServer(null, Integer.parseInt(args[0]));
-         if (args.length == 0)
-            System.out.println("Codebase service on port " + port);
+         CodebaseServer c =  args.length == 0 ? new CodebaseServer(null, 0) :
+            new CodebaseServer(null, Integer.parseInt(args[0])); 
+         System.out.println("Codebase service on port " + c.serverPort);
       } catch(IOException x) { x.printStackTrace(); }
    }
 }
