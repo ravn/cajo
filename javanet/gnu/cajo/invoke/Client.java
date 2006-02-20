@@ -10,25 +10,23 @@ import java.rmi.MarshalledObject;
 /*
  * Graphical Proxy Loader Applet / Application
  * Copyright (c) 1999 John Catherino
+ * The cajo project: https://cajo.dev.java.net
  *
  * For issues or suggestions mailto:cajo@dev.java.net
  *
- * This program is free software; you can redistribute it and/or modify
+ * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation, at version 2.1 of the license, or any
- * later version.  The license differs from the GNU General Public License
- * (GPL) to allow this library to be used in proprietary applications. The
- * standard GPL would forbid this.
+ * later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * GNU Lesser General Public License for more details.
  *
- * To receive a copy of the GNU Lesser General Public License visit their
- * website at http://www.fsf.org/licenses/lgpl.html or via snail mail at Free
- * Software Foundation Inc., 59 Temple Place Suite 330, Boston MA 02111-1307
- * USA
+ * You can receive a copy of the GNU Lesser General Public License from their
+ * website, http://fsf.org/licenses/lgpl.html; or via snail mail, Free
+ * Software Foundation Inc., 51 Franklin Street, Boston MA 02111-1301, USA
  */
 
 /**
@@ -43,27 +41,18 @@ import java.rmi.MarshalledObject;
  * @author John Catherino
  */
 public final class Client extends java.applet.Applet {
-   private static final String TITLE = "CaJo Proxy Viewer";
+   private static final long serialVersionUID = 1L;
+   private static final String TITLE = "cajo Proxy Viewer - ";
    private static Object proxy;
    private Graphics gbuffer;
    private Image ibuffer;
    private static final class CFrame extends Frame implements WindowListener {
-      private Graphics gbuffer;
-      private Image ibuffer;
+      private static final long serialVersionUID = 1L;
       public CFrame(String title) {
          super(title);
          addWindowListener(this);
       }
-      public void setBounds(int x, int y, int width, int height) {
-         super.setBounds(x, y, width, height);
-         ibuffer = createImage(width, height);
-         gbuffer = ibuffer.getGraphics();
-      }
-      public void update(Graphics g) {
-         gbuffer.clearRect(0, 0, getWidth(), getHeight());
-         paint(gbuffer);
-         g.drawImage(ibuffer, 0, 0, null);
-      }
+      public void update(Graphics g) { paint(g); }
       public void windowActivated(WindowEvent e)   {}
       public void windowDeactivated(WindowEvent e) {}
       public void windowOpened(WindowEvent e)      {}
@@ -83,7 +72,7 @@ public final class Client extends java.applet.Applet {
     * @return The identification string for this applet.
     */
    public String getAppletInfo() {
-      return "CaJo Proxy Applet, Copyright \u00A9 1999 by John Catherino";
+      return "cajo Proxy Applet, Copyright \u00A9 1999 by John Catherino";
    }
    /**
     * When running as an applet, this method describes the optional client
@@ -161,20 +150,20 @@ public final class Client extends java.applet.Applet {
       } catch (Exception x) { x.printStackTrace(System.err); }
    }
    /**
-    * Since this applet is double buffered, when the size is changed, a new
-    * drawing buffer will be created here.
-    */
-   public void setBounds(int x, int y, int width, int height) {
-      super.setBounds(x, y, width, height);
-      ibuffer = createImage(width, height);
-      gbuffer = ibuffer.getGraphics();
-   }
-   /**
     * The update method double buffers the applet's paint method, to reduce
     * flicker from the default background repainting.
     */
    public void update(Graphics g) {
-      gbuffer.clearRect(0, 0, getWidth(), getHeight());
+      int tempW = getWidth(), tempH = getHeight();
+      if (ibuffer == null ||
+          ibuffer.getWidth(null) != tempW ||
+          ibuffer.getHeight(null) != tempH) {
+          if (ibuffer != null) ibuffer.flush();
+          ibuffer = createImage(tempW, tempH);
+          if (gbuffer != null) gbuffer.dispose();
+          gbuffer = ibuffer.getGraphics();
+      }
+      gbuffer.clearRect(0, 0, tempW, tempH);
       paint(gbuffer);
       g.drawImage(ibuffer, 0, 0, null);
    }
@@ -189,9 +178,9 @@ public final class Client extends java.applet.Applet {
     * @return the AWT Frame or Swing JFrame containing the component, already
     * visible.
     */
-   public static Frame frame(Component component) {
+   public static Frame frame(Component component, String title) {
       if (component instanceof JComponent) {
-         JFrame frame = new JFrame(TITLE);
+         JFrame frame = new JFrame(TITLE + title);
          if (component instanceof WindowListener)
             frame.addWindowListener((WindowListener)component);
          ((JComponent)component).setDoubleBuffered(true);
@@ -201,7 +190,7 @@ public final class Client extends java.applet.Applet {
          frame.setVisible(true);
          return frame;
       } else {
-         CFrame frame = new CFrame(TITLE);
+         CFrame frame = new CFrame(TITLE + title);
          if (component instanceof WindowListener)
             frame.addWindowListener((WindowListener)component);
          frame.add((Component)component);
@@ -211,11 +200,11 @@ public final class Client extends java.applet.Applet {
       }
    }
    /**
-    * The application creates a graphical proxy hosting VM.
-    * With the URL argument provided, it will use the static
-    * {@link Remote#getItem getItem} method of the {@link Remote Remote} class
-    * to contact the server. It will then invoke a null-argument getProxy on
-    * the resulting reference to request the primary proxy object of the item.<br><br>
+    * The application creates a graphical proxy hosting VM. With the URL
+    * argument provided, it will use the static {@link Remote#getItem getItem}
+    * method of the {@link Remote Remote} class to contact the server. It will
+    * then invoke a null-argument getProxy on the resulting reference to
+    * request the primary proxy object of the item.<br><br>
     * <i><u>Note</u>:</i> When running as an application (<i><u>except</u> via
     * WebStart</i>) it will load a NoSecurityManager, therefore, if no external
     * SecurityManager is specified in the startup command line; the arriving
@@ -228,14 +217,18 @@ public final class Client extends java.applet.Applet {
     * documentation</a>, for more details.<br><br>
     * The startup can take up to five additional optional configuration
     * parameters, in this order:<ul>
-    * <li> args[0] The URL where to get the graphical proxy item:<br>
+    * <li><tt>args[0] - </tt>The URL where to get the graphical proxy item:<br>
     * file:// http:// ftp:// ..., //host:port/name (rmiregistry), /path/name
     * (serialized), or path/name (class).<br>
     * If <i>unspecified,</i> a graphical loader utility will be launched.
-    * <li> args[1] The optional external client port number, if using NAT.
-    * <li> args[2] The optional external client host name,   if using NAT.
-    * <li> args[3] The optional internal client port number, if using NAT.
-    * <li> args[4] The optional internal client host name,   if multi home/NIC.</ul>
+     * <li><tt>args[1] - </tt>The optional external client port number,
+     * if using NAT.
+     * <li><tt>args[2] - </tt>The optional external client host name,
+     * if using NAT.
+     * <li><tt>args[3] - </tt>The optional internal client port number,
+     * if using NAT.
+     * <li><tt>args[4] - </tt>The optional internal client host name,
+     * if multi home/NIC.</ul>
     */
    public static void main(String args[]) {
       try {
@@ -253,7 +246,8 @@ public final class Client extends java.applet.Applet {
                proxy = ((MarshalledObject)proxy).get();
             if (!(proxy instanceof RemoteInvoke))
                proxy = Remote.invoke(proxy, "init", new Remote(proxy));
-            if (proxy instanceof Component) proxy = frame((Component)proxy);
+            if (proxy instanceof Component)
+                proxy = frame((Component)proxy, args[0]);
          } else new Loader();
       } catch (Exception x) { x.printStackTrace(); }
    }
