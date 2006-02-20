@@ -83,9 +83,7 @@ public final class CodebaseServer extends Thread {
     * used in the constructor was zero, it will use an anonymous port; i.e. one
     * selected by the OS from any ports available at runtime. In that case, the
     * port actually offered by the operating system will be stored here
-    * automatically, following construction. <i><u>Note</u>:</i> this is the
-    * preferred access to the CodebaseServer port value. The static method is
-    * purely to maintain backward compatibility.
+    * automatically, following construction.
     */
    public final int serverPort;
    /**
@@ -98,6 +96,7 @@ public final class CodebaseServer extends Thread {
     * automatically, following construction. <i><u>Note</u>:</i> The preferred
     * field to check the CodebaseServer port is <tt>serverPort</tt> this field
     * remains purely to maintain backward compatibility.
+    * @deprecated
     */
    public static int port;
    /**
@@ -313,7 +312,7 @@ public final class CodebaseServer extends Thread {
                         byte xml[] = (
                            "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n" +
                            "<jnlp spec=\"1.0+\"\r\n" +
-                           "  codebase=" + "\"http://" + Remote.getClientHost() + ':' + port + "\"\r\n" +
+                           "  codebase=" + "\"http://" + Remote.getClientHost() + ':' + serverPort + "\"\r\n" +
                            "  href=\"" + clientPort + ':' + localPort + '-'+ proxyName + "!\">\r\n" +
                            "  <information>\r\n" +
                            "    <title>CajoViewer - " + title + "</title>\r\n" +
