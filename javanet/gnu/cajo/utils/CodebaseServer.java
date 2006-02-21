@@ -68,7 +68,7 @@ public final class CodebaseServer extends Thread {
          "Content-length: "
       ).getBytes(),
       end = (
-         "PLUGINSPAGE = http://java.sun.com/j2se/1.4.2/download.html>\r\n" +
+         "PLUGINSPAGE = http://java.sun.com/j2se/1.5.0/download.html>\r\n" +
          "</EMBED></COMMENT></OBJECT></CENTER></BODY></HTML>"
       ).getBytes();
    private final byte[] top, mid;
@@ -144,13 +144,13 @@ public final class CodebaseServer extends Thread {
             "</HEAD><BODY leftmargin=0 topmargin=0 marginheight=0 marginwidth=0 rightmargin=0>\r\n" +
             "<CENTER><OBJECT classid = \"clsid:8AD9C840-044E-11D1-B3E9-00805F499D93\"\r\n" +
             "WIDTH = 100% HEIGHT = 100%\r\n" +
-            "CODEBASE = \"http://java.sun.com/update/1.4.2/jinstall-1_4_2-windows-i586.cab#Version=1,4,0,0\">\r\n" +
+            "CODEBASE = \"http://java.sun.com/update/1.5.0/jinstall-1_5_0-windows-i586.cab#Version=1,5,0,0\">\r\n" +
             "<PARAM NAME = \"archive\" VALUE = \"client.jar\">\r\n" +
-            "<PARAM NAME = \"type\" VALUE = \"application/x-java-applet;version=1.4\">\r\n" +
+            "<PARAM NAME = \"type\" VALUE = \"application/x-java-applet;version=1.5\">\r\n" +
             "<PARAM NAME = \"code\" VALUE = \"" + client + "\">\r\n"
          ).getBytes();
          mid = (
-            "<COMMENT><EMBED type = \"application/x-java-applet;version=1.4\"\r\n" +
+            "<COMMENT><EMBED type = \"application/x-java-applet;version=1.5.0\"\r\n" +
             "ARCHIVE = client.jar\r\n" +
             "CODE = " + client + "\r\n" +
             "WIDTH = 100% HEIGHT = 100%\r\n"
@@ -322,7 +322,7 @@ public final class CodebaseServer extends Thread {
                            "    <description>Graphical cajo proxy client</description>\r\n" +
                            "  </information>\r\n" +
                            "  <resources>\r\n" +
-                           "    <j2se version=\"1.2+\"/>\r\n" +
+                           "    <j2se version=\"1.5+\"/>\r\n" +
                            "    <jar href=\"client.jar\"/>\r\n" +
                            "  </resources>\r\n" +
                            "  <application-desc main-class=\"" + client + "\">\r\n" +
