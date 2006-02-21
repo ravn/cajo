@@ -28,7 +28,7 @@ public class Main { // General purpose server startup pattern
 // monitor the item, just for fun:
          item = new MonitorItem(new TestItem(), System.out);
 // start up the codebase and applet service:
-         new CodebaseServer("proxy.jar", httpPort);
+         CodebaseServer cs = new CodebaseServer("proxy.jar", httpPort);
 // here's the crux:
          item = ItemServer.bind(item, "main", pl);
 // multicast our startup, just for fun:
@@ -49,7 +49,7 @@ public class Main { // General purpose server startup pattern
             DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL).
                format(new java.util.Date()));
          System.out.print("http on internal port\t");
-         System.out.println(CodebaseServer.port);
+         System.out.println(cs.serverPort);
          System.out.print("internally operating on\t");
          System.out.print(Remote.getServerHost());
          System.out.print(" port ");
