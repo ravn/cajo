@@ -121,7 +121,7 @@ public final class CodebaseServer extends Thread {
     * @param port The TCP port on which to serve the codebase, and client
     * applet. It can be zero, to use an anonymous port. If zero, the actual
     * port selected by the OS at runtime will be stored in the
-    * {@link #port port} member.
+    * {@link #serverPort serverPort} member.
     * @param client The name of the graphical client class to be furnished as
     * an Applet, or via WebStart. For example, the generic cajo standard
     * graphical proxy is: <tt>gnu.cajo.invoke.Client</tt>
@@ -195,7 +195,7 @@ public final class CodebaseServer extends Thread {
     * @param port The TCP port on which to serve the codebase, and client
     * applet. It can be zero, to use an anonymous port. If zero, the actual
     * port selected by the OS at runtime will be stored in the
-    * {@link #port port} member.
+    * {@link #serverPort serverPort} member.
     * @throws IOException If the HTTP socket providing the codebase and
     * applet tag service could not be created.
     * @throws IllegalStateException If a instance of this class already exists,
@@ -207,8 +207,8 @@ public final class CodebaseServer extends Thread {
    /**
     * The server thread method, it will send the proxy codebase, and it will
     * also support installing the hosting {@link gnu.cajo.invoke.Client
-    * Client} in a Java-enabled browser, or as a web start application via
-    * JNLP.<p>
+    * Client}, or application specific host, in a Java-enabled browser, or
+    * as a web start application via JNLP.<p>
     * The format of a browser's proxy request URL one required, and
     * five optional parameters, utilizing the following format:<p><code>
     * http://serverHost[:serverPort]/[clientPort][:localPort][-proxyName][!]
