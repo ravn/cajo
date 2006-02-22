@@ -33,6 +33,7 @@
     </target>
     <target name="client">
         <javac srcdir="." target="1.2" source="1.2" includes="gnu/cajo/invoke/Client.java"/> 
+        <javac srcdir="." target="1.2" source="1.2" includes="gnu/cajo/invoke/JClient.java"/> 
         <rmic stubversion="1.2" classname="gnu.cajo.invoke.Remote" base="."/>
         <jar basedir="."
              jarfile="client.jar"
@@ -149,8 +150,8 @@
     </target>
     <target name="doc">
        <mkdir dir="docs" />
-       <javadoc destdir="docs" author="true" version="true"
-           nodeprecated="true" windowtitle="The cajo project"
+       <javadoc destdir="docs" author="true"
+           windowtitle="The cajo project"
            overview="gnu/cajo/overview.html" >
            <fileset dir="gnu/cajo" />
        </javadoc>

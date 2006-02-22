@@ -2,6 +2,7 @@ rem build separate server, client, and proxy jars:
 
 rem build the client:
 javac -classpath . -g:none -target 1.2 -source 1.2 gnu\cajo\invoke\Client.java
+javac -classpath . -g:none -target 1.2 -source 1.2 gnu\cajo\invoke\JClient.java
 rmic  -classpath . -v1.2 gnu.cajo.invoke.Remote
 jar   cfm client.jar client.mft gnu\cajo\invoke\*.class
 del   gnu\cajo\invoke\*.class
