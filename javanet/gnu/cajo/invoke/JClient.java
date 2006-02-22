@@ -29,16 +29,17 @@ import java.awt.event.WindowListener;
  */
 
 /**
- * This class is used to create a hosting VM to receive a graphical proxy
- * JComponent, from a remote VM.  The client will require one outbound port,
- * on which to commuinicate with its proxy server and one on inbound, on which
- * to receive asynchronous callbacks from the server. It will also require one
- * short-term inbound port on which to receive the proxy class files. If the
- * client is behind a firewall, these will have to be open.<br><br>
+ * This class is used to create a hosting VM to receive a Swing graphical proxy
+ * JComponent <i>or</i> and AWT Component, from a remote VM.  The client will
+ * require one outbound port, on which to commuinicate with its proxy server
+ * and one on inbound, on which to receive asynchronous callbacks from the
+ * server, if required. It will also use one short-term inbound port on which
+ * to receive the proxy class files. If the client is behind a firewall, these
+ * will have to be open.<br><br>
  * <i><u>Note</u>:</i> to use this Client, instead of the default one, requires
  * use of the new three argument CodebaseServer {@link gnu.cajo.utils.CodebaseServer#CodebaseServer(java.lang.String, int, java.lang.String) 
  * constructor}. In this case, he third argument would need to be:
- * <b><tt>"gnu.cajo.invoke.JClient"</tt></b>.
+ * <tt>"gnu.cajo.invoke.JClient"</tt>.
  *
  * @version 1.0, 20-Feb-06 Initial release
  * @author John Catherino
@@ -100,10 +101,11 @@ public final class JClient extends JApplet {
     * the remote reference to request its proxy item.  If the item returns the
     * proxy in a MarshalledObject, it will be extracted automatically. If the
     * returned object is a proxy, the client will invoke its init method,
-    * passing it a remote reference itself, and to obtain its primary graphical
-    * JComponent representation, which will then be added into the JApplet. The
-    * proxy can pass this remote reference back to its hosting item, or to
-    * other remote items, on which they can asynchronously call it back.
+    * passing it a remote reference itself, and to obtain its primary
+    * graphical Component representation, which will then be added into the
+    * JApplet via the Swing event dispatch thread. The proxy can pass this
+    * remote reference back to its hosting item, or to other remote items, on
+    * which they can asynchronously call it back.
     */
     public void init() {
       try {
@@ -122,73 +124,85 @@ public final class JClient extends JApplet {
          proxy = Remote.invoke(proxy, "getProxy", null);
          if (proxy instanceof MarshalledObject)
             proxy = ((MarshalledObject)proxy).get();
-         if (!(proxy instanceof RemoteInvoke)) try {
-            proxy = Remote.invoke(proxy, "init", new Remote(proxy));
-         } catch(Exception x) {}
-         if (proxy instanceof Component) {
-            getContentPane().add((Component)proxy);
-            validate();
-         }  // otherwise non-graphical proxy
-      } catch (Exception x) { x.printStackTrace(); }
+         if (!(proxy instanceof RemoteInvoke)) {
+            SwingUtilities.invokeAndWait(new Runnable() {
+               public void run() {
+                  try {
+                     proxy = Remote.invoke(proxy, "init", new Remote(proxy));
+                     if (proxy instanceof Component) {
+                        getContentPane().add((Component)proxy);
+                        validate();
+                     }
+                  } catch(Exception x) { x.printStackTrace(); }
+               }
+            });
+         }
+      } catch(Exception x) { x.printStackTrace(); }
    }
-    /**
-     * The application creates a graphical JComponent proxy hosting VM.
-     * With the URL argument provided, it will use the static
-     * {@link Remote#getItem getItem} method of the {@link Remote Remote} class
-     * to contact the server. It will then invoke a null-argument getProxy on
-     * the resulting reference to request the primary proxy object of the item.<br><br>
-     * <i><u>Note</u>:</i> When running as an application (<i><u>except</u> via
-     * WebStart</i>) it will load a NoSecurityManager, therefore, if no external
-     * SecurityManager is specified in the startup command line; the arriving
-     * proxies will have <i><u><b>full permissions</b></u></i> on this machine!<br><br>
-     * To restrict client proxies permissions, use a startup invocation
-     * similar to the following:<br><br>
-     * <tt>java -jar -Djava.security.manager -Djava.security.policy=client.policy</tt>
-     * <br><br>
-     * See the project client <a href=https://cajo.dev.java.net/client.html>
-     * documentation</a>, for more details.<br><br>
-     * The startup requires one mandatory, and up to four optional
-     * configuration parameters, in this order:<ul>
-     * <li><tt>args[0] - </tt>The URL where to get the graphical proxy item:<br>
-     * file:// http:// ftp:// ..., //host:port/name (rmiregistry), /path/name
-     * (serialized), or path/name (class).
-     * <li><tt>args[1] - </tt>The optional external client port number,
-     * if using NAT.
-     * <li><tt>args[2] - </tt>The optional external client host name,
-     * if using NAT.
-     * <li><tt>args[3] - </tt>The optional internal client port number,
-     * if using NAT.
-     * <li><tt>args[4] - </tt>The optional internal client host name,
-     * if multi home/NIC.</ul>
-     */
-    public static void main(String args[]) {
-       try {
-          if (System.getSecurityManager() == null)
-             System.setSecurityManager(new NoSecurityManager());
-          if (args.length > 0) {
-             int clientPort    = args.length > 1 ? Integer.parseInt(args[1]) : 0;
-             String clientHost = args.length > 2 ? args[2] : null;
-             int localPort     = args.length > 3 ? Integer.parseInt(args[3]) : 0;
-             String localHost  = args.length > 4 ? args[4] : null;
-             Remote.config(localHost, localPort, clientHost, clientPort);
-             proxy = Remote.getItem(args[0]);
-             proxy = Remote.invoke(proxy, "getProxy", null);
-             if (proxy instanceof MarshalledObject)
-                proxy = ((MarshalledObject)proxy).get();
-             if (!(proxy instanceof RemoteInvoke))
-                proxy = Remote.invoke(proxy, "init", new Remote(proxy));
-             if (proxy instanceof Component) {
-                 JFrame frame = new JFrame("cajo Proxy Viewer - " + args[0]);
-                 if (proxy instanceof WindowListener)
-                    frame.addWindowListener((WindowListener)proxy);
-                 if (proxy instanceof JComponent)
-                    ((JComponent)proxy).setDoubleBuffered(true);
-                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                 frame.getContentPane().add((Component)proxy);
-                 frame.pack();
-                 frame.setVisible(true);
-             } // otherwise non-graphical proxy
-          } else System.err.println("No source URL provided");
-       } catch (Exception x) { x.printStackTrace(); }
-    }
+   /**
+    * The application creates a graphical Component proxy hosting VM.
+    * With the URL argument provided, it will use the static
+    * {@link Remote#getItem getItem} method of the {@link Remote Remote} class
+    * to contact the server. It will then invoke a null-argument getProxy on
+    * the resulting reference to request the primary proxy object of the item.<br><br>
+    * <i><u>Note</u>:</i> When running as an application (<i><u>except</u> via
+    * WebStart</i>) it will load a NoSecurityManager, therefore, if no external
+    * SecurityManager is specified in the startup command line; the arriving
+    * proxies will have <i><u><b>full permissions</b></u></i> on this machine!<br><br>
+    * To restrict client proxies permissions, use a startup invocation
+    * similar to the following:<br><br>
+    * <tt>java -jar -Djava.security.manager -Djava.security.policy=client.policy</tt>
+    * <br><br>
+    * See the project client <a href=https://cajo.dev.java.net/client.html>
+    * documentation</a>, for more details.<br><br>
+    * The startup requires one mandatory, and up to four optional
+    * configuration parameters, in this order:<ul>
+    * <li><tt>args[0] - </tt>The URL where to get the graphical proxy item:<br>
+    * file:// http:// ftp:// ..., //host:port/name (rmiregistry), /path/name
+    * (serialized), or path/name (class).
+    * <li><tt>args[1] - </tt>The optional external client port number,
+    * if using NAT.
+    * <li><tt>args[2] - </tt>The optional external client host name,
+    * if using NAT.
+    * <li><tt>args[3] - </tt>The optional internal client port number,
+    * if using NAT.
+    * <li><tt>args[4] - </tt>The optional internal client host name,
+    * if multi home/NIC.</ul>
+    */
+   public static void main(final String args[]) {
+      try {
+         if (System.getSecurityManager() == null)
+            System.setSecurityManager(new NoSecurityManager());
+         if (args.length > 0) {
+            int clientPort    = args.length > 1 ? Integer.parseInt(args[1]) : 0;
+            String clientHost = args.length > 2 ? args[2] : null;
+            int localPort     = args.length > 3 ? Integer.parseInt(args[3]) : 0;
+            String localHost  = args.length > 4 ? args[4] : null;
+            Remote.config(localHost, localPort, clientHost, clientPort);
+            proxy = Remote.getItem(args[0]);
+            proxy = Remote.invoke(proxy, "getProxy", null);
+            if (proxy instanceof MarshalledObject)
+               proxy = ((MarshalledObject)proxy).get();
+            if (!(proxy instanceof RemoteInvoke)) {
+               SwingUtilities.invokeLater(new Runnable() {
+                  public void run() {
+                     try {
+                        proxy = Remote.invoke(proxy, "init", new Remote(proxy));
+                        if (proxy instanceof Component) {
+                           JFrame frame =
+                              new JFrame("cajo Proxy Viewer - " + args[0]);
+                           if (proxy instanceof WindowListener)
+                              frame.addWindowListener((WindowListener)proxy);
+                           frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                           frame.getContentPane().add((Component)proxy);
+                           frame.pack();
+                           frame.setVisible(true);
+                        } // otherwise non-graphical proxy
+                     } catch(Exception x) { x.printStackTrace(); }
+                  }
+               });
+            }
+         } else System.err.println("No source URL provided");
+      } catch(Exception x) { x.printStackTrace(); }
+   }
 }
