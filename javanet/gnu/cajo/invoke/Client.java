@@ -172,7 +172,7 @@ public final class Client extends java.applet.Applet {
     * or Swing component. If the component implements WindowListener, it
     * will be added to its display frame, before being made visible. For
     * AWT components, the frame will be automatically double buffered,
-    * for JComponents, its setDoubleBuffered(true) method will be called.
+    * for JComponents.
     * @param component The AWT/Swing component, typically returned from a
     * proxy initialization, to be framed.
     * @return the AWT Frame or Swing JFrame containing the component, already
@@ -183,14 +183,13 @@ public final class Client extends java.applet.Applet {
          JFrame frame = new JFrame(TITLE + title);
          if (component instanceof WindowListener)
             frame.addWindowListener((WindowListener)component);
-         ((JComponent)component).setDoubleBuffered(true);
          frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
          frame.getContentPane().add((JComponent)component);
          frame.pack();
          frame.setVisible(true);
          return frame;
       } else {
-         CFrame frame = new CFrame(TITLE + title);
+         Frame frame = new CFrame(TITLE + title);
          if (component instanceof WindowListener)
             frame.addWindowListener((WindowListener)component);
          frame.add((Component)component);
@@ -204,7 +203,9 @@ public final class Client extends java.applet.Applet {
     * argument provided, it will use the static {@link Remote#getItem getItem}
     * method of the {@link Remote Remote} class to contact the server. It will
     * then invoke a null-argument getProxy on the resulting reference to
-    * request the primary proxy object of the item.<br><br>
+    * request the primary proxy object of the item. If the proxy is a Swing
+    * JComponent, it will be displayed in a JFrame. If it is an AWT Component,
+    * it will be displayed in a Frame.<br><br>
     * <i><u>Note</u>:</i> When running as an application (<i><u>except</u> via
     * WebStart</i>) it will load a NoSecurityManager, therefore, if no external
     * SecurityManager is specified in the startup command line; the arriving
