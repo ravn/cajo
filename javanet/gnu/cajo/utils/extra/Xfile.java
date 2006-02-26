@@ -162,9 +162,13 @@ public class Xfile {
       } else os = new java.net.URL(dest).openConnection().getOutputStream();
       try {
          Remote.invoke(item, "open", source);
+         os = new java.io.BufferedOutputStream(os);
          for (byte[] msg = (byte[])Remote.invoke(item, "nextBlock", null);
             msg!= null; msg = (byte[])Remote.invoke(item, "nextBlock", null))
                os.write(msg);
-      } finally { os.close(); }
+      } finally {
+         os.flush();
+         os.close();
+      }
    }
 }
