@@ -51,6 +51,7 @@ import java.rmi.MarshalledObject;
  */
 final class Loader extends Frame implements WindowListener, ActionListener {
    private static final long serialVersionUID = 1L;
+   private static final String TITLE = "cajo Proxy Viewer - ";
    private static Button load;
    private static TextField host, port, item, status;
    private final LinkedList proxies = new LinkedList();
@@ -103,16 +104,15 @@ final class Loader extends Frame implements WindowListener, ActionListener {
             proxy = Remote.invoke(proxy, "init", new Remote(proxy));
          url = "cajo proxy - " + url;
          if (proxy instanceof JComponent) {
-            JFrame frame = new JFrame(url);
+            JFrame frame = new JFrame(TITLE + url);
             if (proxy instanceof WindowListener)
                frame.addWindowListener((WindowListener)proxy);
-            ((JComponent)proxy).setDoubleBuffered(true);
             frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             frame.getContentPane().add((JComponent)proxy);
             frame.pack();
             frame.setVisible(true);
          } else if (proxy instanceof Component) {
-            Loader frame = new Loader(url);
+            Loader frame = new Loader(TITLE + url);
             frame.add((Component)proxy);
             if (proxy instanceof WindowListener)
                frame.addWindowListener((WindowListener)proxy);
@@ -127,13 +127,17 @@ final class Loader extends Frame implements WindowListener, ActionListener {
       }
       setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
    }
-   public void setBounds(int x, int y, int width, int height) {
-      super.setBounds(x, y, width, height);
-      ibuffer = createImage(width, height);
-      if (ibuffer != null) gbuffer = ibuffer.getGraphics();
-   }
    public void update(Graphics g) {
-      gbuffer.clearRect(0, 0, getWidth(), getHeight());
+      int tempW = getWidth(), tempH = getHeight();
+      if (ibuffer == null ||
+          ibuffer.getWidth(null) != tempW ||
+          ibuffer.getHeight(null) != tempH) {
+          if (ibuffer != null) ibuffer.flush();
+          ibuffer = createImage(tempW, tempH);
+          if (gbuffer != null) gbuffer.dispose();
+          gbuffer = ibuffer.getGraphics();
+      }
+      gbuffer.clearRect(0, 0, tempW, tempH);
       paint(gbuffer);
       g.drawImage(ibuffer, 0, 0, null);
    }
