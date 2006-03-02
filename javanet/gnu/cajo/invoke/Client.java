@@ -150,6 +150,36 @@ public final class Client extends java.applet.Applet {
       } catch (Exception x) { x.printStackTrace(System.err); }
    }
    /**
+    * This method is called from the AppleContext, each time the applet
+    * becomes visible. It will attempt to invoke a no-arg start method on
+    * the proxy, in the event that it supports one. Support of the method
+    * by the proxy is optional.
+    */
+   public void start() {
+      try { Remote.invoke(proxy, "start", null); }
+      catch(Exception x) {}
+   }
+   /**
+    * This method is called from the AppleContext, each time the applet
+    * becomes invisible. It will attempt to invoke a no-arg stot method on
+    * the proxy, in the event that it supports one. Support of the method
+    * by the proxy is optional.
+    */
+   public void stop() {
+      try { Remote.invoke(proxy, "stop", null); }
+      catch(Exception x) {}
+   }
+   /**
+    * This method is called from the AppleContext, when the applet is being
+    * disposed. It will attempt to invoke a no-arg destroy method on
+    * the proxy, in the event that it supports one. Support of the method
+    * by the proxy is optional.
+    */
+   public void destroy() {
+      try { Remote.invoke(proxy, "destroy", null); }
+      catch(Exception x) {}
+   }
+   /**
     * The update method double buffers the applet's paint method, to reduce
     * flicker from the default background repainting.
     */
