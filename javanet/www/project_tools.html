@@ -34,6 +34,7 @@
 </ul></dd></dl>
 
 <script id="eraser">
+var dd = document.getElementById("eraser").previousSibling;
 for( n=dd.parentNode.previousSibling; n!=null; n=n.previousSibling ) {
   if(n.nodeType==1) {
     if(n.tagName=="DL") { n.style.display = "none"; }
