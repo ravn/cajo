@@ -1,6 +1,15 @@
 <ul><li><a href="http://wiki.java.net/bin/view/Communications/ThecajoProject" title="cajo project wiki">Wiki</a>
 </ul></dd></dl>
 
+<script id="eraser">
+var dd = document.getElementById("eraser").previousSibling;
+for( n=dd.parentNode.previousSibling; n!=null; n=n.previousSibling ) {
+  if(n.nodeType==1) {
+    if(n.tagName=="DL") { n.style.display = "none"; }
+  }
+}
+</script>
+
 <dl class="navgroup"><dt>Project introduction</dt>
 <dd><ul>
    <li><a href="https://cajo.dev.java.net/overview.html" title="adding cajo to existing applications">Overview</a>
@@ -32,22 +41,3 @@
    <li><a href="https://cajo.dev.java.net/license.html" title="cajo source and documentation licenses">Copyright license</a>
    <li><a href="https://cajo.dev.java.net/acknowlege.html" title="cajo contributors">Acknowledgments</a>
 </ul></dd></dl>
-
-<script id="eraser">
-var dd = document.getElementById("eraser").previousSibling;
-for( n=dd; n!=null; n=n.previousSibling ) {
-  if(n.nodeType==1) {
-    if(n.tagName=="DD") {
-      n.style.display = "none";
-    }
-    if(n.tagName=="DT") {
-      n.innerHTML = "<strong>Project tools</strong>";
-    }
-  }
-}
-for( n=dd.parentNode.previousSibling; n!=null; n=n.previousSibling ) {
-  if(n.nodeType==1) {
-    if(n.tagName=="DL") { n.style.display = "none"; }
-  }
-}
-</script>
