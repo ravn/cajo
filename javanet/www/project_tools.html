@@ -3,6 +3,16 @@
 
 <script id="eraser">
 var dd = document.getElementById("eraser").previousSibling;
+for( n=dd; n!=null; n=n.previousSibling ) {
+  if(n.nodeType==1) {
+    if(n.tagName=="DD") {
+      n.style.display = "none";
+    }
+    if(n.tagName=="DT") {
+      n.innerHTML = "<strong>Project tools</strong>";
+    }
+  }
+}
 for( n=dd.parentNode.previousSibling; n!=null; n=n.previousSibling ) {
   if(n.nodeType==1) {
     if(n.tagName=="DL") { n.style.display = "none"; }
