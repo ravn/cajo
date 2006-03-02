@@ -34,6 +34,9 @@
 </ul></dd></dl>
 
 <script id="eraser">
-getInvolved = document.getElementById("communitylinks");
-getInvolved.parentNode.removeChild(getInvolved);
+for( n=dd.parentNode.previousSibling; n!=null; n=n.previousSibling ) {
+  if(n.nodeType==1) {
+    if(n.tagName=="DL") { n.style.display = "none"; }
+  }
+}
 </script>
