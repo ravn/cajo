@@ -8,25 +8,23 @@ import java.rmi.server.UnicastRemoteObject;
 /*
  * Callback proxy for a firewalled client, used by a server item
  * Copyright (c) 2004 John Catherino
+ * The cajo project: https://cajo.dev.java.net
  *
  * For issues or suggestions mailto:cajo@dev.java.net
  *
- * This program is free software; you can redistribute it and/or modify
+ * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation, at version 2.1 of the license, or any
- * later version.  The license differs from the GNU General Public License
- * (GPL) to allow this library to be used in proprietary applications. The
- * standard GPL would forbid this.
+ * later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * GNU Lesser General Public License for more details.
  *
- * To receive a copy of the GNU Lesser General Public License visit their
- * website at http://www.fsf.org/licenses/lgpl.html or via snail mail at Free
- * Software Foundation Inc., 59 Temple Place Suite 330, Boston MA 02111-1307
- * USA
+ * You can receive a copy of the GNU Lesser General Public License from their
+ * website, http://fsf.org/licenses/lgpl.html; or via snail mail, Free
+ * Software Foundation Inc., 51 Franklin Street, Boston MA 02111-1301, USA
  */
 
 /**
@@ -104,6 +102,8 @@ public final class ClientProxy implements Invoke {
     * @param args The data to be provided the method of the callback method,
     * <i>or</i> data resulting from the client callback.
     * @return The result of the client object callback.
+    * @throws InterruptedException If the client is not listening, or if
+    * the callback timeout has expired.
     * @throws Exception For any client specific reasons.
     */
    public synchronized Object invoke(String method, Object args)
@@ -116,14 +116,16 @@ public final class ClientProxy implements Invoke {
          return new Object[] { this.method, this.args };
       } else if (method.equals("cutOff") && (args == null ||
          (args instanceof Object[] && ((Object[])args).length == 0))) {
+         done = false;          // the client is no longer listening
          cutOff();              // client or server wants to terminate
          return null;           // connexion to client is now severed
       } else {                  // server callback invocation thread
+         if (!done) throw new InterruptedException("Client not listening");
          this.method = method;  // save the client method to be invoked
          this.args   = args;    // save the data to provide the invocation
          done = false;          // indicate callback pending
          notify();              // wake the client callback thread
-         wait(timeout);            // suspend the server item thread
+         wait(timeout);         // suspend the server item thread
          if (!done) throw new InterruptedException("Callback Timeout");
          if (this.args instanceof Exception) throw (Exception)this.args;
          return this.args;      // return the callback result
