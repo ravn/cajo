@@ -140,6 +140,36 @@ public final class JClient extends JApplet {
       } catch(Exception x) { x.printStackTrace(); }
    }
    /**
+    * This method is called from the AppleContext, each time the JApplet
+    * becomes visible. It will attempt to invoke a no-arg start method on
+    * the proxy, in the event that it supports one. Support of the method
+    * by the proxy is optional.
+    */
+   public void start() {
+      try { Remote.invoke(proxy, "start", null); }
+      catch(Exception x) {}
+   }
+   /**
+    * This method is called from the AppleContext, each time the JApplet
+    * becomes invisible. It will attempt to invoke a no-arg stot method on
+    * the proxy, in the event that it supports one. Support of the method
+    * by the proxy is optional.
+    */
+   public void stop() {
+      try { Remote.invoke(proxy, "stop", null); }
+      catch(Exception x) {}
+   }
+   /**
+    * This method is called from the AppleContext, when the JApplet is being
+    * disposed. It will attempt to invoke a no-arg destroy method on
+    * the proxy, in the event that it supports one. Support of the method
+    * by the proxy is optional.
+    */
+   public void destroy() {
+      try { Remote.invoke(proxy, "destroy", null); }
+      catch(Exception x) {}
+   }
+   /**
     * The application creates a graphical Component proxy hosting VM.
     * With the URL argument provided, it will use the static
     * {@link Remote#getItem getItem} method of the {@link Remote Remote} class
