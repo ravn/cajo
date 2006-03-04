@@ -3,6 +3,7 @@ package gnu.cajo.utils;
 import gnu.cajo.invoke.*;
 import java.rmi.server.RemoteServer;
 import java.rmi.RemoteException;
+import java.rmi.MarshalledObject;
 import java.rmi.server.ServerNotActiveException;
 import java.io.PrintStream;
 import java.io.OutputStream;
@@ -55,6 +56,12 @@ public class MonitorItem implements Invoke {
    private long count, oldtime = System.currentTimeMillis();
    /**
     * This creates the monitor object, to instrument the target object's use.
+    * The the logging information will be sent to System.out automatically.
+    * @param item The object to receive the client invocation.
+    */
+   public MonitorItem(Object item) { this(item, System.out); }
+   /**
+    * This creates the monitor object, to instrument the target object's use.
     * The the logging information is passed to the OutputStream, where it can
     * be logged to a file, a socket, or simply sent to the console (System.out).
     * The logged data is in text format.
@@ -74,7 +81,10 @@ public class MonitorItem implements Invoke {
     * <i>extremely</i> large, if the objects passed in or out are complex, or
     * if the object is called frequently. Therefore, it is <u>highly</u>
     * recommended to implement the ObjectOutputStream on top of a
-    * GZipOutputStream.
+    * GZipOutputStream. <i><u>Note</u>:</i> to preserve remote object
+    * codebase annotation, all of the objects associated with the particular
+    * method invocation log are stored, in order, in an Object array,
+    * contained within a java.rmi.MarshalledObject.
     * @param item The object to receive the client invocation.
     * @param os The ObjectOutputStream to send input and result objects.
     */
@@ -160,12 +170,12 @@ public class MonitorItem implements Invoke {
          synchronized(os) {
             try {
                if (oos != null) {
-                  oos.writeObject( new Object[] {
+                  oos.writeObject( new MarshalledObject(new Object[] {
                      clientHost, item.toString(), // may not be serializable!
                      method, args, result, new Long(++count),
                      new Long(time - oldtime), new Integer(run),
                      new Integer(freeMemory)
-                  });
+                  }));
                   oos.flush(); // just for good measure...
                } else if (ps != null) {
                   ps.print("\nCaller host = ");
