@@ -12,25 +12,23 @@ import java.lang.reflect.Method;
 /*
  * Generic Item Interface Exporter
  * Copyright (c) 1999 John Catherino
+ * The cajo project: https://cajo.dev.java.net
  *
  * For issues or suggestions mailto:cajo@dev.java.net
  *
- * This program is free software; you can redistribute it and/or modify
+ * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation, at version 2.1 of the license, or any
- * later version.  The license differs from the GNU General Public License
- * (GPL) to allow this library to be used in proprietary applications. The
- * standard GPL would forbid this.
+ * later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * GNU Lesser General Public License for more details.
  *
- * To receive a copy of the GNU Lesser General Public License visit their
- * website at http://www.fsf.org/licenses/lgpl.html or via snail mail at Free
- * Software Foundation Inc., 59 Temple Place Suite 330, Boston MA 02111-1307
- * USA
+ * You can receive a copy of the GNU Lesser General Public License from their
+ * website, http://fsf.org/licenses/lgpl.html; or via snail mail, Free
+ * Software Foundation Inc., 51 Franklin Street, Boston MA 02111-1301, USA
  */
 
 /**
@@ -184,9 +182,8 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
     */
    public static void config(String serverHost, int serverPort,
       String clientHost, int clientPort) throws java.net.UnknownHostException {
-      rssf.host = serverHost;
-      rcsf.host = clientHost != null ? clientHost : serverHost != null ?
-         serverHost : InetAddress.getLocalHost().getHostName();
+      if (serverHost != null) rssf.host = serverHost;
+      rcsf.host = clientHost != null ? clientHost : rssf.host;
       rssf.port =
          serverPort != 0 ? serverPort : clientPort != 0 ? clientPort : 0;
       rcsf.port = clientPort != 0 ? clientPort : serverPort;
@@ -199,11 +196,11 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
     * This method configures the server's TCP parameters for RMI through HTTP
     * proxy servers. This is necessary when the client or server, or both are
     * behind firewalls, and the only method of access to the internet is
-    * through HTTP proxy servers. There will be a fairly significant performance
-    * hit incurred using the HTTP tunnel, but it is better than having no
-    * connectivity at all. Due to an unfortunate oversight in the design of
-    * the standard RMISocketFactory, no server network interface can be
-    * specified, instead it will listen on <i>all</i> network interfaces.
+    * through HTTP proxy servers. There will be a fairly significant
+    * performance hit incurred using the HTTP tunnel, but it is better than
+    * having no connectivity at all. Due to an unfortunate oversight in the
+    * design of the standard RMISocketFactory, no server network interface can
+    * be specified, instead it will listen on <i>all</i> network interfaces.
     * It is probably not a problem for most, but is probably not desirable for
     * multi-homed hosts.
     * <p><i><u>Note</u>:</i> If this class is to be configured, it must be
@@ -238,12 +235,7 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
    public static void config(int serverPort, String clientHost, int clientPort,
       String proxyHost, int proxyPort, final String username,
       final String password) throws java.net.UnknownHostException {
-      rcsf.host = (clientHost != null) ?
-         clientHost : InetAddress.getLocalHost().getHostName();
-      rssf.port = (serverPort != 0) ?
-         serverPort : ((clientPort != 0) ? clientPort : 0);
-      rcsf.port = (clientPort != 0) ?
-         clientPort : rssf.port;
+      config(null, serverPort, clientHost, clientPort);
       try { // this won't work if running as an applet
          if (proxyHost != null) {
             System.setProperty("proxySet", "true");
@@ -258,8 +250,6 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
                }
             );
          }
-         System.setProperty("java.rmi.server.useLocalHostname", "true");
-         System.setProperty("java.rmi.server.hostname", rcsf.host);
       } catch (SecurityException x) {}
    }
    /**
