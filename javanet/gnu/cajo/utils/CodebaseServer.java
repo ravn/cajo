@@ -7,25 +7,23 @@ import gnu.cajo.invoke.Remote;
 /*
  * RMI Codebase and Graphical Proxy Server
  * Copyright (c) 1999 John Catherino
+ * The cajo project: https://cajo.dev.java.net
  *
  * For issues or suggestions mailto:cajo@dev.java.net
  *
- * This program is free software; you can redistribute it and/or modify
+ * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation, at version 2.1 of the license, or any
- * later version.  The license differs from the GNU General Public License
- * (GPL) to allow this library to be used in proprietary applications. The
- * standard GPL would forbid this.
+ * later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * GNU Lesser General Public License for more details.
  *
- * To receive a copy of the GNU Lesser General Public License visit their
- * website at http://www.fsf.org/licenses/lgpl.html or via snail mail at Free
- * Software Foundation Inc., 59 Temple Place Suite 330, Boston MA 02111-1307
- * USA
+ * You can receive a copy of the GNU Lesser General Public License from their
+ * website, http://fsf.org/licenses/lgpl.html; or via snail mail, Free
+ * Software Foundation Inc., 51 Franklin Street, Boston MA 02111-1301, USA
  */
 
 /**
@@ -246,9 +244,8 @@ public final class CodebaseServer extends Thread {
          while(!isInterrupted()) {
             Socket s = ss.accept();
             try {
-               s.setSoTimeout(1500);
                InputStream  is = s.getInputStream();
-               OutputStream os = new BufferedOutputStream(s.getOutputStream(), 0xf000);
+               OutputStream os = new BufferedOutputStream(s.getOutputStream(), 0x8000);
                int ix = is.read(msg);
                String itemName = null;
                scan: for (int i = 0; i < ix; i++) {
@@ -262,7 +259,8 @@ public final class CodebaseServer extends Thread {
                   }
                }
                if (itemName == null) os.write(bye);   // invalid request
-               else if (itemName.indexOf('.') == -1 && itemName.indexOf('/', 1) == -1) { // URL request
+               else if (itemName.indexOf('.') == -1 && itemName.indexOf('/', 1) == -1) {
+                  // URL request
                   try { // parse request arguments
                      int proxyPort = Remote.getClientPort();
                      int ia =
@@ -339,8 +337,10 @@ public final class CodebaseServer extends Thread {
                         os.write(xml);
                      }
                   } catch(Exception x) { os.write(bye); }
-               } else if ((anyFile || itemName.endsWith(".jar")) && !itemName.endsWith(thisJar)) {
-                  try {
+               } else if ( // file request
+                     (anyFile && !itemName.startsWith("..")) || // no superdirectories!
+                     (itemName.endsWith(".jar") && !itemName.endsWith(thisJar))
+                  ) try { // send the requested file
                      int flen;
                      InputStream ris = getClass().getResourceAsStream(itemName);
                      if (ris == null) {
@@ -354,7 +354,7 @@ public final class CodebaseServer extends Thread {
                         os.write(msg, 0, i);
                      ris.close();
                   } catch(Exception x) { os.write(bye); }
-               } else os.write(bye);
+               else os.write(bye); // no other requests are honored
                os.flush();
                os.close();
                is.close();
