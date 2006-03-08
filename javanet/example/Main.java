@@ -20,7 +20,7 @@ public class Main { // General purpose server startup pattern
          int httpPort      = args.length > 0 ? Integer.parseInt(args[0]) : 80; 
          int serverPort    = args.length > 1 ? Integer.parseInt(args[1]) : 1099; 
          String clientHost = args.length > 2 ? args[2] : null;
-         String serverHost = args.length > 3 ? args[3] : java.net.InetAddress.getLocalHost().getHostName();
+         String serverHost = args.length > 3 ? args[3] : null;
          int clientPort    = args.length > 4 ? Integer.parseInt(args[4]) : 0;
          Remote.config(serverHost, serverPort, clientHost, clientPort);
          pl = new ProxyLoader("/example/include/proxy.ser");
