@@ -66,7 +66,7 @@ public final class CodebaseServer extends Thread {
          "Content-length: "
       ).getBytes(),
       end = (
-         "PLUGINSPAGE = http://java.sun.com/j2se/1.5.0/download.html>\r\n" +
+         "PLUGINSPAGE=\"http://java.sun.com/j2se/1.5.0/download.html\">\r\n" +
          "</EMBED></COMMENT></OBJECT></CENTER></BODY></HTML>"
       ).getBytes();
    private final byte[] top, mid;
@@ -139,19 +139,19 @@ public final class CodebaseServer extends Thread {
             "<META NAME=\"copyright\" content=\"Copyright &copy; 1999 John Catherino\"/>\r\n" +
             "<META NAME=\"author\" content=\"John Catherino\"/>\r\n" +
             "<META NAME=\"generator\" content=\"ProxyServer\"/>\r\n" +
-            "</HEAD><BODY leftmargin=0 topmargin=0 marginheight=0 marginwidth=0 rightmargin=0>\r\n" +
-            "<CENTER><OBJECT classid = \"clsid:8AD9C840-044E-11D1-B3E9-00805F499D93\"\r\n" +
-            "WIDTH = 100% HEIGHT = 100%\r\n" +
-            "CODEBASE = \"http://java.sun.com/update/1.5.0/jinstall-1_5_0-windows-i586.cab#Version=1,5,0,0\">\r\n" +
-            "<PARAM NAME = \"archive\" VALUE = \"client.jar\">\r\n" +
-            "<PARAM NAME = \"type\" VALUE = \"application/x-java-applet;version=1.5\">\r\n" +
-            "<PARAM NAME = \"code\" VALUE = \"" + client + "\">\r\n"
+            "</HEAD><BODY leftmargin=\"0\" topmargin=\"0\" marginheight=\"0\" marginwidth=0 rightmargin=\"0\">\r\n" +
+            "<CENTER><OBJECT classid=\"clsid:8AD9C840-044E-11D1-B3E9-00805F499D93\"\r\n" +
+            "WIDTH=\"100%\" HEIGHT=\"100%\"\r\n" +
+            "CODEBASE=\"http://java.sun.com/products/plugin/autodl/jinstall-1_5_0-windows-i586.cab#Version=1,5,0,0\">\r\n" +
+            "<PARAM NAME=\"archive\" VALUE=\"client.jar\">\r\n" +
+            "<PARAM NAME=\"type\" VALUE=\"application/x-java-applet;version=1.5\">\r\n" +
+            "<PARAM NAME=\"code\" VALUE=\"" + client + "\">\r\n"
          ).getBytes();
          mid = (
-            "<COMMENT><EMBED type = \"application/x-java-applet;version=1.5.0\"\r\n" +
-            "ARCHIVE = client.jar\r\n" +
-            "CODE = " + client + "\r\n" +
-            "WIDTH = 100% HEIGHT = 100%\r\n"
+            "<COMMENT><EMBED type=\"application/x-java-applet;version=1.5\"\r\n" +
+            "ARCHIVE=\"client.jar\"\r\n" +
+            "CODE=\"" + client + "\"\r\n" +
+            "WIDTH=\"100%\" HEIGHT=\"100%\"\r\n"
          ).getBytes();
          fixlen = top.length + mid.length + end.length;
          client = CodebaseServer.class.getName().replace('.', '/') + ".class";
@@ -284,18 +284,18 @@ public final class CodebaseServer extends Thread {
                      String clientHost = s.getInetAddress().getHostAddress();
                      if (itemName.indexOf('!') == -1) { // applet request
                         byte iex[] = ( // used by Exploder:
-                           "<PARAM NAME = \"clientHost\" VALUE = \"" + clientHost + "\">\r\n" +
-                           "<PARAM NAME = \"clientPort\" VALUE = \"" + clientPort + "\">\r\n" +
-                           "<PARAM NAME = \"localPort\"  VALUE = \"" + localPort  + "\">\r\n" +
-                           "<PARAM NAME = \"proxyPort\"  VALUE = \"" + proxyPort  + "\">\r\n" +
-                           "<PARAM NAME = \"proxyName\"  VALUE = \"" + proxyName  + "\">\r\n"
+                           "<PARAM NAME=\"clientHost\" VALUE=\"" + clientHost + "\">\r\n" +
+                           "<PARAM NAME=\"clientPort\" VALUE=\"" + clientPort + "\">\r\n" +
+                           "<PARAM NAME=\"localPort\"  VALUE=\"" + localPort  + "\">\r\n" +
+                           "<PARAM NAME=\"proxyPort\"  VALUE=\"" + proxyPort  + "\">\r\n" +
+                           "<PARAM NAME=\"proxyName\"  VALUE=\"" + proxyName  + "\">\r\n"
                         ).getBytes();
                         byte nav[] = ( // used by Navigator and Appletviewer:
-                           "clientHost = " + clientHost + "\r\n" +
-                           "clientPort = " + clientPort + "\r\n" +
-                           "localPort  = " + localPort  + "\r\n" +
-                           "proxyPort  = " + proxyPort  + "\r\n" +
-                           "proxyName  = " + proxyName  + "\r\n"
+                           "clientHost=\"" + clientHost + "\"\r\n" +
+                           "clientPort=\"" + clientPort + "\"\r\n" +
+                           "localPort=\""  + localPort  + "\"\r\n" +
+                           "proxyPort=\""  + proxyPort  + "\"\r\n" +
+                           "proxyName=\""  + proxyName  + "\"\r\n"
                         ).getBytes();
                         byte len[] = (fixlen + iex.length + nav.length + "\r\n\r\n").getBytes();
                         os.write(tag);
