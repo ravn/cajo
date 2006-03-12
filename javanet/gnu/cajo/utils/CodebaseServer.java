@@ -337,13 +337,12 @@ public final class CodebaseServer extends Thread {
                         os.write(xml);
                      }
                   } catch(Exception x) { os.write(bye); }
-               } else if ( // file request
-                     (anyFile && !itemName.startsWith("..")) || // no superdirectories!
-                     (itemName.endsWith(".jar") && !itemName.endsWith(thisJar))
-                  ) try { // send the requested file
+               } else if (anyFile || (itemName.endsWith(".jar") &&
+                  !itemName.endsWith(thisJar))) { // file request
+                  try {
                      int flen;
                      InputStream ris = getClass().getResourceAsStream(itemName);
-                     if (ris == null) {
+                     if (ris == null) { // read from outside server jar
                         File file = new File('.' + itemName);
                         flen = (int)file.length();
                         ris = new FileInputStream(file);
@@ -354,7 +353,7 @@ public final class CodebaseServer extends Thread {
                         os.write(msg, 0, i);
                      ris.close();
                   } catch(Exception x) { os.write(bye); }
-               else os.write(bye); // no other requests are honored
+               } else os.write(bye); // no other requests are honored
                os.flush();
                os.close();
                is.close();
