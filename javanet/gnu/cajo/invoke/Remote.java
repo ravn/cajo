@@ -158,9 +158,10 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
     * <p><i><u>Note</u>:</i> If this class is to be configured, it must be
     * done <b>before</b> any items are remoted.
     * @param serverHost The local domain name, or IP address of this host.
-    * If null, it will use all network interfaces.  Typically it is
+    * If null, it will use the default network interface.  Typically it is
     * specified when the server has multiple phyisical network interfaces, or
-    * is multi-homed, i.e. having multiple logical network interfaces.
+    * is multi-homed, i.e. having multiple logical network interfaces. You can
+    * specify 0.0.0.0 to use all network interfaces on the machine.
     * @param serverPort Specifies the local port on which the server is
     * serving clients. It can be zero, to use an anonymous port.  If firewalls
     * are being used, it must be an accessible port, into this server. If this
