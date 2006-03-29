@@ -107,7 +107,7 @@ public class Xfile {
       if (block == null && maxBlock < size) block = new byte[maxBlock];
       byte buff[] = size == 0 ? stub : // theoretically necessary
          size < maxBlock ? new byte[size] : block;
-      if (is.read(buff) != -1) return buff;
+      if (is.read(buff, 0, buff.length) != -1) return buff;
       else try { // transfer complete, close stream
          is.close();
          return null;
@@ -165,7 +165,7 @@ public class Xfile {
          os = new java.io.BufferedOutputStream(os);
          for (byte[] msg = (byte[])Remote.invoke(item, "nextBlock", null);
             msg!= null; msg = (byte[])Remote.invoke(item, "nextBlock", null))
-               os.write(msg);
+               os.write(msg, 0, msg.length);
       } finally {
          os.flush();
          os.close();
