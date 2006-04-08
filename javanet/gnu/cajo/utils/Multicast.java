@@ -76,16 +76,17 @@ public final class Multicast implements Runnable {
    public RemoteInvoke item;
    /**
     * The default constructor sets the internal fields to default values which
-    * should be sufficient for most purposes. The multicast socket address will
-    * be set to 244.0.1.84, which is the one officially registered with IANA
-    * for Jini announcements.  The UDP port number on which this object will
-    * announce and listen is set to 1099, which is a play on the default TCP
-    * port number of Sun's rmiregistry.  It listens on the same network
-    * interface being used for the server's RMI communication.
+    * should be sufficient for most purposes. The multicast socket address
+    * will be set to 244.0.23.162, which is officially registered with IANA
+    * for cajo object reference announcements.  The UDP port number on which
+    * this object will announce and listen is set to 1189, which is is also
+    * assigned by the IANA, for cajo object reference acquisition.  The object
+    * will listen on the same network interface being used for the server's RMI
+    * communication.
     * @throws java.net.UnknownHostException If the default network interface
     * could not be resolved, <i>not very likely</i>.
     */
-   public Multicast() throws UnknownHostException { this("224.0.1.84", 1099); }
+   public Multicast() throws UnknownHostException { this("224.0.23.162", 1198); }
    /**
     * The full constructor allows creation of Multicast objects on any
     * appropriate address, and port number. It uses the same network interface
