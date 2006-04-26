@@ -30,18 +30,16 @@ import gnu.cajo.invoke.Remote;
  * The standard mechanism to send proxies, and other complex objects to
  * remote VMs. It requires one outbound port. The port can be anonymous, i.e.
  * selected from any available free port at runtime, or it can be explicitly
- * specified, usually to operate through a firewall. A given VM instance can
- * only have one codebase, therefore construction of a second instance will
- * result in an IllegalStateException being thrown by its constructor. It
- * also provides the generic graphical proxy host client service, as an
- * Applet, and via WebStart.
+ * specified, usually to operate through a firewall. It also provides the
+ * generic graphical proxy host client service, as an Applet, and via
+ * WebStart.
  *
  * @version 1.0, 01-Nov-99 Initial release
  * @author John Catherino
  */
 public final class CodebaseServer extends Thread {
  private static final byte[]
-    bye = (
+    bye = ( // http headers:
        "HTTP/1.0 404 Object not found\r\n" +
        "Connection: close\r\n\r\n"
     ).getBytes(),
@@ -52,6 +50,13 @@ public final class CodebaseServer extends Thread {
        "Content-length: "
     ).getBytes(),
     jar = (
+       "HTTP/1.0 200 OK\r\n"   +
+       "Content-type: application/x-java-archive\r\n" +
+       "Cache-control: no-store\r\n" +
+       "Connection: close\r\n" +
+       "Content-length: "
+    ).getBytes(),
+    cls = (
        "HTTP/1.0 200 OK\r\n"   +
        "Content-type: application/octet-stream\r\n" +
        "Cache-control: no-store\r\n" +
@@ -65,7 +70,7 @@ public final class CodebaseServer extends Thread {
        "Connection: close\r\n" +
        "Content-length: "
     ).getBytes(),
-    end = (
+    end = ( // http footers:
        "PLUGINSPAGE=\"http://java.sun.com/j2se/1.5.0/download.html\">\r\n" +
        "</EMBED></COMMENT></OBJECT></CENTER></BODY></HTML>"
     ).getBytes(),
@@ -132,94 +137,92 @@ public final class CodebaseServer extends Thread {
   * applet tag service could not be created.
   * @param title The application specific titile to show in the browser,
   * when running as an applet.
-  * @throws IllegalStateException If a instance of this class already exists,
-  * since each JVM can have only one codebase server.
+  * @throws IOException If if the server could not be started, on the port
+  * specified.
   */
  public CodebaseServer(String jars[], int port, String client, String title)
     throws IOException {
-    if (System.getProperty("java.rmi.server.codebase") == null) {
-       String temp = client.replace('.', '/') + ".class";
-       if (title == null) title = "cajo Proxy Viewer";
-       StringBuffer base = new StringBuffer("client.jar");
-       if (jars != null) {
-          for (int i = 0; i < jars.length; i++) {
-             base.append(", ");
-             base.append(jars[i]);
-          }
-       } // create instance specific response data:
-       top = (
-          "<HTML><HEAD><TITLE>" + title + "</TITLE>\r\n" +
-          "<META NAME=\"description\" content=\"Graphical cajo proxy client\"/>\r\n" +
-          "<META NAME=\"copyright\" content=\"Copyright (c) 1999 John Catherino\"/>\r\n" +
-          "<META NAME=\"author\" content=\"John Catherino\"/>\r\n" +
-          "<META NAME=\"generator\" content=\"ProxyServer\"/>\r\n" +
-          "</HEAD><BODY leftmargin=\"0\" topmargin=\"0\" marginheight=\"0\" marginwidth=0 rightmargin=\"0\">\r\n" +
-          "<CENTER><OBJECT classid=\"clsid:8AD9C840-044E-11D1-B3E9-00805F499D93\"\r\n" +
-          "WIDTH=\"100%\" HEIGHT=\"100%\"\r\n" +
-          "CODEBASE=\"http://java.sun.com/products/plugin/autodl/jinstall-1_5_0-windows-i586.cab#Version=1,5,0,0\">\r\n" +
-          "<PARAM NAME=\"archive\" VALUE=\"" + base.toString() + "\">\r\n" +
-          "<PARAM NAME=\"type\" VALUE=\"application/x-java-applet;version=1.5\">\r\n" +
-          "<PARAM NAME=\"code\" VALUE=\"" + temp + "\">\r\n"
-       ).getBytes();
-       mid = (
-          "<COMMENT><EMBED type=\"application/x-java-applet;version=1.5\"\r\n" +
-          "ARCHIVE=\"" + base.toString() + "\"\r\n" +
-          "CODE=\"" + temp + "\"\r\n" +
-          "WIDTH=\"100%\" HEIGHT=\"100%\"\r\n"
-       ).getBytes();
-       temp = CodebaseServer.class.getName().replace('.', '/') + ".class";
-       temp = CodebaseServer.class.getClassLoader().getResource(temp).toString();
-       if (temp.indexOf('!') != -1) {
-          temp = temp.substring(temp.lastIndexOf(':'), temp.lastIndexOf('!'));
-          temp = temp.substring(temp.lastIndexOf('/') + 1);
-       } else temp = "\""; // server not in a jar file
-       thisJar = temp;
-       ss = Remote.getServerHost() == null ? new ServerSocket(port) :
-          new ServerSocket(port, 50, InetAddress.getByName(Remote.getServerHost()));
-       serverPort = port == 0 ? ss.getLocalPort() : port;
-       CodebaseServer.port = serverPort; // legacy
-       tip = (
-          "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n" +
-          "<jnlp spec=\"1.0+\"\r\n" +
-          "  codebase=" + "\"http://" + Remote.getClientHost() + ':' + serverPort + "\"\r\n"
-       ).getBytes();
-       base = new StringBuffer(
-          "  <information>\r\n" +
-          "    <title>" + title + "</title>\r\n" +
-          "    <shortcut><desktop/></shortcut>\r\n" +
-          "    <vendor>John Catherino</vendor>\r\n" +
-          "    <homepage href=\"https://cajo.dev.java.net\"/>\r\n" +
-          "    <description>Graphical cajo proxy client</description>\r\n" +
-          "  </information>\r\n" +
-          "  <resources>\r\n" +
-          "    <j2se version=\"1.5+\"/>\r\n" +
-          "    <jar href=\"client.jar\"/>\r\n"
-       );
-       if (jars != null)
-          for (int i = 0; i < jars.length; i++)
-             base.append("    <jar href=\"" + jars[i] + "\" download=\"lazy\"/>\r\n");
-       base.append("  </resources>\r\n");
-       base.append("  <application-desc main-class=\"");
-       base.append(client);
-       base.append("\">\r\n");
-       xml = base.toString().getBytes();
-       base = new StringBuffer();
-       String loc = "http://" + Remote.getClientHost() + ':' + CodebaseServer.port + '/';
-       if (jars != null) {
-          for (int i = 0; i < jars.length; i++) {
-             base.append(loc);
-             base.append(jars[i]);
-             if (i < jars.length - 1) base.append(' ');
-          }
-       } else base.append(loc);
-       if (System.getProperty("java.rmi.server.codebase") != null) {
-          base.append(' ');
-          base.append(System.getProperty("java.rmi.server.codebase"));
+    String temp = client.replace('.', '/') + ".class";
+    if (title == null) title = "cajo Proxy Viewer";
+    StringBuffer base = new StringBuffer("client.jar");
+    if (jars != null) {
+       for (int i = 0; i < jars.length; i++) {
+          base.append(", ");
+          base.append(jars[i]);
        }
-       System.setProperty("java.rmi.server.codebase", base.toString());
-       anyFile = jars == null;
-       start(); // ready to accept clients
-    } else throw new IllegalStateException("Codebase currently served");
+    } // create instance specific response data:
+    top = (
+       "<HTML><HEAD><TITLE>" + title + "</TITLE>\r\n" +
+       "<META NAME=\"description\" content=\"Graphical cajo proxy client\"/>\r\n" +
+       "<META NAME=\"copyright\" content=\"Copyright (c) 1999 John Catherino\"/>\r\n" +
+       "<META NAME=\"author\" content=\"John Catherino\"/>\r\n" +
+       "<META NAME=\"generator\" content=\"ProxyServer\"/>\r\n" +
+       "</HEAD><BODY leftmargin=\"0\" topmargin=\"0\" marginheight=\"0\" marginwidth=0 rightmargin=\"0\">\r\n" +
+       "<CENTER><OBJECT classid=\"clsid:8AD9C840-044E-11D1-B3E9-00805F499D93\"\r\n" +
+       "WIDTH=\"100%\" HEIGHT=\"100%\"\r\n" +
+       "CODEBASE=\"http://java.sun.com/products/plugin/autodl/jinstall-1_5_0-windows-i586.cab#Version=1,5,0,0\">\r\n" +
+       "<PARAM NAME=\"archive\" VALUE=\"" + base.toString() + "\">\r\n" +
+       "<PARAM NAME=\"type\" VALUE=\"application/x-java-applet;version=1.5\">\r\n" +
+       "<PARAM NAME=\"code\" VALUE=\"" + temp + "\">\r\n"
+    ).getBytes();
+    mid = (
+       "<COMMENT><EMBED type=\"application/x-java-applet;version=1.5\"\r\n" +
+       "ARCHIVE=\"" + base.toString() + "\"\r\n" +
+       "CODE=\"" + temp + "\"\r\n" +
+       "WIDTH=\"100%\" HEIGHT=\"100%\"\r\n"
+    ).getBytes();
+    temp = CodebaseServer.class.getName().replace('.', '/') + ".class";
+    temp = CodebaseServer.class.getClassLoader().getResource(temp).toString();
+    if (temp.indexOf('!') != -1) {
+       temp = temp.substring(temp.lastIndexOf(':'), temp.lastIndexOf('!'));
+       temp = temp.substring(temp.lastIndexOf('/') + 1);
+    } else temp = "\""; // server not in a jar file
+    thisJar = temp.equals("cajo.jar") ? "\"" : temp;
+    ss = Remote.getServerHost() == null ? new ServerSocket(port) :
+       new ServerSocket(port, 50, InetAddress.getByName(Remote.getServerHost()));
+    serverPort = port == 0 ? ss.getLocalPort() : port;
+    CodebaseServer.port = serverPort; // legacy
+    tip = (
+       "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n" +
+       "<jnlp spec=\"1.0+\"\r\n" +
+       "  codebase=" + "\"http://" + Remote.getClientHost() + ':' + serverPort + "\"\r\n"
+    ).getBytes();
+    base = new StringBuffer(
+       "  <information>\r\n" +
+       "    <title>" + title + "</title>\r\n" +
+       "    <shortcut><desktop/></shortcut>\r\n" +
+       "    <vendor>John Catherino</vendor>\r\n" +
+       "    <homepage href=\"https://cajo.dev.java.net\"/>\r\n" +
+       "    <description>Graphical cajo proxy client</description>\r\n" +
+       "  </information>\r\n" +
+       "  <resources>\r\n" +
+       "    <j2se version=\"1.5+\"/>\r\n" +
+       "    <jar href=\"client.jar\"/>\r\n"
+    );
+    if (jars != null)
+       for (int i = 0; i < jars.length; i++)
+          base.append("    <jar href=\"" + jars[i] + "\" download=\"lazy\"/>\r\n");
+    base.append("  </resources>\r\n");
+    base.append("  <application-desc main-class=\"");
+    base.append(client);
+    base.append("\">\r\n");
+    xml = base.toString().getBytes();
+    base = new StringBuffer();
+    String loc = "http://" + Remote.getClientHost() + ':' + CodebaseServer.port + '/';
+    if (jars != null) {
+       for (int i = 0; i < jars.length; i++) {
+          base.append(loc);
+          base.append(jars[i]);
+          if (i < jars.length - 1) base.append(' ');
+       }
+    } else base.append(loc);
+    if (System.getProperty("java.rmi.server.codebase") != null) {
+       base.append(' ');
+       base.append(System.getProperty("java.rmi.server.codebase"));
+    }
+    System.setProperty("java.rmi.server.codebase", base.toString());
+    anyFile = jars == null;
+    start(); // ready to accept clients
  }
  /**
   * This constructor will start up the server's codebase transport mechanism
@@ -387,14 +390,13 @@ public final class CodebaseServer extends Thread {
                       flen = (int)file.length();
                       ris = new FileInputStream(file);
                    } else flen = ris.available();
-                   os.write(jar);
+                   os.write(itemName.endsWith(".jar") ? jar : cls);
                    os.write((flen + "\r\n\r\n").getBytes());
                    for (int i = ris.read(msg); i != -1; i = ris.read(msg))
                       os.write(msg, 0, i);
                    ris.close();
                 } catch(Exception x) { os.write(bye); }
              } else os.write(bye); // no other requests are honored
-             os.flush();
              os.close(); // terminate client connection
              is.close();
           } catch (Exception x) { x.printStackTrace(); }
