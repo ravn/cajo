@@ -100,8 +100,8 @@ public final class CodebaseServer extends Thread {
   * selected by the OS from any ports available at runtime. In that case, the
   * port actually offered by the operating system will be stored here
   * automatically, following construction. <i><u>Note</u>:</i> The preferred
-  * field to check the CodebaseServer port is <tt>serverPort</tt> this field
-  * remains purely to maintain backward compatibility.
+  * field to check is <tt>serverPort</tt> this field is mutable unfortunately;
+  * it remains solely to maintain backward compatibility.
   * @deprecated
   */
  public static int port;
@@ -133,12 +133,10 @@ public final class CodebaseServer extends Thread {
   * @param client The name of the graphical client class to be furnished as
   * an Applet, or via WebStart. For example, the generic cajo standard
   * graphical proxy is: <tt>gnu.cajo.invoke.Client</tt>
-  * @throws IOException If the HTTP socket providing the codebase and
-  * applet tag service could not be created.
   * @param title The application specific titile to show in the browser,
   * when running as an applet.
-  * @throws IOException If if the server could not be started, on the port
-  * specified.
+  * @throws IOException If the HTTP socket providing the codebase and
+  * applet tag service could not be created.
   */
  public CodebaseServer(String jars[], int port, String client, String title)
     throws IOException {
@@ -237,8 +235,6 @@ public final class CodebaseServer extends Thread {
   * an Applet, or via WebStart.
   * @throws IOException If the HTTP socket providing the codebase and
   * applet tag service could not be created.
-  * @throws IllegalStateException If a instance of this class already exists,
-  * since each JVM can have only one codebase server.
   */
  public CodebaseServer(String base, int port, String client)
     throws IOException {
@@ -254,8 +250,6 @@ public final class CodebaseServer extends Thread {
   * applet.
   * @throws IOException If the HTTP socket providing the codebase and
   * applet tag service could not be created.
-  * @throws IllegalStateException If a instance of this class already exists,
-  * since each JVM can have only one codebase server.
   */
  public CodebaseServer(String base, int port) throws IOException {
     this(base != null ? new String[] { base } : null, port,
@@ -284,7 +278,7 @@ public final class CodebaseServer extends Thread {
   * <li><i>proxyName</i> The registered name of the proxy serving item, by
   * default "main", however a single server can support multiple items.
   * <li><i>!</i> This operator causes the proxy to be sent using JNLP. This
-  * will launch the proxy as an application on the client.</ul>
+  * will launch the proxy as an application on the client using WebStart.</ul>
   * <p>To unspecify any optional item, simply omit it, from the URL, along
   * with its preceeding delimiter, if any.  The <u>order</u> of the
   * arguments must be maintained however.<p>
@@ -412,10 +406,7 @@ public final class CodebaseServer extends Thread {
   * the in its working directory and subdirectories. It is extremely
   * useful for application development. If a port number is provided
   * as an argument, it will be used, otherwise it will be opened on
-  * an anonymous port.<p>
-  * <i><u>Note</u>:</i> in the Virtual Machine sharing its objects,
-  * its system property <tt>rmi.server.codebase</tt> will have to be set
-  * manually, to point to this host and port number.
+  * an anonymous port.
   */
  public static void main(String args[]) {
     try {
