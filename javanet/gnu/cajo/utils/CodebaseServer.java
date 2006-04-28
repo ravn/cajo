@@ -32,43 +32,44 @@ import gnu.cajo.invoke.Remote;
  * selected from any available free port at runtime, or it can be explicitly
  * specified, usually to operate through a firewall. It also provides the
  * generic graphical proxy host client service, as an Applet, and via
- * WebStart.
+ * WebStart.<p>
+ * <i><u>Note</u>:</i> There can be at most <i>one</i> CodebaseServer
+ * instance per JVM.
  *
  * @version 1.0, 01-Nov-99 Initial release
  * @author John Catherino
  */
 public final class CodebaseServer extends Thread {
- private static final byte[]
+  private static final byte[]
     bye = ( // http headers:
        "HTTP/1.0 404 Object not found\r\n" +
-       "Connection: close\r\n\r\n"
+       "Content-type: text/plain\r\n" +
+       "Connection: close\r\n\r\n" +
+       "Not found"
     ).getBytes(),
-    tag = (
+    apl = (
        "HTTP/1.0 200 OK\r\n"   +
        "Content-type: text/html\r\n" +
-       "Connection: close\r\n" +
-       "Content-length: "
+       "Cache-control: must-revalidate\r\n" +
+       "Connection: close\r\n\r\n"
     ).getBytes(),
     jar = (
        "HTTP/1.0 200 OK\r\n"   +
        "Content-type: application/x-java-archive\r\n" +
-       "Cache-control: no-store\r\n" +
-       "Connection: close\r\n" +
-       "Content-length: "
+       "Cache-control: must-revalidate\r\n" +
+       "Connection: close\r\n\r\n"
     ).getBytes(),
     cls = (
        "HTTP/1.0 200 OK\r\n"   +
-       "Content-type: application/octet-stream\r\n" +
-       "Cache-control: no-store\r\n" +
-       "Connection: close\r\n" +
-       "Content-length: "
+       "Content-type: application/x-java-vm\r\n" +
+       "Cache-control: must-revalidate\r\n" +
+       "Connection: close\r\n\r\n"
     ).getBytes(),
     jws = (
        "HTTP/1.0 200 OK\r\n"   +
        "Content-type: application/x-java-jnlp-file\r\n" +
-       "Cache-control: no-store\r\n" +
-       "Connection: close\r\n" +
-       "Content-length: "
+       "Cache-control: must-revalidate\r\n" +
+       "Connection: close\r\n\r\n"
     ).getBytes(),
     end = ( // http footers:
        "PLUGINSPAGE=\"http://java.sun.com/j2se/1.5.0/download.html\">\r\n" +
@@ -111,21 +112,23 @@ public final class CodebaseServer extends Thread {
   * inherited interrupt method. All other constructors in this class call it.
   * @param jars An array of strings representing the path and filename of
   * a library jar used by the client application. The CodebaseServer will
-  * serve them to the remote JVM.* The server will first search for the jar
+  * serve them to the remote JVM. The server will first search for the jar
   * in its own executable jar file, if that fails, then it will check the
   * local filesystem.<p>
-  * The server determines the name of the jar file in which it is running
-  * courtesy of a very cool hack published by Laird Nelson in his
-  * weblog: http://weblogs.java.net/pub/wlg/1874 Thanks Laird! This is
-  * used to allow the server to serve all the jar files in its working
-  * directory tree <i>except</i> its own.<p>
+  * The first jar named in the array will be assumed to be the jar containing
+  * the main client class.<p>
   * <i><u>Note</u>:</i> if this value is null, it indicates that the proxy
   * codebase is <i>not</i> in a jar. The server will then look first in its
   * own jar file for the class files to send, and if not found, it will
   * next look in its working directory. This feature provides an extremely
   * simple, essentially zero-configuration, approach to proxy codebase
   * service. It also provides complete general-purpose web service as well,
-  * supporting documentaions pages, images, and even a favicon.ico.
+  * supporting documentaions pages, images, and even a favicon.ico.<p>
+  * The server determines the name of the jar file in which it is running
+  * courtesy of a very cool hack published by Laird Nelson in his
+  * weblog: http://weblogs.java.net/pub/wlg/1874 Thanks Laird! This is
+  * used to allow the server to serve all the jar files in its working
+  * directory tree <i>except</i> its own.
   * @param port The TCP port on which to serve the codebase, and client
   * applet. It can be zero, to use an anonymous port. If zero, the actual
   * port selected by the OS at runtime will be stored in the
@@ -142,9 +145,10 @@ public final class CodebaseServer extends Thread {
     throws IOException {
     String temp = client.replace('.', '/') + ".class";
     if (title == null) title = "cajo Proxy Viewer";
-    StringBuffer base = new StringBuffer("client.jar");
+    StringBuffer base = new StringBuffer();
     if (jars != null) {
-       for (int i = 0; i < jars.length; i++) {
+       base.append(jars[0]);
+       for (int i = 1; i < jars.length; i++) {
           base.append(", ");
           base.append(jars[i]);
        }
@@ -175,7 +179,7 @@ public final class CodebaseServer extends Thread {
        temp = temp.substring(temp.lastIndexOf(':'), temp.lastIndexOf('!'));
        temp = temp.substring(temp.lastIndexOf('/') + 1);
     } else temp = "\""; // server not in a jar file
-    thisJar = temp.equals("cajo.jar") ? "\"" : temp;
+    thisJar = temp.endsWith("cajo.jar") ? "\"" : temp;
     ss = Remote.getServerHost() == null ? new ServerSocket(port) :
        new ServerSocket(port, 50, InetAddress.getByName(Remote.getServerHost()));
     serverPort = port == 0 ? ss.getLocalPort() : port;
@@ -197,9 +201,11 @@ public final class CodebaseServer extends Thread {
        "    <j2se version=\"1.5+\"/>\r\n" +
        "    <jar href=\"client.jar\"/>\r\n"
     );
-    if (jars != null)
+    if (jars != null) {
+       base.append("    <jar href=\"" + jars[0] + "\" main=\"true\"/>\r\n");
        for (int i = 0; i < jars.length; i++)
           base.append("    <jar href=\"" + jars[i] + "\" download=\"lazy\"/>\r\n");
+    }
     base.append("  </resources>\r\n");
     base.append("  <application-desc main-class=\"");
     base.append(client);
@@ -238,7 +244,8 @@ public final class CodebaseServer extends Thread {
   */
  public CodebaseServer(String base, int port, String client)
     throws IOException {
-    this(base != null ? new String[] { base } : null, port, client, null);
+    this(base != null ? new String[] { "client.jar", base } : null,
+       port, client, null);
  }
  /**
   * This constructor simply calls the main four parameter constructor,
@@ -252,7 +259,7 @@ public final class CodebaseServer extends Thread {
   * applet tag service could not be created.
   */
  public CodebaseServer(String base, int port) throws IOException {
-    this(base != null ? new String[] { base } : null, port,
+    this(base != null ? new String[] { "client.jar", base } : null, port,
        "gnu.cajo.invoke.Client", null);
  }
  /**
@@ -314,7 +321,6 @@ public final class CodebaseServer extends Thread {
              if (itemName == null) os.write(bye); // invalid request
              else if (itemName.indexOf('.') == -1 && itemName.indexOf('/', 1) == -1) {
                 try { // URL request: parse arguments
-                   int proxyPort = Remote.getClientPort();
                    int ia =
                       itemName.indexOf(':') != -1 ? itemName.indexOf(':') :
                       itemName.indexOf('-') != -1 ? itemName.indexOf('-') :
@@ -334,6 +340,7 @@ public final class CodebaseServer extends Thread {
                    String proxyName =
                       ic > ib ? itemName.substring(ib + 1, ic) : "main";
                    String clientHost = s.getInetAddress().getHostAddress();
+                   int proxyPort = Remote.getClientPort();
                    if (itemName.indexOf('!') == -1) { // Applet request
                       byte iex[] = ( // used by Exploder:
                          "<PARAM NAME=\"clientHost\" VALUE=\"" + clientHost + "\">\r\n" +
@@ -349,9 +356,7 @@ public final class CodebaseServer extends Thread {
                          "proxyPort=\""  + proxyPort  + "\"\r\n" +
                          "proxyName=\""  + proxyName  + "\"\r\n"
                       ).getBytes();
-                      byte len[] = (top.length + iex.length + mid.length + nav.length + end.length + "\r\n\r\n").getBytes();
-                      os.write(tag);
-                      os.write(len);
+                      os.write(apl);
                       os.write(top);
                       os.write(iex); // return client specific applet page
                       os.write(mid);
@@ -365,9 +370,7 @@ public final class CodebaseServer extends Thread {
                          "    <argument>" + clientHost + "</argument>\r\n" +
                          "    <argument>" + localPort  + "</argument>\r\n"
                       ).getBytes();
-                      byte len[] = (tip.length + obj.length + xml.length + arg.length + out.length + "\r\n\r\n").getBytes();
                       os.write(jws);
-                      os.write(len);
                       os.write(tip);
                       os.write(obj); // return client specific jnlp document
                       os.write(xml);
@@ -377,15 +380,10 @@ public final class CodebaseServer extends Thread {
                 } catch(Exception x) { os.write(bye); }
              } else if (anyFile || (itemName.endsWith(".jar") && !itemName.endsWith(thisJar))) {
                 try {  // file request: send contents
-                   int flen;
                    InputStream ris = getClass().getResourceAsStream(itemName);
-                   if (ris == null) { // read from outside server jar
-                      File file = new File('.' + itemName);
-                      flen = (int)file.length();
-                      ris = new FileInputStream(file);
-                   } else flen = ris.available();
+                   if (ris == null)  // read from outside server jar
+                      ris = new FileInputStream('.' + itemName);
                    os.write(itemName.endsWith(".jar") ? jar : cls);
-                   os.write((flen + "\r\n\r\n").getBytes());
                    for (int i = ris.read(msg); i != -1; i = ris.read(msg))
                       os.write(msg, 0, i);
                    ris.close();
