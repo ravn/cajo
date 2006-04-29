@@ -152,8 +152,8 @@ public final class CodebaseServer extends Thread {
           base.append(", ");
           base.append(jars[i]);
        }
-    } // create instance specific response data:
-    top = (
+    } else base.append("client.jar");
+    top = ( // create instance specific response data:
        "<HTML><HEAD><TITLE>" + title + "</TITLE>\r\n" +
        "<META NAME=\"description\" content=\"Graphical cajo proxy client\"/>\r\n" +
        "<META NAME=\"copyright\" content=\"Copyright (c) 1999 John Catherino\"/>\r\n" +
@@ -199,7 +199,7 @@ public final class CodebaseServer extends Thread {
        "  </information>\r\n" +
        "  <resources>\r\n" +
        "    <j2se version=\"1.5+\"/>\r\n" +
-       "    <jar href=\"client.jar\"/>\r\n"
+       "    <jar href=\"" + (jars == null ? "client.jar" : jars[0]) + "\"/>\r\n"
     );
     if (jars != null) {
        base.append("    <jar href=\"" + jars[0] + "\" main=\"true\"/>\r\n");
@@ -378,7 +378,7 @@ public final class CodebaseServer extends Thread {
                       os.write(out);
                    }
                 } catch(Exception x) { os.write(bye); }
-             } else if (anyFile || (itemName.endsWith(".jar") && !itemName.endsWith(thisJar))) {
+             } else if (anyFile || !itemName.endsWith(thisJar)) {
                 try {  // file request: send contents
                    InputStream ris = getClass().getResourceAsStream(itemName);
                    if (ris == null)  // read from outside server jar
