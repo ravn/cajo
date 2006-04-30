@@ -136,15 +136,24 @@ public final class CodebaseServer extends Thread {
   * @param client The name of the graphical client class to be furnished as
   * an Applet, or via WebStart. For example, the generic cajo standard
   * graphical proxy is: <tt>gnu.cajo.invoke.Client</tt>
-  * @param title The application specific titile to show in the browser,
-  * when running as an applet.
+  * @param title The optional application specific titile to show in the
+  * browser, when running as an applet.
+  * @param vendor The optional vendor name of the WebStart application.
+  * @param icon The optional custom desktop icon to represent the
+  * WebStart application, it can also be null. It is typically of the form
+  * "images/icon.gif", where it will be requested from the server. The image
+  * can be in either GIF or JPEG format.
+  * @param splash The optional splash screen image to represent the
+  * WebStart application while it is loading, it can also be null. It is
+  * typically of the form "images/splash.jpeg", where it will be requested
+  * from the server. The image can be in either GIF or JPEG format.
   * @throws IOException If the HTTP socket providing the codebase and
   * applet tag service could not be created.
   */
- public CodebaseServer(String jars[], int port, String client, String title)
+ public CodebaseServer(String jars[], int port, String client, String title,
+    String vendor, String icon, String splash)
     throws IOException {
     String temp = client.replace('.', '/') + ".class";
-    if (title == null) title = "cajo Proxy Viewer";
     StringBuffer base = new StringBuffer();
     if (jars != null) {
        base.append(jars[0]);
@@ -154,11 +163,11 @@ public final class CodebaseServer extends Thread {
        }
     } else base.append("client.jar");
     top = ( // create instance specific response data:
-       "<HTML><HEAD><TITLE>" + title + "</TITLE>\r\n" +
+       "<HTML><HEAD><TITLE>" + (title !=null ? title : "cajo Proxy Viewer") + "</TITLE>\r\n" +
        "<META NAME=\"description\" content=\"Graphical cajo proxy client\"/>\r\n" +
        "<META NAME=\"copyright\" content=\"Copyright (c) 1999 John Catherino\"/>\r\n" +
        "<META NAME=\"author\" content=\"John Catherino\"/>\r\n" +
-       "<META NAME=\"generator\" content=\"ProxyServer\"/>\r\n" +
+       "<META NAME=\"generator\" content=\"CodebaseServer\"/>\r\n" +
        "</HEAD><BODY leftmargin=\"0\" topmargin=\"0\" marginheight=\"0\" marginwidth=0 rightmargin=\"0\">\r\n" +
        "<CENTER><OBJECT classid=\"clsid:8AD9C840-044E-11D1-B3E9-00805F499D93\"\r\n" +
        "WIDTH=\"100%\" HEIGHT=\"100%\"\r\n" +
@@ -193,9 +202,13 @@ public final class CodebaseServer extends Thread {
        "  <information>\r\n" +
        "    <title>" + title + "</title>\r\n" +
        "    <shortcut><desktop/></shortcut>\r\n" +
-       "    <vendor>John Catherino</vendor>\r\n" +
+       "    <vendor>" + (vendor != null ? vendor : "The cajo project") + "</vendor>\r\n" +
        "    <homepage href=\"https://cajo.dev.java.net\"/>\r\n" +
        "    <description>Graphical cajo proxy client</description>\r\n" +
+       (icon == null ? "" :
+       "    <icon>href=\"" + icon + "\"/>\r\n") +
+       (splash == null ? "" :
+       "    <icon> kind=\"splash\" href=\"" + splash + "\"/>\r\n") +
        "  </information>\r\n" +
        "  <resources>\r\n" +
        "    <j2se version=\"1.5+\"/>\r\n" +
@@ -231,8 +244,7 @@ public final class CodebaseServer extends Thread {
  /**
   * This constructor will start up the server's codebase transport mechanism
   * on the specified port, using the specified codebase jar file, with the
-  * specified clent. It will invoke the four argument constructor, with
-  * the default client title.
+  * specified clent.
   * @param base The path and name of the file containing the proxy codebase
   * jar file.
   * @param port The TCP port on which to serve the codebase, and client
@@ -245,10 +257,10 @@ public final class CodebaseServer extends Thread {
  public CodebaseServer(String base, int port, String client)
     throws IOException {
     this(base != null ? new String[] { "client.jar", base } : null,
-       port, client, null);
+       port, client, null, null, null, null);
  }
  /**
-  * This constructor simply calls the main four parameter constructor,
+  * This constructor simply calls the three argument constructor,
   * providing the standard cajo generic graphical client as the client
   * argument.
   * @param base The path and name of the file containing the proxy codebase
@@ -259,8 +271,7 @@ public final class CodebaseServer extends Thread {
   * applet tag service could not be created.
   */
  public CodebaseServer(String base, int port) throws IOException {
-    this(base != null ? new String[] { "client.jar", base } : null, port,
-       "gnu.cajo.invoke.Client", null);
+    this(base, port, "gnu.cajo.invoke.Client");
  }
  /**
   * The server thread method, it will send the proxy codebase, and it will
