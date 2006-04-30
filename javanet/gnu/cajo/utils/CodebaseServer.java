@@ -211,14 +211,13 @@ public final class CodebaseServer extends Thread {
        "    <icon> kind=\"splash\" href=\"" + splash + "\"/>\r\n") +
        "  </information>\r\n" +
        "  <resources>\r\n" +
-       "    <j2se version=\"1.5+\"/>\r\n" +
-       "    <jar href=\"" + (jars == null ? "client.jar" : jars[0]) + "\"/>\r\n"
+       "    <j2se version=\"1.5+\"/>\r\n"
     );
     if (jars != null) {
        base.append("    <jar href=\"" + jars[0] + "\" main=\"true\"/>\r\n");
        for (int i = 0; i < jars.length; i++)
           base.append("    <jar href=\"" + jars[i] + "\" download=\"lazy\"/>\r\n");
-    }
+    } else base.append("    <jar href=\"client.jar\" main=\"true\"/>\r\n");
     base.append("  </resources>\r\n");
     base.append("  <application-desc main-class=\"");
     base.append(client);
