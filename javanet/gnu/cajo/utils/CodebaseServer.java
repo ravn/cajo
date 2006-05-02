@@ -100,10 +100,10 @@ public final class CodebaseServer extends Thread {
   * used in the constructor was zero, it will use an anonymous port; i.e. one
   * selected by the OS from any ports available at runtime. In that case, the
   * port actually offered by the operating system will be stored here
-  * automatically, following construction. <i><u>Note</u>:</i> The preferred
-  * field to check is <tt>serverPort</tt> this field is mutable unfortunately;
-  * it remains solely to maintain backward compatibility.
-  * @deprecated
+  * automatically, following construction.
+  * @deprecated The preferred field to check is <tt>serverPort</tt> as this
+  * field is mutable unfortunately; it remains solely to maintain backward
+  * compatibility.
   */
  public static int port;
  /**
