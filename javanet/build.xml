@@ -18,7 +18,9 @@
         </delete>
         <jar basedir="."
             jarfile="cajo.jar"
+            manifest="cajo.mft"
             includes="
+                readme.txt
                 gnu/cajo/invoke/*.class
                 gnu/cajo/utils/*.class
                 gnu/cajo/utils/extra/*.class
