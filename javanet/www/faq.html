@@ -95,6 +95,7 @@
                                          <li><a href=#18>Can I include cajo classes in a proprietary application JAR?</a>
                                          <li><a href=#19>Can I tell if my method is being invoked remotely vs. locally?</a>
                                          <li><a href=#20>Can I make my server accessible both inside <i>and</i> outside a NAT subnet?</a>
+                                         <li><a href=#21>How can I determine my cajo.jar library release number?</a>
                                       </ol>
 
                                       <a id="1"></a><b><u>1. Why doesn't the example work in Appletviewer?</u></b>
@@ -391,8 +392,14 @@
                                       The wrapper server need not even be running on the same physical machine
                                       as the local server. You could even place a <a href=https://cajo.dev.java.net/docs/gnu/cajo/utils/MonitorItem.html>
                                       MonitorItem</a> on the object for example, to get a detailed log of how
-                                      external clients are using the object.
+                                      external clients are using the object.<br><br>
 
+
+                                      <a id="21"></a><b><u>21. How can I determine my cajo.jar library release number?</u></b>
+                                      Starting with release 1.83, this is now easily done. The cajo.jar has
+                                      become executable! In a console window simply type:<br><br>
+                                      <tt> &nbsp;&nbsp;&nbsp; java -jar cajo.jar</tt> &nbsp;&nbsp;&nbsp; the
+                                      release number, and date, will be output.<br><br>
 
                                     </span>
                                  </td>
