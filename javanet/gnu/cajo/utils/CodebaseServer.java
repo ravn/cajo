@@ -126,9 +126,9 @@ public final class CodebaseServer extends Thread {
   * supporting documentaions pages, images, and even a favicon.ico.<p>
   * The server determines the name of the jar file in which it is running
   * courtesy of a very cool hack published by Laird Nelson in his
-  * weblog: http://weblogs.java.net/pub/wlg/1874 Thanks Laird! This is
-  * used to allow the server to serve all the jar files in its working
-  * directory tree <i>except</i> its own.
+  * weblog: <a href=http://weblogs.java.net/pub/wlg/1874>http://weblogs.java.net/pub/wlg/1874</a>
+  * Thanks Laird! This is used to allow the server to serve all the jar files
+  * in its working directory tree <i>except</i> its own.
   * @param port The TCP port on which to serve the codebase, and client
   * applet. It can be zero, to use an anonymous port. If zero, the actual
   * port selected by the OS at runtime will be stored in the
@@ -208,7 +208,7 @@ public final class CodebaseServer extends Thread {
        (icon == null ? "" :
        "    <icon href=\"" + icon + "\"/>\r\n") +
        (splash == null ? "" :
-       "    <icon  kind=\"splash\" href=\"" + splash + "\"/>\r\n") +
+       "    <icon href=\"" + splash + "\" kind=\"splash\"/>\r\n") +
        "  </information>\r\n" +
        "  <resources>\r\n" +
        "    <j2se version=\"1.5+\"/>\r\n"
@@ -391,7 +391,7 @@ public final class CodebaseServer extends Thread {
              } else if (anyFile || !itemName.endsWith(thisJar)) {
                 try {  // file request: send contents
                    InputStream ris = getClass().getResourceAsStream(itemName);
-                   if (ris == null)  // read from outside server jar
+                   if (ris == null)  // resource not inside server jar
                       ris = new FileInputStream('.' + itemName);
                    os.write(itemName.endsWith(".jar") ? jar : cls);
                    for (int i = ris.read(msg); i != -1; i = ris.read(msg))
