@@ -292,10 +292,12 @@
                                       you wish to make remotely callable. Normally this can <i>(and should)</i> be
                                       avoided completely, by designing an object expressly for remote invocation
                                       from the outset. However this is sometimes helpful, when remoting a derived
-                                      object, one that implements java.lang.Runnable for example. <i><u>Note</u>:</i>
-                                      This also allows wrappers to be <i>chainable,</i> to create things liked
-                                      monitored audited objects, and audited monitored objects. (two distinctly
-                                      <i>different</i> things)<br><br>
+                                      object, say one that extends <tt>javax.swing.JFrame</tt> for example.<br><br>
+
+                                      <i><u>Note</u>:</i> This is what also allows wrappers to be
+                                      <i>chainable;</i> to create things liked monitored audited objects, and
+                                      audited monitored objects. (two distinctly <i>different</i> things by the
+                                      way)<br><br>
 
                                       <a id="15"></a><b><u>15. Why is cajo licensed under the GNU LGPL?</u></b>
                                       The GNU LGPL gives you a very important guarantee. The way cajo works, to
