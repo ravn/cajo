@@ -111,10 +111,11 @@ public final class CodebaseServer extends Thread {
   * mechanism on the specified port. To shut the service down, call its
   * inherited interrupt method. All other constructors in this class call it.
   * @param jars An array of strings representing the path and filename of
-  * a library jar used by the client application. The CodebaseServer will
+  * a library jar needed by the client application. The CodebaseServer will
   * serve them to the remote JVM. The server will first search for the jar
   * in its own executable jar file, if that fails, then it will check the
-  * local filesystem.<p>
+  * local filesystem. The jars could represent individual proxies, or
+  * general-purpose shared libraries.<p>
   * The first jar named in the array will be assumed to be the jar containing
   * the main client class.<p>
   * <i><u>Note</u>:</i> if this value is null, it indicates that the proxy
