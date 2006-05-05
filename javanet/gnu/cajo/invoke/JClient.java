@@ -118,7 +118,7 @@ public final class JClient extends JApplet {
          int cPort = clientPort != null ? Integer.parseInt(clientPort) : 0;
          int lPort = localPort  != null ? Integer.parseInt(localPort)  : 0;
          if (proxyName == null) proxyName = "main";
-         Remote.config(null, lPort, clientHost, cPort);
+         Remote.config("0.0.0.0", lPort, clientHost, cPort);
          proxy = LocateRegistry.getRegistry(getCodeBase().getHost(), pPort);
          proxy = ((Registry)proxy).lookup(proxyName);
          proxy = Remote.invoke(proxy, "getProxy", null);
@@ -207,7 +207,7 @@ public final class JClient extends JApplet {
             int clientPort    = args.length > 1 ? Integer.parseInt(args[1]) : 0;
             String clientHost = args.length > 2 ? args[2] : null;
             int localPort     = args.length > 3 ? Integer.parseInt(args[3]) : 0;
-            String localHost  = args.length > 4 ? args[4] : null;
+            String localHost  = args.length > 4 ? args[4] : "0.0.0.0";
             Remote.config(localHost, localPort, clientHost, clientPort);
             proxy = Remote.getItem(args[0]);
             proxy = Remote.invoke(proxy, "getProxy", null);
