@@ -82,7 +82,6 @@ public final class CodebaseServer extends Thread {
  private final byte[] top, mid, tip, xml;
  private final String thisJar;
  private final ServerSocket ss;
- private final boolean anyFile;
  /**
   * This is the inbound ServerSocket port number providing both the HTTP
   * client tag and codebase jar service. If the server is behind a firewall,
@@ -238,7 +237,6 @@ public final class CodebaseServer extends Thread {
        base.append(System.getProperty("java.rmi.server.codebase"));
     }
     System.setProperty("java.rmi.server.codebase", base.toString());
-    anyFile = jars == null;
     start(); // ready to accept clients
  }
  /**
@@ -389,7 +387,7 @@ public final class CodebaseServer extends Thread {
                       os.write(out);
                    }
                 } catch(Exception x) { os.write(bye); }
-             } else if (anyFile || !itemName.endsWith(thisJar)) {
+             } else if (!itemName.endsWith(thisJar)) {
                 try {  // file request: send contents
                    InputStream ris = getClass().getResourceAsStream(itemName);
                    if (ris == null)  // resource not inside server jar
