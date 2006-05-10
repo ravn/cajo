@@ -42,10 +42,15 @@ import gnu.cajo.invoke.Remote;
 public final class CodebaseServer extends Thread {
   private static final byte[]
     bye = ( // http headers:
-       "HTTP/1.0 404 Object not found\r\n" +
-       "Content-type: text/plain\r\n" +
+       "HTTP/1.0 404 Not Found\r\n" +
+       "Content-type: text/html\r\n" +
        "Connection: close\r\n\r\n" +
-       "Not found"
+       "<html><head><title>404 - Not Found</title></head><body>" +
+       "<h1>404 - URL Not Found</h1>" +
+       "The requested resource does not exist on this server.<p>" +
+       "<hr><i>CodebaseServer: "+
+       "<a href=https://cajo.dev.java.net>The cajo project</a> " +
+       "https://cajo.dev.java.net</i></body></html>"
     ).getBytes(),
     apl = (
        "HTTP/1.0 200 OK\r\n"   +
