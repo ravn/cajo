@@ -45,12 +45,12 @@ public final class CodebaseServer extends Thread {
        "HTTP/1.0 404 Not Found\r\n" +
        "Content-type: text/html\r\n" +
        "Connection: close\r\n\r\n" +
-       "<html><head><title>404 - Not Found</title></head><body>" +
-       "<h1>404 - URL Not Found</h1>" +
-       "The requested resource does not exist on this server.<p>" +
-       "<hr><i>CodebaseServer: "+
-       "<a href=https://cajo.dev.java.net>The cajo project</a> " +
-       "https://cajo.dev.java.net</i></body></html>"
+       "<html><head><title>404: URL Not Found</title></head><body>" +
+       "<h1>404 - Not Found</h1>" +
+       "The resource requested does not exist on this server.<br><br>" +
+       "<hr><i>gnu.cajo.utils.CodebaseServer - The cajo project: "+
+       "<a href=https://cajo.dev.java.net>https://cajo.dev.java.net</a>." +
+       "</i></body></html>"
     ).getBytes(),
     apl = (
        "HTTP/1.0 200 OK\r\n"   +
