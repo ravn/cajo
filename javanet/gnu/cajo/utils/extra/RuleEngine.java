@@ -2,6 +2,7 @@ package gnu.cajo.utils.extra;
 
 import java.util.Vector;
 import java.util.Hashtable;
+import java.util.Enumeration;
 import java.io.Serializable;
 import gnu.cajo.invoke.Remote;
 
@@ -59,6 +60,8 @@ public class RuleEngine implements Serializable {
     * provided, however it can be offered by a subclass of this engine, if
     * needed. Rules are generally assumed to be references to objects in
     * remote JVMs, but that can be local object references, if necessary.
+    * Multiple rules can be assigned to the same fact, just as the same
+    * rule can be assigned to multiple facts.
     */
    protected final Hashtable rules = new Hashtable();
    /**
@@ -76,12 +79,26 @@ public class RuleEngine implements Serializable {
     * with the fact object. If the rule instance determines all of its
     * criteria necessary for its firing has been met, then it is the
     * responsibility of that object to carry it out.<p>
+    * Additionally, it will also notify all rules which are registered for
+    * facts which are superclasses of the fact being asserted. This allows
+    * supports logical <i>induction</i> chains of arbitrary length.<p>
+    * For example, assume a fact is asserted:<p>
+    * John sold his Jeep<p>
+    * Assume this fact is an instance of a Jeep object. Correspondingly,
+    * any rules listening for its superclass Truck, would also be
+    * notified. Similarly any rules listening for Truck's superclass
+    * Automobile would also be notified. Therefore the fact that John
+    * sold his Jeep also would indicate that an automobile was sold. In this
+    * case, the class hierarchy models logical sufficiency.<p>
+    * The contents of the class, at each level of the hierarchy support
+    * logical <i>deduction</i> as well. For example:<p>
+    * An automobile has wheels, a truck is a type of automobile, a Jeep
+    * is a type of truck: therefore John's Jeep has wheels. In this
+    * context, the class hierarchy models logical necessity.<p>
     * <i><u>Note</u>:</i> Rule predicate invocations are expected to return
     * as quickly as possible, to ensure maximum performance of the engine.
     * Typically rule objects will save the fact argument, notify a waiting
-    * local thread, and return.  If a rule invocation results in an
-    * exception, normally for network related errors, it will be removed from
-    * the engine for that fact type. A rule generally will register for
+    * local thread, and return. A rule generally will register for
     * multiple fact types, therefore its predicate method most likely
     * <i>will</i> be invoked reentrantly. A rule must <i>never</i>
     * synchronise its predicate method, as the impact could be disastrous.
@@ -98,65 +115,50 @@ public class RuleEngine implements Serializable {
          throw new IllegalArgumentException("Fact must be Serializable");
       Class factType = fact.getClass();
       memory.put(factType, fact);
-      Vector v = (Vector)rules.get(factType);
-      if (v != null) {
-         Object list[] = v.toArray();
-         for (int i = 0; i < list.length; i++)
-            try { Remote.invoke(list[i], "predicate", fact); }
-            catch(Exception x) { remove(factType, list[i]); }
+      Enumeration ruleKeys = rules.keys();
+      while(ruleKeys.hasMoreElements()) {
+         Class ruleKey = (Class)ruleKeys.nextElement();
+         if (ruleKey.isAssignableFrom(factType)) { // induction
+            Vector v = (Vector)rules.get(ruleKey);
+            Object list[] = v.toArray();
+            for (int i = 0; i < list.length; i++)
+               try { Remote.invoke(list[i], "predicate", fact); }
+               catch(Exception x) {}
+         }
       }
    }
    /**
     * This method is used to rescind a fact in the rule engine knowledge
     * base. The engine will extract from its rule base, all rules registered
-    * for notification about the particular type of fact. Each will be
-    * notified serially, by invokeing its public <tt>retract</tt> method,
-    * with the class of the fact being retracted.<p>
+    * for notification about the particular type of fact, and all
+    * superclasses of the fact. Each will be notified serially, by invoking
+    * its public <tt>retract</tt> method, with the class of the fact being
+    * retracted.<p>
     * <i><u>Note</u>:</i> Rule retract invocations are expected to return as
     * quickly as possible, to ensure maximum performance of the engine.
     * Typically rule objects will save the fact class, notify a waiting local
-    * thread, and return.  If a rule invocation results in an exception,
-    * normally for network related errors, it will be removed from the engine
-    * for that fact type automatically. A rule generally will register for
-    * multiple fact types, therefore its retract method most likely
-    * <i>will</i> be invoked reentrantly. A rule must <i>never</i>
-    * synchronise its retract method, as the impact could be disastrous.
+    * thread, and return. A rule generally will register for multiple fact
+    * types, therefore its retract method most likely <i>will</i> be invoked
+    * reentrantly. A rule must <i>never</i> synchronise its retract method,
+    * as the impact could be disastrous.
     * @param factType The category of fact that is being removed from the
     * knowledge base.
     */
    public void retract(Class factType) {
       Object fact = memory.remove(factType);
       if (fact != null) {
-         Vector v = (Vector)rules.get(factType);
-         if (v != null) {
-            Object list[] = v.toArray();
-            for (int i = 0; i < list.length; i++)
-               try { Remote.invoke(list[i], "retract", factType); }
-               catch(Exception x) { remove(factType, list[i]); }
+         Enumeration ruleKeys = rules.keys();
+         while(ruleKeys.hasMoreElements()) {
+            Class ruleKey = (Class)ruleKeys.nextElement();
+            if (ruleKey.isAssignableFrom(factType)) {
+               Vector v = (Vector)rules.get(ruleKey);
+               Object list[] = v.toArray();
+               for (int i = 0; i < list.length; i++)
+                  try { Remote.invoke(list[i], "retract", factType); }
+                  catch(Exception x) {}
+            }
          }
       }
-   }
-   /**
-    * This method is invoked to determine the current state of a rule in
-    * the knowledge base. The rule engine will extract the fact, and if
-    * it exists, it will invoke the rule's <tt>predicate</tt> method with
-    * the fact. This is approach done to simplify the structure of rule
-    * objects. However, it is very important to understand that due to the
-    * inherent reentrancy of the rule engine; a requested fact's state could
-    * actually arrive <i>following</i> an invocation with a <i>more</i>
-    * current state. If this would cause problems, it is recommended that
-    * the fact object implement some manner of timestamp.
-    * @param factType The category of fact whose current state is being
-    * requested.
-    * @param rule The rule whose <tt>predicate</tt> method is to be invoked
-    * with the fact, if it exists. It is typically a reference to an object
-    * in a remote JVM, but it can be to a local object, or even a proxy.
-    */
-   public void getFact(Class factType, Object rule) {
-      Object fact = memory.get(factType);
-      if (fact != null)
-         try { Remote.invoke(rule, "predicate", fact); }
-         catch(Exception x) { remove(factType, rule); }
    }
    /**
     * This method is used to register a rule instance for a type of 
@@ -172,15 +174,25 @@ public class RuleEngine implements Serializable {
     * serialisable. This is a requirement to keep the rule engine
     * serialisable.
     */
-   public synchronized void add(Class factType, Object rule) {
+   public void add(Class factType, Object rule) {
       if (!(rule instanceof Serializable))
          throw new IllegalArgumentException("Rule must be Serializable");
-      Vector list = (Vector)rules.get(factType);
-      if (list == null) {
-         list = new Vector();
-         rules.put(factType, list);
+      synchronized(this) {
+         Vector list = (Vector)rules.get(factType);
+         if (list == null) {
+            list = new Vector();
+            rules.put(factType, list);
+         }
+         list.add(rule);
       }
-      list.add(rule);
+      Enumeration memoryKeys = memory.keys();
+      while(memoryKeys.hasMoreElements()) {
+         Class memoryKey = (Class)memoryKeys.nextElement();
+         if (factType.isAssignableFrom(memoryKey)) {
+            try { Remote.invoke(rule, "predicate", memory.get(memoryKey)); }
+            catch(Exception x) {}
+         }
+      }
    }
    /**
     * This method is used to unregister a rule instance for a type of 
