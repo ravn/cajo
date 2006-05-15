@@ -85,14 +85,13 @@ public class RuleEngine implements Serializable {
        * approve the change by simply returning. It can also throw an
        * Exception of arbitrary type, which will abort the change.
        * By default, it simply returns.
-       * @param oldFact The fact that is proposed for change.
-       * @param newFact The fact that will take its place.
+       * @param fact The fact that will take its place.
        * @param keys The path of candidate keys, to provide a semantic
-       * context for the facts, as needed.
+       * context for the fact, if needed.
        * @throws Exception For any reason, as decided by subclassses.
        * The base class never throws an Exception.
        */
-      public void positOK(Object newFact, Object oldFact, Object keys[])
+      public void positOK(Object fact, Object keys[])
          throws Exception {}
       /**
        * This method is invoked by the rule engine to make a change,
@@ -129,14 +128,12 @@ public class RuleEngine implements Serializable {
        * approve the change by simply returning. It can also throw an
        * Exception of arbitrary type, which will abort the change.
        * By default, it simply returns.
-       * @param oldFact The fact that is proposed for retraction.
        * @param keys The path of candidate keys, to provide a semantic
        * context for the fact, as needed.
        * @throws Exception For any reason, as decided by subclassses.
        * The base class never throws an Exception.
        */
-      public void retractOK(Object oldFact, Object keys[])
-         throws Exception {}
+      public void retractOK(Object keys[]) throws Exception {}
       /**
        * This method is invoked by the rule engine to make a deletion
        * from the local fact base. It will notify the local processing
@@ -182,14 +179,6 @@ public class RuleEngine implements Serializable {
          } catch(InterruptedException x) {}
       }
    }
-   /**
-    * This field represents the current state of all facts in the fact
-    * base. The ability to clear the fact base is not provided, however it
-    * can be offered by a subclass of this engine, if needed. Facts are
-    * generally assumed to be local data objects, but they can in fact be
-    * references, to objects in remote JVMs.
-    */
-   protected final Hashtable memory = new Hashtable();
    /**
     * This field represents the set of rules registered in the engine's
     * rule base. The rules are organised by the <i>types</i> of facts for
@@ -248,30 +237,17 @@ public class RuleEngine implements Serializable {
     * @throws NullPointerException if either the fact, or any of the keys
     * are null.
     */
-   public Object posit(Object fact, Object keys[]) throws Exception {
-      Object element = memory.get(keys[0]);
-      for (int i = 1; i < keys.length; i++) {
-         Object temp = ((Hashtable)element).get(keys[i]);
-         if (temp == null) { // if no path, make one!
-            if (i < keys.length - 1) {
-               temp = new Hashtable();
-               ((Hashtable)element).put(keys[i], temp);
-            }
-         }
-         if (i < keys.length -1) element = temp;
-      }
+   public void posit(Object fact, Object keys[]) throws Exception {
       Object rulez[] = rules(keys);
-      Object oldFact = ((Hashtable)element).get(keys[keys.length - 1]);
       for (int i = 0; i < rulez.length; i++)
          try {
             Remote.invoke(
-               rulez[i], "positOK", new Object[] { fact, oldFact, keys });
+               rulez[i], "positOK", new Object[] { fact, keys });
          } catch(RemoteException x) {}
       for (int i = 0; i < rulez.length; i++)
          try {
             Remote.invoke(rulez[i], "posit", new Object[] { fact, keys });
          } catch(RemoteException x) {}
-      return ((Hashtable)element).put(keys[keys.length - 1], fact);
    }
    /**
     * This method is used to rescind a fact in the rule engine fact
@@ -292,36 +268,14 @@ public class RuleEngine implements Serializable {
     * base, or an array of removed facts.
     * @throws ClassCastException if the path to the fact does not exist.
     */
-   public Object retract(Object keys[]) throws Exception {
-      Object element = memory.get(keys[0]);
-      for (int i = 1; i < keys.length - 1; i++)
-         element = ((Hashtable)element).get(keys[i]);
+   public void retract(Object keys[]) throws Exception {
       Object rulez[] = rules(keys);
-      Object oldFact = ((Hashtable)element).get(keys[keys.length - 1]);
       for (int i = 0; i < rulez.length; i++)
-         try {
-            Remote.invoke(
-               rulez[i], "retractOK", new Object[] { oldFact, keys });
-         } catch(RemoteException x) {}
+         try { Remote.invoke(rulez[i], "retractOK", keys); }
+         catch(RemoteException x) {}
       for (int i = 0; i < rulez.length; i++)
          try { Remote.invoke(rulez[i], "retract", keys); }
          catch(RemoteException x) {}
-      return ((Hashtable)element).remove(keys[keys.length - 1]);
-   }
-   /**
-    * This method is used to request the current state of a fact in the
-    * fact base.
-    * @param keys The chain of keys leading to the element of interest
-    * in the fact base.
-    * @return An instance of the fact that was obtained from the fact
-    * base, if any. It can be either an object, or a Hashtable.
-    * @throws ClassCastException if the path to the fact does not exist.
-    */
-   public Object query(Object keys[]) {
-      Object element = memory.get(keys[0]);
-      for (int i = 1; i < keys.length; i++)
-         element = ((Hashtable)element).get(keys[i]);
-      return element;
    }
    /**
     * This method is used to register a rule instance for a type of 
@@ -334,9 +288,8 @@ public class RuleEngine implements Serializable {
     * a local object, or even a proxy object.
     * @param keys The chain of keys leading to the element of interest
     * in the fact base.
-    * @return The rule overridden, if any.
     */
-   public Object add(Object rule, Object keys[]) {
+   public void add(Object rule, Object keys[]) {
       Object element = rules.get(keys[0]);
       for (int i = 1; i < keys.length; i++) {
          Object temp = ((Hashtable)element).get(keys[i]);
@@ -350,7 +303,6 @@ public class RuleEngine implements Serializable {
       }
       Vector v = (Vector)((Hashtable)element).get(keys[keys.length - 1]);
       v.add(rule);
-      return query(keys);
    }
    /**
     * This method is used to unregister a rule instance for a type of 
