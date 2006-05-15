@@ -92,7 +92,7 @@ public class RuleEngine implements Serializable {
        * @throws Exception For any reason, as decided by subclassses.
        * The base class never throws an Exception.
        */
-      public void positOK(Object oldFact, Object newFact, Object keys[])
+      public void positOK(Object newFact, Object oldFact, Object keys[])
          throws Exception {}
       /**
        * This method is invoked by the rule engine to make a change,
@@ -117,8 +117,6 @@ public class RuleEngine implements Serializable {
             }
             if (i < keys.length -1) element = temp;
          }
-         Object oldFact = ((Hashtable)element).get(keys[keys.length - 1]);
-         positOK(oldFact, fact, keys);
          ((Hashtable)element).put(keys[keys.length - 1], fact);
          change = true;
          if (thread == null) {
@@ -161,8 +159,6 @@ public class RuleEngine implements Serializable {
             }
             if (i < keys.length -1) element = temp;
          }
-         Object oldFact = ((Hashtable)element).get(keys[keys.length - 1]);
-         retractOK(oldFact, keys);
          ((Hashtable)element).remove(keys[keys.length - 1]);
          change = true;
          if (thread == null) {
@@ -269,7 +265,7 @@ public class RuleEngine implements Serializable {
       for (int i = 0; i < rulez.length; i++)
          try {
             Remote.invoke(
-               rulez[i], "positOK", new Object[] { oldFact, fact, keys });
+               rulez[i], "positOK", new Object[] { fact, oldFact, keys });
          } catch(RemoteException x) {}
       for (int i = 0; i < rulez.length; i++)
          try {
