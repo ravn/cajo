@@ -5,7 +5,7 @@ import java.util.Hashtable;
 import java.util.Enumeration;
 import java.io.Serializable;
 import gnu.cajo.invoke.Remote;
-import gnu.cajo.invoke.RemoteInvoke;
+import java.rmi.RemoteException;
 
 /*
  * cajo object oriented rule engine
@@ -33,9 +33,9 @@ import gnu.cajo.invoke.RemoteInvoke;
  * This class is a cajo-based reformulation of rule-based reasoning systems,
  * for declarative programming. This engine does not suffer from the large
  * memory requirements associated with the Rete Algorithm, as it offloads
- * each rule's state to distributed JVMs. The engine is also serialisable;
- * to allow it to scale, as well as providing both modularity, and
- * redundancy.<p>
+ * each rule's state and inference to distributed JVMs. The engine is also
+ * serialisable; to allow it to scale, as well as providing both modularity,
+ * and redundancy.<p>
  * The application of fuzzy facts, and fuzzy predicates is not only easily
  * supported, but is in fact <i>highly</i> recommended.<p>
  * <i><u>Note</u>:</i> to compile this class, it is best to set the java
@@ -48,50 +48,78 @@ public class RuleEngine implements Serializable {
    /**
     * This class is an abstract base for building rules. It minimises load
     * on the rule engine, and properly manages asynchronous change without
-    * synchronisation or deadlock problems. It is highly recommended to
-    * extend this class for your rules, however, only to the extend of
-    * defining its abstract method reason. All methods should be left
-    * unchanged, unless it is <i>extremely</i> critical to the operation
-    * of the rule.
+    * synchronisation, or deadlock problems. It is highly recommended to
+    * extend this class for your rules.
     */
    public static abstract class Rule implements Serializable, Runnable {
       /**
-       * The rule specific local knowledge base on which to reason.
+       * The rule specific local fact base on which to infer.
        */
       protected Hashtable facts = new Hashtable();
       /**
        * This flag indicates that asynchronous modification has been
-       * made to the knowledge base. <i><u>Very Important</u>:</i>
-       * The <i>first</i> instruction of the reason method should be to
+       * made to the fact base. <i><u>Very Important</u>:</i>
+       * The <i>first</i> instruction of the infer method should be to
        * set it false.
        */
       protected boolean change;
       /**
        * The local reasoning thread. It is lazily instantiated, and can
        * be shut down by calling its interrupt method, if necessary.
-       * It's job is to call the reason method whenever there is a
-       * change (addidion, removal, modification) to the local knowledge
+       * It's job is to call the infer method whenever there is a
+       * change (addidion, removal, modification) to the local fact
        * base.
        */
       protected transient Thread thread;
       /**
        * This method is completely rule-specific. It is called when there
-       * has been a change to the local knowledge base. It should first
+       * has been a change to the local fact base. It should first
        * reset the change flag, then evaluate its state to make decisions.
-       * It is possible for the knowledgebase to be actively changing,
+       * It is possible for the fact base to be actively changing,
        * while this method is executing. This can be detected by monitoring
        * the state of the change flag.
        */
-      protected abstract void reason();
+      protected abstract void infer();
+      /**
+       * This method is called when a new fact is being posited. It can
+       * approve the change by simply returning. It can also throw an
+       * Exception of arbitrary type, which will abort the change.
+       * By default, it simply returns.
+       * @param oldFact The fact that is proposed for change.
+       * @param newFact The fact that will take its place.
+       * @param keys The path of candidate keys, to provide a semantic
+       * context for the facts, as needed.
+       * @throws Exception For any reason, as decided by subclassses.
+       * The base class never throws an Exception.
+       */
+      public void positOK(Object oldFact, Object newFact, Object keys[])
+         throws Exception {}
       /**
        * This method is invoked by the rule engine to make a change,
-       * addition or modification, to the local knowledge base. It will
+       * addition or modification, to the local fact base. It will
        * notify the local processing thread, creating it if necessary, and
        * return. Its run time is designed to be as short as possible, and
        * should not be overridden, unless it is absolutely critical.
+       * @throws Exception An arbitrary exception may be thrown by the
+       * positOk method of this class, if it does not want the fact to
+       * be changed.
        */
-      public synchronized void predicate(Object fact) {
-         facts.put(fact.getClass(), fact);
+      public synchronized void posit(Object fact, Object keys[])
+         throws Exception {
+         Object element = facts.get(keys[0]);
+         for (int i = 1; i < keys.length; i++) {
+            Object temp = ((Hashtable)element).get(keys[i]);
+            if (temp == null) { // if no path, make one!
+               if (i < keys.length - 1) {
+                  temp = new Hashtable();
+                  ((Hashtable)element).put(keys[i], temp);
+               }
+            }
+            if (i < keys.length -1) element = temp;
+         }
+         Object oldFact = ((Hashtable)element).get(keys[keys.length - 1]);
+         positOK(oldFact, fact, keys);
+         ((Hashtable)element).put(keys[keys.length - 1], fact);
          change = true;
          if (thread == null) {
             thread = new Thread(this);
@@ -99,14 +127,43 @@ public class RuleEngine implements Serializable {
          } else notify();
       }
       /**
+       * This method is called when a fact is being rescinded. It can
+       * approve the change by simply returning. It can also throw an
+       * Exception of arbitrary type, which will abort the change.
+       * By default, it simply returns.
+       * @param oldFact The fact that is proposed for retraction.
+       * @param keys The path of candidate keys, to provide a semantic
+       * context for the fact, as needed.
+       * @throws Exception For any reason, as decided by subclassses.
+       * The base class never throws an Exception.
+       */
+      public void retractOK(Object oldFact, Object keys[])
+         throws Exception {}
+      /**
        * This method is invoked by the rule engine to make a deletion
-       * from the local knowledge base. It will notify the local processing
+       * from the local fact base. It will notify the local processing
        * thread, creating it if necessary, and return. Its run time is
        * designed to be as short as possible, and should not be overridden,
        * unless it is absolutely critical.
+       * @throws Exception An arbitrary exception may be thrown by the
+       * retractOk method of this class, if it does not want the fact to
+       * be rescinded.
        */
-      public synchronized void retract(Object fact) {
-         facts.remove(fact.getClass());
+      public synchronized void retract(Object keys[]) throws Exception {
+         Object element = facts.get(keys[0]);
+         for (int i = 1; i < keys.length; i++) {
+            Object temp = ((Hashtable)element).get(keys[i]);
+            if (temp == null) { // if no path, make one!
+               if (i < keys.length - 1) {
+                  temp = new Hashtable();
+                  ((Hashtable)element).put(keys[i], temp);
+               }
+            }
+            if (i < keys.length -1) element = temp;
+         }
+         Object oldFact = ((Hashtable)element).get(keys[keys.length - 1]);
+         retractOK(oldFact, keys);
+         ((Hashtable)element).remove(keys[keys.length - 1]);
          change = true;
          if (thread == null) {
             thread = new Thread(this);
@@ -115,27 +172,26 @@ public class RuleEngine implements Serializable {
       }
       /**
        * This is the local change processing thread. It waits until there
-       * has been a change to the local knowledge base, and invokes the
-       * reason method. It is used to offload the reasoning processing
-       * from the change invocation thread. It is created on the first
-       * change to this rule.
+       * has been a change to the local fact base, and invokes the
+       * infer method. It is used to offload the reasoning processing
+       * from the change invocation thread. It is created automatically,
+       * on the first change to this rule.
        */
       public void run() {
          try {
             while (true) {
-               reason();
+               infer();
                synchronized(this) { while(!change) wait(); }
             }
          } catch(InterruptedException x) {}
       }
    }
    /**
-    * This field represents the current state of all facts in the knowledge
-    * base. The facts are organised by their type, each type of fact is
-    * allowed only one instance. The ability to clear the knowledge base is
-    * not provided, however it can be offered by a subclass of this engine,
-    * if needed. Facts are generally assumed to be local data objects, but
-    * they can in fact be references, to objects in remote JVMs.
+    * This field represents the current state of all facts in the fact
+    * base. The ability to clear the fact base is not provided, however it
+    * can be offered by a subclass of this engine, if needed. Facts are
+    * generally assumed to be local data objects, but they can in fact be
+    * references, to objects in remote JVMs.
     */
    protected final Hashtable memory = new Hashtable();
    /**
@@ -150,79 +206,79 @@ public class RuleEngine implements Serializable {
     */
    protected final Hashtable rules = new Hashtable();
    /**
+    * This utility method returns all registered rules, for the given key
+    * path.
+    * @param keys The array of candidate keys leading to the list of
+    * rules.
+    * @return An array of references to the rule objects. Typically these
+    * are used for notification of a rule addition, modification, or deletion.
+    * @throws ClassCastException if the provided key path is invalid, or if
+    * the last node is not a rule collection.
+    */
+   protected Object[] rules(Object keys[]) {
+      Object element = rules.get(keys[0]);
+      for (int i = 1; i < keys.length; i++)
+         element = ((Hashtable)element).get(keys[i]);
+      return ((Vector)element).toArray();
+   }
+   /**
     * This constructor performs no function, as the operation of the rule
     * engine is completely runtime dependent.
     */
    public RuleEngine() {}
    /**
     * This method is used to assert, or modify, a fact in the rule engine
-    * knowledge base. If no fact of this type has been already registered
+    * fact base. If no fact of this type has been already registered
     * with this engine, the fact will be added automatically.<p>
     * The engine will extract from its rule base, all rules registered for
     * notification about the particular type of fact. Each rule will be
-    * notified serially, by invoking its public <tt>predicate</tt> method,
-    * with the fact object. If the rule instance determines all of its
+    * notified serially, by invoking its public <tt>posit</tt> method,
+    * with the fact object. If a rule instance determines all of its
     * criteria necessary for its firing has been met, then it is the
-    * responsibility of that object to carry it out.<p>
-    * Additionally, it will also notify all rules which are registered for
-    * facts which are superclasses of the fact being asserted. This allows
-    * supports logical <i>induction</i> chains of arbitrary length.<p>
-    * For example, assume a fact is asserted:<p>
-    * John sold his Jeep<p>
-    * Assume this fact is an instance of a Jeep object. Correspondingly,
-    * any rules listening for its superclass Truck, would also be
-    * notified. Similarly any rules listening for Truck's superclass
-    * Automobile would also be notified. Therefore the fact that John
-    * sold his Jeep also would indicate that an automobile was sold. In this
-    * case, the class hierarchy models logical sufficiency.<p>
-    * The contents of the class, at each level of the hierarchy support
-    * logical <i>deduction</i> as well. For example:<p>
-    * An automobile has wheels, a truck is a type of automobile, a Jeep
-    * is a type of truck: therefore John's Jeep has wheels. In this
-    * context, the class hierarchy models logical necessity.<p>
-    * The engine will work like a traditional rule engine, if class
-    * hierarchies are not used, i.e. each fact type is a base class.<p>
-    * <i><u>Note</u>:</i> Rule predicate invocations are expected to return
-    * as quickly as possible, to ensure maximum performance of the engine.
-    * Typically rule objects will save the fact argument in a queue, notify
-    * a waiting local thread, and return. A rule generally will register for
-    * multiple fact types, therefore its predicate method most likely
-    * <i>will</i> be invoked reentrantly.
-    * @param fact The fact that is being added or updated to the knowledge
+    * responsibility of that rule to carry it out.<p>
+    * Any rule is capable of aborting this change, by throwing an exception.
+    * <i><u>Note</u>:</i> Rule <tt>posit</tt> invocations are expected to
+    * return as quickly as possible to ensure maximum performance of the
+    * engine. Typically rule objects will save the fact argument in a queue,
+    * notify a waiting local thread, and return. A rule generally will
+    * register for multiple fact types, therefore its posit method most
+    * likely <i>will</i> be invoked reentrantly.
+    * @param fact The fact that is being added or updated to the fact
     * base. The fact is a collection of data logically related to some
     * facet of the system. It is must be a local object. To minimise traffic,
     * facts can also be sent in an Object array.
-    * @throws IllegalArgumentException If the provided fact is not
-    * serialisable. This is a requirement to keep the rule engine
-    * serialisable. Also if the instance of the fact provided is not a local
-    * object reference.
+    * @param keys The chain of keys leading to the element of interest
+    * in the fact base.
+    * @throws NullPointerException if either the fact, or any of the keys
+    * are null.
     */
-   public void posit(Object fact) {
-      Object facts[] =  fact instanceof Object[] ?
-         (Object[])fact : new Object[] { fact };
-      for (int i = 0; i < facts.length; i++) {
-         fact = facts[i];
-         if (fact instanceof RemoteInvoke)
-            throw new IllegalArgumentException("Fact must be local");
-         if (!(fact instanceof Serializable))
-            throw new IllegalArgumentException("Fact must be Serializable");
-         Class factType = fact.getClass();
-         memory.put(factType, fact);
-         Enumeration ruleKeys = rules.keys();
-         while(ruleKeys.hasMoreElements()) {
-            Class ruleKey = (Class)ruleKeys.nextElement();
-            if (ruleKey.isAssignableFrom(factType)) { // induction
-               Vector v = (Vector)rules.get(ruleKey);
-               Object list[] = v.toArray();
-               for (int j = 0; j < list.length; j++)
-                  try { Remote.invoke(list[i], "predicate", fact); }
-                  catch(Exception x) {}
+   public Object posit(Object fact, Object keys[]) throws Exception {
+      Object element = memory.get(keys[0]);
+      for (int i = 1; i < keys.length; i++) {
+         Object temp = ((Hashtable)element).get(keys[i]);
+         if (temp == null) { // if no path, make one!
+            if (i < keys.length - 1) {
+               temp = new Hashtable();
+               ((Hashtable)element).put(keys[i], temp);
             }
          }
+         if (i < keys.length -1) element = temp;
       }
+      Object rulez[] = rules(keys);
+      Object oldFact = ((Hashtable)element).get(keys[keys.length - 1]);
+      for (int i = 0; i < rulez.length; i++)
+         try {
+            Remote.invoke(
+               rulez[i], "positOK", new Object[] { oldFact, fact, keys });
+         } catch(RemoteException x) {}
+      for (int i = 0; i < rulez.length; i++)
+         try {
+            Remote.invoke(rulez[i], "posit", new Object[] { fact, keys });
+         } catch(RemoteException x) {}
+      return ((Hashtable)element).put(keys[keys.length - 1], fact);
    }
    /**
-    * This method is used to rescind a fact in the rule engine knowledge
+    * This method is used to rescind a fact in the rule engine fact
     * base. The engine will extract from its rule base, all rules registered
     * for notification about the particular type of fact, and all
     * superclasses of the fact. Each will be notified serially, by invoking
@@ -234,102 +290,87 @@ public class RuleEngine implements Serializable {
     * a waiting local thread, and return. A rule generally will register for
     * multiple fact types, therefore its retract method most likely
     * <i>will</i> be invoked reentrantly.
-    * @param factType The Class of the fact that is being removed from the
-    * knowledge base. To minimise traffic, fact types can be sent in a
-    * Class array.
-    * @return An instance of the fact that was removed from the knowledge
+    * @param keys The chain of keys leading to the element of interest
+    * in the fact base.
+    * @return An instance of the fact that was removed from the fact
     * base, or an array of removed facts.
+    * @throws ClassCastException if the path to the fact does not exist.
     */
-   public Object retract(Object factType) {
-      Class factTypes[] = factType instanceof Class[] ?
-         (Class[])factType : new Class[] { (Class)factType };
-      Object facts[] = new Object[factTypes.length];
-      for (int i = 0; i < factTypes.length; i++) {
-         Class facttype = factTypes[i];
-         facts[i] = memory.remove(facttype);
-         if (facts[i] != null) {
-            Enumeration ruleKeys = rules.keys();
-            while(ruleKeys.hasMoreElements()) {
-               Class ruleKey = (Class)ruleKeys.nextElement();
-               if (ruleKey.isAssignableFrom(facttype)) {
-                  Vector v = (Vector)rules.get(ruleKey);
-                  Object list[] = v.toArray();
-                  for (int j = 0; j < list.length; i++)
-                     try { Remote.invoke(list[j], "retract", facts[i]); }
-                     catch(Exception x) {}
-               }
-            }
-         }
-      }
-      return facts.length == 1 ? facts[0] : facts;
+   public Object retract(Object keys[]) throws Exception {
+      Object element = memory.get(keys[0]);
+      for (int i = 1; i < keys.length - 1; i++)
+         element = ((Hashtable)element).get(keys[i]);
+      Object rulez[] = rules(keys);
+      Object oldFact = ((Hashtable)element).get(keys[keys.length - 1]);
+      for (int i = 0; i < rulez.length; i++)
+         try {
+            Remote.invoke(
+               rulez[i], "retractOK", new Object[] { oldFact, keys });
+         } catch(RemoteException x) {}
+      for (int i = 0; i < rulez.length; i++)
+         try { Remote.invoke(rulez[i], "retract", keys); }
+         catch(RemoteException x) {}
+      return ((Hashtable)element).remove(keys[keys.length - 1]);
    }
    /**
     * This method is used to request the current state of a fact in the
-    * knowledge base.
-    * @param factType The Class of the fact that is being requested from the
-    * knowledge base. To minimise traffic, the fact tyhpes can be sent in a
-    * Class array.
-    * @return An instance of the fact that was obtained from the knowledge
-    * base, if any, or an array of facts.
+    * fact base.
+    * @param keys The chain of keys leading to the element of interest
+    * in the fact base.
+    * @return An instance of the fact that was obtained from the fact
+    * base, if any. It can be either an object, or a Hashtable.
+    * @throws ClassCastException if the path to the fact does not exist.
     */
-   public Object query(Object factType) {
-      Class factTypes[] = factType instanceof Class[] ?
-         (Class[])factType : new Class[] { (Class)factType };
-      Object facts[] = new Object[factTypes.length];
-      for (int i = 0; i < factTypes.length; i++)
-         facts[i] = memory.get(factTypes[i]);
-      return facts.length == 1 ? facts[0] : facts;
+   public Object query(Object keys[]) {
+      Object element = memory.get(keys[0]);
+      for (int i = 1; i < keys.length; i++)
+         element = ((Hashtable)element).get(keys[i]);
+      return element;
    }
    /**
     * This method is used to register a rule instance for a type of 
     * fact. The rule engine will store the rule reference, to have either
-    * its <tt>predicate</tt> or its <tt>retract</tt> methods invoked, as the
+    * its <tt>posit</tt> or its <tt>retract</tt> methods invoked, as the
     * state of the fact of interest changes. It is worth mentioning, a
     * single rule instance is often used to monitor multiple types of facts.
-    * <p>When a rule is first rigistered, the engine will check its knowledge
-    * base, if there are a fact of the class type posited, or any of its
-    * subclasses, they will all be invoked on the rules <tt>predicate</tt>
-    * method.
-    * @param factType The category of fact to be monitored.
-    * @param rule The rule to be notified when a fact state changes. It is
+    * @param rule The rule to be notified when the fact state changes. It is
     * typically a reference to an object in a remote JVM, but it can be to
     * a local object, or even a proxy object.
-    * @throws IllegalArgumentException If the provided rule is not
-    * serialisable. This is a requirement to keep the rule engine
-    * serialisable.
+    * @param keys The chain of keys leading to the element of interest
+    * in the fact base.
+    * @return The rule overridden, if any.
     */
-   public void add(Class factType, Object rule) {
-      if (!(rule instanceof Serializable))
-         throw new IllegalArgumentException("Rule must be Serializable");
-      Vector list = (Vector)rules.get(factType);
-      if (list == null) synchronized(this) {
-         list = (Vector)rules.get(factType);
-         if (list == null) {
-            list = new Vector();
-            rules.put(factType, list);
+   public Object add(Object rule, Object keys[]) {
+      Object element = rules.get(keys[0]);
+      for (int i = 1; i < keys.length; i++) {
+         Object temp = ((Hashtable)element).get(keys[i]);
+         if (temp == null) { // if no path, make one!
+            if (i < keys.length - 1) {
+               temp = new Hashtable();
+               ((Hashtable)element).put(keys[i], temp);
+            }
          }
+         element = temp;
       }
-      list.add(rule);
-      Enumeration memoryKeys = memory.keys();
-      while(memoryKeys.hasMoreElements()) {
-         Class memoryKey = (Class)memoryKeys.nextElement();
-         if (factType.isAssignableFrom(memoryKey)) {
-            try { Remote.invoke(rule, "predicate", memory.get(memoryKey)); }
-            catch(Exception x) {}
-         }
-      }
+      Vector v = (Vector)((Hashtable)element).get(keys[keys.length - 1]);
+      v.add(rule);
+      return query(keys);
    }
    /**
     * This method is used to unregister a rule instance for a type of 
     * fact. The rule engine will delete the rule reference from its
-    * knowledge base.
-    * @param factType The category of fact being monitored.
+    * fact base.
     * @param rule The rule to be removed from the engine. It is typically a
     * reference to an object in a remote JVM, but it can be to a local
     * object, or even a proxy object.
+    * @param keys The chain of keys leading to the element of interest
+    * in the fact base.
     */
-   public void remove(Class factType, Object rule) {
-      Vector v = (Vector)rules.get(factType);
-      if (v != null) v.remove(rule);
+   public void remove(Object rule, Object keys[]) {
+      Object element = rules.get(keys[0]);
+      for (int i = 1; i < keys.length - 1; i++)
+         element = ((Hashtable)element).get(keys[i]);
+      Vector v = (Vector)((Hashtable)element).get(keys[keys.length - 1]);
+      v.remove(rule);
    }
 }
