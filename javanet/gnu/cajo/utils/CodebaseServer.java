@@ -198,6 +198,7 @@ public final class CodebaseServer extends Thread {
        new ServerSocket(port, 50, InetAddress.getByName(Remote.getServerHost()));
     serverPort = port == 0 ? ss.getLocalPort() : port;
     CodebaseServer.port = serverPort; // legacy
+    String loc = "http://" + Remote.getClientHost() + ':' + CodebaseServer.port + '/';
     tip = (
        "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n" +
        "<jnlp spec=\"1.0+\"\r\n" +
@@ -211,9 +212,9 @@ public final class CodebaseServer extends Thread {
        "    <homepage href=\"https://cajo.dev.java.net\"/>\r\n" +
        "    <description>Graphical cajo proxy client</description>\r\n" +
        (icon == null ? "" :
-       "    <icon href=\"" + icon + "\"/>\r\n") +
+       "    <icon href=\"" + loc + icon + "\"/>\r\n") +
        (splash == null ? "" :
-       "    <icon href=\"" + splash + "\" kind=\"splash\"/>\r\n") +
+       "    <icon href=\"" + loc + splash + "\" kind=\"splash\"/>\r\n") +
        "  </information>\r\n" +
        "  <resources>\r\n" +
        "    <j2se version=\"1.5+\"/>\r\n"
@@ -229,7 +230,6 @@ public final class CodebaseServer extends Thread {
     base.append("\">\r\n");
     xml = base.toString().getBytes();
     base = new StringBuffer();
-    String loc = "http://" + Remote.getClientHost() + ':' + CodebaseServer.port + '/';
     if (jars != null) {
        for (int i = 0; i < jars.length; i++) {
           base.append(loc);
