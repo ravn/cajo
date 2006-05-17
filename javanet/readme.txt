@@ -1,5 +1,5 @@
 
-Library release 1.85, 08-May-06
+Library release 1.86, 16-May-06
 
 The cajo project: Free Transparent Distributed Computing
 
