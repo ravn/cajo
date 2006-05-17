@@ -160,6 +160,7 @@ public final class CodebaseServer extends Thread {
     throws IOException {
     String temp = client.replace('.', '/') + ".class";
     StringBuffer base = new StringBuffer();
+    if (title == null) title = "cajo Proxy Viewer";
     if (jars != null) {
        base.append(jars[0]);
        for (int i = 1; i < jars.length; i++) {
@@ -168,7 +169,7 @@ public final class CodebaseServer extends Thread {
        }
     } else base.append("client.jar");
     top = ( // create instance specific response data:
-       "<HTML><HEAD><TITLE>" + (title !=null ? title : "cajo Proxy Viewer") + "</TITLE>\r\n" +
+       "<HTML><HEAD><TITLE>" + title + "</TITLE>\r\n" +
        "<META NAME=\"description\" content=\"Graphical cajo proxy client\"/>\r\n" +
        "<META NAME=\"copyright\" content=\"Copyright (c) 1999 John Catherino\"/>\r\n" +
        "<META NAME=\"author\" content=\"John Catherino\"/>\r\n" +
@@ -201,27 +202,27 @@ public final class CodebaseServer extends Thread {
     String loc = "http://" + Remote.getClientHost() + ':' + CodebaseServer.port + '/';
     tip = (
        "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n" +
-       "<jnlp spec=\"1.0+\"\r\n" +
+       "<jnlp spec=\"1.5+\"\r\n" +
        "  codebase=" + "\"http://" + Remote.getClientHost() + ':' + serverPort + "\"\r\n"
     ).getBytes();
     base = new StringBuffer(
        "  <information>\r\n" +
        "    <title>" + title + "</title>\r\n" +
-       "    <shortcut><desktop/></shortcut>\r\n" +
        "    <vendor>" + (vendor != null ? vendor : "The cajo project") + "</vendor>\r\n" +
        "    <homepage href=\"https://cajo.dev.java.net\"/>\r\n" +
        "    <description>Graphical cajo proxy client</description>\r\n" +
        (icon == null ? "" :
-       "    <icon href=\"" + loc + icon + "\"/>\r\n") +
+       "    <icon href=\"" + icon + "\"/>\r\n") +
        (splash == null ? "" :
-       "    <icon href=\"" + loc + splash + "\" kind=\"splash\"/>\r\n") +
+       "    <icon href=\"" + splash + "\" kind=\"splash\"/>\r\n") +
+       "    <shortcut><desktop/></shortcut>\r\n" +
        "  </information>\r\n" +
        "  <resources>\r\n" +
        "    <j2se version=\"1.5+\"/>\r\n"
     );
     if (jars != null) {
        base.append("    <jar href=\"" + jars[0] + "\" main=\"true\"/>\r\n");
-       for (int i = 0; i < jars.length; i++)
+       for (int i = 1; i < jars.length; i++)
           base.append("    <jar href=\"" + jars[i] + "\" download=\"lazy\"/>\r\n");
     } else base.append("    <jar href=\"client.jar\" main=\"true\"/>\r\n");
     base.append("  </resources>\r\n");
@@ -377,7 +378,7 @@ public final class CodebaseServer extends Thread {
                       os.write(nav);
                       os.write(end);
                    } else { // WebStart request
-                      byte obj[] = ("  href=\"" + clientPort + ':' + localPort + '-' + proxyName + "!\">\r\n").getBytes();
+                      byte obj[] = ("  href=\"!" + clientPort + ':' + localPort + '-' + proxyName + ".jnlp\">\r\n").getBytes();
                       byte arg[] = (
                          "    <argument>//" + Remote.getClientHost() + ':' + proxyPort + '/' + proxyName + "</argument>\r\n" +
                          "    <argument>" + clientPort + "</argument>\r\n" +
