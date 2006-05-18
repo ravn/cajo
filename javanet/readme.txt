@@ -1,5 +1,12 @@
+   ___  _
+  / ,_`(_) ___
+ / __ \ _ / _ \
+/ / _` | | (_) )
+\ \__,_; ;\___/
+ \ \___/ /
+  \_____/
 
-Library release 1.86, 16-May-06
+Library release 1.87, 18-May-06
 
 The cajo project: Free Transparent Distributed Computing
 
@@ -13,7 +20,7 @@ examples, and multiple support fora.
 Copyright (C) 1999 John Catherino
 
 This library is Free Software. You may distribute it and/or modify
-it under the terms of the GNU Lesser General Public License, at version
+it, under the terms of the GNU Lesser General Public License, at version
 2.1 of the license, or any later version published by The Free Software
 Foundation.
 
@@ -23,10 +30,10 @@ see the GNU Lesser General Public License for more details.
 
 You find this license on the FSF website at:
 
- http://fsf.org/licenses/lgpl.html
+  http://fsf.org/licenses/lgpl.html
 
 or request it in official paper form from:
 
- The Free Software Foundation, Inc.
- 51 Franklin Street
- Boston, MA 02111-1301 U.S.A.
+  The Free Software Foundation, Inc.
+  51 Franklin Street
+  Boston, MA 02111-1301 U.S.A.
