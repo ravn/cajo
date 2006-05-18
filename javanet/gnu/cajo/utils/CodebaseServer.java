@@ -209,8 +209,8 @@ public final class CodebaseServer extends Thread {
        "  <information>\r\n" +
        "    <title>" + title + "</title>\r\n" +
        "    <vendor>" + (vendor != null ? vendor : "The cajo project") + "</vendor>\r\n" +
-       "    <homepage href=\"https://cajo.dev.java.net\"/>\r\n" +
        "    <description>Graphical cajo proxy client</description>\r\n" +
+       "    <homepage href=\"https://cajo.dev.java.net\"/>\r\n" +
        (icon == null ? "" :
        "    <icon href=\"" + icon + "\"/>\r\n") +
        (splash == null ? "" :
@@ -378,7 +378,7 @@ public final class CodebaseServer extends Thread {
                       os.write(nav);
                       os.write(end);
                    } else { // WebStart request
-                      byte obj[] = ("  href=\"!" + clientPort + ':' + localPort + '-' + proxyName + ".jnlp\">\r\n").getBytes();
+                      byte obj[] = ("  href=\"" + clientPort + ':' + localPort + '-' + proxyName + "!\">\r\n").getBytes();
                       byte arg[] = (
                          "    <argument>//" + Remote.getClientHost() + ':' + proxyPort + '/' + proxyName + "</argument>\r\n" +
                          "    <argument>" + clientPort + "</argument>\r\n" +
