@@ -34,12 +34,12 @@ import java.lang.reflect.Method;
 /**
  * This class takes any object, and allows it to be called from
  * remote VMs. This class eliminates the need to maintain multiple
- * specialized rmic interface compilations for multiple, application specific
- * objects. It effectively allows any object to be remoted, and makes all of
- * the object's public methods remotely callable. It also contains several
- * very useful utility methods, to further support the invoke package
- * paradigm.<p> It can also be run as an application, to load an object from
- * a URL, and remote it within a VM.
+ * specialized stubs for multiple, application specific objects. It
+ * effectively allows any object to be remoted, and makes all of
+ * the object's public methods, including its static ones, remotely callable.
+ * It also contains several very useful utility methods, to further support
+ * the invoke package paradigm.<p> It can also be run as an application, to
+ * load an object from a URL, and remote it within a JVM.
  *
  * @version 1.0, 01-Nov-99 Initial release
  * @author John Catherino
@@ -62,34 +62,29 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
       }
       public boolean equals(Object o) {
          return o instanceof RSSF &&
-            ((RSSF)o).host.equals(host) &&
                ((RSSF)o).port == port;
       }
       public int hashCode() { return getClass().hashCode() + port; }
    }
    private static final class RCSF
       implements RMIClientSocketFactory, Serializable {
-      static final long serialVersionUID = 0x6060842L; // ;-) B-52s
+      private static final long serialVersionUID = 0x6060842L; // ;-) B-52s
       private int port;
       private String host;
+      private RCSF() {}
+      private RCSF(String localAddr) {
+          host = localAddr;
+          port = rssf.port;
+      }
       public Socket createSocket(String host, int port) throws IOException {
          Socket s;
-         try {
-            s = RMISocketFactory.getDefaultSocketFactory().
-               createSocket(this.host, this.port != 0 ? this.port : port);
-         } catch(IOException x) { // last ditch attempt try local
-            s = RMISocketFactory.getDefaultSocketFactory().
-               createSocket(InetAddress.getLocalHost().getHostName(),
-                  this.port != 0 ? this.port : port);
-            System.err.print("cajo.invoke.Remote redirecting to localhost ");
-            System.err.println("instead of " + this.host);
-         }
+         s = RMISocketFactory.getDefaultSocketFactory().
+            createSocket(this.host, this.port != 0 ? this.port : port);
          s.setKeepAlive(true);
          return s;
       }
       public boolean equals(Object o) {
          return o instanceof RCSF &&
-            ((RCSF)o).host.equals(host) &&
                ((RCSF)o).port == port;
       }
       public int hashCode() { return getClass().hashCode() + port; }
@@ -118,7 +113,7 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
    }
    /**
     * This method is provided to obtain the server's host name.
-    * This is useful when the host can have one of multiple addresses, either
+    * This is useful when the host can have multiple addresses, either
     * because it has multiple network interface cards, or is multi-homed. 
     * @return The server address on which the item is remoted.
     */
@@ -141,7 +136,7 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
    /**
     * This method is provided to obtain the socket port number the remote
     * client must use to contact the server.  This can be different from
-    * the server port number if NAT port translation is being used.
+    * the server port number if port translation is being used.
     * @return The port clients must connect on to reach the server.
     */
    public static int getClientPort() { return rcsf.port; }
@@ -150,8 +145,8 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
     * complete specification of client-side and server-side ports and
     * hostnames.  It used to override the default values, which are anonymous,
     * meaning from an unused pool, selected by the OS.  It is necessary
-    * when either VM is either operating behind a firewall, has multiple network
-    * interfaces, is multi-addressed, or is using NAT. The first two parameters
+    * when either the VM is operating behind a firewall, has multiple network
+    * interfaces, is multi-homed, or is using NAT. The first two parameters
     * control how the sockets will be configured locally, the second two
     * control how a remote object's sockets will be configured to communicate
     * with this server.
@@ -161,24 +156,24 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
     * If null, it will use the primary network interface. Typically it is
     * specified when the server has multiple phyisical network interfaces, or
     * is multi-homed, i.e. having multiple logical network interfaces. It can
-    * <i>also</i> be specified as "0.0.0.0" to use <u>all</u> of the
+    * <i>also</i> be specified as "0.0.0.0" to use <i><u>all</u></i> of the
     * machine's network interfaces.
     * @param serverPort Specifies the local port on which the server is
     * serving clients. It can be zero, to use an anonymous port. If firewalls
     * are being used, it must be an accessible port, into this server. If this
     * port is zero, and the ClientPort argument is non-zero, then the
     * ClientPort value will automatically substituted.
-    * @param clientHost The domain name, or IP address the remote client will
+    * @param clientHost The host name, or IP address the remote client will
     * use to communicate with this server.  If null, it will be the same as
     * serverHost resolution.  This would need to be explicitly specified if
-    * the server is operating behind NAT i.e. when the server's subnet IP
+    * the server is operating behind NAT; i.e. when the server's subnet IP
     * address is <i>not</i> the same as its address outside the subnet.
     * @param clientPort Specifies the particular port on which the client
     * will connect to the server.  Typically this is the <i>same</i> number
     * as the serverPort argument, but could be different, if port translation
     * is being used.  If the clientPort field is 0, i.e. anonymous, its port
     * value will be automatically assigned to match the server, even if the
-    * server port is anonymous.
+    * server port is also anonymous.
     * @throws java.net.UnknownHostException If the IP address or name of the
     * serverHost can not be resolved.
     */
@@ -196,8 +191,8 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
    }
    /**
     * This method configures the server's TCP parameters for RMI through HTTP
-    * proxy servers. This is necessary when the client or server, or both are
-    * behind firewalls, and the only method of access to the internet is
+    * proxy servers. This is necessary when the client or server, or both,
+    * are behind firewalls, and the only method of access to the internet is
     * through HTTP proxy servers. There will be a fairly significant
     * performance hit incurred using the HTTP tunnel, but it is better than
     * having no connectivity at all. Due to an unfortunate oversight in the
@@ -207,22 +202,21 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
     * multi-homed hosts.
     * <p><i><u>Note</u>:</i> If this class is to be configured, it must be
     * done <b>before</b> any items are remoted.
-    * @param serverPort Specifies the local inbound port on which the server is
-    * serving clients. It can be zero, to use an anonymous port.  If a firewall
-    * is being used, it must be an accessible port, into this server. If this
+    * @param serverPort Specifies the local port on which the server is
+    * serving clients. It can be zero, to use an anonymous port. If firewalls
+    * are being used, it must be an accessible port, into this server. If this
     * port is zero, and the ClientPort argument is non-zero, then the
     * ClientPort value will automatically substituted.
-    * @param clientHost The domain name, or IP address the remote client will
-    * use to communicate with this server.  If null, it will be the server's
-    * default host name.  This would need to be explicitly specified if
-    * the server is operating behind NAT i.e. when the server's subnet IP
+    * @param clientHost The host name, or IP address the remote client will
+    * use to communicate with this server.  If null, it will be the same as
+    * serverHost resolution.  This would need to be explicitly specified if
+    * the server is operating behind NAT; i.e. when the server's subnet IP
     * address is <i>not</i> the same as its address outside the subnet.
     * @param clientPort Specifies the particular port on which the client
     * will connect to the server.  Typically this is the <i>same</i> number
     * as the serverPort argument, but could be different, if port translation
     * is being used.  If the clientPort field is 0, i.e. anonymous, its port
     * value will be automatically assigned to match the server, even if the
-    * server port is anonymous.
     * @param proxyHost The name or address of the proxy server used to gain
     * HTTP access to the internet.
     * @param proxyPort The port number of the proxy server used to gain
@@ -230,7 +224,7 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
     * @param username The proxy account user name required for permission, if
     * non-null.
     * @param password The proxy account password required for permission, if
-    * required.
+    * non-null.
     * @throws java.net.UnknownHostException If the IP address or name of the
     * local host interface can not be determined.
     */
@@ -481,16 +475,39 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
    /**
     * The constructor takes <i>any</i> object, and allows it to be remotely
     * invoked. If the object implements the {@link Invoke Invoke} interface,
-    * (i.e. it is an <tt>Item</tt>) it will simply route all remote
-    * invocations directly to it. Otherwise it will use Java reflection to
-    * attempt to invoke the remote calls directly on the object's public
-    * methods.
+    * it will route all remote invocations directly to it. Otherwise it will
+    * use Java reflection to attempt to invoke the remote calls directly on
+    * the object's public methods.
     * @param  item The object to make remotely callable.  It may be an
-    * arbitrary object of any type, or an <b>Item</b> (either local or remote).
+    * arbitrary object of any type, it can even be a reference to a remote
+    * reference from another host, being re-remoted through this JVM.
     * @throws RemoteExcepiton If the remote instance could not be be created.
     */
    public Remote(Object item) throws RemoteException {
       super(rssf.port, rcsf, rssf);
+      this.item = item;
+   }
+   /**
+    * The constructor takes <i>any</i> object, and allows it to be remotely
+    * invoked. If the object implements the {@link Invoke Invoke} interface,
+    * it will route all remote invocations directly to it. Otherwise it will
+    * use Java reflection to attempt to invoke the remote calls directly on the
+    * object's public methods.
+    * @param  item The object to make remotely callable.  It may be an
+    * arbitrary object of any type, it can even be a reference to a remote
+    * reference from another host, being re-remoted through this JVM.
+    * @param localAddr The NAT internal address. This is used to remote
+    * objects for use by clients <i>inside</i> a NAT subnet. This is often
+    * needed for routers like LinkSys, which do not allow clients inside the
+    * NAT subnet to use a hosts external address. For example, the externally
+    * accessible reference could be created from the single-argument
+    * constructor under the name and bound under the name <tt>externalItem,</tt>
+    * and the locally accessible item could be created with this constructor,
+    * and bound under the name <tt>internalItem.</tt>
+    * @throws RemoteExcepiton If the remote instance could not be be created.
+    */
+   public Remote(Object item, String localAddr) throws RemoteException {
+      super(rssf.port, new RCSF(localAddr), rssf);
       this.item = item;
    }
    /**
