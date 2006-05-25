@@ -31,7 +31,7 @@ more details.
 
 You can find this license on the FSF website at:
 
-   http://fsf.org/licenses/lgpl.html
+   http://www.gnu.org/licenses/lgpl.html
 
 or request it in official paper from:
 
