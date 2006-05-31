@@ -36,12 +36,20 @@ import java.rmi.RemoteException;
  * each rule's state and inference to distributed JVMs. The engine is also
  * serialisable; to allow it to scale, as well as providing both modularity,
  * and redundancy.<p>
- * Only the RuleEngine ontology is stored at the server host. This makes the
- * creation of extremely large distributed rule bases both possible, and
- * very simple. The applciation specific knowledge bases are offloaded
- * to the clients as well.<p>
- * The application of fuzzy facts, and fuzzy predicates is not only easily
- * supported, but is in fact very <i>highly</i> recommended.<p>
+ * A rule engine can be likened to a database, with some important
+ * differences. In database parlance, what is known as the schema is called
+ * an ontology in a rule engine. Unlike a database, multiple facts are
+ * deposited in any given slot, a database is somewhat less dynamic in its
+ * change of existing data. Data in a database are called facts in a Rule
+ * engine. A database supports queries on its stored data, this is not
+ * possible for the rule engine, as it sends its facts to registered
+ * listeners.<p>
+ * Since only the RuleEngine ontology is stored at the server host, and
+ * not the fact base; this makes the creation of extremely large distributed
+ * rule bases both possible, and very simple. The applciation specific
+ * knowledge bases are offloaded to the clients as well.<p>
+ * The application of both fuzzy facts, and fuzzy predicates is not only
+ * easily supported, but is in fact very <i>highly</i> recommended.<p>
  * <i><u>Note</u>:</i> to compile this class, it is best to set the java
  * compiler's <tt>-source</tt> switch to <tt>1.2</tt>.
  *
@@ -58,7 +66,8 @@ public class RuleEngine implements Serializable {
     */
    public static class Rule implements Serializable, Runnable {
       /**
-       * The rule specific local fact base on which to infer.
+       * The rule specific local fact base on which to infer. It allows
+       * a rule to encompass many different aspects of an ontology.
        */
       protected Hashtable facts = new Hashtable();
       /**
@@ -79,36 +88,53 @@ public class RuleEngine implements Serializable {
       /**
        * This method is completely rule-specific. It is called when there
        * has been a change to the local fact base. It should first
-       * reset the change flag, then evaluate its state to make decisions.
-       * It is possible for the fact base to be actively changing,
-       * while this method is executing. This can be detected by monitoring
-       * the state of the change flag.
+       * reset the change flag, which is done simply by calling super(),
+       * then evaluate its state to make decisions. It is possible for the
+       * fact base to be actively changing, while this method is executing.
+       * This can be detected by monitoring the state of the change flag.
        */
       protected void infer() { change = false; }
+      /**
+       * This method extracts the Hashtable corresponding to the provided
+       * key series. If a path to the Hashtable does not exist, it will be
+       * created automatically. It is called by the posit method, but it
+       * is also a handy utility for the infer method, to check the status
+       * of interesting data elements.
+       * @param keys The ordered sequence of candidate keys leading to the
+       * fact storage position in the fact base.
+       * @return The hashtable indexed one key before the final in the
+       * array. The fact of interest is located in this table, at the
+       * final key value.
+       */
+      protected synchronized Hashtable select(Object keys[]) {
+         Hashtable element = (Hashtable)facts.get(keys[0]);
+         for (int i = 1; i < keys.length - 1; i++) {
+            Object temp = element.get(keys[i]);
+            if (temp == null)  { // if no path, make one!
+               temp = new Hashtable();
+               element.put(keys[i], temp);
+            }
+            element = (Hashtable)temp;
+         }
+         return element;
+      }
       /**
        * This method is invoked by the rule engine to make a change,
        * addition or modification, to the local fact base. It will
        * notify the local processing thread, creating it if necessary, and
        * return. Its run time is designed to be as short as possible, and
        * should not be overridden, unless it is absolutely critical.
+       * @param fact A datum of interest, which has been changed at the
+       * rule engine.
+       * @param keys The ordered sequence of candidate keys leading to the
+       * fact storage position in the fact base.
        * @throws Exception An arbitrary exception may be thrown by the
        * positOk method of this class, if it does not want the fact to
        * be changed.
        */
       public synchronized void posit(Object fact, Object keys[])
          throws Exception {
-         Object element = facts.get(keys[0]);
-         for (int i = 1; i < keys.length; i++) {
-            Object temp = ((Hashtable)element).get(keys[i]);
-            if (temp == null) { // if no path, make one!
-               if (i < keys.length - 1) {
-                  temp = new Hashtable();
-                  ((Hashtable)element).put(keys[i], temp);
-               }
-            }
-            if (i < keys.length -1) element = temp;
-         }
-         ((Hashtable)element).put(keys[keys.length - 1], fact);
+         select(keys).put(keys[keys.length - 1], fact);
          change = true;
          if (thread == null) {
             thread = new Thread(this);
@@ -167,16 +193,18 @@ public class RuleEngine implements Serializable {
     * @param fact The fact that is being asserted or changed.
     * @param keys The chain of keys leading to the element of interest
     * in the ontology.
-    * @throws NullPointerException if either the fact is null.
+    * @throws NullPointerException if either the keys or the fact is null.
+    * @throws ClassCastException if the key path is invalid.
     */
 // if a key is null, get all elements, and recurse, null == SELECT *
    public void posit(Object fact, Object keys[]) throws Exception {
       Object element = rules.get(keys[0]);
       for (int i = 1; i < keys.length; i++)
          element = ((Hashtable)element).get(keys[i]);
+      Object data[] = new Object[] { fact, keys };
       Object rulez[] = ((Vector)element).toArray();
       for (int i = 0; i < rulez.length; i++) try {
-         Remote.invoke(rulez[i], "posit", new Object[] { fact, keys });
+         Remote.invoke(rulez[i], "posit", data);
       } catch(RemoteException x) { ((Vector)element).remove(rulez[i]); }
    }
    /**
@@ -193,21 +221,19 @@ public class RuleEngine implements Serializable {
     */
    public void add(Object rule, Object keys[]) {
 // if a key is null, get all elements, and recurse, null == SELECT *
-      Object element = rules.get(keys[0]);
+      Hashtable element = (Hashtable)rules.get(keys[0]);
       for (int i = 1; i < keys.length - 1; i++) {
-         Object temp = ((Hashtable)element).get(keys[i]);
+         Object temp = element.get(keys[i]);
          if (temp == null) { // if no path, make one!
-            if (i < keys.length - 1) {
-               temp = new Hashtable();
-               ((Hashtable)element).put(keys[i], temp);
-            }
+            temp = new Hashtable();
+            element.put(keys[i], temp);
          }
-         element = temp;
+         element = (Hashtable)temp;
       }
-      Object o = ((Hashtable)element).get(keys[keys.length - 1]);
+      Object o = element.get(keys[keys.length - 1]);
       if (o == null) {
          o = new Vector();
-         ((Hashtable)element).put(keys[keys.length - 1], o);
+         element.put(keys[keys.length - 1], o);
       }
       ((Vector)o).add(rule);
    }
@@ -220,13 +246,14 @@ public class RuleEngine implements Serializable {
     * object, or even a proxy object.
     * @param keys The chain of keys leading to the element of interest
     * in the ontology.
+    * @throws ClassCastException if the key path is invalid.
     */
    public void remove(Object rule, Object keys[]) {
 // if a key is null, get all elements, and recurse, null == SELECT *
-      Object element = rules.get(keys[0]);
+      Hashtable element = (Hashtable)rules.get(keys[0]);
       for (int i = 1; i < keys.length - 1; i++)
-         element = ((Hashtable)element).get(keys[i]);
-      Vector v = (Vector)((Hashtable)element).get(keys[keys.length - 1]);
+         element = (Hashtable)element.get(keys[i]);
+      Vector v = (Vector)element.get(keys[keys.length - 1]);
       v.remove(rule);
    }
 }
