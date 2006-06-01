@@ -64,7 +64,7 @@ public class RuleEngine implements Serializable {
     * extend this class for your rules. The collection of registered rules
     * constitute the <i>knowledge base</i> of the rule engine.
     */
-   public static class Rule implements Serializable, Runnable {
+   public static class Rule implements Serializable {
       /**
        * The rule specific local fact base on which to infer. It allows
        * a rule to encompass many different aspects of an ontology.
@@ -137,24 +137,20 @@ public class RuleEngine implements Serializable {
          select(keys).put(keys[keys.length - 1], fact);
          change = true;
          if (thread == null) {
-            thread = new Thread(this);
+            thread = new Thread(new Runnable() {
+               public void run() {
+                  try {
+                     while (true) {
+                        infer();
+                        synchronized(Rule.this) {
+                           while(!change) Rule.this.wait();
+                        }
+                     }
+                  } catch(InterruptedException x) {}
+               }
+            });
             thread.start();
          } else notify();
-      }
-      /**
-       * This is the local change processing thread. It waits until there
-       * has been a change to the local fact base, and invokes the
-       * infer method. It is used to offload the reasoning processing
-       * from the change invocation thread. It is created automatically,
-       * on the first change to this rule.
-       */
-      public void run() {
-         try {
-            while (true) {
-               infer();
-               synchronized(this) { while(!change) wait(); }
-            }
-         } catch(InterruptedException x) {}
       }
    }
    /**
