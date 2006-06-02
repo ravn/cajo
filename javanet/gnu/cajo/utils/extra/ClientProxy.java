@@ -50,7 +50,7 @@ import java.rmi.server.UnicastRemoteObject;
 public final class ClientProxy implements Invoke {
    private String method;
    private Object args;
-   private boolean done;
+   private boolean done, connected;
    /**
     * This is the longest value, in milliseconds, that the server will wait
     * for a client invocation to execute before it aborts it. It is set
@@ -88,6 +88,7 @@ public final class ClientProxy implements Invoke {
     */
    public void cutOff() throws NoSuchObjectException {
       UnicastRemoteObject.unexportObject(remoteThis, true);
+      done = false;
    }
    /**
     * This method serves two fundamentally different, but symmetrical
@@ -104,11 +105,13 @@ public final class ClientProxy implements Invoke {
     * @return The result of the client object callback.
     * @throws InterruptedException If the client is not listening, or if
     * the callback timeout has expired.
+    * @throws RemoteException For any network related failures.
     * @throws Exception For any client specific reasons.
     */
    public synchronized Object invoke(String method, Object args)
       throws Exception {
       if (method == null) {     // client callback response thread
+         connected = true;      // indicate client is connected
          this.args = args;      // save the callback result
          done = true;           // indicate callback complete
          notify();              // wake the server item thread
@@ -116,10 +119,10 @@ public final class ClientProxy implements Invoke {
          return new Object[] { this.method, this.args };
       } else if (method.equals("cutOff") && (args == null ||
          (args instanceof Object[] && ((Object[])args).length == 0))) {
-         done = false;          // the client is no longer listening
          cutOff();              // client or server wants to terminate
          return null;           // connexion to client is now severed
       } else {                  // server callback invocation thread
+         if (!connected) wait(timeout); // delay for initial client connect
          if (!done) throw new InterruptedException("Client not listening");
          this.method = method;  // save the client method to be invoked
          this.args   = args;    // save the data to provide the invocation
