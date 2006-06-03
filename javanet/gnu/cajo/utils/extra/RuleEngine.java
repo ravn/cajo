@@ -166,6 +166,85 @@ public class RuleEngine implements Serializable {
     */
    protected final Hashtable rules = new Hashtable();
    /**
+    * This method is called by the public assert method. It will
+    * recursively traverse through the ontology, invoking one or more
+    * assertions based on the key sequence provided.<p>
+    * @param data A two element array containing the fact and the key
+    * sequence array. It will be provided to each listening rule as the
+    * arguments to its posit method.
+    * @param keys The chain of keys leading to the element(s) of interest
+    * in the ontology. If any key value is null, it is considered a wild
+    * card, resulting in all of the keys at that dimension being used.
+    * @throws NullPointerException if either the keys or the fact is null.
+    * @throws ClassCastException if the key path is invalid.
+    */
+   protected static void posit(
+      Hashtable rules, Object keys[], int offset, Object data)
+      throws Exception {
+      if (keys[offset] == null) { // wildcard, n-ary recursion
+         offset++;
+         Enumeration wildKeys = rules.keys();
+         while(wildKeys.hasMoreElements())
+            posit((Hashtable)rules.get(wildKeys.nextElement()),
+               keys, offset, data);
+      } else { // fixed key, linear recursion
+         rules = (Hashtable)rules.get(keys[offset]);
+         if (offset == keys.length - 1) { // boundary condition
+            Object listeners[] =
+               ((Vector)rules.get(keys[keys.length - 1])).toArray();
+            for (int i = 0; i < listeners.length; i++) try {
+               Remote.invoke(listeners[i], "posit", data);
+            } catch(RemoteException x) {
+               ((Vector)rules.get(listeners[i])).remove(listeners[i]);
+            }
+         } else posit(rules, keys, offset++, data);
+      }
+   }
+// add javadoc here...
+   protected static void add(
+      Hashtable rules, Object rule, Object keys[], int offset) {
+      if (keys[offset] == null) { // wildcard, n-ary recursion
+         offset++;
+         Enumeration wildKeys = rules.keys();
+         while(wildKeys.hasMoreElements())
+            add((Hashtable)rules.get(wildKeys.nextElement()),
+               rule, keys, offset);
+      } else { // fixed key, linear recursion
+         synchronized(rules) {
+            Hashtable table = (Hashtable)rules.get(keys[offset]);
+            if (table == null) { // if no path, make one!
+               table = new Hashtable();
+               rules.put(keys[offset], table);
+            }
+         }
+         rules = (Hashtable)rules.get(keys[offset]);
+         if (offset == keys.length - 1) { // boundary condition
+            Vector vector = (Vector)rules.get(keys[keys.length - 1]);
+            if (vector == null) {
+               vector = new Vector();
+               rules.put(keys[keys.length - 1], vector);
+            }
+            vector.add(rule);
+         } else add(rules, rule, keys, offset++);
+      }
+   }
+   protected static void remove(
+      Hashtable rules, Object rule, Object keys[], int offset) {
+      if (keys[offset] == null) { // wildcard, n-ary recursion
+         offset++;
+         Enumeration wildKeys = rules.keys();
+         while(wildKeys.hasMoreElements())
+            remove((Hashtable)rules.get(wildKeys.nextElement()),
+               rule, keys, offset);
+      } else { // fixed key, linear recursion
+         rules = (Hashtable)rules.get(keys[offset]);
+         if (offset == keys.length - 1) { // boundary condition
+            Vector vector = (Vector)rules.get(keys[keys.length - 1]);
+            vector.remove(rule);
+         } else remove(rules, rule, keys, offset++);
+      }
+   }
+   /**
     * This constructor performs no function, as the operation of the rule
     * engine is completely runtime dependent.
     */
@@ -177,7 +256,8 @@ public class RuleEngine implements Serializable {
     * <tt>posit</tt> method, with the fact object, and the collection of
     * keys. If a rule instance determines all of its criteria necessary for
     * firing has been met, then it is the responsibility of that rule to
-    * carry it out.<p>
+    * carry it out. It simply invokes the static posit method to begin
+    * a recursive ontology traversal.<p>
     * <i><u>Note</u>:</i> Rule <tt>posit</tt> invocations are expected to
     * return as quickly as possible to ensure maximum performance of the
     * engine. Typically rule objects will save the fact argument in a queue,
@@ -192,51 +272,31 @@ public class RuleEngine implements Serializable {
     * @throws NullPointerException if either the keys or the fact is null.
     * @throws ClassCastException if the key path is invalid.
     */
-// if a key is null, get all elements, and recurse, null == SELECT *
    public void posit(Object fact, Object keys[]) throws Exception {
-      Object element = rules.get(keys[0]);
-      for (int i = 1; i < keys.length; i++)
-         element = ((Hashtable)element).get(keys[i]);
-      Object data[] = new Object[] { fact, keys };
-      Object rulez[] = ((Vector)element).toArray();
-      for (int i = 0; i < rulez.length; i++) try {
-         Remote.invoke(rulez[i], "posit", data);
-      } catch(RemoteException x) { ((Vector)element).remove(rulez[i]); }
+      posit(rules, keys, 0, new Object[] { fact, keys });
    }
    /**
     * This method is used to register a rule instance with the ontology.
     * The rule engine will store the rule reference, to have its
     * <tt>posit</tt> method invoked, as the state of the fact of interest
     * changes. It is worth mentioning, a single rule instance is often used
-    * to monitor multiple types of facts.
+    * to monitor multiple types of facts. It simply invokes the static
+    * add method, to begin the recursive ontology traversal to add the rule.
     * @param rule The rule to be notified when the fact state changes. It is
     * typically a reference to an object in a remote JVM, but it can be to
     * a local object, or even a proxy object.
     * @param keys The chain of keys leading to the element of interest
-    * in the fact base.
+    * in the fact base. If the path does not exist, it will be created
+    * implicitly.
     */
    public void add(Object rule, Object keys[]) {
-// if a key is null, get all elements, and recurse, null == SELECT *
-      Hashtable element = (Hashtable)rules.get(keys[0]);
-      for (int i = 1; i < keys.length - 1; i++) {
-         Object temp = element.get(keys[i]);
-         if (temp == null) { // if no path, make one!
-            temp = new Hashtable();
-            element.put(keys[i], temp);
-         }
-         element = (Hashtable)temp;
-      }
-      Object o = element.get(keys[keys.length - 1]);
-      if (o == null) {
-         o = new Vector();
-         element.put(keys[keys.length - 1], o);
-      }
-      ((Vector)o).add(rule);
+      add(rules, rule, keys, 0);
    }
    /**
     * This method is used to unregister a rule instance for a type of 
     * fact. The rule engine will delete the rule reference from its
-    * ontology.
+    * ontology. It simply invokes the static remove method, to begin the
+    * recursive ontology traversal to delete the rule.
     * @param rule The rule to be removed from the engine. It is typically a
     * reference to an object in a remote JVM, but it can be to a local
     * object, or even a proxy object.
@@ -245,11 +305,6 @@ public class RuleEngine implements Serializable {
     * @throws ClassCastException if the key path is invalid.
     */
    public void remove(Object rule, Object keys[]) {
-// if a key is null, get all elements, and recurse, null == SELECT *
-      Hashtable element = (Hashtable)rules.get(keys[0]);
-      for (int i = 1; i < keys.length - 1; i++)
-         element = (Hashtable)element.get(keys[i]);
-      Vector v = (Vector)element.get(keys[keys.length - 1]);
-      v.remove(rule);
+       remove(rules, rule, keys, 0);
    }
 }
