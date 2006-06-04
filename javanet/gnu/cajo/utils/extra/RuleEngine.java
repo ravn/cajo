@@ -3,9 +3,7 @@ package gnu.cajo.utils.extra;
 import java.util.Vector;
 import java.util.Hashtable;
 import java.util.Enumeration;
-import java.io.Serializable;
 import gnu.cajo.invoke.Remote;
-import java.rmi.RemoteException;
 
 /*
  * cajo object oriented rule engine
@@ -43,7 +41,8 @@ import java.rmi.RemoteException;
  * change of existing data. Data in a database are called facts in a Rule
  * engine. A database supports queries on its stored data, this is not
  * possible for the rule engine, as it sends its facts to registered
- * listeners.<p>
+ * listeners. Unlike the Java language, an ontology logically, and therefor
+ * must, support multiple inheretance.<p>
  * Since only the RuleEngine ontology is stored at the server host, and
  * not the fact base; this makes the creation of extremely large distributed
  * rule bases both possible, and very simple. The applciation specific
@@ -56,7 +55,7 @@ import java.rmi.RemoteException;
  * @version 1.0, 11-May-06
  * @author John Catherino
  */
-public class RuleEngine implements Serializable {
+public class RuleEngine implements java.io.Serializable {
    /**
     * This is a good base class for building rules. It minimises load
     * on the rule engine, and properly manages asynchronous change without
@@ -64,7 +63,7 @@ public class RuleEngine implements Serializable {
     * extend this class for your rules. The collection of registered rules
     * constitute the <i>knowledge base</i> of the rule engine.
     */
-   public static class Rule implements Serializable {
+   public static class Rule implements java.io.Serializable {
       /**
        * The rule specific local fact base on which to infer. It allows
        * a rule to encompass many different aspects of an ontology.
@@ -128,12 +127,8 @@ public class RuleEngine implements Serializable {
        * rule engine.
        * @param keys The ordered sequence of candidate keys leading to the
        * fact storage position in the fact base.
-       * @throws Exception An arbitrary exception may be thrown by the
-       * positOk method of this class, if it does not want the fact to
-       * be changed.
        */
-      public synchronized void posit(Object fact, Object keys[])
-         throws Exception {
+      public synchronized void posit(Object fact, Object keys[]) {
          select(keys).put(keys[keys.length - 1], fact);
          change = true;
          if (thread == null) {
@@ -169,80 +164,101 @@ public class RuleEngine implements Serializable {
     * This method is called by the public assert method. It will
     * recursively traverse through the ontology, invoking one or more
     * assertions based on the key sequence provided.<p>
-    * @param data A two element array containing the fact and the key
-    * sequence array. It will be provided to each listening rule as the
-    * arguments to its posit method.
+    * @param rules The ontology on which to operate.
     * @param keys The chain of keys leading to the element(s) of interest
     * in the ontology. If any key value is null, it is considered a wild
     * card, resulting in all of the keys at that dimension being used.
-    * @throws NullPointerException if either the keys or the fact is null.
-    * @throws ClassCastException if the key path is invalid.
+    * @param offset The index into the provided key sequence.
+    * @param data A two element array containing the fact and the key
+    * sequence array. It will be provided to each listening rule as the
+    * arguments to its posit method.
     */
    protected static void posit(
-      Hashtable rules, Object keys[], int offset, Object data)
-      throws Exception {
-      if (keys[offset] == null) { // wildcard, n-ary recursion
-         offset++;
-         Enumeration wildKeys = rules.keys();
-         while(wildKeys.hasMoreElements())
-            posit((Hashtable)rules.get(wildKeys.nextElement()),
-               keys, offset, data);
-      } else { // fixed key, linear recursion
-         rules = (Hashtable)rules.get(keys[offset]);
-         if (offset == keys.length - 1) { // boundary condition
-            Object listeners[] =
-               ((Vector)rules.get(keys[keys.length - 1])).toArray();
-            for (int i = 0; i < listeners.length; i++) try {
-               Remote.invoke(listeners[i], "posit", data);
-            } catch(RemoteException x) {
-               ((Vector)rules.get(listeners[i])).remove(listeners[i]);
-            }
-         } else posit(rules, keys, offset++, data);
-      }
+      Hashtable rules, Object keys[], int offset, Object data) {
+      try {
+         if (keys[offset] != null) { // fixed key, linear recursion
+            if (offset == keys.length - 1) { // boundary condition
+               Object listeners[] =
+                  ((Vector)rules.get(keys[offset])).toArray();
+               for (int i = 0; i < listeners.length; i++) try {
+                  Remote.invoke(listeners[i], "posit", data);
+               } catch(Exception x) {
+                  ((Vector)rules.get(listeners[i])).remove(listeners[i]);
+               }
+            } else posit((Hashtable)rules.get(keys[offset]),
+               keys, offset + 1, data); // continue recursing
+         } else {  // wildcard, n-ary recursion
+            Enumeration wildKeys = rules.keys();
+            while(wildKeys.hasMoreElements())
+               posit((Hashtable)rules.get(wildKeys.nextElement()),
+                  keys, offset + 1, data);
+         }
+      } catch(ClassCastException x) {} // invalid key path, ignore
    }
-// add javadoc here...
+   /**
+    * This method is called by the public add method. It will
+    * recursively traverse through the ontology, invoking one or more
+    * rule locations based on the key sequence provided.<p>
+    * @param rules The ontology on which to operate.
+    * @param keys The chain of keys leading to the element(s) of interest
+    * in the ontology. If any key value is null, it is considered a wild
+    * card, resulting in all of the keys at that dimension being used.
+    * @param offset The index into the provided key sequence.
+    */
    protected static void add(
       Hashtable rules, Object rule, Object keys[], int offset) {
-      if (keys[offset] == null) { // wildcard, n-ary recursion
-         offset++;
-         Enumeration wildKeys = rules.keys();
-         while(wildKeys.hasMoreElements())
-            add((Hashtable)rules.get(wildKeys.nextElement()),
-               rule, keys, offset);
-      } else { // fixed key, linear recursion
-         synchronized(rules) {
-            Hashtable table = (Hashtable)rules.get(keys[offset]);
-            if (table == null) { // if no path, make one!
-               table = new Hashtable();
-               rules.put(keys[offset], table);
+      try {
+         if (keys[offset] != null) { // fixed key, linear recursion
+            synchronized(rules) { // get next path node
+               Hashtable table = (Hashtable)rules.get(keys[offset]);
+               if (table == null) { // if no node, make one!
+                  table = new Hashtable();
+                  rules.put(keys[offset], table);
+               }
             }
+            rules = (Hashtable)rules.get(keys[offset]);
+            if (offset == keys.length - 1) { // boundary condition
+               Vector vector = (Vector)rules.get(keys[keys.length - 1]);
+               if (vector == null) {
+                  vector = new Vector();
+                  rules.put(keys[keys.length - 1], vector);
+               }
+               vector.add(rule);
+            } else add(rules, rule, keys, offset + 1); // continue recursing
+         } else {  // wildcard, n-ary recursion
+            Enumeration wildKeys = rules.keys();
+            while(wildKeys.hasMoreElements())
+               add((Hashtable)rules.get(wildKeys.nextElement()),
+                  rule, keys, offset + 1);
          }
-         rules = (Hashtable)rules.get(keys[offset]);
-         if (offset == keys.length - 1) { // boundary condition
-            Vector vector = (Vector)rules.get(keys[keys.length - 1]);
-            if (vector == null) {
-               vector = new Vector();
-               rules.put(keys[keys.length - 1], vector);
-            }
-            vector.add(rule);
-         } else add(rules, rule, keys, offset++);
-      }
+      } catch(ClassCastException x) {} // invalid key path, ignore
    }
+   /**
+    * This method is called by the public remove method. It will
+    * recursively traverse through the ontology, removing one or more
+    * rule locations based on the key sequence provided.<p>
+    * @param rules The ontology on which to operate.
+    * @param keys The chain of keys leading to the element(s) of interest
+    * in the ontology. If any key value is null, it is considered a wild
+    * card, resulting in all of the keys at that dimension being used.
+    * @param offset The index into the provided key sequence.
+    */
    protected static void remove(
       Hashtable rules, Object rule, Object keys[], int offset) {
-      if (keys[offset] == null) { // wildcard, n-ary recursion
-         offset++;
-         Enumeration wildKeys = rules.keys();
-         while(wildKeys.hasMoreElements())
-            remove((Hashtable)rules.get(wildKeys.nextElement()),
-               rule, keys, offset);
-      } else { // fixed key, linear recursion
-         rules = (Hashtable)rules.get(keys[offset]);
-         if (offset == keys.length - 1) { // boundary condition
-            Vector vector = (Vector)rules.get(keys[keys.length - 1]);
-            vector.remove(rule);
-         } else remove(rules, rule, keys, offset++);
-      }
+      try {
+         if (keys[offset] != null) { // fixed key, linear recursion
+            rules = (Hashtable)rules.get(keys[offset]);
+            if (offset == keys.length - 1) { // boundary condition
+               Vector vector = (Vector)rules.get(keys[keys.length - 1]);
+               vector.remove(rule);
+            } else remove(rules, rule, keys, offset + 1); // continue
+         } else {  // wildcard, n-ary recursion
+            Enumeration wildKeys = rules.keys();
+            while(wildKeys.hasMoreElements())
+               remove((Hashtable)rules.get(wildKeys.nextElement()),
+                  rule, keys, offset + 1);
+         }
+      } catch(ClassCastException x) {} // invalid key path, ignore
    }
    /**
     * This constructor performs no function, as the operation of the rule
@@ -268,11 +284,10 @@ public class RuleEngine implements Serializable {
     * collection of listeners for that element.
     * @param fact The fact that is being asserted or changed.
     * @param keys The chain of keys leading to the element of interest
-    * in the ontology.
-    * @throws NullPointerException if either the keys or the fact is null.
-    * @throws ClassCastException if the key path is invalid.
+    * in the ontology. If the key sequence does not exist in the ontology,
+    * the invocation will be ignored silently.
     */
-   public void posit(Object fact, Object keys[]) throws Exception {
+   public void posit(Object fact, Object keys[]) {
       posit(rules, keys, 0, new Object[] { fact, keys });
    }
    /**
@@ -301,10 +316,10 @@ public class RuleEngine implements Serializable {
     * reference to an object in a remote JVM, but it can be to a local
     * object, or even a proxy object.
     * @param keys The chain of keys leading to the element of interest
-    * in the ontology.
-    * @throws ClassCastException if the key path is invalid.
+    * in the ontology. If the key sequence does not exist in the ontology,
+    * the invocation will be ignored silently.
     */
    public void remove(Object rule, Object keys[]) {
-       remove(rules, rule, keys, 0);
+      remove(rules, rule, keys, 0);
    }
 }
