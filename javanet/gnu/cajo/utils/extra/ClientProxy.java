@@ -81,6 +81,8 @@ public final class ClientProxy implements Invoke {
     * similar cutOff method. The client may also remotely invoke this method,
     * if it wishes to sever its link to the server. Any subsequent
     * invocations by the server will result in client timeout exceptions.
+    * This method also calls notify(), in case there was an invocation
+    * in process when this happened.
     * <i><u>Note</u>:</i> it would not make sense to call this method more
     * than once, ever, for a given object instance.
     * @throws NoSuchObjectException Should this method ever be called more
@@ -89,6 +91,7 @@ public final class ClientProxy implements Invoke {
    public void cutOff() throws NoSuchObjectException {
       UnicastRemoteObject.unexportObject(remoteThis, true);
       done = false;
+      synchronized(this) { notify(); }
    }
    /**
     * This method serves two fundamentally different, but symmetrical
