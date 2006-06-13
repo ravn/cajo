@@ -313,7 +313,7 @@ public class ItemServer {
               format(new java.util.Date()));
         System.out.print("Serving item ");
         System.out.print(args[0]);
-        System.out.println(" bound under name item");
+        System.out.println(" bound under the name main");
         System.out.print("locally  operating on ");
         System.out.print(Remote.getServerHost());
         System.out.print(" port ");
