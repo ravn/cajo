@@ -96,6 +96,7 @@
                                          <li><a href=#19>Can I tell if my method is being invoked remotely vs. locally?</a>
                                          <li><a href=#20>Can I make my server accessible both inside <i>and</i> outside a NAT subnet?</a>
                                          <li><a href=#21>How can I determine my cajo.jar library release number?</a>
+                                         <li><a href=#22>How can I launch a generic proxy hosting JVM?</a>
                                       </ol>
 
                                       <a id="1"></a><b><u>1. Why doesn't the example work in Appletviewer?</u></b>
@@ -409,6 +410,19 @@
                                       become executable! In a console window simply type:<br><br>
                                       <tt> &nbsp;&nbsp;&nbsp; java -jar cajo.jar</tt> &nbsp;&nbsp;&nbsp;<br><br>
                                       the release number, and date, will be output.<br><br>
+
+                                      <a id="22"></a><b><u>22. How can I launch a generic proxy hosting JVM?</u></b>
+                                      Fortunately, since these are so valuable for clustered application
+                                      development, the project supports them implicitly. Simply type:
+                                      <blockquote><tt>java -cp cajo.jar gnu.cajo.utils.ItemServer gnu.cajo.utils.BaseItem</tt></blockquote>
+                                      This will launch a generic proxy host, bound under the name "main", operating
+                                      on a port selected by your OS. To install a proxy, invoke its <tt>installProxy</tt>
+                                      method. It will return a remote reference to the proxy provided, on which you
+                                      may communicate with it, synchronously. If you wish to use specific ports, or
+                                      route across NAT, have a look at the command line <a href=docs/gnu/cajo/utils/ItemServer.html#main(java.lang.String[])>arguments</a>
+                                      accepted. <i><u>Note</u>:</i> this will provide proxies <i>full</i>
+                                      permissions on the host, by default. If you do not wish this, please see
+                                      <a href=faq.html#9>FAQ #9</a>.<br><br>
 
                                     </span>
                                  </td>
