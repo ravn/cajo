@@ -355,8 +355,10 @@
 
                                       Put your remote specific functionality in the try block, and your local
                                       specific stuff in the catch. The common functionality can be placed above
-                                      and below the test, or even in a finally block. This is the server side
-                                      corollary to the client side test, for object remoteness vs. locality:
+                                      and below the test, or even in a finally block.<br><br>
+
+                                      This is the server side corollary to the client side test, for object
+                                      remoteness vs. locality:
 
 <tt><pre>
     <b>if</b> (object <b>instanceof</b> gnu.cajo.invoke.RemoteInvoke) {
@@ -414,7 +416,7 @@
                                       <a id="22"></a><b><u>22. How can I launch a generic proxy hosting JVM?</u></b>
                                       Fortunately, since these are so valuable for clustered application
                                       development, the project supports them implicitly. Simply type:
-                                      <blockquote><tt>java -cp cajo.jar -Djava.security.policy host.pol
+                                      <blockquote><tt>java -cp cajo.jar -Djava.security.policy=host.policy
                                       gnu.cajo.utils.ItemServer gnu.cajo.utils.BaseItem</tt></blockquote>
                                       where the host security policy looks something like:
 
