@@ -85,8 +85,9 @@ public final class Queue implements gnu.cajo.invoke.Invoke {
          thread = new Thread(new Runnable() {
             public void run() {
                try {
-                  while (list.size() == 0)
-                     synchronized(Queue.this) { Queue.this.wait(); }
+                  synchronized(Queue.this) {
+                     while (list.size() == 0) Queue.this.wait();
+                  }
                   String method = (String)list.removeFirst();
                   Object args = list.removeFirst();
                   Remote.invoke(object, method, args);
