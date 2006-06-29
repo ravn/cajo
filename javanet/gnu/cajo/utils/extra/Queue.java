@@ -71,11 +71,10 @@ public final class Queue implements gnu.cajo.invoke.Invoke {
     * @param args The argument(s) to invoke on the wrapped item's method.
     * It can be a single object, and Object array of arguments, or null.
     * presumably, the wrapped object has a matching public method signature.
-    * @return Boolean.TRUE Indicating the enqueue operation was successful.
-    * Since the operation is performed asynchronously, there can be
-    * no synchronous return data. A callback object reference can be provided
-    * as an argument, if result data is required. When no arguments are
-    * provided, the operation is essentially a semaphore.
+    * @return null Since the operation is performed asynchronously, there can
+    * be no synchronous return data. A callback object reference can be
+    * provided as an argument, if result data is required. When no arguments
+    * are provided, the operation is essentially a semaphore.
     * @throws java.rmi.RemoteException If the invocation failed to enqueue,
     * due to a network related error.
     */
@@ -100,6 +99,6 @@ public final class Queue implements gnu.cajo.invoke.Invoke {
       list.add(method);
       list.add(args);
       notify();
-      return Boolean.TRUE;
+      return null;
    }
 }
