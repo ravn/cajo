@@ -125,7 +125,7 @@ public class SomeObject {
             <table width="98%" height="96" border="0" align="center" cellpadding="9" cellspacing="0">
                <tr>
                   <td valign="top">
-                     <span class="spacing style4 style7 style9">
+                     <span class="spacing style4 style7 style9"><br>
                         One of the most important aspects of the cajo framework is that it does not
                         require any changes to <u>your</u> objects, in order to use them remotely.
                         Even if your application already uses some other distributed framework; it
@@ -180,7 +180,7 @@ public class SomeObject {
 
                         Consider for a moment the useful network resource created simply by a
                         <i>single-line</i> of code remoting a <a href=http://java.sun.com/j2se/1.4.2/docs/api/java/util/Hashtable.html>
-                        Hashtable</a> for instance.
+                        Hashtable</a> for instance.<br>
                      </span>
                   </td>
                </tr>
@@ -206,7 +206,7 @@ public class SomeObject {
             <table width="98%" height="96" border="0" align="center" cellpadding="9" cellspacing="0">
                <tr>
                   <td valign="top">
-                     <span class="spacing style4 style7 style9">
+                     <span class="spacing style4 style7 style9"><br>
                         <a href=nonav/docs/gnu/cajo/invoke/Remote.html#invoke(java.lang.Object,%20java.lang.String,%20java.lang.Object)>
                         Invoke</a> is the cajo architecture approach to dynamic method invocation,
                         supplemented by the use of Java reflection. It is the foundation of the
@@ -262,7 +262,7 @@ public class SomeObject {
             <table width="98%" height="96" border="0" align="center" cellpadding="9" cellspacing="0">
                <tr>
                   <td valign="top">
-                     <span class="spacing style4 style7 style9">
+                     <span class="spacing style4 style7 style9"><br>
                         It might appear that all type safety has been completely abandoned;
                         looking a bit like the old, currently <i>fashionably</i> called 'dynamic
                         languages': like BASIC, and Ruby. However, what has really happened is that
@@ -331,7 +331,13 @@ public class WrapperObject {
                         local, to remote, or to a different server; <i>even</i> at runtime. It
                         similarly allows the server the flexibility to return a remote reference, or
                         a locally running <a href=proxy.html>proxy</a>, or a completely local object;
-                        all without affecting the client's remaining code!
+                        all without affecting the client's remaining code!<br><br>
+
+                        There is one more thing to consider: While the wrapper approach is highly
+                        recommended; If you prefer <u><i>complete</i></u> transparency, and not to
+                        have to deal with checked exceptions, there is an <a href=http://wiki.java.net/bin/view/Communications/TransparentProxy>
+                        alternate</a> approach supported by the project, to make remote objects
+                        behave <i>identically</a> as if they were local.<br>
                      </span>
                   </td>
                </tr>
@@ -356,7 +362,7 @@ public class WrapperObject {
    <table width="98%" height="96" border="0" align="center" cellpadding="9" cellspacing="0">
       <tr>
          <td valign="top">
-            <span class="spacing style4 style7 style9">
+            <span class="spacing style4 style7 style9"><br>
                The diagramme below illustrates the options for receiving and exposing object
                references from a Virtual Machine:<br><br>
 
@@ -380,7 +386,7 @@ public class WrapperObject {
             </span>
          </td>
       </tr>
-   </table>
+   </table><br>
 <!-- end regular section -->
 
 <!-- footer: -->
