@@ -2,6 +2,11 @@ package gnu.cajo.utils.extra;
 
 import gnu.cajo.invoke.*;
 import java.lang.reflect.*;
+import java.io.IOException;
+
+import java.rmi.RemoteException;
+import java.rmi.NotBoundException;
+import java.net.MalformedURLException;
 
 /*
  * Item Transparent Dynamic Proxy (requires JRE 1.3+)
@@ -118,12 +123,21 @@ public final class TransparentItemProxy implements InvocationHandler {
     * @return A reference to the server item, wrapped in the object created
     * at runtime, implementing all of the interfaces provided. It can then
     * be typecast into any of the interfaces, as needed by the client.
-    * @throws MalformedURLException if the URL is not in the format required.
-    * @throws RemoteException if the rmiregistry could not be reached.
+    * @throws RemoteException if the remote registry could not be reached.
     * @throws NotBoundException if the requested name is not in the registry.
+    * @throws IOException if the zedmob format is invalid.
+    * @throws ClassNotFoundException if a proxy was sent to the VM, and
+    * proxy hosting was not enabled.
+    * @throws InstantiationException when the URL specifies a class name
+    * which cannot be instantiated at runtime.
+    * @throws IllegalAccessException when the url specifies a class name
+    * and it does not support a no-arg constructor.
+    * @throws MalformedURLException if the URL is not in the format explained
     */
    public static Object getItem(String url, Class interfaces[])
-      throws Exception {
+      throws RemoteException, NotBoundException, IOException,
+      ClassNotFoundException, InstantiationException, IllegalAccessException,
+      MalformedURLException {
       return getItem(Remote.getItem(url), interfaces);
    }
 }
