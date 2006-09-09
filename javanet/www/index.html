@@ -64,15 +64,16 @@
 <!-- begin main.html -->
 
                            The cajo project is a small, free library, enabling powerful dynamic
-                           multi-machine co&ouml;peration; both within and between, both free <i>and</i>
+                           multi-machine co&ouml;peration; both within and between, both free and
                            proprietary Java applications. It provides a surprisingly easy to use, yet
                            completely understandable framework, to simplify the use of RMI; while at
-                           the same time harnessing its <i>full</i> potential. It is actively being
-                           deployed in Java EE, SE, and ME environments, all over the world. It is a
-                           uniquely <i>'drop-in'</i> distributed computing framework: meaning it imposes
-                           <i>no</i> structural requirements on your applications. It allows remote JVMs
-                           to work together seamlessly, as one. Welcome to the home of the <a href=http://weblogs.java.net/pub/wlg/1715>
-                           World Wide Virtual Machine</a>.<br><br>
+                           the same time harnessing its full potential. It is actively being deployed
+                           in Java EE, SE, and ME environments, all over the world. It is a uniquely
+                           <i>'drop-in'</i> distributed computing framework: meaning it imposes
+                           no structural requirements on your applications. It allows multiple remote
+                           JVMs, to work together seamlessly, as one. Welcome, to the home of the
+                           <a href=http://weblogs.java.net/pub/wlg/1715 title="the WWVM">World Wide
+                           Virtual Machine</a>.<br><br>
 
                            <h2>Project goals</h2>
 
@@ -88,31 +89,27 @@
                            <h2>Major features</h2>
 
                            1. The framework allows any number of Java Virtual Machines to work together,
-                           <i>literally</i> as one.  Application code makes no <i>syntactic</i>
-                           distinction, between local and remote  objects; they can even be interchanged,
-                           at <i>runtime.</i> Applications can evolve from all objects being on a single
-                           Virtual Machine, to all objects being on separate Virtual Machines, to all
-                           objects being on separate Physical Machines. The scalability comes via the
-                           framework; it requires <i>no</i> changes to the application's code, or its
-                           structure.<br><br>
+                           literally as one.  Application code makes no syntactic distinction between
+                           local and remote  objects; they can even be interchanged, at runtime.
+                           Applications can evolve from all objects being on a single Virtual Machine,
+                           to all objects being on separate Virtual Machines, to all objects being on
+                           separate Physical Machines. The scalability comes via the framework; it
+                           requires no changes to the application's code, or its structure.<br><br>
 
                            2. Unsigned Applets and WebStart applications, indistinguishable from
-                           installed applications, can be created simply.
-                           Easily transfer an application's entire user interface, to any Java
-                           equipped client.
-                           Cleanly separate the components of the model, view, and
-                           controller portions of an application between multiple machines. Send both
-                           data and code, with complete transparency, <i>and</i> security.
-                           Again, all without source impact.
-                           <br><br>
+                           installed applications, can be created simply. Easily transfer an
+                           application's entire user interface, to any Java equipped client. Cleanly
+                           separate the components of the model, view, and controller portions of an
+                           application between multiple machines. Send both data and code, with complete
+                           transparency, and security. Again, all without source impact.<br><br>
 
                            3. This framework allows both applications, and developers, to collaborate
                            dynamically, linking their objects at will. This architecture can fulfill
                            the true promise of Java: Turn the network into one seamless, evolving
                            computer; link everything, from mainframes, to mobile phones. It can
                            allow applications to be easily built using optimised components from
-                           <i>other</i> distributed applications. Remoting and linking of objects can
-                           be done with as little as one additional line of code.<br><br>
+                           other distributed applications. Remoting and linking of objects can be done
+                           with as little as one additional line of code.<br><br>
 
                            <h2>Getting started</h2>
 
@@ -130,7 +127,7 @@
                            Virtual Machines can be behind NAT, firewalls, even HTTP proxies.<br><br>
 
                            Best of all, this framework is 100% <i>pure</i> Java<font size="-4">
-                           <sup>TM</sup></font> i.e. it uses <i><u>no</u> bloody</i>
+                           <sup>TM</sup></font>: i.e. it uses <i><u>no</u> bloody</i>
                            <tt>&lt;XML&gt;</tt>; and <i><u>no</u> silly</i> @nnotations!<br><br>
 
                            There are two general approaches to getting started:<br><br>
@@ -147,17 +144,18 @@
                            <a href=example.html>example</a>. It consists of just four small classes,
                            yet it completely exercises the entire framework, and demonstrates its
                            capability. The project's root directory has batch files, and an ant script,
-                           illustrating three fundamentally different ways to build the example. The
+                           illustrating four fundamentally different ways to build the example. The
                            <a href=tutorial.html>tutorial</a> page, should be of particular interest to
                            this group.<br><br>
 
-                           > Either way, the best first step would be to read the short <a href=overview.html>
-                           overview</a> page. Many also find the simple <a href=starting.html>getting started</a>,
-                           <a href=http://wiki.java.net/bin/view/Communications/ProxyUsage>proxy</a>,
-                           <a href=http://wiki.java.net/bin/view/Communications/TransparentProxy>transparency</a>,
-                           and <a href=http://wiki.java.net/bin/view/Communications/CajoScripting>
-                           scripting</a> experiments quickly enlightening. Java EE Developers: once you
-                           have familiarised yourself with the project, come see the  <a href=http://wiki.java.net/bin/view/Communications/CajoServlet>
+                           *Either way; The best first step, would be to read the short <a href=overview.html>
+                           overview</a> page. Many people also find the simple <a href=starting.html>
+                           getting started</a>, <a href=http://wiki.java.net/bin/view/Communications/ProxyUsage>
+                           proxy</a>, <a href=http://wiki.java.net/bin/view/Communications/TransparentProxy>
+                           transparency</a>, and <a href=http://wiki.java.net/bin/view/Communications/CajoScripting>
+                           scripting</a> experiments to be quickly enlightening. Java EE Developers:
+                           Once you have familiarised yourself with the project, come see the
+                            <a href=http://wiki.java.net/bin/view/Communications/CajoServlet>
                            migration</a> framework, we have created just for you.
 <!-- end main.html -->
                      </td>
@@ -297,9 +295,8 @@
 <table>
    <tr>
       <td>
-                           The <a href=servlets/ProjectNewsList>Announcements</a> section hosts the
-                           latest information about the project, and the discussion <a href=servlets/ProjectForumView>
-                           fora</a> are an interesting and valuable resource. The <a href=servlets/ProjectDocumentList>
+                           The discussion <a href=servlets/ProjectForumView>fora</a> are an interesting
+                           and valuable resource. The <a href=servlets/ProjectDocumentList>
                            Documents & files</a> section holds optional extension classes, and serves
                            as a public developement area. There is also a <a href=http://wiki.java.net/bin/view/Communications/ThecajoProject>
                            wiki</a>, where members can offer examples, clarify details, or
@@ -309,15 +306,17 @@
                            found on the left sidebar.<br><br>
 
                            I hope you find it <i>surprisingly</i> easy to come up to speed. I also
-                           hope you find the new possibilities very exciting. This framework is clear
-                           and focused, and this project is not intent on senselessly making it larger.
-                           Rather, the primary goal is on promoting and assisting its adoption into new
-                           and existing applications. Of course improvements and fixes are always
-                           welcome; from <i>everyone</i>! However, the interesting challenge is: all
-                           changes must be both backward <i>and</i> forward compatible, in order to
-                           maintain interoperability with currently running applications. E.g. consider
-                           the public telephone network: A 1920's-era rotary phone can call the newest
-                           satellite phone on the other side of the planet, <i>and</i> vice versa.<br><br>
+                           hope you find the new possibilities very exciting. This framework is both
+                           clear, and very focused; this project is not intent on senselessly
+                           making it larger. Rather, the primary goal is on promoting and assisting its
+                           adoption, into new and existing applications. Of course improvements and
+                           fixes are always welcome; From <i>everyone</i>! However, the interesting
+                           challenge is: All changes must be both <a href=http://foldoc.org/?backward+compatibility>
+                           backward</a> <i>and</i> <a href=http://foldoc.org/?forward+compatible>
+                           forward</a> compatible; in order to maintain interoperability with currently
+                           running applications. E.g. consider the public telephone network: A
+                           1920's-era rotary phone can call the newest satellite phone on the other
+                           side of the planet, <i>and</i> vice versa.<br><br>
 
                            <h2>Community mission</h2>
 
