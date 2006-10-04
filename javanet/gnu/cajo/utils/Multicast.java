@@ -79,7 +79,7 @@ public final class Multicast implements Runnable {
     * should be sufficient for most purposes. The multicast socket address
     * will be set to 244.0.23.162, which is officially registered with IANA
     * for cajo object reference announcements.  The UDP port number on which
-    * this object will announce and listen is set to 1189, which is is also
+    * this object will announce and listen is set to 1198, which is is also
     * assigned by the IANA, for cajo object reference acquisition.  The object
     * will listen on the same network interface being used for the server's RMI
     * communication.
