@@ -39,8 +39,8 @@ import gnu.cajo.invoke.Remote;
  * <p>
  * The scheduler's purpose is to provide an exclusive thread of execution
  * amongst the scheduled tasks.  It will assure that only one of the tasks is
- * running at any given time, therefore shared memory between the tasks cannot
- * be corrupted by the scheduler due to synchronization problems.
+ * running at any given time, therefore shared memory between the tasks
+ * cannot be corrupted by the scheduler due to synchronization problems.
  * <p>
  * All scheduler methods are properly synchronized, to allow task loading,
  * unloading, and management, from other threads, as well as by the scheduled
@@ -48,9 +48,9 @@ import gnu.cajo.invoke.Remote;
  * <p>
  * Up to 32 tasks can be loaded, at any given time, for scheduling.  Once
  * loaded, tasks can be scheduled to run in any, or all, of three ways;
- * Synchronous, Triggered, or Asynchronous. The class implements three methods
- * to flag a loaded task as such.  The following is a description of the
- * scheduling algorithm:
+ * Synchronous, Triggered, or Asynchronous. The class implements three
+ * methods to flag a loaded task as such.  The following is a description of
+ * the scheduling algorithm:
  * <p>
  * When a task is flagged as asynchronous, it will be run only when no
  * tasks are flagged as synchronous, or triggered, at the start of its
@@ -78,9 +78,10 @@ import gnu.cajo.invoke.Remote;
  * The stop method is used to prevent the execution of any flagged task.
  * General notes:<ul>
  * <li>
- * Since scheduling is not preemptive, agressively minimize asynchronous task's
- * run time requirements, to decrease the latency of event responsiveness.  This
- * becomes especially important when tasks are elevated in priority.
+ * Since scheduling is not preemptive, developers must agressively minimize
+ * asynchronous task's run time length, to decrease the latency of event
+ * responsiveness.  This becomes especially important when tasks are elevated
+ * in priority.
  * <li>
  * Non-preemptive scheduling eliminates all synchronization concerns for
  * objects shared between scheduled tasks.
@@ -89,9 +90,10 @@ import gnu.cajo.invoke.Remote;
  * the design runtime load increases, selected tasks can be boosted in
  * proiority to achieve the desired responsiveness.
  * </ul><p>
- * <i>Note:</i>  This class supports serialization.  It will restart the
- * scheduling task automatically on deserialization.  However, in order for
- * serialization to succeed, all of the loaded tasks must also be serializable.
+ * <i>Note:</i>  This class supports serialisation.  It will restart the
+ * scheduling task automatically on deserialisation.  However, in order for
+ * serialisation to succeed, all of the loaded tasks must also be
+ * serialisable.
  *
  * @version 1.0, 01-Nov-99 Initial release
  * @author John Catherino
@@ -99,6 +101,8 @@ import gnu.cajo.invoke.Remote;
  */
 
 public final class Scheduler implements Serializable {
+   private static final String
+      INDEX_INVALID = "task table index invalid";
    private transient Thread thread;
    private int syncFlags, soonFlags, wakeFlags;
    private Object list[] = new Object[32];
@@ -142,7 +146,7 @@ public final class Scheduler implements Serializable {
                   }
                }
                try { Remote.invoke(list[slot], "slice", null); }
-               catch(Exception x) { drop(new Integer(slot)); }
+               catch(Exception x) { drop(slot); }
            }
          } catch(InterruptedException x) {}
       }
@@ -155,9 +159,9 @@ public final class Scheduler implements Serializable {
    /**
     * This method will start, or suspend, the scheduler.  The scheduler will
     * be started automatically when the first task is flagged for execution.
-    * Enabling an already enabled scheduler will cause no effect, just as
-    * disabling a currently disabled scheduler. <i>Note:</i> the scheduler
-    * cannot be stopped remotely.
+    * The method is idempotent; therefore enabling an already enabled
+    * scheduler will cause no effect, just as disabling a currently disabled
+    * scheduler.
     * @param enabled The flag to indicate if this is a startup, or suspend
     * operation.
     * @return true if successfully started or stopped, false if not for
@@ -182,21 +186,21 @@ public final class Scheduler implements Serializable {
       return false;
    }
    /**
-    * This method accepts a task to be scheduled.  If the task is accepted, it
-    * is placed in the queue, but will not be executed, until it is
+    * This method accepts a task to be scheduled.  If the task is accepted,
+    * it is placed in the table, but will not be executed, until it is
     * flagged for operation. If the execution of the task slice results in
     * an exception, the task will be automatically dropped from the queue.
     * @param task The task to attempt to schedule, it may be either local,
     * remote, or even a proxy, when enabled.
-    * @return the handle of the task in the queue.  The task handle is used
-    * in the scheduling methods.
-    * @throws IllegalArgumentException If the task queue is full.
+    * @return the index of the task in the table.  The task table index is
+    * used in the scheduling methods.
+    * @throws IllegalArgumentException If the task table is full.
     */
-   public synchronized Integer load(Object task) {
+   public synchronized int load(Object task) {
       for (int slot = 0; slot < 32; slot++) {
 	     if (list[slot] == null) {
 	        list[slot] = task;
-            return new Integer(slot);
+            return slot;
          }
       }
       throw new IllegalArgumentException("task table currently full");
@@ -204,97 +208,98 @@ public final class Scheduler implements Serializable {
    /**
     * This method sets the synchronous execution flag for a task. The flag
     * will be cleared automatically, when the scheduler calls this task.
-    * @param task The handle of the task in the queue
+    * @param task The index of the task in the table
     * @return false if the task was already flagged, or not in the queue,
     * else true if successfully flagged.
-    * @throws IllegalArgumentException If the task handle is invalid.
+    * @throws IllegalArgumentException If the task table index is invalid.
     */
-   public synchronized Boolean sync(Integer task) {
-      if (task.intValue() < 32) {
-         int mask = 1 << task.intValue();
+   public synchronized boolean sync(int task) {
+      if (task >= 0 && task < 32) {
+         int mask = 1 << task;
          if ((syncFlags & mask) == 0) {
             syncFlags |= mask;
             setEnabled(true);
-            return Boolean.TRUE;
-         } else return Boolean.FALSE;
-      } else throw new IllegalArgumentException("task table index too large");
+            return true;
+         } else return false;
+      } else throw new IllegalArgumentException(INDEX_INVALID);
    }
    /**
     * This method sets the triggered execution flag for a task.  It will be
     * cleared just before passing execution on to the task.
-    * @param  task The handle of the task in the queue
+    * @param  task The index of the task in the table
     * @return true if successfully flagged, false if already flagged
-    * @throws IllegalArgumentException If the task handle is invalid.
+    * @throws IllegalArgumentException If the task table index is invalid.
     */
-   public synchronized Boolean soon(Integer task) {
-      if (task.intValue() < 32) {
-         int mask = 1 << task.intValue();
+   public synchronized boolean soon(int task) {
+      if (task >= 0 && task < 32) {
+         int mask = 1 << task;
          if ((soonFlags & mask) == 0) {
             soonFlags |= mask;
             setEnabled(true);
-            return Boolean.TRUE;
-         } else return Boolean.FALSE;
-      } else throw new IllegalArgumentException("task table index too large");
+            return true;
+         } else return false;
+      } else throw new IllegalArgumentException(INDEX_INVALID);
    }
    /**
     * This method sets the asynchronous execution flag for a task. It will
     * <u>not</u> be cleared when passing execution on to the task. The flag
-    * will retain its state, until changed through the scheduler interface.
-    * @param  task The handle of the task to be scheduled for continuous
+    * will retain its state, until disabled through the stop method.
+    * @param  task The index of the task to be scheduled for continuous
     * asynchronous execution.
     * @return true if successfully flagged, false if already flagged.
-    * @throws IllegalArgumentException If the task handle is invalid.
+    * @throws IllegalArgumentException If the task table index is invalid.
     */
-   public synchronized Boolean wake(Integer task) {
-      if (task.intValue() < 32) {
-         int mask = 1 << task.intValue();
+   public synchronized boolean wake(int task) {
+      if (task >= 0 && task < 32) {
+         int mask = 1 << task;
          if ((wakeFlags & mask) == 0) {
             wakeFlags |= mask;
             setEnabled(true);
-            return Boolean.TRUE;
-         } else return Boolean.FALSE;
-      } else throw new IllegalArgumentException("task table index too large");
+            return true;
+         } else return false;
+      } else throw new IllegalArgumentException(INDEX_INVALID);
    }
    /**
     * This method clears all scheduling flags for indicated task.  The task
-    * will reamain in the queue however. <i>Note:</i> to remove a task, use
+    * will reamain in the table however. <i>Note:</i> to remove a task, use
     * the drop method instead, it automatically calls stop, before removing
-    * the task from the queue.
-    * @param task The handle of the task in the queue
-    * @throws IllegalArgumentException If the task handle is invalid.
+    * the task from the table.
+    * @param task The index of the task in the table
+    * @throws IllegalArgumentException If the task table index is invalid.
     */
-   public synchronized void stop(Integer task) {
-      if (task.intValue() < 32) {
-         int mask = ~(1 << task.intValue());
+   public synchronized void stop(int task) {
+      if (task >= 0 && task < 32) {
+         int mask = ~(1 << task);
          syncFlags &= mask;
          soonFlags &= mask;
          wakeFlags &= mask;
-      } else throw new IllegalArgumentException("task table index too large");
+      } else throw new IllegalArgumentException(INDEX_INVALID);
    }
    /**
     * This method clears all scheduling flags for the indicated task, and
-    * also removes it from the queue.
-    * @param task The handle of the task to stop and remove from the queue
-    * @throws IllegalArgumentException If the task handle is invalid.
+    * also removes it from the table.
+    * @param task The index of the task to stop and remove from the table.
+    * @throws IllegalArgumentException If the task table index is invalid.
     */
-   public synchronized void drop(Integer task) {
-      if (task.intValue() < 32) {
+   public synchronized void drop(int task) {
+      if (task >= 0 && task < 32) {
          stop(task);
-         list[task.intValue()] = null;
-      } else throw new IllegalArgumentException("task table index too large");
+         list[task] = null;
+      } else throw new IllegalArgumentException(INDEX_INVALID);
    }
    /**
     * The purpose of this function is to reduce event-driven task latency by
-    * allowing asynchronous tasks to voluntarily exit prematurely.  To improve
-    * responsiveness, asynchronous tasks could check this method, before going
-    * on to another functionally distinct section of its task execution. It is
-    * normally checked when the async task has some periodic extra work, if
-    * the method returns false, the extra work could be processed in its
-    * current slice.
+    * allowing asynchronous tasks to voluntarily exit prematurely.  To
+    * improve responsiveness, asynchronous tasks could check this method,
+    * before going on to another functionally distinct section of its task
+    * execution. It is normally checked when the async task has some periodic
+    * extra work, if the method returns false, the extra work could be
+    * processed in its current slice.
     * @return true if synchronous or triggered tasks have been flagged for
-    * execution, false if it is OK for the task to continue a little longer.
+    * execution, false if it is OK for the task to continue running a little
+    * longer.
     */
-   public Boolean pending() {
-      return (syncFlags != 0 | soonFlags != 0) ? Boolean.TRUE : Boolean.FALSE;
+   public boolean pending() {
+      return syncFlags != 0 | soonFlags != 0;
    }
 }
