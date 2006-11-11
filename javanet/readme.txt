@@ -1,4 +1,4 @@
-Library Release 1.92 07-Sep-06
+Library Release 1.93 11-Nov-06
 
                        ___  _
                       / ,_`(_) ___
@@ -17,7 +17,7 @@ Home of the World Wide Virtual Machine (WWVM)
 Here you will find full source code, detailed documentation,
 illustrative examples, and multiple support fora.
 
-Copyright (C) 1999 John Catherino
+Copyright (c) 1999 John Catherino
 
 This library is Free Software. You may distribute it and/or
 modify it under the terms of the GNU Lesser General Public
