@@ -70,11 +70,11 @@
                                  <td valign="top">
 <!-- title bar section -->         <span class="spacing style4 style7 style9">
                                       The <a href=docs/gnu/cajo/utils/CodebaseServer.html>
-                                      CodebaseServer</a> could be considered one of the world's smallest
-                                      application servers. It is completely customized to support the cajo
+                                      CodebaseServer</a> could likely be considered the world's smallest
+                                      application server. It is completely customised to support the cajo
                                       framework. The entire server consists of a single class, yet it serves
-                                      <i>(no pun intended;)</i> two <u>major</u> roles. First, and foremost, it
-                                      provides codebase service; to allow remote VMs to run objects locally, for
+                                      <i>(pun intended)</i> two major roles. First, and foremost, it provides
+                                      codebase service; to allow remote VMs to run objects locally, for
                                       which they do not have the local class files. Secondly, it provides
                                       client service; to allow transparent distribution of user interfaces,
                                       as either Applets, or as WebStart applications.
@@ -106,8 +106,8 @@
       <tr>
          <td valign="top">
             <span class="spacing style4 style7 style9">
-               When a proxy item is sent to another VM, it arrives solely as a serialized
-               collection of many cooperating objects, but no code (i.e. class files). The
+               When a proxy item is sent to another VM, it arrives solely as a serialised
+               collection of many co&ouml;perating objects, but no code (i.e. class files). The
                receiving VM will first check in its local codebase to find class definitions
                for these objects, if it does, it will use them. However, as is often the
                case with proxies, it will not have all of the application specific classes
@@ -119,7 +119,7 @@
                locally, in the context of that VM.<br><br>
 
                All proxy-specific class files, and other files needed by the proxy, such as
-               images or localized string tables, are packaged into a single jar file. The
+               images or localised string tables, are packaged into a single jar file. The
                supplied <a href=example.html>example</a> illustrates how to do this very
                easily.<br><br>
 
@@ -155,14 +155,14 @@
          <td valign="top">
             <span class="spacing style4 style7 style9">
                If the <a href=client.html>client</a> topic seemed almost magical; this is
-               the functionality of the application server. The previous discussion on
+               the functionality of the codebase server. The previous discussion on
                codebase service could be provided by <u>any</u> general purpose webserver.
                What makes an application server special is knowing what to do with all that
-               <i>'extra-stuff'</i> appended to the end of the URL.<br><br>
+               <i>"extra-stuff"</i> appended to the end of the URL.<br><br>
 
                As explained previously, the CodebaseServer first checks if a jar file is
-               simply being requested, if so, it fulfills the request. However, when the
-               request is <i>not</i> for a jar file; here is where things get interesting.<br><br>
+               being requested, if so, it fulfills the request. However, when the request
+               is <i>not</i> for a jar file; here is where things get interesting.<br><br>
 
                The CodebaseServer will parse the URL to extract additional meaning from the
                request. Based on its content, one of three things will happen. First, and
@@ -191,13 +191,13 @@
                   <li>The host requests the codebase needed by the proxy
                   <li>The CodebaseServer provides this
 
-               </ol>An elaborate process, to be sure, but all handled transparently behind
-               the scenes. The code is all there of course, but truth be told; just like
-               the Java API source, you need not understand it completely, in order to use
-               it effectively. This was only a high-level overview, the <i>mind-numbing</i>
-               technical details were intentionally omitted. If this already has your head
-               spinning, don't worry about it; <i>especially</i> don't worry about the next
-               section, simply go on to the conclusion.
+               </ol>An elabourate process, to be sure, but all handled transparently behind
+               the scenes. The source is all there of course for the curious, but truth be
+               told; just like the Java Runtime Environment source, you need not understand
+               it, in order to use it effectively. This was only a high-level overview, the
+               <i>mind-numbing</i> technical details were intentionally omitted. If this
+               already has your head spinning, don't worry about it; <i>especially</i>
+               don't worry about the next section, simply go on to the conclusion.
             </span>
          </td>
       </tr>
@@ -224,16 +224,17 @@
       <tr>
          <td valign="top">
             <span class="spacing style4 style7 style9">
-               OK, for you <i>hot-shots</i> who want to squeeze out every last ounce of
+               For those out there who want to squeeze out every last gramme of
                performance, you probably already thought of this, but here it is anyway.
-               Since the CodebaseServer performs the functionality of a generic http
-               server, if you do not require the client application service functionality,
-               you can share another item's CodebaseServer (or generic http server). Simply
-               place your proxy jar file in the working directory of another codebase
-               server, and use the fully-qualified constructor of the <a href=docs/gnu/cajo/utils/ItemServer.html#bind(java.lang.Object,%20java.lang.String)>
+               Since the CodebaseServer fundamentally performs the functionality of a
+               generic http server, if you do not require the client application service
+               functionality, you can share another item's CodebaseServer (or generic http
+               server). Simply place your proxy jar file in the working directory of
+               another codebase server, and use the fully-qualified constructor of the
+               <a href=docs/gnu/cajo/utils/ItemServer.html#bind(java.lang.Object,%20java.lang.String)>
                ItemServer</a>, to tell clients where to find the file. <i><u>Note</u>:</i>
                The CodebaseServer need not even be in the same physical box as the server
-               item. <i>(Just ponder the implications of that :-)</i>
+               items. <i>(Just ponder the implications of that :-)</i>
             </span>
          </td>
       </tr>
@@ -264,7 +265,7 @@
                transfer between virtual machines, transparent. It can allow the generic
                client object the ablity to display <i>any</i> graphical proxy. Its purpose
                is to bring the power of proxy items, and remote graphical proxy viewing,
-               to everybody, not just the <i>rocket-scientists</i>.
+               to everybody, not just the <i>'Rocket-Scientists.'</i><br>
             </span>
          </td>
       </tr>
@@ -291,7 +292,7 @@
          <td width="95%" valign="top" background="ventro/bar_bg.gif">
             <table width="100%" height="31" border="0" cellpadding="0" cellspacing="0">
                <tr>
-                  <td style="vertical-align:middle"><span class="style11">&copy; 2004 GNU FDL</span></td>
+                  <td style="vertical-align:middle"><span class="style11">&copy; 2004 John Catherino, <a href=license.html>GNU FDL</a></span></td>
                   <td width="53%"><div align="right"></div></td></tr></table></td>
                   <td width="3%"><img src="ventro/bar_Right.gif" width="10" height="35"></td></tr></table></td>
                </tr>
