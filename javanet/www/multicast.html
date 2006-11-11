@@ -69,7 +69,7 @@
                               <tr>
                                  <td valign="top">
 <!-- title bar section -->         <span class="spacing style4 style7 style9">
-                                      The <a href=nonav/docs/gnu/cajo/utils/Multicast.html>Multicast</a> class performs
+                                      The <a href=docs/gnu/cajo/utils/Multicast.html>Multicast</a> class performs
                                       two complimentary functions. First, it allows an object to <i>"broadcast"</i>
                                       a remote reference to itself over the network. Second, it allows an object to
                                       listen for, and <i>catch</i>, these reference broadcasts. Once caught, an
@@ -127,18 +127,20 @@
                Applications can range from performing all multicasts on a single channel,
                to using separate channels for each specific meaning. A server performs a
                broadcast by passing a reference to any object to a multicast object's
-               <a href=nonav/docs/gnu/cajo/utils/Multicast.html#announce(java.lang.Object,%20int)>
+               <a href=docs/gnu/cajo/utils/Multicast.html#announce(java.lang.Object,%20int)>
                announce</a> method.<br><br>
 
-               The framework defines a default channel, which can be useful for spontaneous
-               inter-networking.  To use a <b><i>Star Trek</i></b> metaphor; it could be
-               likened to the <i>'hailing frequency'</i>, for contacting new and unknown
+               The Internet Assigned Numbers Authority, (IANA) has granted the cajo
+               framework a global default channel, which can be useful for spontaneous
+               inter-networking.  To use a <b><i>Star Trek</i></b> metaphor, it could be
+               likened to the <i>'hailing frequency;'</i> for contacting new and unknown
                objects. Extracting interface information from spontaneously discovered
                objects is currently application specific, unless there is strong community
-               interest for its standardization. The official <i>suggestion</i> would be
-               for objects to implement a <code>String getDescription()</code> method, which
-               would return a description of the features and use of the object in detail,
-               with HTML markup allowed. (one suggested template can be found <a href=https://cajo.dev.java.net/files/documents/974/12066/description.html>
+               interest for its standardisation. The official <i>suggestion</i> would be
+               for objects to implement a <code>String getDescription()</code> method,
+               which would return a description of the features and use of the object in
+               detail, with HTML markup allowed. (one suggested template can be found
+               <a href=https://cajo.dev.java.net/files/documents/974/12066/description.html>
                here</a>) Ideally, objects should also implement the <code>getProxy()</code>
                method, to provide a local interface, which would in turn provide a graphical
                user interface to the object, as described in the <a href=proxy.html>proxy</a>
@@ -176,7 +178,7 @@
             <span class="spacing style4 style7 style9">
                An object can register itself with a multicast object to listen for these
                reference broadcasts.  It does this by invoking the multicast's
-               <a href=nonav/docs/gnu/cajo/utils/Multicast.html#listen(java.lang.Object)>
+               <a href=docs/gnu/cajo/utils/Multicast.html#listen(java.lang.Object)>
                listen</a> method, passing in a reference to itself.  When the multicast
                object receives a broadcast of a remote object reference, it will invoke the
                listener's public multicast method, passing a reference to itself, as
@@ -246,7 +248,7 @@
       <tr>
          <td valign="top">
             <span class="spacing style4 style7 style9">
-               Graphically, the multicast concept looks something like this:<br><br>
+               The cajo multicast concept is illustrated in the following diagramme:<br><br>
 
                <center><img src="ventro/diagram_multicast.jpg" alt="cajo UDP multicast discovery"
                   title="cajo multicast technology"></center><br>
@@ -268,8 +270,8 @@
                small-world</a> and <a href=http://www.amazon.com/exec/obidos/ASIN/0452284392/qid=1102258432/sr=2-1/ref=pd_ka_b_2_1/002-5249030-9700002 target=_blank>
                scale-free</a> network properties. When operating in the context of a group
                of developers; it can enable a whole range of <a href=http://www.simonsays.com/book/default_book.cfm?isbn=0684868768&areaid=33 target=_blank>
-               emergent</a> applications to form. This is an extremely exciting new
-               frontier!
+               emergent</a> applications to form. These technologies are an extremely
+               exciting new frontier in Computer Science.
             </span>
          </td>
       </tr>
@@ -296,7 +298,7 @@
          <td width="95%" valign="top" background="ventro/bar_bg.gif">
             <table width="100%" height="31" border="0" cellpadding="0" cellspacing="0">
                <tr>
-                  <td style="vertical-align:middle"><span class="style11">&copy; 2004 GNU FDL</span></td>
+                  <td style="vertical-align:middle"><span class="style11">&copy; 2004 John Catherino, <a href=license.html>GNU FDL</a></span></td>
                   <td width="53%"><div align="right"></div></td></tr></table></td>
                   <td width="3%"><img src="ventro/bar_Right.gif" width="10" height="35"></td></tr></table></td>
                </tr>
