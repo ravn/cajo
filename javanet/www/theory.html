@@ -70,7 +70,7 @@
                               <tr>
                                  <td valign="top">
 <!-- title bar section -->         <span class="spacing style4 style7 style9">
-                                      Every remotely accessible object in the framework is called an <a href=item.html>
+                                      A remotely accessible object in the framework is called an <a href=item.html>
                                       Item</a>. An application can host one or more items within its Virtual
                                       Machine. Items can call other items, and an item can also be called by other
                                       items. A special type of item is known as a <a href=proxy.html>Proxy</a>.
@@ -78,29 +78,39 @@
                                       another. Proxies can also call, or be called, by other items, and even by
                                       other proxies.<br><br>
 
-                                      In the standard RMI framework, each remote object must have a unique
-                                      <i>"stub"</i> compiled for its callable methods. This can quickly become
-                                      burdensome, especially if the interaction between objects becomes highly
-                                      diverse; and is completely impossible when method signatures are unknown
-                                      at compile time. To address these issues, the framework defines only one
-                                      remote interface; called <a href=nonav/docs/gnu/cajo/invoke/Invoke.html>
-                                      Invoke</a>. It defines a single method, to represent all object
-                                      methods; it accepts a method name, the arguments to be provided to it,
-                                      and the data to be returned; i.e.:
+                                      Normally, every RMI object must have a unique <i>"stub"</i> compiled for it.
+                                      Starting with Java 1.5, these stubs <i>could</i> be generated at runtime, by
+                                      the client, but if any clients are running on JREs earlier than 1.5, which
+                                      is still a significant number, all of these stubs must be pre-compiled
+                                      manually, by the developer. Ironically, this has created a significant
+                                      burden, for <i>both</i> clients <i>and</i> servers, particularly when the
+                                      number of remoted objects is large. Additionally, the stub approach becomes
+                                      completely unworkable, when the remote method's signatures are not known at
+                                      compile time, i.e. it precludes spontaneous interoperability. The
+                                      conventional RMI stub approach also creates a potential <i>security</i>
+                                      issue: Each stub contains all of an object's callable method signatures,
+                                      this could provide malicious users significant insight as to the purpose and
+                                      use of an object.<br><br>
 
-                                      <pre>   Object invoke(String method, Object args);</pre>
+                                      All of the above issues are completely eliminated in the approach of the
+                                      cajo framework. Here we have only <b><i>one</i></b> remote interface; called <a href=docs/gnu/cajo/invoke/Invoke.html>
+                                      Invoke</a>. It defines a single method, to represent <i>all</i> object
+                                      methods. It accepts a method name, the arguments to be provided to it, and
+                                      the data to be returned; i.e.:
 
-                                      </a><i><u>Note</u>:</i> it is <i>highly</i> recommended that rather than using
-                                      the invoke interface directly, always interact with an object reference
-                                      using the static invoke method of the <a href=nonav/docs/gnu/cajo/invoke/Remote.html>
+                                      <pre>   Object invoke(String method, Object args);</pre><br>
+
+                                      </a><i><u>Note</u>:</i> It is <i>highly</i> recommended that rather than using
+                                      the invoke interface directly; interact with object references using the
+                                      static invoke method of the <a href=docs/gnu/cajo/invoke/Remote.html>
                                       Remote</a> class.  It has the following signature:
 
                                       <pre>   Object Remote.invoke(Object object, String method, Object args);</pre>
 
-                                      It provides all the functionality of the invoke interface, but also works on
-                                      <u>both</u> remote objects, and ordinary local objects. This can allow code
+                                      This provides all the functionality of the invoke interface, but also works
+                                      on <u>both</u>, remote <i>and</i> ordinary local objects. This can allow code
                                       to transparently scale from local to remote object use, even at runtime, with
-                                      no application source code changes.
+                                      <i>no</i> application source code changes.
                                     </span>
                                  </td>
                               </tr>
@@ -129,15 +139,15 @@
          <td valign="top">
             <span class="spacing style4 style7 style9">
                The invocation of a method on a remote object using the Invoke interface is
-               made possible using the Remote class.  It combines Java RMI with another
-               Java feature known as <i>reflection</i>.  The Remote class takes <i>any</i>
-               object, and places a remotely invokable wrapper around it. When remote
-               objects execute the invoke method, Remote uses reflection to find the method
-               on its internal object, matching both the name and the argument types, if
-               any. If it is found, it executes that method, and returns the result, or
-               exception, if any. If no matching method can be found on the internal object,
-               a <tt>NoSuchMethodException</tt> is thrown. This technique effectively
-               makes <i>all</i> public methods of the internal object remotely callable.
+               made possible using the Remote class.  It fuses Java RMI, with Java
+               Reflection.  The Remote class takes <i>any</i> object, and places a
+               remotely invokable wrapper around it. When remote objects execute the
+               invoke method, Remote uses reflection to find the method on its internal
+               object matching the signature. If the method is found, it executes it and
+               returns the result, or exception, if any. If no matching method can be
+               found on the internal object, a <tt>NoSuchMethodException</tt> is thrown.
+               This technique effectively makes <i>all</i> public methods of the internal
+               object, even including static ones, remotely callable.
             </span>
          </td>
       </tr>
@@ -165,22 +175,21 @@
          <td valign="top">
             <span class="spacing style4 style7 style9">
                An item can send mobile code, i.e. proxy items and complex object arguments
-               to clients using the <a href=nonav/docs/gnu/cajo/utils/CodebaseServer.html>CodebaseServer</a>
-               class.  CodebaseServer will create a very specialized http server on the
-               designated TCP port. It serves the specified jar file containing the class
-               files needed by the client, along with any other resources needed by the
-               proxies. The resources are typically, images and string tables.  By default,
-               a client VM will <u>not</u> accept mobile code. This is typically enabled by
-               calling the <a href=nonav/docs/gnu/cajo/utils/ItemServer.html#acceptProxies()>
-               acceptProxies</a> method of the <a href=nonav/docs/gnu/cajo/utils/ItemServer.html>
-               ItemServer</a> class.  This will install an RMISecurityManager to accept the
-               code, and protect the client hardware and files, it effectively creates an
-               applet-like sandbox around the incoming code.  In essence, <i>mobile code</i>
-               means the client's VM is using classes from a codebase provided to it by the
-               server, over the network. The reason it is not enabled by default, is that
-               one or more proxies, or their complex arguments, could load a JVM
-               <i>significantly</i>. The acceptance of mobile code is an important
-               application specific design decision.
+               to clients using the <a href=docs/gnu/cajo/utils/CodebaseServer.html>
+               CodebaseServer</a> class.  CodebaseServer will create a highly specialised
+               HTTP server on its designated TCP port. It serves the jar file containing
+               the class files needed by the client to instantiate the objects locally. By
+               default, a client VM will <i><u>not</u></i> accept mobile code. This is
+               typically enabled by calling the <a href=docs/gnu/cajo/utils/ItemServer.html#acceptProxies()>
+               acceptProxies</a> method of the <a href=docs/gnu/cajo/utils/ItemServer.html>
+               ItemServer</a> class.  This will install an RMISecurityManager, to accept the
+               code, and protect the client's machine, it effectively creates an applet-like
+               sandbox around the incoming code.  In essence, mobile code means that the
+               client's VM is using classes from a codebase provided to it by the server,
+               over the network. The reason it is not enabled by default, is that accepting
+               proxies, or their complex arguments, <i>could</i> load a JVM significantly.
+               Therefore the acceptance of mobile code is an important application specific
+               design decision.
             </span>
          </td>
       </tr>
@@ -210,37 +219,37 @@
                References to remote items can be easily passed to other items, as a method
                argument, or return, even in an exception. They can also be written to disc,
                and read back for use at some later time. However, obtaining initial
-               references is done via two standard mechanisms:<br><br>
+               references is done via two standard mechanisma:<br><br>
 
-               First, it is generally useful to <a href=nonav/docs/gnu/cajo/utils/ItemServer.html#bind(java.lang.Object,%20java.lang.String)>
+               First, it is generally useful to <a href=docs/gnu/cajo/utils/ItemServer.html#bind(java.lang.Object,%20java.lang.String)>
                bind</a> each item with the ItemServer class. ItemServer will automatically
                create an rmiregistry, and bind the item under the name provided. Other
                clients can now contact the registry, and obtain a remote reference to the
-               item by name. The rmiregistry, and the item communicate using the same TCP
+               item by name. The rmiregistry and the item communicate using the same TCP
                port. Therefore, all that is required for a client to obtain a reference to
                an item using this mechanism is the server host name, port number, and the
                name under which the item is bound. Canonically, the default item for any
                server is bound under the name "<i>main</i>". Obtaining a reference to a
-               bound remote item is accomplished using the static <a href=nonav/docs/gnu/cajo/invoke/Remote.html#getItem(java.lang.String)>
+               bound remote item is accomplished using the static <a href=docs/gnu/cajo/invoke/Remote.html#getItem(java.lang.String)>
                getItem</a> method of the Remote class. This mechanism is called linking
                <u><i>statically</i></u>. <br><br>
 
-               The second mechanism to obtain a reference to a remote item is using the <a href=nonav/docs/gnu/cajo/utils/Multicast.html>
+               The second mechanism to obtain a reference to a remote item is using the <a href=docs/gnu/cajo/utils/Multicast.html>
                Multicast</a> class. Unlike the previous method which uses TCP/IP to obtain
                the reference, this technique uses UDP/IP.  Instead of needing to know the
-               server's TCP address and port number, the client needs to know the UDP
-               address and port number the server will be using. The important difference
-               here is that servers can <i>pick</i> their UDP addresses, and they are
+               TCP address and port number, the client needs to know the UDP address, and
+               port number that servers will be using. The important difference here is that
+               servers can <i>pick</i> their UDP addresses and ports, and that they are
                completely independent of their TCP address. Also, a server can use
                <i>multiple</i> UDP addresses if needed. Multiple servers use the same
                address, to form <i>groups</i>. A server <i>broadcasts</i> a remote reference
-               to an item by calling the <a href=nonav/docs/gnu/cajo/utils/Multicast.html#announce(java.lang.Object,%20int)>
+               to an item by calling the <a href=docs/gnu/cajo/utils/Multicast.html#announce(java.lang.Object,%20int)>
                announce</a> method of Multicast.  This will send the reference to all
                clients listening in the <i>group</i>. Items listen for these announcements
-               using the <a href=nonav/docs/gnu/cajo/utils/Multicast.html#listen(java.lang.Object)>
+               using the <a href=docs/gnu/cajo/utils/Multicast.html#listen(java.lang.Object)>
                listen</a> method of Multicast. Use of UDP/IP, and multicasting in general,
-               has proven to be unfamiliar to a lot of developers, so an entire tutorial <a href=multicast.html>
-               page</a> has been dedicated to the use of the Multicast class. Most
+               has proven to be unfamiliar to a lot of developers, so an entire <a href=multicast.html>
+               tutorial</a> page has been dedicated to the use of the Multicast class. Most
                importantly, this mechanism allows JVMs to spontaneously form networks of
                functionality by linking <u><i>dynamically</i></u>.
             </span>
@@ -272,10 +281,10 @@
                Essentially, any Java application is simply a collection of objects, used by a
                virtual machine, to accomplish a specific purpose. This framework
                transparently provides developers the object resources of other remote
-               virtual machines, with which to create applications.<br><br>
+               virtual machines, with which to create spophisticated
+               <i>meta-applications.</i><br><br>
 
-               For example; the paradigm could be represented graphically, something like
-               this:<br><br>
+               The paradigm it represented in this diagramme:<br><br>
 
                <center><img src="ventro/diagram_theory.jpg" alt="cajo theory"
                   title="cajo concept diagram"></center><br>
@@ -294,7 +303,7 @@
 
                It is important to keep in mind during application development: While this
                framework makes the network appear <i>logically</i> transparent; it most
-               definitely is <u>not</u> <i>physically</i> transparent. A remote method call
+               definitely is not <i>physically</i> transparent. A remote method call
                can fail, or take a really long time, for a multitude of reasons, and at any
                time. It is an inherent <a href=http://weblogs.java.net/jag/Fallacies.html>
                nature</a> of the network. It is very intuitive to treat remote object usage
@@ -334,7 +343,7 @@
          <td width="95%" valign="top" background="ventro/bar_bg.gif">
             <table width="100%" height="31" border="0" cellpadding="0" cellspacing="0">
                <tr>
-                  <td style="vertical-align:middle"><span class="style11">&copy; 2004 GNU FDL</span></td>
+                  <td style="vertical-align:middle"><span class="style11">&copy; 2004 John Catherino, <a href=license.html>GNU FDL</a></span></td>
                   <td width="53%"><div align="right"></div></td></tr></table></td>
                   <td width="3%"><img src="ventro/bar_Right.gif" width="10" height="35"></td></tr></table></td>
                </tr>
