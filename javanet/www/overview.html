@@ -264,9 +264,8 @@ public class SomeObject {
                   <td valign="top">
                      <span class="spacing style4 style7 style9">
                         Now it might appear that all type safety has been completely abandoned;
-                        looking a bit like those old, simplistic, currently fashionably called:
-                        <i>'dynamic languages'</i>, such as BASIC, and Ruby. <i>(ironically, both of
-                        which are being hastily added by Sun)</i> However, what has really happened
+                        looking a bit like those old, currently <i>fashionably</i> called,
+                        <i>'dynamic languages'</i>, like BASIC, and Ruby. However, what has really happened
                         is that strong typechecking had to move, from compile time to run time. If
                         there is no strongly mappable signature, the invocation will result in a
                         <tt>java.lang.NoSuchMethodException</tt>.<br><br>
@@ -283,6 +282,7 @@ public class SomeObject {
 
 <blockquote><tt><pre>
 import java.rmi.RemoteException;
+import gnu.cajo.invoke.Remote;
 
 public class WrapperObject {
    protected Object obj;
@@ -375,14 +375,14 @@ public class WrapperObject {
                framework is even there!<br><br>
 
                All of this functionality; and quite a <u><i>lot</i></u> more: From a
-               codebase of less than 40<b><u>k</u></b>B!<br><br>
+               codebase of 40<b><u>k</u></b>B!<br><br>
 
                Its simplicity, flexibility, ease of use, and <i>performance</i>; offer quite
                an exciting change from the more complex, and heavyweight distributed
                frameworks out there.<br><br>
 
                If you are are interested to try out the example we have discussed here,
-               please visit our <a href=starting.html>getting started</a> page.
+               please visit our <a href=starting.html>getting started</a> page.<br>
 
             </span>
          </td>
@@ -411,7 +411,7 @@ public class WrapperObject {
             <table width="100%" height="31" border="0" cellpadding="0" cellspacing="0">
                <tr>
                   <td style="vertical-align:middle">
-                     <span class="style11">&copy; 2004 GNU FDL</span>
+                     <span class="style11">&copy; 2004 John Catherino, <a href=license.html>GNU FDL</a></span>
                   </td>
                   <td width="53%"><div align="right"></div></td>
                </tr>
