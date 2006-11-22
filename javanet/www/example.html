@@ -94,7 +94,7 @@
                                          </tr>
                                          <tr>
                                             <td><b><a href="#Builder">Builder</a></b></td>
-                                            <td>Configure and serialize the example proxy</td>
+                                            <td>Configure and serialise the example proxy</td>
                                          </tr>
                                          <tr>
                                             <td><b><a href="#Main">Main</a></b></td>
@@ -102,9 +102,8 @@
                                          </tr>
                                       </table><br>
 
-                                      As mentioned in the <a href=proxy.html>proxy</a> page, a server does not
-                                      need to use proxies; one is included in the example, for completeness of
-                                      illustration.
+                                      A server need not use proxies; however, one is included in the example,
+                                      for completeness of illustration.
                                    </span>
                                  </td>
                               </tr>
@@ -174,7 +173,7 @@
                importance of reentrancy consideration with regard to an item's public
                interface. If many items invoke this method simultaneously, only the last
                caller will get called back by the item's main thread.  Making the example's
-               callback method threadsafe is left as a mental excercise for the reader.<br><br>
+               callback method threadsafe is left as an excercise for the reader.<br><br>
 
                Lastly, the item implements the <tt>toString</tt> method, inherited from
                <tt>Object</tt>.  This is also a <i>highly recommended</i> practice.  In
@@ -212,14 +211,14 @@
                framework.  It is sent to a client, as the return from the TestItem's <a href=nonav/docs/gnu/cajo/utils/BaseItem.html#getProxy()>
                getProxy</a> method, inherited from <a href=nonav/docs/gnu/cajo/utils/BaseItem.html>
                BaseItem</a>. The proxy automatically inherits a remote reference to the
-               TestItem.  On arrival at the client, it is initialized (by the client) with
+               TestItem.  On arrival at the client, it is initialised (by the client) with
                the assignment of its remoteThis member with a reference to the proxy itself,
-               remoted the context of the client VM.  This initialization, will cause the
+               remoted the context of the client VM.  This initialisation, will cause the
                proxy's main thread to start, if it has one. As with server items; a proxy
                need not define a main thread, i.e. it can also be purely <i>event driven</i>.<br><br>
 
-               The example also demonstrates the Internationalization feature of proxies.
-               When the proxy is initialized, it will load its string table, if defined,
+               The example also demonstrates the Internationalisation feature of proxies.
+               When the proxy is initialised, it will load its string table, if defined,
                from a properties file, most closely matching the locale of the receiving VM.
                This allows the proxy's user interface to be in German on an Austrian machine,
                and Spanish on a Mexican one, for example.  Of course, all of these
@@ -229,7 +228,7 @@
                simplify the proxy's jar creation, as the build script can then include all
                the files in the directory blindly (i.e. *.*).<br><br>
 
-               Since this is a graphical proxy example, it's initialization invocation also
+               Since this is a graphical proxy example, it's initialisation invocation also
                returns a non-null graphical component that the client can display on its
                monitor. The purpose of the component is to provide a graphical user
                interface to a remote server item.<br><br>
@@ -276,28 +275,28 @@
 
                First it serves to replace all the code which would otherwise go into the
                proxy's constructor.  Why do this? Because all of the construction code,
-               which can be quite sizeable if the proxy is elaborate, can be left out of
+               which can be quite sizeable if the proxy is elabourate, can be left out of
                the proxy's jar file.  This reduces the proxy jar size, and also adds the
                additional security that the proxy becomes <i>much</i> more difficult to
                reverse-engineer, if such protection is important to you.<br><br>
 
                The second function of the Builder class is to instantiate the proxy, then
-               serialize its image to disc.  This serialized object will be included in the
+               serialise its image to disc.  This serialised object will be included in the
                proxy jar file, and referenced through a <a href=nonav/docs/gnu/cajo/utils/ProxyLoader.html>
-               ProxyLoader</a> in the TestItem's runtime.  This is the <i>most elaborate</i>
+               ProxyLoader</a> in the TestItem's runtime.  This is the <i>most elabourate</i>
                way to use a ProxyLoader. It can also be used to invoke a proxy's no-arg
                constructor, to create a new instance of the proxy, on its arrival at the
                host VM. In that case, all of the construction code would have to be passed
                to the client VM. Use of a ProxyLoader is optional, but it is a <i>highly</i>
-               recommended optimization, as it prevents having to load proxies into the
+               recommended optimisation, as it prevents having to load proxies into the
                server JVM runtime.<br><br>
 
                The actual mechanics of what is going on inside the builder is not so
                important.  It is basically configuring graphical components, and putting
                them into the graphical user interface member object <a href=nonav/docs/gnu/cajo/utils/BaseProxy.html#container>
                container</a>. The proxy will return this graphical container to the hosting
-               client as a result of its initialization invocation.  It also defines the
-               keys of the string table, also loaded during initialization. It references a
+               client as a result of its initialisation invocation.  It also defines the
+               keys of the string table, also loaded during initialisation. It references a
                ProxyLoader, this is a special requirement.  The proxy will need to use the
                ProxyLoader class file on its arrival at the host, however, it doesn't need
                to use one at compile time.  Without this apparently unused reference, the
@@ -382,7 +381,7 @@
       <tr>
          <td valign="top">
             <span class="spacing style4 style7 style9">
-               The example illustrates a very common use of the cajo framework:
+               The example illustrates a very common paradigm of the cajo framework:
                <blockquote>
                <i>String -> remote reference -> local proxy -> GUI</i>
                </blockquote>
@@ -413,12 +412,12 @@
 
                In cases, when a proxy <i><u>must</u></i> be loaded into the server's VM;
                presumably for some runtime dependent configuration, it is <i>highly</i>
-               recommended to use a ZippedProxy.  It compresses the serialized image of
+               recommended to use a ZippedProxy.  It compresses the serialised image of
                the proxy as it is sent to the hosting VM. This is done to reduce the amount
                of data, and transmission time, required to send the proxy.  If the proxy
                image is large, the network uplink is slow, or the cost per byte sent is high,
                this technique makes tremendous sense.  Its use is recommended for <u>all</u>
-               proxies loaded into the server, as a general paradigm.
+               proxies loaded into the server, as a general paradigm.<br><br>
             </span>
          </td>
       </tr>
@@ -445,7 +444,7 @@
          <td width="95%" valign="top" background="ventro/bar_bg.gif">
             <table width="100%" height="31" border="0" cellpadding="0" cellspacing="0">
                <tr>
-                  <td style="vertical-align:middle"><span class="style11">&copy; 2004 GNU FDL</span></td>
+                  <td style="vertical-align:middle"><span class="style11">&copy; 2004 John Catherino, <a href=license.html>GNU FDL</a></span></td>
                   <td width="53%"><div align="right"></div></td></tr></table></td>
                   <td width="3%"><img src="ventro/bar_Right.gif" width="10" height="35"></td></tr></table></td>
                </tr>
