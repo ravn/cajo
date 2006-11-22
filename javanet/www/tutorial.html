@@ -74,11 +74,11 @@
                                       limitless.<br><br>
 
                                       The tutorial will start by describing the <a href="#directory">directory</a>
-                                      structure and its components. Next it will move on to
+                                      structure project and its components. Next it will move on to
                                       <a href=#building>building</a> and <a href=#launching>launching</a> the
                                       example server, and their related options.  It will conclude by describing
                                       the ways of <a href=#connecting>connecting</a> to the server. This should
-                                      provide a fairly complete introduction to the use of the framework.<br><br>
+                                      provide a fairly complete introduction to the overall use of the framework.<br><br>
 
                                       <i><u>Note</u>:</i> to best follow along, please download and unzip the
                                       project <a href=cajo.zip>source</a> code.<br>
@@ -111,7 +111,7 @@
       <tr>
          <td valign="top">
             <span class="spacing style4 style7 style9">
-               The project is organized into the following directories:
+               The project is organised into the following directories:
 
 <blockquote><tt><pre>
 /cajo          // install directory
@@ -135,7 +135,7 @@
                javadoc hypertext documents in the docs subdirectory.  This will be a
                <u>very</u> valuable resource in your development activities. Nearly half of
                the source code is documentation comments! You can view this helpful resource
-               by opening the file docs/index.html with your favorite browser.<br><br>
+               by opening the file docs/index.html with your favourite browser.<br><br>
 
                The <b>gnu/cajo/invoke</b> directory houses the three core classes of this
                framework's architecture.  Its files are described at length in the javadoc
@@ -175,8 +175,9 @@
                even merit more detailed examination.<br><br>
 
                The <b>docs</b> directory, as mentioned previously, is where the
-               auto-generated documentation goes.  To save space, initially it is empty.
-               You also can view the documentation <a href=https://cajo.dev.java.net/nonav/docs/index.html target=_blank>
+               auto-generated documentation goes.  To save space, initially it does not
+               exist, until you run the doc build. You also can view the documentation
+               <a href=https://cajo.dev.java.net/nonav/docs/index.html target=_blank>
                online</a>.<br><br>
 
                <i><u>Note</u>:</i> there is also a directory called extra, located beneath
@@ -223,7 +224,7 @@
                the server.  All servers use the same policy file by default, so a deployment
                directory could consist of many server jars, and a single policy
                file.  This is an important part of the paradigm; to allow complex
-               functionality to be modularized into multiple Virtual Machines seamlessly
+               functionality to be modularised into multiple Virtual Machines seamlessly
                working together. <i>Note:</i> If you should need separate policy files for
                each server, simply place each server jar and its associated policy into
                separate directories.<br><br>
@@ -506,10 +507,11 @@
                This is the proverbial tip of the iceberg, but it should get you started.
                If you have further questions, there are <a href=https://cajo.dev.java.net/servlets/ProjectForumView>
                fora</a> for this project. However, before posting, please do your <a href=http://catb.org/~esr/faqs/smart-questions.html target=_blank>
-               homework</a>. (<i><u>Note</u>:</i> the previously cited link is not part of
-               this project, rather it is provided purely for insight) Most often, the
-               answer you are seeking can can be found in the source documentation, or
-               right here on this site, and typically <i>much</i> faster.
+               homework</a>. (<i><u>Note</u>:</i> the previously cited link is <i>not</i>
+               part of this project, rather it is provided purely for insight) Most often,
+               the answer you are seeking can can be found in the source documentation, or
+               right here on this site, and usually <i>much</i> faster. Otherwise, your
+               questions, comments, and suggestions, are all most welcome.
             </span>
          </td>
       </tr>
@@ -536,7 +538,7 @@
          <td width="95%" valign="top" background="ventro/bar_bg.gif">
             <table width="100%" height="31" border="0" cellpadding="0" cellspacing="0">
                <tr>
-                  <td style="vertical-align:middle"><span class="style11">&copy; 2004 GNU FDL</span></td>
+                  <td style="vertical-align:middle"><span class="style11">&copy; 2004 John Catherino, <a href=license.html>GNU FDL</a></span></td>
                   <td width="53%"><div align="right"></div></td></tr></table></td>
                   <td width="3%"><img src="ventro/bar_Right.gif" width="10" height="35"></td></tr></table></td>
                </tr>
