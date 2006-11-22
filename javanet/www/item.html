@@ -77,7 +77,8 @@
                                       using the <a href=nonav/docs/gnu/cajo/invoke/Remote.html>Remote</a> class.
                                       Remote takes the object in its constructor, and implements the <a href=nonav/docs/gnu/cajo/invoke/Invoke.html>
                                       Invoke</a> interface, which serves to make all of its member object's public
-                                      methods remotely callable. The Invoke interface defines only one method:
+                                      methods, including its static ones, remotely callable. The Invoke interface
+                                      defines only one method:
 
                                          <pre><code>   Object invoke(String method, Object args);</code></pre>
 
@@ -143,7 +144,10 @@
                be made to the static <a href=nonav/docs/gnu/cajo/invoke/Remote.html#config(java.lang.String,%20int,%20java.lang.String,%20int)>
                config</a> method of the Remote class. It is used to assign specified TCP
                ports for communication, otherwise the objects will be remoted on anonymous
-               ports. It need only be called once, in the lifetime of the server.
+               ports. It need only be called once, in the lifetime of the server. It is
+               highly recommended to use port 1198 when the server is accessible from the
+               internet, as this is the cajo world-wide standard port, granted the by the
+               Internet Assigned Numbers Authority.
                <br><br>
 
                The remote object reference can be broadcasted to all listening VMs. This
@@ -257,7 +261,7 @@
             <span class="spacing style4 style7 style9">
                There is a special static <a href=nonav/docs/gnu/cajo/utils/ItemServer.html#bind(java.lang.String,%20java.lang.String,%20java.lang.String)>
                bind</a> method in the ItemServer class. It serves a <i>very</i> powerful
-               purpose. It allows one or more items, their related classes, and serialized
+               purpose. It allows one or more items, their related classes, and serialised
                objects, to be stored into <i>separate</i> jar files. These items can then be
                loaded, as needed at runtime, by the server JVM. This <i>greatly</i> reduces
                complexity and maintenance issues associated with a large server design. Just
@@ -291,7 +295,8 @@
          <td valign="top">
             <span class="spacing style4 style7 style9">
                Binding at runtime, combined with loadable items, offers application
-               scalability in <i>two</i> important dimensions:<br><br>
+               scalability in <i>two</i> important dimensions as illustrated in this
+               diagramme:<br><br>
 
                <center><img src="ventro/diagram_item.jpg" alt="cajo framework scalability"
                   title="cajo object distribution technology"></center><br>
@@ -331,7 +336,7 @@
          <td width="95%" valign="top" background="ventro/bar_bg.gif">
             <table width="100%" height="31" border="0" cellpadding="0" cellspacing="0">
                <tr>
-                  <td style="vertical-align:middle"><span class="style11">&copy; 2004 GNU FDL</span></td>
+                  <td style="vertical-align:middle"><span class="style11">&copy; 2004 John Catherino, <a href=license.html>GNU FDL</a></span></td>
                   <td width="53%"><div align="right"></div></td></tr></table></td>
                   <td width="3%"><img src="ventro/bar_Right.gif" width="10" height="35"></td></tr></table></td>
                </tr>
