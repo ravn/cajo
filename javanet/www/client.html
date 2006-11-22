@@ -72,13 +72,13 @@
 <!-- title bar section -->         <span class="spacing style4 style7 style9">
                                       The client class is a generic, general purpose graphical proxy host. It can
                                       be used to display and interact with any graphical proxy, without need for
-                                      any customization. It can operate in two fundamentally different, but
+                                      any customisation. It can operate in two fundamentally different, but
                                       functionally complementary ways; as an applet or as an application. The
                                       client uses only the classes in the gnu.cajo.invoke package.<br><br>
 
                                       As an applet, on loading by a Java enabled browser, it will connect back to
                                       its host and request either the default proxy, or one specified in the
-                                      browser URL. Next it will initialize the proxy, by calling its init method,
+                                      browser URL. Next it will initialise the proxy, by calling its init method,
                                       providing a reference to the proxy remoted within the context of the plug-in's
                                       VM.  Finally, the return of this proxy invocation, canonically a descendant
                                       of java.awt.Container, is added to the applet's panel. This allows a single
@@ -174,8 +174,8 @@
                The class can also operate as a local application. This is very useful for
                testing and development purposes. It is also the fastest and most efficient
                means to host a remote graphical proxy. It connects to a remote item,
-               requests its proxy, initializes it in the identical manner as the applet
-               does, and if the initialization returns an awt Component (or a swing
+               requests its proxy, initialises it in the identical manner as the applet
+               does, and if the initialisation returns an awt Component (or a swing
                JComponent), it will create a Frame (or a JFrame) on the client machine,
                displaying the result.<br><br>
 
@@ -198,7 +198,7 @@
                   <li> ftp:// to load it from an ftp server
                   <li> file:// to load it from the local disc
                   <li> path/name to instantiate it from a local class file
-                  <li> /path/name to load it as a serialized proxy from disc
+                  <li> /path/name to load it as a serialised proxy from disc
                   <li> //host[:port]/[name] to load it from an rmiregistry
                </ul>
 
@@ -341,7 +341,7 @@ grant {
          <td width="95%" valign="top" background="ventro/bar_bg.gif">
             <table width="100%" height="31" border="0" cellpadding="0" cellspacing="0">
                <tr>
-                  <td style="vertical-align:middle"><span class="style11">&copy; 2004 GNU FDL</span></td>
+                  <td style="vertical-align:middle"><span class="style11">&copy; 2004 John Catherino, <a href=license.html>GNU FDL</a></span></td>
                   <td width="53%"><div align="right"></div></td></tr></table></td>
                   <td width="3%"><img src="ventro/bar_Right.gif" width="10" height="35"></td></tr></table></td>
                </tr>
