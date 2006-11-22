@@ -75,19 +75,19 @@
 
                                  <td valign="top">
                                     <span class="spacing style4 style7 style9">
-                                      This short walkthrough will demonstrate both the ease of use of the framework,
-                                      as well as provide a practical template for building applications. We will
-                                      start with a server first, then move on to the construction of a client. Once
-                                      you understand this material, it will be possible for you to successfully
-                                      distribute <i>any</i> application that you can make work in a single Virtual
-                                      Machine! In fact, this is a highly recommended approach for
+                                      This short walkthrough will demonstrate both the ease of use of the
+                                      framework, as well as provide a practical template for building applications.
+                                      We will start with a server first, then move on to the construction of a
+                                      client. Once you understand this material, it will be possible for you to
+                                      successfully distribute <i>any</i> application that you can make work in a
+                                      single Virtual Machine. In fact, this is a highly recommended approach for
                                       application development; first get the whole thing working in a single JVM,
                                       <i>then</i> add cajo to distribute it.<br><br>
 
                                       <i><u>Note</u>:</i> if you do not have it already, you will need the <a href=cajo.jar>
                                       cajo.jar</a> library.<br><br>
 
-                                      Let's extend the simple object we learned about in the <a href=overview.html>
+                                      Let's extend the simple object of which we leart in the <a href=overview.html>
                                       overview</a>: &nbsp; <i>(feel free to cut and paste)</i>
 
 <blockquote><tt><pre>
@@ -117,13 +117,13 @@ public class SomeObject {
 
 
                                       Here we have a basic server. Quite intuitive already isn't it? The static
-                                      main method will launch the server, operating on the cajo IANA assigned
+                                      main method will launch the server, operating on the IANA assigned cajo
                                       TCP port of <a href=https://cajo.dev.java.net/servlets/NewsItemView?newsItemID=2539>
                                       1198</a>.<br><br>
 
                                       The next step would be to compile the server, it is done thus:
 
-                                      <blockquote><tt>javac -classpath cajo.jar;. SomeObject.java</tt></blockquote>
+                                      <blockquote><tt>javac -classpath cajo.jar SomeObject.java</tt></blockquote>
 
                                       Now it is ready to be run, to do this type:
 
@@ -186,13 +186,13 @@ public class SomeClient {
 
                         Let's compile the client:
 
-                        <blockquote><tt>javac -classpath cajo.jar;. SomeClient.java</tt></blockquote>
+                        <blockquote><tt>javac -classpath cajo.jar SomeClient.java</tt></blockquote>
 
                         It is now ready to be run, just type:
 
                         <blockquote><tt>java -classpath cajo.jar;. SomeClient</tt></blockquote>
 
-                        The results should come out exactly as you would expect!
+                        The results should come out exactly as you would expect.
                      </span>
                   </td>
                </tr>
@@ -219,16 +219,16 @@ public class SomeClient {
       <tr>
          <td valign="top">
             <span class="spacing style4 style7 style9">
-               Now feel free to expand on, and test with, this simple template. If it hasn't
+               Now feel free to expand upon, and test, with this simple template. If it hasn't
                become apparent already; an application can be <i>both</i> a client <i>and</i>
-               a server!<br><br>
+               a server.<br><br>
 
-               Later, when you are ready to learn some more sophisticated techniques; the
-               equally simple <a href=http://wiki.java.net/bin/view/Communications/ProxyUsage>
+               Next, when you are ready to learn some more sophisticated techniques; the
+               <a href=http://wiki.java.net/bin/view/Communications/ProxyUsage>
                proxy</a>, <a href=http://wiki.java.net/bin/view/Communications/CajoScripting>
                scripting</a>, <a href=http://wiki.java.net/bin/view/Communications/TransparentProxy>
                transparency<a/>, and <a href=http://wiki.java.net/bin/view/Communications/UsingMulticast>
-               multicast</a> turorials await you!<br>
+               multicast</a> turorials await you.<br><br>
 
             </span>
          </td>
@@ -243,7 +243,7 @@ public class SomeClient {
             <div align="center">
                <hr width=90%">
                <span class="spacing style4 style7 style9">
-                  If your design can work within a single JVM, cajo can let it scale easily!
+                  If your design can work within a single JVM, cajo can scale it transparently!
                </span>
             </div>
          </td>
@@ -257,7 +257,7 @@ public class SomeClient {
             <table width="100%" height="31" border="0" cellpadding="0" cellspacing="0">
                <tr>
                   <td style="vertical-align:middle">
-                     <span class="style11">&copy; 2004 GNU FDL</span>
+                     <span class="style11">&copy; 2004 John Catherino, <a href=license.html>GNU FDL</a></span>
                   </td>
                   <td width="53%"><div align="right"></div></td>
                </tr>
