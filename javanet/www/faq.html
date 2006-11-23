@@ -117,7 +117,7 @@
                                       <a id="3"></a><b><u>3. What is a zedmob?</u></b> A zedmob first off, is a
                                       contraction of the two words <i><u>Z</u></i>ipp<i><u>ed</u></i>
                                       <i><u>M</u></i>arshalled<i><u>Ob</u></i>ject. It is the standard mechanism for
-                                      encapsulating remote item references, serialized objects, and item proxies;
+                                      encapsulating remote item references, serialised objects, and item proxies;
                                       for transmission over the network, or storage on disc. A zedmob is
                                       particularly helpful in the case of proxies, as items are free to pass a
                                       proxy zedmob between each other, and successfully extract the proxy. This is
@@ -156,6 +156,12 @@
 
                                       &nbsp&nbsp&nbsp&nbsp java -jar client.jar <u>//localhost:2222/</u>
                                       &nbsp <i>-or-</i> &nbsp <u>//127.0.0.1:2222/</u><br><br>
+
+                                      What this means internally, is for the server to do something like the
+                                      following:<br><br>
+
+                                      &nbsp&nbsp&nbsp&nbsp Remote.config("localhost", 2222, null, 0);<br><br>
+
 
                                       <a id="6"></a><b><u>6. What is this crazy cajo coding style?</u></b> I never
                                       thought this would become a FAQ, but apparently it has. OK, over the years
@@ -463,7 +469,7 @@
          <td width="95%" valign="top" background="ventro/bar_bg.gif">
             <table width="100%" height="31" border="0" cellpadding="0" cellspacing="0">
                <tr>
-                  <td style="vertical-align:middle"><span class="style11">&copy; 2004 GNU FDL</span></td>
+                  <td style="vertical-align:middle"><span class="style11">&copy; 2004 John Catherino, <a href=license.html>GNU FDL</a></span></td>
                   <td width="53%"><div align="right"></div></td></tr></table></td>
                   <td width="3%"><img src="ventro/bar_Right.gif" width="10" height="35"></td></tr></table></td>
                </tr>
