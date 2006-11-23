@@ -105,12 +105,10 @@ public class SomeObject {
       try { return this.string; }
       finally { this.string = string; }
    }
-   public static void main(String args[]) {
-      try {
-         Remote.config(null, 1198, null, 0);
-         ItemServer.bind(new SomeObject(), "someName");
-         System.out.println("The server is running!");
-      } catch(Exception x) { x.printStackTrace(); }
+   public static void main(String args[]) throws Exception {
+      Remote.config(null, 1198, null, 0);
+      ItemServer.bind(new SomeObject(), "someName");
+      System.out.println("The server is running!");
    }
 }
 </tt></pre></blockquote>
@@ -167,14 +165,12 @@ public class SomeObject {
 import gnu.cajo.invoke.Remote;
 
 public class SomeClient {
-   public static void main(String args[]) {
-      try {
-         Object object = Remote.getItem("//serverHost:1198/someName");
-         String s = (String)Remote.invoke(object, "baz", "hello");
-         System.out.println("first string = " + s);
-         s = (String)Remote.invoke(object, "foo", null);
-         System.out.println("second string = " + s);
-      } catch(Exception x) { x.printStackTrace(); }
+   public static void main(String args[]) throws Exception {
+      Object object = Remote.getItem("//serverHost:1198/someName");
+      String s = (String)Remote.invoke(object, "baz", "hello");
+      System.out.println("first string = " + s);
+      s = (String)Remote.invoke(object, "foo", null);
+      System.out.println("second string = " + s);
    }
 }
 </tt></pre></blockquote>
