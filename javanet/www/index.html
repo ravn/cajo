@@ -70,10 +70,10 @@
                            the same time harnessing its full potential. It is actively being deployed
                            in Java EE, SE, and ME environments, all over the world. It is a uniquely
                            <i>'drop-in'</i> distributed computing framework: meaning it imposes
-                           no structural requirements on your applications. It allows multiple remote
-                           JVMs, to work together seamlessly, as one. Welcome, to the home of the
-                           <a href=http://weblogs.java.net/pub/wlg/1715 title="the WWVM">World Wide
-                           Virtual Machine</a>.<br><br>
+                           no structural requirements on your applications, or source changes. It
+                           allows multiple remote JVMs, to work together seamlessly, as one. Welcome,
+                           to the home of the <a href=http://weblogs.java.net/pub/wlg/1715 title="the WWVM">
+                           World Wide Virtual Machine</a>.<br><br>
 
                            <h2>Project goals</h2>
 
@@ -93,8 +93,7 @@
                            local and remote  objects; they can even be interchanged, at runtime.
                            Applications can evolve from all objects being on a single Virtual Machine,
                            to all objects being on separate Virtual Machines, to all objects being on
-                           separate Physical Machines. The scalability comes via the framework; it
-                           requires no changes to the application's code, or its structure.<br><br>
+                           separate Physical Machines.<br><br>
 
                            2. Unsigned Applets and WebStart applications, indistinguishable from
                            installed applications, can be created simply. Easily transfer an
@@ -275,7 +274,8 @@
 
                            1. For those who want to fully understand the implementation of this
                            framework, first review the <a href=https://cajo.dev.java.net/docs/gnu/cajo/invoke/package-summary.html>
-                           invoke</a> package, it's surprisingly small. Next move on to the <a href=https://cajo.dev.java.net/docs/gnu/cajo/utils/package-summary.html>
+                           invoke</a> package, it is <i>surprisingly</i> small. Next move on to the
+                           <a href=https://cajo.dev.java.net/docs/gnu/cajo/utils/package-summary.html>
                            utils</a> package. This will make the provided example code both immediately
                            understandable, and quickly extensible. It's also an excellent way to learn
                            about RMI, in detail. A <a href=theory.html>theory</a> page has been
@@ -314,8 +314,8 @@
                            clear, and focused; this project is not intent on senselessly
                            making it larger. Rather, the primary goal is on promoting and assisting its
                            adoption, into new and existing applications. Of course improvements and
-                           fixes are always welcome; from <i>everyone</i>! However, the interesting
-                           challenge is: All changes must be both <a href=http://foldoc.org/?backward+compatibility>
+                           fixes are always welcome; from everyone! However, the interesting challenge
+                           is: All changes must be both <a href=http://foldoc.org/?backward+compatibility>
                            backward</a> <i>and</i> <a href=http://foldoc.org/?forward+compatible>
                            forward</a> compatible; in order to maintain interoperability with currently
                            running applications. E.g. consider the public telephone network: A
@@ -337,12 +337,12 @@
    </tr>
    <tr>
       <td style="vertical-align:bottom">
+         <font size="-6">&copy; 2003 John Catherino, <a href=license.html>GNU FDL</a></font>
          <div align=right>
             <a href=http://www.catb.org/~esr/faqs/hacker-howto.html title="the hacker's emblem" target=_blank>
                <img src=images/hacker.png>
             </a>
          </div>
-         <font size="-6">&copy; 2003 John Catherino, <a href=license.html>GNU FDL</a></font>
       </td>
    </tr>
    </body>
