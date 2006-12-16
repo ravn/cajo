@@ -72,32 +72,39 @@
                                       This page will stand as a living document, based on the feedback of
                                       developers.  In any project, a certain collection of questions are asked
                                       disproportionately often.  These deserve their own space, as they have the
-                                      highest statistical probability of being very helpful.<br>
+                                      highest statistical probability of being very helpful.
 
-                                      <ol>
-                                         <li><a href=#1>Why doesn't the example work in Appletviewer?</a>
-                                         <li><a href=#2>What if someone forks this code?</a>
-                                         <li><a href=#3>What is a zedmob?</a>
-                                         <li><a href=#4>Can I forcibly disconnect a client?</a>
-                                         <li><a href=#5>Can I restrict my server only to local clients?</a>
-                                         <li><a href=#6>What is this crazy cajo coding style?</a>
-                                         <li><a href=#7>Can I run cajo over Secure Sockets Layer?</a>
-                                         <li><a href=#8>Why is there no package version number?</a>
-                                         <li><a href=#9>Can my application put proxies in an Applet sandbox?</a>
-                                         <li><a href=#10>Why is the framework named cajo?</a>
-                                         <li><a href=#11>Can I use the example's TileLayout manager?</a>
-                                         <li><a href=#12>Does cajo pass objects by reference, or by value?</a>
-                                         <li><a href=#13>Why do the build scripts target JRE 1.2?</a>
-                                         <li><a href=#14>Can my item have public methods that are only locally invokable?</a>
-                                         <li><a href=#15>Why is cajo licenced under the GNU LGPL?</a>
-                                         <li><a href=#16>Why does each ItemServer create its own rmiregistry?</a>
-                                         <li><a href=#17>Can I use null arguments in a remote method invocation?</a>
-                                         <li><a href=#18>Can I include cajo classes in a proprietary application JAR?</a>
-                                         <li><a href=#19>Can I tell if my method is being invoked remotely vs. locally?</a>
-                                         <li><a href=#20>Can I make my server accessible both inside <i>and</i> outside a NAT subnet?</a>
-                                         <li><a href=#21>How can I determine my cajo.jar library release number?</a>
-                                         <li><a href=#22>How can I launch a generic proxy hosting JVM?</a>
-                                      </ol>
+                                      <blockquote>
+                                         <b> How can I ... ?</b><br>
+                                           <a href=#21>How can I determine my cajo.jar library release number?</a><br>
+                                           <a href=#22>How can I launch a generic proxy hosting JVM?</a><br>
+                                         <b> Can I ... ?</b><br>
+                                           <a href=#4>Can I forcibly disconnect a client?</a><br>
+                                           <a href=#5>Can I restrict my server only to local clients?</a><br>
+                                           <a href=#7>Can I run cajo over Secure Sockets Layer?</a><br>
+                                           <a href=#9>Can my application put proxies in an Applet sandbox?</a><br>
+                                           <a href=#11>Can I use the example's TileLayout manager?</a><br>
+                                           <a href=#14>Can my item have public methods that are only locally invokable?</a><br>
+                                           <a href=#17>Can I use null arguments in a remote method invocation?</a><br>
+                                           <a href=#18>Can I include cajo classes in a proprietary application JAR?</a><br>
+                                           <a href=#19>Can I tell if my method is being invoked remotely vs. locally?</a><br>
+                                           <a href=#20>Can I make my server accessible both inside <i>and</i> outside a NAT subnet?</a><br>
+                                         <b> Why is it ... ?</b><br>
+                                           <a href=#1>Why doesn't the example work in Appletviewer?</a><br>
+                                           <a href=#8>Why is there no package version number?</a><br>
+                                           <a href=#10>Why is the framework named cajo?</a><br>
+                                           <a href=#13>Why do the build scripts target JRE 1.2?</a><br>
+                                           <a href=#16>Why does each ItemServer create its own rmiregistry?</a><br>
+                                           <a href=#15>Why is cajo licenced under the GNU LGPL?</a><br>
+                                         <b> What is ... ?</b><br>
+                                           <a href=#3>What is a zedmob?</a><br>
+                                           <a href=#6>What is this crazy cajo coding style?</a><br>
+                                         <b> General</b><br>
+                                           <a href=#2>What if someone forks this code?</a><br>
+                                           <a href=#12>Does cajo pass objects by reference, or by value?</a><br>
+                                      </blockquote>
+
+                                      (Questions are numbered in the order posted)<br><br>
 
                                       <a id="1"></a><b><u>1. Why doesn't the example work in Appletviewer?</u></b>
                                       The <a href=docs/gnu/cajo/utils/CodebaseServer.html>CodebaseServer</a> tells
@@ -187,22 +194,16 @@
                                       programming language.<br><br>
 
                                       <a id="7"></a><b><u>7. Can I run cajo over Secure Sockets Layer?</u></b>
-                                      Why, yes, this should be possible... Uh, these days however, living in the uh,
-                                      land of the <i>'free'</i>; it could be really dangerous to give out
-                                      information on strong cryptography that can be directly traced back to me.
-                                      <i>(I don't want to be exiled to Cuba;)</i> I suppose however, it couldn't
-                                      hurt to link to someone else's fine work. So, let's just say, hypothetically
-                                      speaking, if you went <a href=http://java.sun.com/j2se/1.4.2/docs/guide/security/jsse/samples/index.html target=_blank>here</a>,
-                                      and copied the sample <a href=http://java.sun.com/j2se/1.4.2/docs/guide/security/jsse/samples/jssesamples.zip>zip file</a>,
-                                      and replaced the two socket factories in <a href=docs/gnu/cajo/invoke/Remote.html>
-                                      Remote</a>; that just might get the system communicating over SSL. Of course
-                                      I should <i>not</i> endorse any of this... <i>(cough* Patriot Act *cough).</i>
-                                      <i>(Psst: if you want something a little <u>stronger</u>, take a look
-                                      <a href=https://cajo.dev.java.net/files/documents/974/6293/CryptObject.java>
-                                      here</a>.</i> ;-) <u>Update:</u> If you are using J2SE5 (1.5.x) SSL/TLS
-                                      socket factories are now <a href=http://java.sun.com/j2se/1.5.0/docs/guide/rmi/relnotes.html>
-                                      included</a>. Here is a very excellent <a href=http://www.cs.columbia.edu/~akonstan/rmi-ssl/>
-                                      example</a> of the whole process.<br><br>
+                                      Yes, of course. If you need to support pre JSE 5 clients, have a look <a href=http://java.sun.com/j2se/1.4.2/docs/guide/security/jsse/samples/index.html target=_blank>
+                                      here</a>; you can copy the sample <a href=http://java.sun.com/j2se/1.4.2/docs/guide/security/jsse/samples/jssesamples.zip>
+                                      zip file</a>, and replace the two socket factories in <a href=docs/gnu/cajo/invoke/Remote.html>
+                                      Remote</a>. If <i>all</i> JVMs involved are <i>certain</i> to be using JSE 5
+                                      or higher; SSL/TLS socket factories are <a href=http://java.sun.com/j2se/1.5.0/docs/guide/rmi/relnotes.html>
+                                      included</a> in the runtime. Here is a very excellent <a href=http://www.cs.columbia.edu/~akonstan/rmi-ssl/>
+                                      example</a> of this whole process. <i><u>*However</u>,</i> a much more
+                                      important question is; Would you want to? Please have a look at the following
+                                      project discussion <a href=https://cajo.dev.java.net/servlets/ProjectForumMessageView?messageID=16416&forumID=428>
+                                      thread.</a><br><br>
 
                                       <a id="8"></a><b><u>8. Why is there no package version number?</u></b>
                                       This is an <u>excellent</u> question! In the cajo project, a release
@@ -264,13 +265,14 @@
                                       
                                       <a id="12"></a><b><u>12. Does cajo pass objects by reference, or by value?</u></b>
                                       To provide the <i>ultimate</i> in flexibility, the answer is: <u><i>Either</u>!</i>
-                                      The Java language <i>only</i> allows passing objects by reference; meaning
-                                      that when you provide an object to a method as an argument, any changes the
-                                      method makes to that object are actually changes to <i>your</i> object. In
-                                      cajo an object is passed by reference to a remote Virtual Machine, by
-                                      wrapping it in a <a href=docs/gnu/cajo/invoke/Remote.html>Remote</a> object.
-                                      However unlike Java, and  more like C++, cajo <i>also</i> allows you to pass
-                                      an object by value; meaning the receiving method gets an exact <i>copy</i>
+                                      The Java language <i>only</i> allows passing objects by <a href=http://wiki.java.net/bin/view/Communications/TransparentProxy>
+                                      reference;</a> meaning that when you provide an object to a method as an
+                                      argument, any changes the method makes to that object are actually changes
+                                      to <i>your</i> object. In cajo an object is passed by reference to a
+                                      remote Virtual Machine, by wrapping it in a <a href=docs/gnu/cajo/invoke/Remote.html>
+                                      Remote</a> object. However unlike Java, and  more like C++, cajo <i>also</i>
+                                      allows you to pass an object by <a href=http://wiki.java.net/bin/view/Communications/TransparentProxy2>
+                                      value;</a> meaning the receiving method gets an exact <i>copy</i>
                                       of the object, and anything it does to it, has <i>no</i> affect on your
                                       object. This is accomplished very simply, by passing the object
                                       <u><i>without</i></u> wrapping it in a Remote wrapper. (<i><u>Note</u>:</i>
