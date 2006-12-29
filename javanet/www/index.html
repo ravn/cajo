@@ -110,6 +110,15 @@
                            Remoting and linking of objects can be done with as little as <i><a href=overview.html>
                            one</a></i> additional line of code.<br><br>
 
+                           The project has no dependencies on any other frameworks. It works
+                           with <i>all</i> Java Runtime Environments, 1.2 and higher; this is
+                           especially important, to include JME / embedded devices. Co&ouml;perating
+                           Virtual Machines can be behind NAT, firewalls, even HTTP proxies.<br><br>
+
+                           Best of all, this framework is 100% <i>pure</i> Java<font size="-4">
+                           <sup>TM</sup></font>: i.e. it uses <u>no</u> <i>bloody</i> <tt>&lt;XML&gt;</tt><i>!<br>
+                           (nor silly @nnotations either)</i>
+
                            <h2>Getting started</h2>
 
                            The framework consists of just two very small packages:<ul>
@@ -119,15 +128,6 @@
 
                            <li><a href=docs/gnu/cajo/utils/package-summary.html>gnu.cajo.utils</a>
                            (8 classes) applies this core for the creation of servers</ul>
-
-                           The project has no dependencies on any other frameworks. It works
-                           with <i>all</i> Java Runtime Environments, 1.2 and higher; this is
-                           especially important, to include JME / embedded devices. Co&ouml;perating
-                           Virtual Machines can be behind NAT, firewalls, even HTTP proxies.<br><br>
-
-                           Best of all, this framework is 100% <i>pure</i> Java<font size="-4">
-                           <sup>TM</sup></font>: i.e. it uses <u>no</u> <i>bloody</i> <tt>&lt;XML&gt;</tt><i>!<br>
-                           (nor silly @nnotations either)</i>
 
 <!-- end main.html -->
                      </td>
@@ -281,34 +281,47 @@
    <tr>
       <td>
 
-                           There are two general approaches to getting started:<br><br>
+                           The recommended <i>Quick Start,</i> is to read the short <a href=overview.html>
+                           overview</a> page. Then try any of our four short experiments:
+
+                           <ul>
+                             <li> <a href=starting.html title="introduction to the cajo framework">Getting started</a>
+                             <li> <a href=http://wiki.java.net/bin/view/Communications/ProxyUsage title="transparent use of mobile code">
+                             Introduction to proxies</a>
+                             <li> <a href=http://wiki.java.net/bin/view/Communications/TransparentProxy title="transparent use of remote objects">
+                             Object transparency</a>
+                             <li> <a href=http://wiki.java.net/bin/view/Communications/CajoScripting title="using remote objects from scripts">
+                             JVM scripting</a>
+                           </ul>
+
+                           Following that, there are two general approaches to proceed:<br><br>
 
                            1. For those who want to fully understand the implementation of this
-                           framework, first review the <a href=https://cajo.dev.java.net/docs/gnu/cajo/invoke/package-summary.html>
-                           invoke</a> package, it is <i>surprisingly</i> small. Next move on to the
-                           <a href=https://cajo.dev.java.net/docs/gnu/cajo/utils/package-summary.html>
-                           utils</a> package. This will make the provided example code both immediately
-                           understandable, and quickly extensible. It's also an excellent way to learn
-                           about RMI, in detail. A <a href=theory.html>theory</a> page has been
-                           provided, especially for this group.<br><br>
+                           framework;
 
-                           2. For those who want to jump right in, and learn by doing, there is the
-                           <a href=example.html>example</a>. It consists of just four small classes,
-                           yet it completely exercises the entire framework, and demonstrates its
-                           capability. The project's root directory has batch files, and an ant script,
-                           illustrating four fundamentally different ways to build the example. The
-                           <a href=tutorial.html>tutorial</a> page, should be of particular interest to
-                           this group.<br><br>
+                           <ul>
+                             <li> First review the <a href=https://cajo.dev.java.net/docs/gnu/cajo/invoke/package-summary.html>
+                             invoke</a> package, it is <i>surprisingly</i> small
+                             <li> Next move on to the <a href=https://cajo.dev.java.net/docs/gnu/cajo/utils/package-summary.html>
+                             utils</a> package
+                             <li> A <a href=theory.html>theory</a> page has been provided, especially
+                             for this group
+                           </ul>
 
-                           <b>*</b><i><u>Either way</u></i>: The best first step would be to read the short <a href=overview.html>
-                           overview</a> page. Many people <i>also</i> find the simple <a href=starting.html>
-                           getting started</a>, <a href=http://wiki.java.net/bin/view/Communications/ProxyUsage>
-                           proxy</a>, <a href=http://wiki.java.net/bin/view/Communications/TransparentProxy>
-                           transparency</a>, and <a href=http://wiki.java.net/bin/view/Communications/CajoScripting>
-                           scripting</a> experiments to be quickly enlightening. Java EE Developers:
-                           Once you have familiarised yourself with the project, come see the
-                           <a href=http://wiki.java.net/bin/view/Communications/CajoServlet>
-                           migration</a> framework, we have created just for you.<br><br>
+                           This will make the provided example code both quickly understandable, and
+                           readily extensible. It's also an excellent way to learn about RMI in detail.<br><br>
+
+                           2. For those who want to jump right in, and learn by doing;
+
+                           <ul>
+                             <li> Look at the <a href=example.html>example</a>, it consists of four
+                             small classes, yet completely exercises the framework
+                             <li> The <a href=tutorial.html>tutorial</a> page, should be of particular
+                             interest to this group
+                           </ul>
+                           
+                           The project's root directory has both batch files, and a complete ant script,
+                           illustrating four strategically different ways to build the example.<br><br>
 
                            The discussion <a href=servlets/ProjectForumView>fora</a> are an interesting
                            and valuable resource. The <a href=servlets/ProjectDocumentList>
@@ -317,8 +330,12 @@
                            wiki</a>, where members can offer examples, clarify details, or
                            supplementally create any additional project documentation.<br><br>
 
-                           <i><u>Note</u>:</i> links to all this information, and much more, can be
+                           <i>Note:</i> links to all this information, and much more, can be
                            found on the left sidebar.<br><br>
+
+                           *Java EE Developers: Once you have familiarised yourself with the
+                           project, come see the <a href=http://wiki.java.net/bin/view/Communications/CajoServlet>
+                           migration</a> framework, we have created just for you.<br><br>
 
                            We hope you find it <i>surprisingly</i> easy to come up to speed. We also
                            hope you find the new possibilities very exciting. This framework is both
