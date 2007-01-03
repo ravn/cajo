@@ -148,12 +148,12 @@ public class MonitorItem implements Invoke {
             StackTraceElement stes[] = x.getStackTrace();
             StringBuffer sb = new StringBuffer("localhost <trace>");
             for (int i = 4; i < stes.length; i++) {
-               sb.append("\n\tclass = ");
+               sb.append("\n     method = ");
                sb.append(stes[i].getClassName());
                sb.append('.');
                sb.append(stes[i].getMethodName());
                if (stes[i].getLineNumber() != -1) { // debug info available
-                  sb.append("\n\tfile  = ");
+                  sb.append("\n     file   = ");
                   sb.append(stes[i].getFileName());
                   sb.append(" line ");
                   sb.append(stes[i].getLineNumber());
@@ -180,7 +180,7 @@ public class MonitorItem implements Invoke {
                } else if (ps != null) {
                   ps.print("\nCaller host = ");
                   ps.print(clientHost);
-                  ps.print("\nItem called = ");
+                  ps.print("\nObject call = ");
                   ps.print(item.toString());
                   ps.print("\nMethod call = ");
                   ps.print(method);
@@ -196,7 +196,7 @@ public class MonitorItem implements Invoke {
                         ps.print(((Object[])args)[i] != null ?
                            ((Object[])args)[i].toString() : "null");
                      }
-                  } else ps.print(args != null ? args.toString() : "null");
+                  } else ps.print(args != null ? args.toString() : "none");
                   ps.print("\nResult data = ");
                   if (result instanceof java.rmi.MarshalledObject)
                      result = ((java.rmi.MarshalledObject)result).get();
@@ -212,8 +212,9 @@ public class MonitorItem implements Invoke {
                            ps.print(((Object[])result)[i].toString());
                         else ps.print("null");
                      }
-                  } else ps.print(result != null ? result.toString() : "null");
-                  ps.print("\nCall count  = ");
+                     ps.println();
+                  } else ps.println(result != null ? result.toString() : "void");
+                  ps.print("Call count  = ");
                   ps.print(++count);
                   ps.print("\nIdle time   = ");
                   ps.print(time - oldtime);
@@ -225,9 +226,9 @@ public class MonitorItem implements Invoke {
                   ps.print(freeMemory);
                   ps.println('%');
                }
-            } catch(Exception x) { x.printStackTrace(System.err); }
+            } catch(Exception x) { x.printStackTrace(); }
+            oldtime = time;
          }
-         oldtime = time;
       }
    }
 }
