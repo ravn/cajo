@@ -176,9 +176,10 @@
                the requesting browser.
                <li> If an exclamation point <i>is</i> terminating the URL, this will be
                interpreted as a request for the GUI proxy to be run as a WebStart
-               application, on the desktop of the requesting host. The remaining URL
-               components are used to configure the client for operation within the
-               requester's VM, as explained in the client topic.</ul>
+               application, on the desktop of the requesting host.</ul>
+
+               In either case, the remaining URL components are used to configure the client
+               for operation within the requester's VM, as explained in the client topic.<br><br>
 
                For the curious; the client GUI loading process executes as follows:<ol>
 
@@ -194,11 +195,10 @@
                </ol>An elabourate process, to be sure, but all handled transparently behind
                the scenes. The source is all there for the curious, but truth be told; just
                like the Java Runtime Environment source, you do not need to know it, in
-               order to use it effectively. <i><u>Note</u>:</i> this was only a high-level
-               overview, the <i>mind-numbing</i> technical details were intentionally
-               omitted. If this already has your head spinning, don't worry about it;
-               <i>especially</i> don't worry about the next section, simply go on to the
-               conclusion.
+               order to use it effectively. Note: this was only a high-level overview, the
+               <i>mind-numbing</i> technical details were intentionally omitted. If this
+               already has your head spinning, don't worry about it; <i>especially</i> don't
+               worry about the next section, simply go on to the conclusion.
             </span>
          </td>
       </tr>
@@ -233,7 +233,7 @@
                http/ftp server). Simply place your proxy jar file in the working directory
                of another codebase server, and use the fully-qualified constructor of
                <a href=docs/gnu/cajo/utils/ItemServer.html#bind(java.lang.Object,%20java.lang.String)>
-               ItemServer</a>, to tell clients where to find the file. <i><u>Note</u>:</i>
+               ItemServer</a> to tell clients where to find the files. <i><u>Note</u>:</i>
                The CodebaseServer need not even be in the same physical box as the server
                items. <i>(Just ponder the implications of that :-)</i>
             </span>
