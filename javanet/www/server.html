@@ -70,14 +70,16 @@
                                  <td valign="top">
 <!-- title bar section -->         <span class="spacing style4 style7 style9">
                                       The <a href=docs/gnu/cajo/utils/CodebaseServer.html>
-                                      CodebaseServer</a> could likely be considered the world's smallest
-                                      application server. It is completely customised to support the cajo
+                                      CodebaseServer</a> could be considered the world's smallest
+                                      <i>application server.</i> It is completely customised to support the cajo
                                       framework. The entire server consists of a single class, yet it serves
-                                      <i>(pun intended)</i> two major roles. First, and foremost, it provides
-                                      codebase service; to allow remote VMs to run objects locally, for
-                                      which they do not have the local class files. Secondly, it provides
-                                      client service; to allow transparent distribution of user interfaces,
-                                      as either Applets, or as WebStart applications.
+                                      <i>(pun intended)</i> two major roles:
+                                      <ul>
+                                      <li> First, it provides codebase service; to allow client VMs to run remote
+                                      objects locally, for which they do not have the local class files.
+                                      <li> Secondly, it provides client service; to allow transparent distribution
+                                      of User Interfaces, as either Applets, or as WebStart applications.
+                                      </ul>
                                     </span>
                                  </td>
                               </tr>
@@ -107,21 +109,21 @@
          <td valign="top">
             <span class="spacing style4 style7 style9">
                When a proxy item is sent to another VM, it arrives solely as a serialised
-               collection of many co&ouml;perating objects, but no code (i.e. class files). The
-               receiving VM will first check in its local codebase to find class definitions
+               collection of many co&ouml;perating objects, but with no code (i.e. class files).
+               The receiving VM will first check its local codebase to find class definitions
                for these objects, if it does, it will use them. However, as is often the
-               case with proxies, it will not have all of the application specific classes
+               case with proxies, it will not have the application specific classes
                needed by the received proxy. When this happens, the RMI framework steps in;
                it will call back to the item server, and request the class definitions. The
                primary use of the CodebaseServer is to manage this transfer, and it does
-               this automatically and transparently. The necessary classes are provided to
-               the remote host, loaded into its runtime, then the proxy is free to operates
+               this automatically, and transparently. The necessary classes are provided to
+               the remote host, loaded into its runtime, and the proxy is free to operate
                locally, in the context of that VM.<br><br>
 
-               All proxy-specific class files, and other files needed by the proxy, such as
-               images or localised string tables, are packaged into a single jar file. The
-               supplied <a href=example.html>example</a> illustrates how to do this very
-               easily.<br><br>
+               For efficiency, all proxy-specific class files, and other files needed by the
+               proxy, such as images or localised string tables, are typically packaged into
+               a single jar file. The supplied <a href=example.html>example</a> illustrates
+               how to do this very easily.<br><br>
 
                You will need a codebase server any time you are sending proxies to another
                remote machine that will not have all of the class files needed by the
@@ -154,33 +156,31 @@
       <tr>
          <td valign="top">
             <span class="spacing style4 style7 style9">
-               If the <a href=client.html>client</a> topic seemed almost magical; this is
-               the functionality of the codebase server. The previous discussion on
-               codebase service could be provided by <u>any</u> general purpose webserver.
-               What makes an application server special is knowing what to do with all that
-               <i>"extra-stuff"</i> appended to the end of the URL.<br><br>
+               If the <a href=tutorial.html>tutorial</a> conclusion seemed almost magical;
+               this is due to the functionality of the codebase server. The previous
+               discussion on codebase service could be provided by <u>any</u> general
+               purpose webserver. What makes an application server special, is knowing what
+               to do with all that <i>"extra-stuff"</i> appended to the end of the URL.<br><br>
 
                As explained previously, the CodebaseServer first checks if a jar file is
                being requested, if so, it fulfills the request. However, when the request
                is <i>not</i> for a jar file; here is where things get interesting.<br><br>
 
                The CodebaseServer will parse the URL to extract additional meaning from the
-               request. Based on its content, one of three things will happen. First, and
+               request. Based on its content, one of three things will happen: First, and
                trivially, it may not understand the request, in this case, the request is
                rejected. However, if the request is understood; now one of two things will
-               happen.<br><br>
+               happen:<ul>
+               <li> If no exclamation point is terminates the request, the CodebaseServer will
+               interpret this as a request for a GUI proxy to be run as an applet, inside
+               the requesting browser.
+               <li> If an exclamation point <i>is</i> terminating the URL, this will be
+               interpreted as a request for the GUI proxy to be run as a WebStart
+               application, on the desktop of the requesting host. The remaining URL
+               components are used to configure the client for operation within the
+               requester's VM, as explained in the client topic.</ul>
 
-               If no exclamation point is terminates the request, the CodebaseServer will
-               interpret this as a request for a GUI proxy, to be run as an applet inside
-               the requesting browser. If an exclamation point <i>is</i> terminating the
-               URL, this will be interpreted as a request for the GUI proxy to be run as
-               a WebStart application, on the desktop of the requesting host. The remaining
-               URL components are used to configure the client for operation within the
-               requester's VM, as explained in the client topic. <i>Note:</i> the client
-               itself is contained in a separate jar file. The CodebaseServer will also
-               handle its transfer automatically.<br><br>
-
-               For the curious; the client GUI loading process is as follows:<ol>
+               For the curious; the client GUI loading process executes as follows:<ol>
 
                   <li>The host requests the client
                   <li>The CodebaseServer returns instructions on how to do this
@@ -192,12 +192,13 @@
                   <li>The CodebaseServer provides this
 
                </ol>An elabourate process, to be sure, but all handled transparently behind
-               the scenes. The source is all there of course for the curious, but truth be
-               told; just like the Java Runtime Environment source, you need not understand
-               it, in order to use it effectively. This was only a high-level overview, the
-               <i>mind-numbing</i> technical details were intentionally omitted. If this
-               already has your head spinning, don't worry about it; <i>especially</i>
-               don't worry about the next section, simply go on to the conclusion.
+               the scenes. The source is all there for the curious, but truth be told; just
+               like the Java Runtime Environment source, you do not need to know it, in
+               order to use it effectively. <i><u>Note</u>:</i> this was only a high-level
+               overview, the <i>mind-numbing</i> technical details were intentionally
+               omitted. If this already has your head spinning, don't worry about it;
+               <i>especially</i> don't worry about the next section, simply go on to the
+               conclusion.
             </span>
          </td>
       </tr>
@@ -228,9 +229,9 @@
                performance, you probably already thought of this, but here it is anyway.
                Since the CodebaseServer fundamentally performs the functionality of a
                generic http server, if you do not require the client application service
-               functionality, you can share another item's CodebaseServer (or generic http
-               server). Simply place your proxy jar file in the working directory of
-               another codebase server, and use the fully-qualified constructor of the
+               functionality, you can share another item's CodebaseServer (or generic
+               http/ftp server). Simply place your proxy jar file in the working directory
+               of another codebase server, and use the fully-qualified constructor of
                <a href=docs/gnu/cajo/utils/ItemServer.html#bind(java.lang.Object,%20java.lang.String)>
                ItemServer</a>, to tell clients where to find the file. <i><u>Note</u>:</i>
                The CodebaseServer need not even be in the same physical box as the server
@@ -265,7 +266,7 @@
                transfer between virtual machines, transparent. It can allow the generic
                client object the ablity to display <i>any</i> graphical proxy. Its purpose
                is to bring the power of proxy items, and remote graphical proxy viewing,
-               to everybody, not just the <i>'Rocket-Scientists.'</i><br>
+               to everybody; not just the <i>'Rocket-Scientists.'</i><br><br>
             </span>
          </td>
       </tr>
