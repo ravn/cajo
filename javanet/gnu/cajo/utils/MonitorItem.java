@@ -178,7 +178,7 @@ public class MonitorItem implements Invoke {
                   }));
                   oos.flush(); // just for good measure...
                } else if (ps != null) {
-                  ps.print("\nCaller host = ");
+                  ps.print("Caller host = ");
                   ps.print(clientHost);
                   ps.print("\nObject call = ");
                   ps.print(item.toString());
@@ -224,7 +224,7 @@ public class MonitorItem implements Invoke {
                   ps.print(" ms");
                   ps.print("\nFree memory = ");
                   ps.print(freeMemory);
-                  ps.println('%');
+                  ps.print("%\n\n");
                }
             } catch(Exception x) { x.printStackTrace(); }
             oldtime = time;
