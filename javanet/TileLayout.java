@@ -7,27 +7,23 @@ import java.io.Serializable;
 /*
  * Relative Component Layout Manager
  * Copyright (c) 1999 John Catherino
+ * The cajo project: https://cajo.dev.java.net
  *
  * For issues or suggestions mailto:cajo@dev.java.net
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published
- * by the Free Software Foundation, at version 2.1 of the license, or any
- * later version.  The license differs from the GNU General Public License
- * (GPL) to allow this library to be used in proprietary applications. The
- * standard GPL would forbid this. As the source declares the class in the
- * unnamed package, you may place it in any package you wish, with no
- * licensing affects on the other classes in the package.
+ * This library is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License, at version
+ * 2.1 of the licence, or any later version published by the Free Software
+ * Foundation.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * GNU Lesser General Public License for more details.
  *
- * To receive a copy of the GNU Lesser General Public License visit their
- * website at http://www.fsf.org/licenses/lgpl.html or via snail mail at Free
- * Software Foundation Inc., 59 Temple Place Suite 330, Boston MA 02111-1307
- * USA
+ * You can receive a copy of the GNU Lesser General Public License from their
+ * website, http://fsf.org/licenses/lgpl.html; or via snail mail, Free
+ * Software Foundation Inc., 51 Franklin Street, Boston MA 02111-1301, USA
  */
 
 /**
@@ -52,8 +48,8 @@ import java.io.Serializable;
  * 
  * Usage example:<blockquote><tt><pre>
  * panel.add(new JLabel(&quot;Label text:&quot;), new Object[]{
- *       new Integer(TileLayout.LEFTINDENT + TileLayout.NOOFFSET
- *             + TileLayout.PROPWIDTH + TileLayout.FULLHEIGHT), refComponent,
+ *       new Integer(TileLayout.LEFTINDENT + TileLayout.NOOFFSET +
+ *       TileLayout.PROPWIDTH + TileLayout.FULLHEIGHT), refComponent,
  *       new Insets(-5, 10, 5, 10), new Rectangle(0, 0, 333, 0)
  * // proportion rectangle 33.3%w
  *       });
@@ -96,18 +92,15 @@ public final class TileLayout implements LayoutManager2, Serializable {
       if (cons != null) {
          for (int i = 0; i < cons.length; i++) { // gather constraints
             if (cons[i] != null) {
-               if (cons[i] instanceof Rectangle) fixd = (Rectangle) cons[i];
-               else if (cons[i] instanceof Insets) insets = (Insets) cons[i];
-               else if (cons[i] instanceof Integer) align = ((Integer) cons[i])
-                     .intValue();
-               else if (cons[i] instanceof Component) tile = ((Component) cons[i])
-                     .getBounds();
+               if (cons[i] instanceof Rectangle) fixd = (Rectangle)cons[i];
+               else if (cons[i] instanceof Insets) insets = (Insets)cons[i];
+               else if (cons[i] instanceof Integer) align = ((Integer)cons[i]).intValue();
+               else if (cons[i] instanceof Component) tile = ((Component)cons[i]).getBounds();
             }
          }
       }
       if (tile == null) tile = new Rectangle(cont);
-      Rectangle pref = new Rectangle(tile.getLocation(), comp
-            .getPreferredSize());
+      Rectangle pref = new Rectangle(tile.getLocation(), comp.getPreferredSize());
 
       // perform component positioning:
 
