@@ -113,7 +113,7 @@
             <span class="spacing style4 style7 style9">
                The project is organised into the following directories:
 
-<blockquote><tt><pre><b>
+<blockquote><tt><pre>
 /cajo         // install directory
 |- /gnu       // GNU root namespace
 |
@@ -127,9 +127,9 @@
 |-- /gui      // proxy graphical widgets
 |
 |- /docs      // documentation collection
-</b></pre></tt></blockquote><br>
+</b></pre></tt></blockquote>
 
-               The <b>cajo</b> directory contains several important files, all of these
+               The <b>cajo</b> install directory contains several important files, all of these
                will be covered in the course of this tutorial.  For now, the most important
                file is either doc.bat, or build.xml. Invoking either the batch file, or
                the doc Ant target, will scan the project source, and create highly detailed
@@ -148,7 +148,7 @@
                For now it can be summarised as providing a collection of classes used in
                the creation of servers.<br><br>
 
-               The <b>example</b> directory contains the four Java classes comprising the
+               The <b>cajo/example</b> directory contains the four Java classes comprising the
                sample server.  The file Main.java is the server application itself. The
                file TestItem is an item, meaning a server-side resource object,
                which is accessible to remote applications.  The file TestProxy is a proxy,
@@ -161,28 +161,28 @@
                little extra work, but it can make the proxies a lot smaller, simpler, and
                more secure.<br><br>
 
-               The <b>include</b> directory contains miscellaneous data resources used by
+               The <b>cajo/example/include</b> directory contains miscellaneous data resources used by
                the proxy. This includes things like properties tables for multiple language
                support, graphical bitmaps. Essentially it is any non-Java files required
                for operation of the proxy at its remote host. It is put in its own directory
                so that it can be included into the proxy's jar file with a simple *.*
                option.<br><br>
 
-               The <b>gui</b> directory contains a small collection of graphical widgets
+               The <b>cajo/example/gui</b> directory contains a small collection of graphical widgets
                used by the proxy to create its user interface on hosting clients. They are
                outside the scope of this project as a proxy is free to use the AWT, or
                Swing, or anything else. Please don't think this is the graphical toolkit you
                have to use, it is here only for the purposes of this example, and doesn't
                even merit more detailed examination.<br><br>
 
-               The <b>docs</b> directory, as mentioned previously, is where the
+               The <b>cajo/docs</b> directory, as mentioned previously, is where the
                auto-generated documentation goes.  To save space, initially it does not
                exist, until you run the doc build. You also can view the documentation
                <a href=https://cajo.dev.java.net/nonav/docs/index.html>
                online</a>.<br><br>
 
-               <i><u>Note</u>:</i> there is also a directory called <b>extra</b>, located beneath
-               utils. It contains powerful applications of the framework, for later study.
+               <i><u>Note</u>:</i> there is also a directory <b>gnu/cajo/utils/extra</b>.
+               It contains powerful applications of the framework, for later study.
                Its <a href=http://wiki.java.net/bin/view/Communications/ExtensionPackage>
                description</a> will be set aside at this time, as it is not used by the
                example.<br>
