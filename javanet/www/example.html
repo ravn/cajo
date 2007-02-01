@@ -275,15 +275,21 @@
 
                First it serves to replace all the code which would otherwise go into the
                proxy's constructor.  Why do this? Because all of the construction code,
-               which can be quite sizeable if the proxy is elabourate, can be left out of
+               which can be quite sizeable if the proxy is elaborate, can be left out of
                the proxy's jar file.  This reduces the proxy jar size, and also adds the
                additional security that the proxy becomes <i>much</i> more difficult to
                reverse-engineer, if such protection is important to you.<br><br>
 
+               <i><u>Note</u>:</i> while the builder technique works very well for AWT user
+               interfaces, due to security restrictions; many Swing components cannot
+               be deserialised in an Applet/WebStart sandbox. The code must then move
+               back into the proxy constuctor. An example of this approach can be found
+               <a href=http://wiki.java.net/bin/view/Communications/JProxyTest>here</a>.<br><br>
+
                The second function of the Builder class is to instantiate the proxy, then
                serialise its image to disc.  This serialised object will be included in the
                proxy jar file, and referenced through a <a href=nonav/docs/gnu/cajo/utils/ProxyLoader.html>
-               ProxyLoader</a> in the TestItem's runtime.  This is the <i>most elabourate</i>
+               ProxyLoader</a> in the TestItem's runtime.  This is the <i>most elaborate</i>
                way to use a ProxyLoader. It can also be used to invoke a proxy's no-arg
                constructor, to create a new instance of the proxy, on its arrival at the
                host VM. In that case, all of the construction code would have to be passed
@@ -396,16 +402,16 @@
                4. A GUI is requested from the proxy, to be the View, to its Controller
                functionality.<br><br>
 
-               This allows the provision of sophisticated visual modules, which can be
+               This allows the provision of sophisticated visual modules, which can further be
                <i>composed</i> to yield even richer functionality. The components are neatly
-               modularised by server. A single server may serve <i>several</i> graphical
+               modularised by server. A single server may serve <i>multiple</i> graphical
                interfaces. These interfaces can also be viewed with an ordinary web browser,
                or via Web Start.<br><br>
 
                <i><u>Note</u>:</i> The <a href=nonav/docs/gnu/cajo/utils/ZippedProxy.html>ZippedProxy</a>
                class is the only utility class not used in the example. This is bacause the
                example demonstrates indirectly referencing a proxy, through a ProxyLoader.
-               This is indicated when the server item, does not need to configure a proxy
+               This is preferred when the server item does not need to configure a proxy
                before sending it.  This can save a lot of space in the server item's runtime,
                especially if the proxy is very large, or if a single VM is serving many
                proxies.<br><br>
