@@ -129,7 +129,7 @@ public class SomeObject {
                         One of the most important aspects of the cajo framework is that it does not
                         require any changes to your objects, in order to use them remotely.
                         Even if your application already uses some other distributed framework; it
-                        is very easy to <i>drop-in</i> cajo support to compliment and extend your
+                        is very easy to <i>'drop-in'</i> cajo support, to compliment and extend your
                         distributed computing capability, and to increase your distributed user
                         base.<br><br>
 
@@ -214,7 +214,7 @@ public class SomeObject {
                         Invoke</a> is the cajo architecture approach to dynamic method invocation,
                         supplemented by the use of Java reflection. It is the foundation of the
                         framework. It can be used to invoke <i>any</i> public method, including
-                        static, on <i>any</i> object; on both local <u>and</u> remote objects!<br><br>
+                        static, on <i>any</i> object; on both local <u>and</u> remote!<br><br>
 
                         The static method has the following signature:
 
@@ -222,16 +222,16 @@ public class SomeObject {
                            Object Remote.invoke(Object object, String method, Object args) throws Exception;
                         </tt></blockquote>
 
-                        The <i>object</i> argument is the object on which to operate. The
-                        <i>method</i> argument is the name of the public method to be invoked.
-                        The <i>args</i> argument represents the argument(s) to be provided to the
-                        method, if any. Multiple arguments are represented when <i>args</i> is an
-                        Object array. A null <i>args</i> value, or less preferably an empty array,
-                        indicates no arguments. The method's result is the object returned from the
-                        method invocation, if any. The method declares that it throws
-                        <i>Exception</i>, to allow the called method the freedom to throw any type of
-                        Exception, <i>including</i> none at all. This is also used to cover network
-                        related failures for invocations on remote objects.<br><br>
+                        The <i>object</i> argument is a reference to either a local or remote object,
+                        on which to operate. The <i>method</i> argument is the name of the public
+                        method to be invoked. The <i>args</i> argument represents the argument(s) to
+                        be provided to the method, if any. Multiple arguments are represented when
+                        <i>args</i> is an Object array. A null <i>args</i> value, or less preferably
+                        an empty array, indicates no arguments. The method's result is the object
+                        returned from the method invocation, if any. The method declares that it
+                        throws <i>Exception</i>, to allow the called method the freedom to throw any
+                        type of Exception, <i>including</i> none at all. This is also used to cover
+                        network related failures for invocations on remote objects.<br><br>
 
                         Consider for a moment just this one small example of the power in dynamic
                         method invocation:
@@ -266,9 +266,9 @@ public class SomeObject {
                <tr>
                   <td valign="top">
                      <span class="spacing style4 style7 style9">
-                        Now it might appear that all type safety has been completely abandoned;
+                        Now it might appear that all typesafety has been completely abandoned;
                         looking a bit like those old, currently <i>fashionably</i> called,
-                        <i>'dynamic languages'</i>, like BASIC, and Ruby. However, what has really happened
+                        <i>'dynamic languages'</i>, like BASIC and Ruby. However, what has really happened
                         is that strong typechecking had to move, from compile time to run time. If
                         there is no strongly mappable signature, the invocation will result in a
                         <tt>java.lang.NoSuchMethodException</tt>.<br><br>
@@ -315,17 +315,17 @@ public class WrapperObject {
 </pre></tt></blockquote>
 
                         Note the network exception catch blocks: Any remote invocation can <i>fail</i>
-                        unexpectedly, in a way that would not occur when the wrapped object reference
+                        unexpectedly, in a way that would not occur if the wrapped object reference
                         is local. The wrapper architecture also facilitates the simple insertion of
-                        <i>extremely</i> powerful supplemental functionality such as; retry, caching,
+                        <i>extremely</i> powerful supplemental functionality such as: retry, caching,
                         monitoring, notification, logging, measurement, debug, testing, validation,
                         rollback, load balancing, fail-over, etc.<br><br>
 
                         Note how this object interface is not a Java <tt>interface</tt>, nor is the
                         remote reference to a Java <tt>interface</tt>; to pre-empt any confusion of
-                        terminology, we will refer to this practise via the term: Programming to
-                        <i>Contract</i>. The remote object is free to add new methods, for newer
-                        clients, but simply in a manner compatible with the existing clients.<br><br>
+                        terminology, we will refer to this practice via the term: <i><a href=http://weblogs.java.net/blog/cajo/archive/2006/12/dynamic_client.html>
+                        Client Subtype.</a></i> The remote object is free to add new methods, for
+                        newer clients, but simply in a manner compatible with the existing clients.<br><br>
 
                         It is important to remember that since the Remote.invoke method works
                         on <u>both</u> local <i>and</i> remote objects; the wrapper technique
@@ -380,8 +380,8 @@ public class WrapperObject {
                All of this functionality; and quite a <u><i>lot</i></u> more: From a
                codebase of 40<b><u>k</u></b>B!<br><br>
 
-               Its simplicity, flexibility, ease of use, and <i>performance</i>; offer quite
-               an exciting change from the more complex, and heavyweight distributed
+               Its simplicity, flexibility, ease of use, and sheer <i>performance</i>; offer
+               quite an exciting change from the more complex, and heavyweight distributed
                frameworks out there.<br><br>
 
                If you are are interested to try out the example we have discussed here,
