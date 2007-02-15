@@ -42,7 +42,6 @@ import java.rmi.MarshalledObject;
  */
 public final class Client extends java.applet.Applet {
    private static final long serialVersionUID = 1L;
-   private static final String TITLE = "cajo Proxy Viewer - ";
    private static Object proxy;
    private Graphics gbuffer;
    private Image ibuffer;
@@ -210,7 +209,7 @@ public final class Client extends java.applet.Applet {
     */
    public static Frame frame(Component component, String title) {
       if (component instanceof JComponent) {
-         JFrame frame = new JFrame(TITLE + title);
+         JFrame frame = new JFrame(title);
          if (component instanceof WindowListener)
             frame.addWindowListener((WindowListener)component);
          frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -219,7 +218,7 @@ public final class Client extends java.applet.Applet {
          frame.setVisible(true);
          return frame;
       } else {
-         Frame frame = new CFrame(TITLE + title);
+         Frame frame = new CFrame(title);
          if (component instanceof WindowListener)
             frame.addWindowListener((WindowListener)component);
          frame.add((Component)component);
@@ -236,14 +235,18 @@ public final class Client extends java.applet.Applet {
     * request the primary proxy object of the item. If the proxy is a Swing
     * JComponent, it will be displayed in a JFrame. If it is an AWT Component,
     * it will be displayed in a Frame.<br><br>
+    * When using Client from the command line, it is possible to set the
+    * Client frame explicitly. To do this, simply type:<br><br><tt>
+    * java -cp cajo.jar -Dgnu.cajo.invoke.Client.title="My Frame Title"
+    * gnu.cajo.invoke.Client //myHost:1198/test</tt><br><br>
     * <i><u>Note</u>:</i> When running as an application (<i><u>except</u> via
     * WebStart</i>) it will load a NoSecurityManager, therefore, if no external
     * SecurityManager is specified in the startup command line; the arriving
     * proxies will have <i><u><b>full permissions</b></u></i> on this machine!<br><br>
     * To restrict client proxies permissions, use a startup invocation
     * similar to the following:<br><br>
-    * <tt>java -jar -Djava.security.manager -Djava.security.policy=client.policy</tt>
-    * <br><br>
+    * <tt>java -cp cajo.jar -Djava.security.manager -Djava.security.policy=client.policy
+    * ... gnu.cajo.invoke.Client ... </tt><br><br>
     * See the project client <a href=https://cajo.dev.java.net/client.html>
     * documentation</a>, for more details.<br><br>
     * The startup can take up to five additional optional configuration
@@ -252,14 +255,14 @@ public final class Client extends java.applet.Applet {
     * file:// http:// ftp:// ..., //host:port/name (rmiregistry), /path/name
     * (serialized), or path/name (class).<br>
     * If <i>unspecified,</i> a graphical loader utility will be launched.
-     * <li><tt>args[1] - </tt>The optional external client port number,
-     * if using NAT.
-     * <li><tt>args[2] - </tt>The optional external client host name,
-     * if using NAT.
-     * <li><tt>args[3] - </tt>The optional internal client port number,
-     * if using NAT.
-     * <li><tt>args[4] - </tt>The optional internal client host name,
-     * if multi home/NIC.</ul>
+    * <li><tt>args[1] - </tt>The optional external client port number,
+    * if using NAT.
+    * <li><tt>args[2] - </tt>The optional external client host name,
+    * if using NAT.
+    * <li><tt>args[3] - </tt>The optional internal client port number,
+    * if using NAT.
+    * <li><tt>args[4] - </tt>The optional internal client host name,
+    * if multi home/NIC.</ul>
     */
    public static void main(String args[]) {
       try {
@@ -277,8 +280,11 @@ public final class Client extends java.applet.Applet {
                proxy = ((MarshalledObject)proxy).get();
             if (!(proxy instanceof RemoteInvoke))
                proxy = Remote.invoke(proxy, "init", new Remote(proxy));
-            if (proxy instanceof Component)
-                proxy = frame((Component)proxy, args[0]);
+            if (proxy instanceof Component) {
+               String title = System.getProperty("gnu.cajo.invoke.Client.title");
+               if (title == null) title = "cajo Proxy Viewer";
+               proxy = frame((Component)proxy, title + " - " + args[0]);
+            }
          } else new Loader();
       } catch (Exception x) { x.printStackTrace(); }
    }

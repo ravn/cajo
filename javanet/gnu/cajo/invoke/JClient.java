@@ -170,19 +170,23 @@ public final class JClient extends JApplet {
       catch(Exception x) {}
    }
    /**
-    * The application creates a graphical Component proxy hosting VM.
-    * With the URL argument provided, it will use the static
-    * {@link Remote#getItem getItem} method of the {@link Remote Remote} class
-    * to contact the server. It will then invoke a null-argument getProxy on
-    * the resulting reference to request the primary proxy object of the item.<br><br>
+    * The application creates a graphical Component proxy hosting VM. With the
+    * URL argument provided, it will use the static {@link Remote#getItem getItem}
+    * method of the {@link Remote Remote} class to contact the server. It will
+    * then invoke a null-argument getProxy on the resulting reference to request
+    * the primary proxy object of the item.<br><br>
+    * When using the JClient from the command line, it is possible to set the
+    * JClient frame title explicitly. To do this, simply type:<br><br><tt>
+    * java -cp cajo.jar -Dgnu.cajo.invoke.JClient.title="My Frame Title"
+    * gnu.cajo.invoke.JClient //myHost:1198/test</tt><br><br>
     * <i><u>Note</u>:</i> When running as an application (<i><u>except</u> via
     * WebStart</i>) it will load a NoSecurityManager, therefore, if no external
     * SecurityManager is specified in the startup command line; the arriving
     * proxies will have <i><u><b>full permissions</b></u></i> on this machine!<br><br>
     * To restrict client proxies permissions, use a startup invocation
     * similar to the following:<br><br>
-    * <tt>java -jar -Djava.security.manager -Djava.security.policy=client.policy</tt>
-    * <br><br>
+    * <tt>java -cp cajo.jar -Djava.security.manager -Djava.security.policy=client.policy
+    * ... gnu.cajo.invoke.JClient ... </tt><br><br>
     * See the project client <a href=https://cajo.dev.java.net/client.html>
     * documentation</a>, for more details.<br><br>
     * The startup requires one mandatory, and up to four optional
@@ -219,8 +223,9 @@ public final class JClient extends JApplet {
                      try {
                         proxy = Remote.invoke(proxy, "init", new Remote(proxy));
                         if (proxy instanceof Component) {
-                           JFrame frame =
-                              new JFrame("cajo Proxy Viewer - " + args[0]);
+                           String title = System.getProperty("gnu.cajo.invoke.JClient.title");
+                           if (title == null) title = "cajo Proxy Viewer";
+                           JFrame frame = new JFrame(title + " - " + args[0]);
                            if (proxy instanceof WindowListener)
                               frame.addWindowListener((WindowListener)proxy);
                            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
