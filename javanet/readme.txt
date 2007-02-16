@@ -1,4 +1,4 @@
-Library Release 1.93 11-Nov-06
+Library Release 1.94 15-Feb-07
 
                        ___  _
                       / ,_`(_) ___
@@ -33,7 +33,7 @@ You can find this licence on the FSF website at:
 
    http://www.gnu.org/licenses/lgpl.html
 
-or request it archaically in paper from:
+or request it archaically, in paper from:
 
    The Free Software Foundation, Inc.
    51 Franklin Street
