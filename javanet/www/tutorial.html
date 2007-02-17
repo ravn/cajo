@@ -253,19 +253,19 @@
                clients will receive the updated functionality automatically, and the server
                need <u>not</u> be shut down.<br><br>
 
-               The <a href=source/browse/cajo/make4.bat?rev=1.5&view=markup>make4</a> creates
-               the server as <b><i>four</i></b> files: server.jar, client.jar, proxy.jar,
-               <i>and</i> cajo.jar. The cajo.jar file is the standard binary library for the
-               cajo project. By using this jar file, all of the standard functionality is
-               stored in one central repository. This not only reduces the size of the
-               server jar files, but permits library updates <i>without</i> affecting the
-               server files. This is the most common method of deployment.<br><br>
+               The <a href=source/browse/cajo/make4.bat?rev=1.5>make4</a> creates the server
+               as <b><i>four</i></b> files: server.jar, client.jar, proxy.jar, <i>and</i>
+               cajo.jar. The cajo.jar file is the standard binary library for the cajo
+               project. By using this jar file, all of the standard functionality is stored
+               in one central repository. This not only reduces the size of the server jar
+               files, but permits library updates <i>without</i> affecting the server files.
+               This is the most common method of deployment.<br><br>
 
                As you would expect, there is a fifth batch file, and default ant build
-               target; called <a href=../library.bat>library</a>. It compiles the project
-               source code and creates the standard cajo.jar library image. Its purpose is
-               to provide the framework functionality to multi-jar classpaths, used by the
-               majority of applications.<br>
+               target; called <a href=https://cajo.dev.java.net/source/browse/cajo/library.bat?rev=1.5>
+               library</a>. It compiles the project source code and creates the standard
+               cajo.jar library image. Its purpose is to provide the framework functionality
+               to multi-jar classpaths, used by the majority of applications.<br>
 
             </span>
          </td>
