@@ -47,7 +47,7 @@ public final class CodebaseServer extends Thread {
        "Connection: close\r\n\r\n" +
        "<html><head><title>404: URL Not Found</title></head><body>" +
        "<h1>404 - Not Found</h1>" +
-       "The resource requested does not exist on this server.<br><br>" +
+       "The requested resource does not exist on this server.<br><br>" +
        "<hr><i>gnu.cajo.utils.CodebaseServer - The cajo project: "+
        "<a href=https://cajo.dev.java.net>https://cajo.dev.java.net</a>." +
        "</i></body></html>"
@@ -354,6 +354,9 @@ public final class CodebaseServer extends Thread {
                       ib > ia ? itemName.substring(ia + 1, ib) : "0";
                    String proxyName =
                       ic > ib ? itemName.substring(ib + 1, ic) : "main";
+                   Integer.parseInt(clientPort); // test URL validity
+                   Integer.parseInt(localPort); // test URL vaidity
+                   ItemServer.registry.lookup(proxyName); // test URL validity
                    String clientHost = s.getInetAddress().getHostAddress();
                    int proxyPort = Remote.getClientPort();
                    if (itemName.indexOf('!') == -1) { // Applet request
