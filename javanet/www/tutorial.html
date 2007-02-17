@@ -129,61 +129,63 @@
 |- /docs      // documentation collection
 </b></pre></tt></blockquote>
 
-               The <b>cajo</b> install directory contains several important files, all of these
-               will be covered in the course of this tutorial.  For now, the most important
-               file is either doc.bat, or build.xml. Invoking either the batch file, or
-               the doc Ant target, will scan the project source, and create highly detailed
-               javadoc hypertext documents in the docs subdirectory.  This will be a
-               <u>very</u> valuable resource in your development activities. Nearly half of
-               the source code is documentation comments! You can view this helpful resource
-               by opening the file docs/index.html with your favourite browser.<br><br>
+               The <a href=docs/overview-summary.html#overview_description>cajo</a> install
+               directory contains several important files, all of these will be covered in
+               the course of this tutorial.  For now, the most important file is either
+               doc.bat, or build.xml. Invoking either the batch file, or the doc Ant target,
+               will scan the project source, and create highly detailed javadoc hypertext
+               documents in the docs subdirectory.  This will be a <u>very</u> valuable
+               resource in your development activities. Nearly half of the source code is
+               documentation comments! You can view this helpful resource by opening the
+               file docs/index.html with your favourite browser.<br><br>
 
-               The <b>gnu/cajo/invoke</b> directory houses the three core classes of this
-               framework's architecture.  Its files are described at length in the javadoc
-               pages. For now suffice it to say that it defines the standard interface
-               through which all cajo objects communicate.<br><br>
+               The <a href=docs/gnu/cajo/invoke/package-summary.html>gnu/cajo/invoke</a>
+               directory houses the three core classes of this framework's architecture.
+               Its files are described at length in the javadoc pages. For now suffice it
+               to say that it defines the standard interface through which all cajo objects
+               communicate.<br><br>
 
-               The <b>gnu/cajo/utils</b> directory applies the invoke package to create the
-               framework. Likewise, these files are covered in detail in the javadoc pages.
-               For now it can be summarised as providing a collection of classes used in
-               the creation of servers.<br><br>
+               The <a href=docs/gnu/cajo/utils/package-summary.html>gnu/cajo/utils</a>
+               directory applies the invoke package to create the framework. Likewise, these
+               files are covered in detail in the javadoc pages. For now it can be summarised
+               as providing a collection of classes used in the creation of servers.<br><br>
 
-               The <b>cajo/example</b> directory contains the four Java classes comprising the
-               sample server.  The file Main.java is the server application itself. The
-               file TestItem is an item, meaning a server-side resource object,
-               which is accessible to remote applications.  The file TestProxy is a proxy,
-               meaning a mobile functional object, which is sent to remote clients, and
-               communicates back to its item.  Server objects can be made that do not use
-               proxies, it is included to demonstrate how to make one, and what it does.
-               Finally there is the file Builder.java.  Strictly speaking the example could
-               have been made without this class also, but it is here to demonstrate the
-               process of configuring proxies at compile time, rather than runtime.  It's a
-               little extra work, but it can make the proxies a lot smaller, simpler, and
-               more secure.<br><br>
+               The <a href=source/browse/cajo/example>cajo/example</a> directory contains
+               the four Java classes comprising the sample server.  The file Main.java is
+               the server application itself. The file TestItem is an item, meaning a
+               server-side resource object, which is accessible to remote applications.  The
+               file TestProxy is a proxy, meaning a mobile functional object, which is sent
+               to remote clients, and communicates back to its item. Server objects can be
+               made that do not use proxies, it is included to demonstrate how to make one,
+               and what it does. Finally there is the file Builder.java.  Strictly speaking
+               the example could have been made without this class also, but it is here to
+               demonstrate the process of configuring proxies at compile time, rather than
+               runtime.  It's a little extra work, but it can make the proxies a lot
+               smaller, simpler, and more secure.<br><br>
 
-               The <b>cajo/example/include</b> directory contains miscellaneous data resources used by
-               the proxy. This includes things like properties tables for multiple language
-               support, graphical bitmaps. Essentially it is any non-Java files required
-               for operation of the proxy at its remote host. It is put in its own directory
+               The <a href=source/browse/cajo/example/include>cajo/example/include</a>
+               directory contains miscellaneous data resources used by the proxy. This
+               includes things like properties tables for multiple language support,
+               graphical bitmaps. Essentially it is any non-Java files required for
+               operation of the proxy at its remote host. It is put in its own directory
                so that it can be included into the proxy's jar file with a simple *.*
                option.<br><br>
 
-               The <b>cajo/example/gui</b> directory contains a small collection of graphical widgets
-               used by the proxy to create its user interface on hosting clients. They are
-               outside the scope of this project as a proxy is free to use the AWT, or
-               Swing, or anything else. Please don't think this is the graphical toolkit you
-               have to use, it is here only for the purposes of this example, and doesn't
-               even merit more detailed examination.<br><br>
+               The <a href=source/browse/cajo/example/gui>cajo/example/gui</a> directory
+               contains a small collection of graphical widgets used by the proxy to
+               create its user interface on hosting clients. They are outside the scope
+               of this project as a proxy is free to use the AWT, or Swing, or anything
+               else. Please don't think this is the graphical toolkit you have to use, it
+               is here only for the purposes of this example, and doesn't even merit more
+               detailed examination.<br><br>
 
-               The <b>cajo/docs</b> directory, as mentioned previously, is where the
-               auto-generated documentation goes.  To save space, initially it does not
-               exist, until you run the doc build. You also can view the documentation
-               <a href=https://cajo.dev.java.net/nonav/docs/index.html>
-               online</a>.<br><br>
+               The <docs/index.html>cajo/docs</a> directory, as mentioned previously, is
+               where the auto-generated documentation goes.  To save space, initially it
+               does not exist, until you run the doc build.<br><br>
 
-               <i><u>Note</u>:</i> there is also a directory <b>gnu/cajo/utils/extra</b>.
-               It contains powerful applications of the framework, for later study.
-               Its <a href=http://wiki.java.net/bin/view/Communications/ExtensionPackage>
+               <i><u>Note</u>:</i> there is also a directory <a href=docs/gnu/cajo/utils/extra/package-summary.html>
+               gnu/cajo/utils/extra</a>. It contains powerful applications of the framework,
+               for later study. Its <a href=http://wiki.java.net/bin/view/Communications/ExtensionPackage>
                description</a> will be set aside at this time, as it is not used by the
                example.<br>
 
@@ -218,51 +220,51 @@
                in the build.xml ant script. Each builds the server with identical
                functionality, however, packaged in <i>fundamentally</i> different ways.<br><br>
 
-               The <b>make1</b> creates the server in <u>one</u> monolithic jar file.
-               Everything is contained inside it, the server itself, the test item, the test
-               proxy, and even a client applet, which allows browsers to host the proxy.
-               This file, and the security.policy file are all that is needed to deploy
-               the server.  All servers use the same policy file by default, so a deployment
-               directory could consist of many server jars, and a single policy
-               file.  This is an important part of the paradigm; to allow complex
-               functionality to be modularised into multiple Virtual Machines seamlessly
-               working together. <i>Note:</i> If you should need separate policy files for
-               each server, simply place each server jar and its associated policy into
-               separate directories.<br><br>
+               The <a href=../make1.bat>make1</a> creates the server in <i>one</i>
+               monolithic jar file. Everything is contained inside it, the server itself,
+               the test item, the test proxy, and even a client applet, which allows
+               browsers to host the proxy. This file, and the security.policy file are all
+               that is needed to deploy the server.  All servers use the same policy file by
+               default, so a deployment directory could consist of many server jars, and a
+               single policy file.  This is an important part of the paradigm; to allow
+               complex functionality to be modularised into multiple Virtual Machines
+               seamlessly working together. <i>Note:</i> If you should need separate policy
+               files for each server, simply place each server jar and its associated policy
+               into separate directories.<br><br>
 
-               The <b>make2</b> creates the server in <u>two</u> files: server.jar <i>and</i>
-               client.jar. The client.jar is a stand-alone generic client application, in
-               addition, it is <i>also</i> a generic proxy hosting Applet. Deployment now
-               consists of the server jar, the client jar, and the policy file. All servers
-               built this way reference the same client jar, in the same way as they all
-               reference the same policy file. A stand-alone client not only reduces the
-               server jar file size, which can be helpful if there are many servers in the
-               same directory, it is also very useful in its own right. Using the standard
-               <a href=client.html>client</a> is a topic of its own, and as such gets its
-               own page.<br><br>
+               The <a href=../make2.bat>make2</a> creates the server in <i>two</i> files:
+               server.jar <i>and</i> client.jar. The client.jar is a stand-alone generic
+               client application, in addition, it is <i>also</i> a generic proxy hosting
+               Applet. Deployment now consists of the server jar, the client jar, and the
+               policy file. All servers built this way reference the same client jar, in the
+               same way as they all reference the same policy file. A stand-alone client not
+               only reduces the server jar file size, which can be helpful if there are many
+               servers in the same directory, it is also very useful in its own right. Using
+               the standard <a href=client.html>client</a> is a topic of its own, and as
+               such gets its own page.<br><br>
 
-               The <b>make3</b> creates the server as <u>three</u> files: server.jar,
-               client.jar, <i>and</i> proxy.jar. Now deployment consists of four files, the
-               three jars, and the policy file. The reason to use make3, is if you want to
-               take advantage of the <i>'hot plugging'</i> capability of the framework.
-               This means you can modify the proxy, or proxies, recompile their jar file(s),
-               and overwrite the existing proxy jars, all while the server is <i>still</i>
-               running! All subsequent clients will receive the updated functionality
-               automatically, and the server need <u>not</u> be shut down.<br><br>
+               The <a href=../make3.bat>make3</a> creates the server as <i>three</i> files:
+               server.jar, client.jar, <i>and</i> proxy.jar. Now deployment consists of four
+               files, the three jars, and the policy file. The reason to use make3, is if you
+               want to take advantage of the <i>'hot plugging'</i> capability of the
+               framework. This means you can modify the proxy, or proxies, recompile their
+               jar file(s), and overwrite the existing proxy jars, all while the server is
+               <i>still</i> running! All subsequent clients will receive the updated
+               functionality automatically, and the server need <u>not</u> be shut down.<br><br>
 
-               The <b>make4</b> creates the server as <u>four</u> files: server.jar,
-               client.jar, proxy.jar, <i>and</i> cajo.jar. The cajo.jar file is the standard
-               binary library for the cajo project. By using this jar file, all of the
-               standard functionality is stored in one central repository. This not only
-               reduces the size of the server jar files, but permits library updates
+               The <a href=../make4.bat>make4</a> creates the server as <i>four</i> files:
+               server.jar, client.jar, proxy.jar, <i>and</i> cajo.jar. The cajo.jar file is
+               the standard binary library for the cajo project. By using this jar file, all
+               of the standard functionality is stored in one central repository. This not
+               only reduces the size of the server jar files, but permits library updates
                <i>without</i> affecting the server files. This is the most common method of
                deployment.<br><br>
 
                As you would expect, there is a fifth batch file, and default ant build
-               target; called <b>library</b>. It compiles the project source code and
-               creates the standard cajo.jar library image. Its purpose is to provide the
-               framework functionality to multi-jar classpaths, used by the majority of
-               applications.<br>
+               target; called <a href=../library.bat>library</a>. It compiles the project
+               source code and creates the standard cajo.jar library image. Its purpose is
+               to provide the framework functionality to multi-jar classpaths, used by the
+               majority of applications.<br>
 
             </span>
          </td>
