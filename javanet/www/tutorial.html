@@ -220,45 +220,46 @@
                in the build.xml ant script. Each builds the server with identical
                functionality, however, packaged in <i>fundamentally</i> different ways.<br><br>
 
-               The <a href=../make1.bat>make1</a> creates the server in <i>one</i>
-               monolithic jar file. Everything is contained inside it, the server itself,
-               the test item, the test proxy, and even a client applet, which allows
-               browsers to host the proxy. This file, and the security.policy file are all
-               that is needed to deploy the server.  All servers use the same policy file by
-               default, so a deployment directory could consist of many server jars, and a
-               single policy file.  This is an important part of the paradigm; to allow
-               complex functionality to be modularised into multiple Virtual Machines
-               seamlessly working together. <i>Note:</i> If you should need separate policy
-               files for each server, simply place each server jar and its associated policy
-               into separate directories.<br><br>
+               The <a href=source/browse/cajo/make1.bat?rev=1.6>make1</a> creates the server
+               in <b><i>one</i></b> monolithic jar file. Everything is contained inside it,
+               the server itself, the test item, the test proxy, and even a client applet,
+               which allows browsers to host the proxy. This file, and the security.policy
+               file are all that is needed to deploy the server.  All servers use the same
+               policy file by default, so a deployment directory could consist of many
+               server jars, and a single policy file.  This is an important part of the
+               paradigm; to allow complex functionality to be modularised into multiple
+               Virtual Machines seamlessly working together. <i>Note:</i> If you should need
+               separate policy files for each server, simply place each server jar and its
+               associated policy into separate directories.<br><br>
 
-               The <a href=../make2.bat>make2</a> creates the server in <i>two</i> files:
-               server.jar <i>and</i> client.jar. The client.jar is a stand-alone generic
-               client application, in addition, it is <i>also</i> a generic proxy hosting
-               Applet. Deployment now consists of the server jar, the client jar, and the
-               policy file. All servers built this way reference the same client jar, in the
-               same way as they all reference the same policy file. A stand-alone client not
-               only reduces the server jar file size, which can be helpful if there are many
-               servers in the same directory, it is also very useful in its own right. Using
-               the standard <a href=client.html>client</a> is a topic of its own, and as
-               such gets its own page.<br><br>
+               The <a href=https:source/browse/cajo/make2.bat?rev=1.6>make2</a> creates the
+               server in <b><i>two</i></b> files: server.jar <i>and</i> client.jar. The
+               client.jar is a stand-alone generic client application, in addition, it is
+               <i>also</i> a generic proxy hosting Applet. Deployment now consists of the
+               server jar, the client jar, and the policy file. All servers built this way
+               reference the same client jar, in the same way as they all reference the same
+               policy file. A stand-alone client not only reduces the server jar file size,
+               which can be helpful if there are many servers in the same directory, it is
+               also very useful in its own right. Using the standard <a href=client.html>
+               client</a> is a topic of its own, and as such gets its own page.<br><br>
 
-               The <a href=../make3.bat>make3</a> creates the server as <i>three</i> files:
-               server.jar, client.jar, <i>and</i> proxy.jar. Now deployment consists of four
-               files, the three jars, and the policy file. The reason to use make3, is if you
-               want to take advantage of the <i>'hot plugging'</i> capability of the
-               framework. This means you can modify the proxy, or proxies, recompile their
-               jar file(s), and overwrite the existing proxy jars, all while the server is
-               <i>still</i> running! All subsequent clients will receive the updated
-               functionality automatically, and the server need <u>not</u> be shut down.<br><br>
+               The <a href=source/browse/cajo/make3.bat?rev=1.6>make3</a> creates the server
+               as <b><i>three</i></b> files: server.jar, client.jar, <i>and</i> proxy.jar.
+               Now deployment consists of four files, the three jars, and the policy file.
+               The reason to use make3, is if you want to take advantage of the <i>'hot
+               plugging'</i> capability of the framework. This means you can modify the
+               proxy, or proxies, recompile their jar file(s), and overwrite the existing
+               proxy jars, all while the server is <i>still</i> running! All subsequent
+               clients will receive the updated functionality automatically, and the server
+               need <u>not</u> be shut down.<br><br>
 
-               The <a href=../make4.bat>make4</a> creates the server as <i>four</i> files:
-               server.jar, client.jar, proxy.jar, <i>and</i> cajo.jar. The cajo.jar file is
-               the standard binary library for the cajo project. By using this jar file, all
-               of the standard functionality is stored in one central repository. This not
-               only reduces the size of the server jar files, but permits library updates
-               <i>without</i> affecting the server files. This is the most common method of
-               deployment.<br><br>
+               The <a href=source/browse/cajo/make4.bat?rev=1.5&view=markup>make4</a> creates
+               the server as <b><i>four</i></b> files: server.jar, client.jar, proxy.jar,
+               <i>and</i> cajo.jar. The cajo.jar file is the standard binary library for the
+               cajo project. By using this jar file, all of the standard functionality is
+               stored in one central repository. This not only reduces the size of the
+               server jar files, but permits library updates <i>without</i> affecting the
+               server files. This is the most common method of deployment.<br><br>
 
                As you would expect, there is a fifth batch file, and default ant build
                target; called <a href=../library.bat>library</a>. It compiles the project
