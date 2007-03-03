@@ -66,10 +66,10 @@
                            The cajo project is a small, free library, enabling powerful dynamic
                            multi-machine co&ouml;peration; both within and between, both free and
                            proprietary Java applications. It provides a surprisingly easy to use, yet
-                           completely understandable framework, to simplify the use of RMI; while at
-                           the same time harnessing its full potential. It is actively being deployed
-                           in Java EE, SE, and ME environments, all over the world. It is a uniquely
-                           <i>'drop-in'</i> distributed computing framework: meaning it imposes
+                           completely understandable framework to dramatically simplify the use of RMI;
+                           while at the same time harnessing its full potential. It is actively being
+                           deployed in Java EE, SE, and ME environments; all over the world. It is a
+                           uniquely <i>'drop-in'</i> distributed computing framework: meaning it imposes
                            <i>no</i> structural requirements on your applications, <i>nor</i> source
                            changes. It allows multiple remote JVMs to work together seamlessly as
                            one. Welcome, to the home of the <a href=http://weblogs.java.net/pub/wlg/1715 title="the WWVM">
@@ -95,12 +95,13 @@
                            to all objects being on separate Virtual Machines, to all objects being on
                            separate Physical Machines.<br><br>
 
-                           2. Unsigned Applets and WebStart applications, indistinguishable from
-                           installed applications, can be created simply. Easily transfer an
-                           application's entire user interface, to any Java equipped client. Cleanly
-                           separate the components of the model, view, and controller portions of an
-                           application between multiple machines. Send both data and code, with complete
-                           transparency, and security. Again, all without source impact.<br><br>
+                           2. Easily create unsigned thin-client applications, both as Applets and via
+                           WebStart, indistinguishable from locally installed applications. Transfer an
+                           application's entire user interface, to any Java equipped client
+                           automatically. Cleanly separate the components of the model, view, and
+                           controller portions of an application between multiple machines. Send both
+                           data and code, with complete transparency, and security. All without source
+                           impact.<br><br>
 
                            3. This framework allows both applications, and developers, to collaborate
                            dynamically, linking their objects at will. This architecture can literally
@@ -110,16 +111,17 @@
                            Remoting and linking of objects can be done with as little as <i><a href=overview.html>
                            one</a></i> additional line of code.<br><br>
 
-                           The project has no dependencies on any other frameworks. It works
-                           with <i>all</i> Java Runtime Environments, 1.2 and higher; this is
-                           especially important, to include JME / embedded devices. Co&ouml;perating
-                           Virtual Machines can be behind NAT, firewalls, even HTTP proxies.<br><br>
+                           This framework has no dependencies on any other libraries. It works
+                           with all Java Runtime Environments, 1.2 and higher; this is especially
+                           important, to include JME/embedded devices. Co&ouml;perating Virtual Machines
+                           can be behind NAT, firewalls, even HTTP proxies.<br><br>
 
                            Best of all, this framework is 100% <i>pure</i> Java<font size="-4">
                            <sup>TM</sup></font>: i.e. it uses <u>no</u> <i>bloody</i> <tt>&lt;XML&gt;</tt><i>!<br>
                            (nor silly @nnotations, neither)</i><br><br>
 
-                           The framework consists of just two very small, well documented packages:<ul>
+                           The framework consists of just two, very small <i>well documented</i>
+                           packages:<ul>
 
                            <li><a href=docs/gnu/cajo/invoke/package-summary.html>gnu.cajo.invoke</a>
                            (6 classes) defines the architectural core for clients
@@ -282,23 +284,23 @@
                            <h2>Getting started</h2>
 
                            The recommended <i>Quick Start,</i> is to read the short <a href=overview.html>
-                           overview</a> page. Then try some of our short experiments:
+                           overview</a> page; then try some of our short experiments:
 
                            <ul>
                              <li> <a href=starting.html title="introduction to the cajo framework">Getting started</a>
                              <li> <a href=http://wiki.java.net/bin/view/Communications/TransparentProxy title="transparent use of remote objects">
                              Object transparency</a>
                              <li> <a href=http://wiki.java.net/bin/view/Communications/ProxyUsage title="transparent use of mobile code">
-                             Introduction to proxies</a>
+                             Using proxies</a>
                              <li> <a href=http://wiki.java.net/bin/view/Communications/UsingMulticast title="broadcasting cajo object references">
                              Reference multicasting</a>
                              <li> <a href=http://wiki.java.net/bin/view/Communications/CajoScripting title="using remote objects from scripts">
                              JVM scripting</a>
                            </ul>
 
-                           Following that, there are two general approaches to proceed:<br><br>
+                           Following that, there are two general approaches to mastery:<br><br>
 
-                           1. For those who want to fully understand the implementation of this
+                           A. For those who want to fully understand the implementation of this
                            framework;
 
                            <ul>
@@ -313,11 +315,11 @@
                            This will make the provided example code both quickly understandable, and
                            readily extensible. It's also an excellent way to learn about RMI in detail.<br><br>
 
-                           2. For those who want to jump right in, and learn by doing;
+                           B. For those who want to jump right in, and learn by doing;
 
                            <ul>
                              <li> Look at the <a href=example.html>example</a>, it consists of four
-                             small classes, yet completely exercises the framework
+                             small classes, yet exercises the entire framework
                              <li> The <a href=tutorial.html>tutorial</a> page, should be of particular
                              interest to this group
                            </ul>
@@ -357,7 +359,7 @@
                            <i><u>Most importantly</u></i>: If you would like to show your support,
                            please consider becoming a project <a href=servlets/ProjectMembershipRequest>
                            Observer</a>. Our <a href=membership.html>membership</a> strengthens our
-                           framework's position as a free, public standard. It <i>also</i> encourages
+                           framework's position, as a free public standard. It <i>also</i> encourages
                            more developers to look into our codebase. Please feel free to post a hello
                            in the <a href=servlets/ForumMessageList?forumID=373>introduction</a> forum
                            if you wish, as well as to make use of every other support forum. In the
