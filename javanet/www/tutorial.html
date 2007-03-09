@@ -177,9 +177,11 @@
                of this project as a proxy is free to use the AWT, or Swing, or anything
                else. Please don't think this is the graphical toolkit you have to use, it
                is here only for the purposes of this example, and doesn't even merit more
-               detailed examination.<br><br>
+               detailed examination. (recently there has begun formalisation on the gui
+               framework, you can find detailed and free information <a href=servlets/ProjectDocumentList?folderID=6731&expandFolder=6731&folderID=0>
+               here</a>.<br><br>
 
-               The <docs/index.html>cajo/docs</a> directory, as mentioned previously, is
+               The <a href=docs/index.html>cajo/docs</a> directory, as mentioned previously, is
                where the auto-generated documentation goes.  To save space, initially it
                does not exist, until you run the doc build.<br><br>
 
@@ -249,7 +251,7 @@
                The reason to use make3, is if you want to take advantage of the <i>'hot
                plugging'</i> capability of the framework. This means you can modify the
                proxy, or proxies, recompile their jar file(s), and overwrite the existing
-               proxy jars, all while the server is <i>still</i> running! All subsequent
+               proxy jars, all whilst the server is <i>still</i> running! All subsequent
                clients will receive the updated functionality automatically, and the server
                need <u>not</u> be shut down.<br><br>
 
@@ -363,16 +365,16 @@
                <b>4.</b> Next, lets assume your computer has two network adapters; a wired
                connection to your LAN, and a wireless connection to the internet.  You may
                want to specify on which IP address, in this case <i>physical</i> network
-               interface, you want to run.  Otherwise, it will operate on all of them, by
-               default. To do this you would specify the <i>local</i> interface address,
+               interface, you want to run: Otherwise, it will operate on all of them, by
+               default. To do this, you would specify the <i>local</i> interface address,
                even if it is running behind NAT.  This would be your command line now:
 
                <pre>    <code>java -jar server.jar 8080 1234 123.123.123.123 100.100.100.100</code></pre>
 
-               This would also be required if your machine is multi-homed, i.e. has multiple
-               <i>logical</i> network interfaces.  Generally speaking, multi-homing is guru
-               magic, if you don't know what the term means, it most likely doesn't apply to
-               you.<br><br>
+               <i><u>Note</u>:</i> this would also be required if your machine is multi-homed,
+               i.e. has multiple <i>logical</i> network interfaces on a single <i>physical</i>
+               network interface.  Generally speaking, multi-homing is guru magic, if you
+               don't know what the term means, it most likely doesn't apply to you.<br><br>
 
                <b>5.</b> The final, and most <i>obscure</i> option, is used to support port
                forwarding. Essentially, this is needed when a router is publicly taking
@@ -415,7 +417,7 @@
          <td valign="top">
             <span class="spacing style4 style7 style9">
                Connecting to this example is generally done using a browser.  You will need
-               to have the Java Plug-In installed, if you don't the server will cause your
+               to have the Java plugin installed, if you don't the server will cause your
                browser prompt you if it can install it automatically. This is done to make
                connections easy for end users, who may be technically unsophisticated.
                Just as with launching the application, connecting could be as simple as
@@ -503,7 +505,7 @@
                   </tr>
                </table><br>
 
-               While the server console will look rather like this:<br><br>
+               Whilst the server console will look rather like this:<br><br>
 
                <img src="images/console.gif" alt="cajo example server"
                   title="cajo server example"><br><br>
@@ -511,11 +513,10 @@
                This is the proverbial tip of the iceberg, but it should get you started.
                If you have further questions, there are <a href=https://cajo.dev.java.net/servlets/ProjectForumView>
                fora</a> for this project. However, before posting, please do your <a href=http://catb.org/~esr/faqs/smart-questions.html target=_blank>
-               homework</a>. (<i><u>Note</u>:</i> the previously cited link is <i>not</i>
-               part of this project, rather it is provided purely for insight) Most often,
-               the answer you are seeking can can be found in the source documentation, or
-               right here on this site, and usually <i>much</i> faster. Otherwise, your
-               questions, comments, and suggestions, are all most welcome.
+               homework</a>. Most often, the answer you are seeking can can be found in the
+               source documentation, or right here on this site, and usually <i>much</i>
+               more quickly. Otherwise, your questions, comments, and suggestions, are all
+               most welcome.
             </span>
          </td>
       </tr>
