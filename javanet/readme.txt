@@ -1,4 +1,4 @@
-Library Release 1.95 23-Feb-07
+Library Release 1.96 05-Apr-07
 
                        ___  _
                       / ,_`(_) ___
