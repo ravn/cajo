@@ -95,8 +95,8 @@
                                       All of the above issues are completely eliminated in the approach of the
                                       cajo framework. Here we have only <b><i>one</i></b> remote interface; called <a href=docs/gnu/cajo/invoke/Invoke.html>
                                       Invoke</a>. It defines a single method, to represent <i>all</i> object
-                                      methods. It accepts a method name, the arguments to be provided to it, and
-                                      the data to be returned; i.e.:
+                                      methods. It accepts a method name, the zero or more arguments to be provided
+                                      to it, and the data to be returned; i.e.:
 
                                       <pre>   Object invoke(String method, Object args);</pre><br>
 
@@ -153,7 +153,7 @@
                returns the result, or exception, if any. If no matching method can be
                found on the internal object, a <tt>NoSuchMethodException</tt> is thrown.
                This technique effectively makes <i>all</i> public methods of the internal
-               object, even including static ones, remotely callable.
+               object, even including static ones, remotely callable.<br>
             </span>
          </td>
       </tr>
@@ -195,7 +195,7 @@
                over the network. The reason it is not enabled by default, is that accepting
                proxies, or their complex arguments, <i>could</i> load a JVM significantly.
                Therefore the acceptance of mobile code is an important application specific
-               design decision.
+               design decision.<br>
             </span>
          </td>
       </tr>
@@ -257,7 +257,7 @@
                has proven to be unfamiliar to a lot of developers, so an entire <a href=multicast.html>
                tutorial</a> page has been dedicated to the use of the Multicast class. Most
                importantly, this mechanism allows JVMs to spontaneously form networks of
-               functionality by linking <u><i>dynamically</i></u>.
+               functionality by linking <u><i>dynamically</i></u>.<br>
             </span>
          </td>
       </tr>
