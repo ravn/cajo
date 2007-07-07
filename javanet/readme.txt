@@ -1,4 +1,4 @@
-Library Release 1.96 05-Apr-07
+Library Release 1.97 07-Jul-07
 
                        ___  _
                       / ,_`(_) ___
@@ -19,22 +19,17 @@ illustrative examples, and multiple support fora.
 
 Copyright (c) 1999 John Catherino
 
-This library is Free Software. You may distribute it and/or
-modify it under the terms of the GNU Lesser General Public
-Licence, at version 2.1 of the licence, or any later version
-published by The Free Software Foundation.
+The cajo library is Free Software. You may distribute it
+and/or modify it under the terms of the GNU Lesser General
+Public Licence, at version 3 of the licence, or any later
+version published by The Free Software Foundation.
 
-This program is distributed without any warranty, not even the
-implied warranty of merchantability, or fitness for any
+The cajo library is distributed without any warranty, not even
+the implied warranty of merchantability, or fitness for any
 particular purpose. Please see the GNU Lesser General Public
 Licence for more details.
 
-You can find this licence on the FSF website at:
+You should have have received a copy of the GNU Lesser General
+Public Licence along with this library. If not, see:
 
    http://www.gnu.org/licenses/lgpl.html
-
-or request it archaically, in paper from:
-
-   The Free Software Foundation, Inc.
-   51 Franklin Street
-   Boston, MA 02111-1301 U.S.A.

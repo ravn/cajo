@@ -12,19 +12,20 @@ import gnu.cajo.invoke.Remote;
  *
  * For issues or suggestions mailto:cajo@dev.java.net
  *
- * This library is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published
- * by the Free Software Foundation, at version 2.1 of the license, or any
- * later version.
+ * This file RuleEngine.java is part of the cajo library.
  *
- * This program is distributed in the hope that it will be useful,
+ * The cajo library is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public Licence as published
+ * by the Free Software Foundation, at version 3 of the licence, or (at your
+ * option) any later version.
+ *
+ * Th cajo library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Lesser General Public License for more details.
+ * GNU Lesser General Public Licence for more details.
  *
- * You can receive a copy of the GNU Lesser General Public License from their
- * website, http://fsf.org/licenses/lgpl.html; or via snail mail, Free
- * Software Foundation Inc., 51 Franklin Street, Boston MA 02111-1301, USA
+ * You should have received a copy of the GNU Lesser General Public Licence
+ * along with this library. If not, see http://www.gnu.org/licenses/lgpl.html
  */
 
 /**
