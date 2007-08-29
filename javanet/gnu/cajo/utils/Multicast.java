@@ -233,13 +233,13 @@ public final class Multicast implements Runnable {
                item = (RemoteInvoke)Remote.zedmob(bais);
                iaddr = dp.getAddress();
                if (Remote.invoke(callback, "multicast", this) != null) break;
-            } catch(Exception x) {}
+            } catch(Exception x) { x.printStackTrace(); }
             finally { bais.close(); }
-         } catch(Exception x) { x.printStackTrace(System.err); }
+         } catch(Exception x) { x.printStackTrace(); }
          ms.close();
          ms = null;
          thread = null;
-      } catch(IOException x) { x.printStackTrace(System.err); }
+      } catch(IOException x) { x.printStackTrace(); }
    }
    /**
     * The application method loads a zipped marshalled object (zedmob) to a
@@ -295,6 +295,6 @@ public final class Multicast implements Runnable {
          mcast = new Multicast();
          mcast.announce(Multicast.proxy, 16);
          mcast.listen(proxy);
-      } catch (Exception x) { x.printStackTrace(System.err); }
+      } catch (Exception x) { x.printStackTrace(); }
    }
 }
