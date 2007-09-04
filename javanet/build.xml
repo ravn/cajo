@@ -8,6 +8,7 @@
         <javac srcdir="." target="1.2" source="1.2" includes="gnu/cajo/invoke/*.java"/> 
         <javac srcdir="." target="1.2" source="1.2" includes="gnu/cajo/utils/*.java"/> 
         <javac srcdir="." target="1.2" source="1.2" includes="gnu/cajo/utils/extra/*.java"/> 
+        <javac srcdir="." target="1.2" source="1.2" includes="gnu/cajo/*.java"/> 
         <rmic stubversion="1.2" classname="gnu.cajo.invoke.Remote" base="."/>
         <delete>
             <fileset dir="." includes="
@@ -21,12 +22,37 @@
             manifest="cajo.mft"
             includes="
                 readme.txt
+                gnu/cajo/*.class
                 gnu/cajo/invoke/*.class
                 gnu/cajo/utils/*.class
                 gnu/cajo/utils/extra/*.class
             "/>
         <delete>
             <fileset dir="." includes="
+                gnu/cajo/*.class
+                gnu/cajo/invoke/*.class
+                gnu/cajo/utils/*.class
+                gnu/cajo/utils/extra/*.class
+            "/>
+        </delete>
+    </target>
+    <target name="grail">
+        <!-- the grail library deployment package -->  
+        <javac srcdir="." target="1.2" source="1.2" includes="gnu/cajo/Cajo.java"/> 
+        <rmic stubversion="1.2" classname="gnu.cajo.invoke.Remote" base="."/>
+        <jar basedir="."
+            jarfile="grail.jar"
+            manifest="cajo.mft"
+            includes="
+                readme.txt
+                gnu/cajo/*.class
+                gnu/cajo/invoke/*.class
+                gnu/cajo/utils/*.class
+                gnu/cajo/utils/extra/*.class
+            "/>
+        <delete>
+            <fileset dir="." includes="
+                gnu/cajo/*.class
                 gnu/cajo/invoke/*.class
                 gnu/cajo/utils/*.class
                 gnu/cajo/utils/extra/*.class
