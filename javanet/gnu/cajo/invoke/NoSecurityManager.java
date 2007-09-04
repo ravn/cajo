@@ -81,20 +81,4 @@ public final class NoSecurityManager extends SecurityManager {
     * machine.
     */
    public void checkPermission(java.security.Permission perm) {}
-   /**
-    * Technically this method is totally unrelated to the class. It provides
-    * an execution point called when the cajo.jar library is executed. It
-    * simply copies the contents of the internal readme.txt file to the
-    * console.
-    */
-    public static void main(String args[]) {
-       try {
-          java.io.InputStream is =
-             NoSecurityManager.class.getResourceAsStream("/readme.txt");
-          byte text[] = new byte[is.available()];
-          is.read(text);
-          System.out.println(new String(text));
-          is.close();
-       } catch(Exception x) { x.printStackTrace(); }
-    }
 }
