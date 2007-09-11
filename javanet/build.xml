@@ -40,6 +40,12 @@
         <!-- the grail library deployment package -->  
         <javac srcdir="." target="1.2" source="1.2" includes="gnu/cajo/Cajo.java"/> 
         <rmic stubversion="1.2" classname="gnu.cajo.invoke.Remote" base="."/>
+        <delete>
+            <fileset dir="." includes="
+                gnu/cajo/utils/ItemServer$JarClassLoader.class
+            "/>
+            <!-- Not needed in grail.jar proper -->  
+        </delete>
         <jar basedir="."
             jarfile="grail.jar"
             manifest="cajo.mft"
