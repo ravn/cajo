@@ -1,7 +1,6 @@
 package gnu.cajo;
 
 import gnu.cajo.invoke.Remote;
-import gnu.cajo.invoke.RemoteInvoke;
 import gnu.cajo.invoke.Invoke;
 import gnu.cajo.utils.Multicast;
 import gnu.cajo.utils.ItemServer;
