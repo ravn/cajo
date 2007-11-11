@@ -176,12 +176,14 @@ public final class Cajo implements Grail {
     * is operating behind a Network Adress Translating router (NAT), the
     * internal and external addresses are requried. If not, then both
     * addresses can be the same, or null arguments can be used.
-    * @param port The TCP port on which to operate, it is canonically 1198,
-    * however when running multiple clients or servers on the <i>same</i>
-    * machine, different ports must be chosen, in that case typically zero
-    * is used, to allow the OS to pick any currently unused port
+    * @param port The TCP port to be used for communications, for servers
+    * it is canonically the IANA assigned cajo port of 1198, for clients it
+    * can be any value, including 0, meaining chosen from any unused port
+    * available at the time of startup
     * @param serverHost The <i>external</i> address or host name of the NAT
-    * router, if no NAT router is being used, this argument can be null
+    * router, if no NAT router is being used; if the computer has more than
+    * one network interface the special address 0.0.0.0 can be used, to
+    * provide service on all of the interfaces
     * @param clientHost The <i>internal</i> address or host name; if the host
     * has only one network interface, or wishes to use all of them, the
     * argument can be null
@@ -275,11 +277,13 @@ public final class Cajo implements Grail {
     * is used to reach JVMs that for some reason are not accessible by UDP.
     * The method will also share all of its references.
     * @param hostname The address or domain name of a remote grail JVM
+    * @param port The TCP port on which the object is being shared,
+    * canonically it 1198
     * @throws Exception Various types, related to network related errors:
     * invalid host name, host unavailable, host unreachable, etc...
     */
-   public void register(String hostname) throws Exception {
-      Object reg = Remote.getItem("//" + hostname + ":1198/registrar");
+   public void register(String hostname, int port) throws Exception {
+      Object reg = Remote.getItem("//"+hostname+':'+port+"/registrar");
       if (items.size() > 0) Remote.invoke(reg, "register", items);
       Vector entries = (Vector)Remote.invoke(reg, "request", null);
       registrar.register(entries);
