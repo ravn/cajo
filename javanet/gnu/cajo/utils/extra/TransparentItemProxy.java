@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.rmi.RemoteException;
 import java.rmi.NotBoundException;
 import java.net.MalformedURLException;
+import java.lang.reflect.InvocationTargetException;
 
 /*
  * Item Transparent Dynamic Proxy (requires JRE 1.3+)
@@ -80,13 +81,21 @@ public final class TransparentItemProxy implements InvocationHandler {
     * @throws NoSuchMethodException If no matching method can be found
     * on the server item.
     * @throws Exception If the server item rejected the invocation, for
-    * application specific reasons.
+    * application specific reasons. The cause of the exception will be
+    * automatically unpacked from the internally resulting
+    * java.lang.reflect.InvocationTargetException, to provide the calling
+    * code with the actual exception resulting from the method invocation.
+    * Special thanks to Petr Stepan for pointing out this improvement, and
+    * providing a <a href=http://benpryor.com/blog/index.php?/archives/24-Java-Dynamic-Proxies-and-InvocationTargetException.html>
+    * link</a> to the discussion.
     * @throws Throwable For some <i>very</i> unlikely reasons, not outlined
     * above. (required, sorry)
     */
    public Object invoke(Object proxy, Method method, Object args[])
       throws Throwable {
-      return Remote.invoke(item, method.getName(), args);
+      try {
+         return Remote.invoke(item, method.getName(), args);
+      } catch(InvocationTargetException x) { throw x.getTargetException(); }
    }
    /**
     * This generates a class definition for a remote object reference at
