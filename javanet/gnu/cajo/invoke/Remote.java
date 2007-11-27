@@ -45,7 +45,8 @@ import java.lang.reflect.Method;
  * @version 1.0, 01-Nov-99 Initial release
  * @author John Catherino
  */
-public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
+public final class Remote extends UnicastRemoteObject
+   implements RemoteInvoke, Unreferenced {
    private static final class RSSF implements RMIServerSocketFactory {
       private int port;
       private String host;
@@ -589,6 +590,17 @@ public final class Remote extends UnicastRemoteObject implements RemoteInvoke {
     */
    public void zedmob(OutputStream os) throws IOException {
       zedmob(os, this);
+   }
+   /**
+    * This method is called by the RMI runtime sometime after it determines
+    * the collection of listening clients becomes empty. If the wrapped
+    * object whishes to be notified of being unreferenced, it need only
+    * implement the java.rmi.server.Unreferenced interface itself, and the
+    * invocation will be passed along. Highest thanks to Petr Stepan, for the
+    * suggestion for this addition.
+    */
+   public void unreferenced() {
+      if (item instanceof Unreferenced) ((Unreferenced)item).unreferenced();
    }
    /**
     * The application method loads a zipped marshalled object (zedmob) from a
