@@ -451,21 +451,30 @@ public final class Remote extends UnicastRemoteObject
       if (item instanceof Invoke) return ((Invoke)item).invoke(method, args);
       if (method == null)
          throw new IllegalArgumentException("Method argument cannot be null");
-      if (args instanceof Object[]) {
-         if (((Object[])args).length == 0) 
-            return item.getClass().getMethod(method, null).invoke(item, null);
-         Object[] o_args = (Object[])args;
-         Class[]  c_args = new Class[o_args.length];
-         for(int i = 0; i < o_args.length; i++)
-            c_args[i] = o_args[i] != null ? o_args[i].getClass() : null;
-         Method m = findBestMethod(item, method, c_args);
-         if (m!= null) return m.invoke(item, o_args);
-      } else if (args != null) {
-         Method m =
-            findBestMethod(item, method, new Class[]{ args.getClass() });
-         if (m != null) return m.invoke(item, new Object[]{ args });
-      } else return item.getClass().getMethod(method, null).invoke(item, null);
-      throw new NoSuchMethodException();
+     Method m;
+     if (args instanceof Object[]) {
+        if (((Object[])args).length == 0) {
+           m = item.getClass().getMethod(method, null);
+           if (m != null) m.invoke(item, null);
+        } else {
+           Object[] o_args = (Object[])args;
+           Class[]  c_args = new Class[o_args.length];
+           for(int i = 0; i < o_args.length; i++)
+              c_args[i] = o_args[i] != null ? o_args[i].getClass() : null;
+           m = findBestMethod(item, method, c_args);
+           if (m != null) return m.invoke(item, o_args);
+        }
+     }
+     if (args != null) {
+        m = findBestMethod(item, method, new Class[]{ args.getClass() });
+        if (m != null) return m.invoke(item, new Object[]{ args });
+     } else {
+        m = item.getClass().getMethod(method, null);
+        if (m != null) return m.invoke(item, null);
+     }
+     m = item.getClass().getMethod(method, new Class[]{ Object.class });
+     if (m != null) return m.invoke(item, new Object[]{ args });
+     throw new NoSuchMethodException("no joy");
    }
    /**
     * This is the reference to the local (or possibly remote) object
