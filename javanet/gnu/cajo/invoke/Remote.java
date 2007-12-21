@@ -109,8 +109,10 @@ public final class Remote extends UnicastRemoteObject
          rcsf.host = rssf.host;
          rssf.port = 0;
          rcsf.port = 0;
-         System.setProperty("java.rmi.server.useLocalHostname", "true");
-         System.setProperty("java.rmi.server.hostname", rcsf.host);
+         try { // this won't work if running as an applet
+            System.setProperty("java.rmi.server.useLocalHostname", "true");
+            System.setProperty("java.rmi.server.hostname", rcsf.host);
+         } catch(SecurityException x) {}
       } catch(Exception x) {}
    }
    /**
@@ -186,10 +188,6 @@ public final class Remote extends UnicastRemoteObject
       rssf.port =
          serverPort != 0 ? serverPort : clientPort != 0 ? clientPort : 0;
       rcsf.port = clientPort != 0 ? clientPort : serverPort;
-      try { // this won't work if running as an applet
-         System.setProperty("java.rmi.server.useLocalHostname", "true");
-         System.setProperty("java.rmi.server.hostname", rcsf.host);
-      } catch(SecurityException x) {}
    }
    /**
     * This method configures the server's TCP parameters for RMI through HTTP
@@ -449,32 +447,27 @@ public final class Remote extends UnicastRemoteObject
    public static Object invoke(Object item, String method, Object args)
       throws Exception {
       if (item instanceof Invoke) return ((Invoke)item).invoke(method, args);
-      if (method == null)
-         throw new IllegalArgumentException("Method argument cannot be null");
-     Method m;
-     if (args instanceof Object[]) {
-        if (((Object[])args).length == 0) {
-           m = item.getClass().getMethod(method, null);
-           if (m != null) m.invoke(item, null);
-        } else {
+      if (args instanceof Object[]) {
+        if (((Object[])args).length == 0) try {
+           return item.getClass().getMethod(method, null).invoke(item, null);
+        } catch(NoSuchMethodException x) {}
+        else {
            Object[] o_args = (Object[])args;
            Class[]  c_args = new Class[o_args.length];
            for(int i = 0; i < o_args.length; i++)
               c_args[i] = o_args[i] != null ? o_args[i].getClass() : null;
-           m = findBestMethod(item, method, c_args);
+           Method m = findBestMethod(item, method, c_args);
            if (m != null) return m.invoke(item, o_args);
         }
      }
      if (args != null) {
-        m = findBestMethod(item, method, new Class[]{ args.getClass() });
+        Method m = findBestMethod(item, method, new Class[]{ args.getClass() });
         if (m != null) return m.invoke(item, new Object[]{ args });
-     } else {
-        m = item.getClass().getMethod(method, null);
-        if (m != null) return m.invoke(item, null);
-     }
-     m = item.getClass().getMethod(method, new Class[]{ Object.class });
-     if (m != null) return m.invoke(item, new Object[]{ args });
-     throw new NoSuchMethodException("no joy");
+     } else try {
+        return item.getClass().getMethod(method, null).invoke(item, null);
+     } catch(NoSuchMethodException x) {}
+     return item.getClass().getMethod(method, new Class[]{ Object.class }).
+        invoke(item, new Object[]{ args });
    }
    /**
     * This is the reference to the local (or possibly remote) object
@@ -635,21 +628,19 @@ public final class Remote extends UnicastRemoteObject
     * proxy as the sole argument to a setItem method invoked on the loaded item.
     * </ul>
     */
-   public static void main(String args[]) {
-      try {
-         if (args.length == 0) args = new String[] { "///main" };
-         String clientHost = args.length > 1 ? args[1] : null;
-         int clientPort    = args.length > 2 ? Integer.parseInt(args[2]) : 0;
-         String localHost  = args.length > 3 ? args[3] : null;
-         int localPort     = args.length > 4 ? Integer.parseInt(args[4]) : 0;
-         config(localHost, localPort, clientHost, clientPort);
-         try { System.setProperty("java.rmi.server.disableHttp", "true"); }
-         catch(SecurityException x) {}
-         proxy = getItem(args[0]);
+   public static void main(String args[]) throws Exception {
+      if (args.length == 0) args = new String[] { "///main" };
+      String clientHost = args.length > 1 ? args[1] : null;
+      int clientPort    = args.length > 2 ? Integer.parseInt(args[2]) : 0;
+      String localHost  = args.length > 3 ? args[3] : null;
+      int localPort     = args.length > 4 ? Integer.parseInt(args[4]) : 0;
+      config(localHost, localPort, clientHost, clientPort);
+      try { System.setProperty("java.rmi.server.disableHttp", "true"); }
+      catch(SecurityException x) {}
+      proxy = getItem(args[0]);
          if (args.length > 5) invoke(proxy, "setItem", getItem(args[5]));
          registry =
             LocateRegistry.createRegistry(getServerPort(), rcsf, rssf);
          registry.bind("main", new Remote(proxy));
-      } catch (Exception x) { x.printStackTrace(System.err); }
    }
 }
