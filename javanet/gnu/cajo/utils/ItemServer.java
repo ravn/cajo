@@ -28,7 +28,7 @@ import java.io.IOException;
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public Licence for more details.
  *
- * You should have received a copy of the GNU Lesser General Public Licence
+ * You should have received a copy of the GNU Lesser Genferal Public Licence
  * along with this library. If not, see http://www.gnu.org/licenses/lgpl.html
  */
 /**
@@ -166,7 +166,8 @@ public class ItemServer {
    * settings.
    * @throws RemoteException If the registry could not be created.
    */
-  public static Remote bind(Object item, String name) throws RemoteException {
+  public static synchronized Remote bind(Object item, String name)
+     throws RemoteException {
      if (registry == null) {
         registry = LocateRegistry.
            createRegistry(Remote.getServerPort(), Remote.rcsf, Remote.rssf);
@@ -198,8 +199,8 @@ public class ItemServer {
    * settings.
    * @throws RemoteException If the registry could not be created.
    */
-  public static Remote bind(Object item, String name, Object proxy)
-     throws RemoteException {
+  public static synchronized Remote
+     bind(Object item, String name, Object proxy) throws RemoteException {
      if (registry == null) {
         registry = LocateRegistry.
            createRegistry(Remote.getServerPort(), Remote.rcsf, Remote.rssf);
@@ -293,34 +294,32 @@ public class ItemServer {
    * (serialized), or path/name (class).  It will be passed into the loaded
    * item as the sole argument to its setItem method.<ul>
    */
-  public static void main(String args[]) {
-     try {
-        String url        = args.length > 0 ? args[0] : null;
-        String clientHost = args.length > 1 ? args[1] : null;
-        int clientPort    = args.length > 2 ? Integer.parseInt(args[2]) : 0;
-        String localHost  = args.length > 3 ? args[3] : null;
-        int localPort     = args.length > 4 ? Integer.parseInt(args[4]) : 0;
-        Remote.config(localHost, localPort, clientHost, clientPort);
-        main = Remote.getItem(url);
-        if (args.length > 5)
-           Remote.invoke(main, "setItem", Remote.getItem(args[5]));
-        main = bind(main, "main");
-        new Multicast().announce((Remote)main, 16);
-        acceptProxies();
-        System.out.println("Server started: " +
-           DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL).
-              format(new java.util.Date()));
-        System.out.print("Serving item ");
-        System.out.print(args[0]);
-        System.out.println(" bound under the name main");
-        System.out.print("locally  operating on ");
-        System.out.print(Remote.getServerHost());
-        System.out.print(" port ");
-        System.out.println(Remote.getServerPort());
-        System.out.print("remotely operating on ");
-        System.out.print(Remote.getClientHost());
-        System.out.print(" port ");
-        System.out.println(Remote.getClientPort());
-     } catch (Exception x) { x.printStackTrace(System.err); }
-  }
+   public static void main(String args[]) throws Exception {
+      String url        = args.length > 0 ? args[0] : null;
+      String clientHost = args.length > 1 ? args[1] : null;
+      int clientPort    = args.length > 2 ? Integer.parseInt(args[2]) : 0;
+      String localHost  = args.length > 3 ? args[3] : null;
+      int localPort     = args.length > 4 ? Integer.parseInt(args[4]) : 0;
+      Remote.config(localHost, localPort, clientHost, clientPort);
+      main = Remote.getItem(url);
+      if (args.length > 5)
+         Remote.invoke(main, "setItem", Remote.getItem(args[5]));
+      main = bind(main, "main");
+      new Multicast().announce((Remote)main, 16);
+      acceptProxies();
+      System.out.println("Server started: " +
+         DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL).
+            format(new java.util.Date()));
+      System.out.print("Serving item ");
+      System.out.print(args[0]);
+      System.out.println(" bound under the name main");
+      System.out.print("locally  operating on ");
+      System.out.print(Remote.getServerHost());
+      System.out.print(" port ");
+      System.out.println(Remote.getServerPort());
+      System.out.print("remotely operating on ");
+      System.out.print(Remote.getClientHost());
+      System.out.print(" port ");
+      System.out.println(Remote.getClientPort());
+   }
 }
