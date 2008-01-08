@@ -8,7 +8,6 @@ import java.rmi.RemoteException;
 import java.rmi.NotBoundException;
 import java.net.MalformedURLException;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.UndeclaredThrowableException;
 
 /*
  * Item Transparent Dynamic Proxy (requires JRE 1.3+)
@@ -95,13 +94,14 @@ public final class TransparentItemProxy implements InvocationHandler {
    public Object invoke(Object proxy, Method method, Object args[])
       throws Throwable {
       try {
-         return Remote.invoke(item, method.getName(), args);
-      } catch(InvocationTargetException x) {
-         Throwable t = x.getTargetException();
-         if (t instanceof UndeclaredThrowableException)
-            t = ((UndeclaredThrowableException)t).getUndeclaredThrowable();
-         throw t;
-      }
+         String name = method.getName();
+         if (name.equals("equals")) { // perform shallow equals...
+            return args[0] != null && args[0].equals(this) ?
+               Boolean.TRUE : Boolean.FALSE;
+         } else if (name.equals("hashCode")) // shallow hashCode too...
+            return new Integer(this.hashCode());
+         else return Remote.invoke(item, name, args);
+      } catch(InvocationTargetException x) { throw x.getTargetException(); }
    }
    /**
     * This generates a class definition for a remote object reference at
