@@ -1,6 +1,7 @@
 package gnu.cajo.utils.extra;
 
 import gnu.cajo.invoke.Remote;
+import java.lang.reflect.InvocationTargetException;
 
 /*
  * Asynchronous Method Invocation Class
@@ -120,6 +121,9 @@ public final class AsyncMethod implements gnu.cajo.invoke.Invoke {
          public void run() {
             Object result;
             try { result = Remote.invoke(item, method, args); }
+            catch(InvocationTargetException x) {
+               result = x.getTargetException();
+            }
             catch(Exception x) { result = x; }
             if (callback != null)
                try { Remote.invoke(callback, method, result); }
