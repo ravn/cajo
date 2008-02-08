@@ -71,25 +71,6 @@ public class InterceptorItem implements Invoke {
       this.interceptor = interceptor;
    }
    /**
-    * This method is overridden here to ensure that two different interceptor
-    * items holding the same intercepted object return the same value.
-    * @return The hash code returned by the intercepted object
-    */
-   public int hashCode() { return item.hashCode(); }
-   /**
-    * This method is overridden here to ensure that two different interceptor
-    * items holding the same intercepted object return true.
-    * @param obj An object, presumably another item, to compare
-    * @return True if the intercepted objects are equivalent, otherwise false
-    */
-   public boolean equals(Object obj) { return item.equals(obj); }
-   /**
-    * This method is overridden here to provide the name of the intercepted
-    * object, rather than the name of this interceptor item.
-    * @return The string returned by the audited object's toString method
-    */
-   public String toString() { return item.toString(); }
-   /**
     * This method intercepts the incoming calls. The interceptor object has
     * three options:<ul><p>
     * <li>Process the method invocation itself, effectively <i>overriding</i>
