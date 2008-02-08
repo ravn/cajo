@@ -101,43 +101,6 @@ public class Wrapper implements Invoke {
     */
    public Wrapper(String url) { this.url = url; }
    /**
-    * This method returns the hashcode of the inner object instead of
-    * the wrapper itself. This allows two different wrappers referencing an
-    * equivalent inner object to hash identically. If the wrapped object has
-    * not yet been loaded, this will cause it to happen, which could
-    * result in a NullPointerException on a load failure.
-    */
-   public int hashCode() {
-      if (object == null) load();
-      return object.hashCode();
-   }
-   /**
-    * This method returns checks for equality with the inner object instead of
-    * the wrapper itself. This allows two different wrappers referencing an
-    * equivalent inner object to return true. If the wrapped object has
-    * not yet been deserialized, this will cause it to happen, which could
-    * result in a NullPointerException on failure. If the wrapped object has
-    * not yet been loaded, this will cause it to happen, which could
-    * result in a NullPointerException on a load failure.
-    */
-   public boolean equals(Object o) {
-      if (object == null) load();
-      return o.equals(object);
-   }
-   /**
-    * This method returns the toString result of the inner object instead of
-    * the wrapper itself. This allows two different wrappers referencing an
-    * equivalent inner object to return an equivalent string. If the wrapped
-    * object has not yet been deserialized, this will cause it to happen, which
-    * could result in a NullPointerException on failure. If the wrapped object
-    * has not yet been loaded, this will cause it to happen, which could
-    * result in a NullPointerException on a load failure.
-    */
-   public String toString() {
-      if (object == null) load();
-      return object.toString();
-   }
-   /**
     * This method is used to test if the inner object is a reference to a
     * remote object. This can be important to know as remote invocations are
     * not time deterministic, and not assured of execution, as with local
