@@ -92,25 +92,6 @@ public class MonitorItem implements Invoke {
       this.os = os;
    }
    /**
-    * This method is overridden here to ensure that two different monitor
-    * items holding the target item return the same value.
-    * @return The hash code returned by the target item
-    */
-   public int hashCode() { return item.hashCode(); }
-   /**
-    * This method is overridden here to ensure that two different monitor
-    * items holding the same target item return true.
-    * @param obj An object, presumably another item, to compare
-    * @return True if the inner items are equivalent, otherwise false
-    */
-   public boolean equals(Object obj) { return item.equals(obj); }
-   /**
-    * This method is overridden here to provide the name of the internal
-    * object, rather than the name of the Monitor object.
-    * @return The string returned by the internal item's toString method.
-    */
-   public String toString() { return item.toString(); }
-   /**
     * This method logs the incoming calls, passing the caller's data to the
     * internal item. It records the following information:<ul>
     * <li> The name of the item being called

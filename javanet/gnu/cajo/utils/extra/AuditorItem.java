@@ -76,25 +76,6 @@ public class AuditorItem implements Invoke {
       this.auditor = auditor;
    }
    /**
-    * This method is overridden here to ensure that two different auditor
-    * items holding the audited object return the same value.
-    * @return The hash code returned by the audited object
-    */
-   public int hashCode() { return item.hashCode(); }
-   /**
-    * This method is overridden here to ensure that two different auditor
-    * items holding the same audited object return true.
-    * @param obj An object, presumably another item, to compare
-    * @return True if the audited objects are equivalent, otherwise false
-    */
-   public boolean equals(Object obj) { return item.equals(obj); }
-   /**
-    * This method is overridden here to provide the name of the audited
-    * object, rather than the name of this auditor item.
-    * @return The string returned by the audited object's toString method
-    */
-   public String toString() { return item.toString(); }
-   /**
     * This method audits the incoming calls. If the auditor approves, or
     * change the supplied arguments, they will be passed into the audited
     * item for processing. The auditor will again review the returned data,
