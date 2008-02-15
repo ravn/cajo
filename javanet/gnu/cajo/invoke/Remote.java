@@ -515,28 +515,6 @@ public final class Remote extends UnicastRemoteObject
       this.item = item;
    }
    /**
-    * This method is used to check if two Remote objects are holding an
-    * equavilent inner item. It short-circuit's the invocation, returning the
-    * result of the internal object's equals invocation.
-    * @param object A reference to another object to compare for equality.
-    * @return The result of the equals method called on the internal object. 
-    */
-   public boolean equals(Object object) { return item.equals(object); }
-   /**
-    * This method is used to identify the internal object.  It short-circuit's
-    * the invocation, returning the result of the internal object's toString
-    * invocation.
-    * @return The internal object's cannonical string identifier. 
-    */
-   public String toString() { return item.toString(); }
-   /**
-    * This method is used to identify the internal object.  It short-circuit's
-    * the invocation, returning the result of the internal item's hashCode
-    * invocation.
-    * @return The semi-unique integer identifier for the internal object.
-    */
-   public int hashCode() { return item.hashCode(); }
-   /**
     * The sole generic, multi-purpose interface for communication between VMs.
     * This function may be called reentrantly, so the inner object <i>must</i>
     * synchronize its critical sections as necessary. Technically, it simply
