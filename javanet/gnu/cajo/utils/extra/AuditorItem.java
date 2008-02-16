@@ -54,14 +54,17 @@ public class AuditorItem implements Invoke {
     * the audited item for processing. The result of this operation will be
     * passed to the auditing item's postprocess method. Again, it has the
     * similiar three options; to change, approve, or reject the returned
-    * data.
+    * data. It is declared as public to allow the reference of the AuditorItem,
+    * and its auditor object, from a single instance of AuditorItem.
     */
-   protected final Object auditor;
+   public final Object auditor;
    /**
     * This is the object to be audited. Since it has no knowlege of the audit
     * it's structure need not be changed in any way to accomodate it.
+    * It is declared as public to allow the reference of the AuditorItem, and
+    * its wrapped object, from a single instance of AuditorItem.
     */
-   protected final Object item;
+   public final Object item;
    /**
     * This creates the object, to audit the target object's use. The class
     * in not declared final, to allow no-arg auditing items to be easily

@@ -50,9 +50,14 @@ import java.io.ObjectOutputStream;
  * @author John Catherino
  */
 public class MonitorItem implements Invoke {
-   private final Object item;
    private final OutputStream os;
    private long count, oldtime = System.currentTimeMillis();
+   /**
+    * The object being monitored. It is declared as public to allow the
+    * reference of the MontorItem, and its wrapped object, from a single
+    * instance of MonitorItem.
+    */
+   public final Object item;
    /**
     * This creates the monitor object, to instrument the target object's use.
     * The the logging information will be sent to System.out automatically.

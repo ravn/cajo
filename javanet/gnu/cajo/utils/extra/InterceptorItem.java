@@ -42,15 +42,19 @@ public class InterceptorItem implements Invoke {
     * The interceptor object. This object will recieve the remote invocation
     * first, on a method of matching signature. The interceptor has the
     * option to process the invocation itself, or pass it on to the
-    * intercepted object for processing.
+    * intercepted object for processing. It is declared as public to allow the
+    * reference of the InterceptorItem, and its interceptor object, from a
+    * single instance of InterceptorItem.
     */
-   protected final Object interceptor;
+   public final Object interceptor;
    /**
     * This is the object to be intercepted. Since it has no knowlege of the
     * interception it's structure need not be changed in any way to
-    * accomodate it.
+    * accomodate it. It is declared as public to allow the reference of the
+    * InterceptorItem, and its intercepted object, from a single instance of
+    * InterceptorItem.
     */
-   protected final Object item;
+   public final Object item;
    /**
     * This object is used a signal from an interceptor object. It is
     * returned from a method invocation, it means that the interceptor object
