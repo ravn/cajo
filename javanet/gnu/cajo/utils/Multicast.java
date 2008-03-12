@@ -232,7 +232,9 @@ public final class Multicast implements Runnable {
             try {
                item = (RemoteInvoke)Remote.zedmob(bais);
                iaddr = dp.getAddress();
-               if (Remote.invoke(callback, "multicast", this) != null) break;
+               Object quit = Remote.invoke(callback, "multicast", this);
+               item = null;
+               if (quit != null) break;
             } catch(Exception x) { x.printStackTrace(); }
             finally { bais.close(); }
          } catch(Exception x) { x.printStackTrace(); }
