@@ -59,12 +59,26 @@ import java.lang.reflect.InvocationTargetException;
  * discussion</a> in the cajo project Developer's forum, with project member
  * Bharavi Gade, caused me to reconsider.
  *
+ * <p><i><u>Also note</u>:</i> The three fundamental object methods; hashCode,
+ * equals, and toString, are performed locally. This is because the remote
+ * invocation could fail, most unintuitively. This is just to make the class
+ * operation much more intuitive.
+ *
  * @version 1.1, 11-Nov-05 Support multiple interfaces
  * @author John Catherino
  */
 public final class TransparentItemProxy implements InvocationHandler {
    private final Object item;
-   private TransparentItemProxy(Object item) { this.item = item; }
+   private final Object name;
+   private TransparentItemProxy(Object item) {
+      this.item = item;
+      Object temp = null;
+      try { temp = Remote.invoke(item, "toString", null); }
+      catch(Exception x) {
+         throw new IllegalArgumentException(x.getLocalizedMessage());
+      }
+      name = temp;
+   }
    /**
     * This method, inherited from InvocationHandler, simply passes all object
     * method invocations on to the remote object, automatically and
@@ -100,6 +114,8 @@ public final class TransparentItemProxy implements InvocationHandler {
                Boolean.TRUE : Boolean.FALSE;
          } else if (name.equals("hashCode")) // shallow hashCode too...
             return new Integer(this.hashCode());
+         else if (name.equals("toString")) // shallow toString too...
+            return name;
          else return Remote.invoke(item, name, args);
       } catch(InvocationTargetException x) { throw x.getTargetException(); }
    }
