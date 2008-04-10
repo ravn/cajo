@@ -115,7 +115,7 @@ public final class TransparentItemProxy implements InvocationHandler {
          } else if (name.equals("hashCode")) // shallow hashCode too...
             return new Integer(this.hashCode());
          else if (name.equals("toString")) // shallow toString too...
-            return name;
+            return this.name;
          else return Remote.invoke(item, name, args);
       } catch(InvocationTargetException x) { throw x.getTargetException(); }
    }
