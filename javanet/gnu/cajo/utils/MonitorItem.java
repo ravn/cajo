@@ -137,7 +137,7 @@ public class MonitorItem implements Invoke {
                sb.append(stes[i].getClassName());
                sb.append('.');
                sb.append(stes[i].getMethodName());
-               if (stes[i].getLineNumber() != -1) { // debug info available
+               if (stes[i].getLineNumber() <= 0) { // debug info available
                   sb.append("\n     file   = ");
                   sb.append(stes[i].getFileName());
                   sb.append(" line ");
