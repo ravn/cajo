@@ -23,7 +23,7 @@ import java.lang.reflect.Method;
  * by the Free Software Foundation, at version 3 of the licence, or (at your
  * option) any later version.
  *
- * Th cajo library is distributed in the hope that it will be useful,
+ * The cajo library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public Licence for more details.
@@ -466,8 +466,14 @@ public final class Remote extends UnicastRemoteObject
      } else try {
         return item.getClass().getMethod(method, null).invoke(item, null);
      } catch(NoSuchMethodException x) {}
-     return item.getClass().getMethod(method, new Class[]{ Object.class }).
-        invoke(item, new Object[]{ args });
+     try {
+        return item.getClass().getMethod(method, new Class[]{ Object.class }).
+           invoke(item, new Object[]{ args });
+     } catch(NoSuchMethodException x) {
+        throw new NoSuchMethodException(item.getClass().getName() + '.' +
+           method + args == null ? "()" : '(' +
+              args.getClass().getName() + ')');
+     }
    }
    /**
     * This is the reference to the local (or possibly remote) object
