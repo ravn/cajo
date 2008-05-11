@@ -157,7 +157,7 @@ public class MonitorItem implements Invoke {
                if (oos != null) {
                   oos.writeObject( new MarshalledObject(new Object[] {
                      clientHost, item.toString(), // may not be serializable!
-                     method, args, result, new Long(++count),
+                     method, args, result, new Long(++count), new Long(time),
                      new Long(time - oldtime), new Integer(run),
                      new Integer(freeMemory)
                   }));
@@ -201,6 +201,8 @@ public class MonitorItem implements Invoke {
                   } else ps.println(result != null ? result.toString() : "void");
                   ps.print("Call count  = ");
                   ps.print(++count);
+                  ps.print("\nTime stamp  = ");
+                  ps.print(time);
                   ps.print("\nIdle time   = ");
                   ps.print(time - oldtime);
                   ps.print(" ms");
