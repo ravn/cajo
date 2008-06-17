@@ -1,4 +1,4 @@
-Library Release 1.111 11-Apr-08
+Library Release 1.112 16-Jun-08
 
                        ___  _
                       / ,_`(_) ___
