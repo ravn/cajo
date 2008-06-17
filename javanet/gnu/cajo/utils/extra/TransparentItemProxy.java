@@ -39,7 +39,7 @@ import java.lang.reflect.InvocationTargetException;
  * implements, if any; they are simply logical groupings, of interest solely
  * to the client. The interface methods <i>'should'</i> declare that they
  * throw <tt>java.lang.Exception</tt>: However, the Java dynamic proxy
- * mechanism very <i>doubiously</i> allows this to be optional.
+ * mechanism very <i>dubiously</i> allows this to be optional.
  *
  * <p>Clients can dynamically create an item wrapper classes implementing
  * <i>any</i> combination of interfaces. Combining interfaces provides a very
@@ -80,6 +80,28 @@ public final class TransparentItemProxy implements InvocationHandler {
       name = temp;
    }
    /**
+    * An optional centralised invocation error handler. If an invocation on
+    * a remote object results in a checked or unchecked exception being thrown;
+    * this object, if assigned, will be called to deal with it. This allows
+    * all retry/recovery/rollback logic, etc. to be located in a single place.
+    * It is expected that this object will implement a method of the following
+    * signature:<p>
+    * <blockquote><tt>
+    * public Object handle(Object proxy, String method, Object args[], Throwable t)
+    * throws Throwable; </tt></blockquote><p>
+    * The first arguments are as follows:<ul>
+    * <li>the local proxy to the remote object generating the error
+    * <li>the method that was called on the remote object
+    * <li>the arguments that were provided in the method call
+    * <li>the error that resulted from the invocation</ul>
+    * The handler will either successfully recover from the error, and return
+    * the appropriate result, or throw a hopefully more descriptive error.
+    * <i><u>Note</u>:</i> the <tt>toString()</tt> method can be invoked
+    * on the proxy object, to determine its identity, or the handler could
+    * maintain a map of proxies, to proxy-specific handler objects.     
+    */
+    public static Object handler;
+   /**
     * This method, inherited from InvocationHandler, simply passes all object
     * method invocations on to the remote object, automatically and
     * transparently. This allows the local runtime to perform remote item
@@ -110,14 +132,20 @@ public final class TransparentItemProxy implements InvocationHandler {
       try {
          String name = method.getName();
          if (name.equals("equals")) { // perform shallow equals...
-            return args[0] != null && args[0].equals(this) ?
-               Boolean.TRUE : Boolean.FALSE;
+            return this.equals(args[0]) ? Boolean.TRUE : Boolean.FALSE;
          } else if (name.equals("hashCode")) // shallow hashCode too...
             return new Integer(this.hashCode());
          else if (name.equals("toString")) // shallow toString too...
             return this.name;
          else return Remote.invoke(item, name, args);
-      } catch(InvocationTargetException x) { throw x.getTargetException(); }
+      } catch(Throwable t) {
+         if (t instanceof InvocationTargetException)
+            t = ((InvocationTargetException)t).getTargetException();
+         if (handler != null)
+            return Remote.invoke(handler, "handle",
+               new Object[] { proxy, method, args, t });
+         else throw t;
+      }
    }
    /**
     * This generates a class definition for a remote object reference at
