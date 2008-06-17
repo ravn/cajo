@@ -6,6 +6,7 @@ import java.rmi.*;
 import java.util.zip.*;
 import java.rmi.server.*;
 import java.rmi.registry.*;
+import java.util.Vector;
 import java.util.LinkedList;
 import java.lang.reflect.Method;
 
@@ -93,6 +94,7 @@ public final class Remote extends UnicastRemoteObject
    }
    private static Object proxy;
    private static Registry registry;
+   private static Vector items = new Vector();
    /**
     * A global reference to the remote client socket factory.  This is the
     * factory remote VMs will use to communicate with local items.
@@ -111,7 +113,6 @@ public final class Remote extends UnicastRemoteObject
          rcsf.port = 0;
          try { // this won't work if running as an applet
             System.setProperty("java.rmi.server.useLocalHostname", "true");
-            System.setProperty("java.rmi.server.hostname", rcsf.host);
          } catch(SecurityException x) {}
       } catch(Exception x) {}
    }
@@ -247,6 +248,20 @@ public final class Remote extends UnicastRemoteObject
             );
          }
       } catch (SecurityException x) {}
+   }
+   /**
+    * This method will brutally un-remote all currently remotely invocable
+    * wrappers. This can be used to allow the JVM to shut down without having
+    * to call <tt>System.exit()</tt> also, to support use in managed container
+    * systems. Following this execution, objects can be newly remoted again.
+    */
+   public static void shutdown() {
+      synchronized(items) {
+         for (int i = items.size() - 1; i >= 0; i--)
+            try { Remote.unexportObject((Remote)items.elementAt(i), true); }
+            catch(NoSuchObjectException x) {}
+         items.clear();
+      }
    }
    /**
     * A utility method to reconstitute a zipped marshalled object (zedmob)
@@ -496,6 +511,7 @@ public final class Remote extends UnicastRemoteObject
    public Remote(Object item) throws RemoteException {
       super(rssf.port, rcsf, rssf);
       this.item = item;
+      items.add(this);
    }
    /**
     * The constructor takes <i>any</i> object, and allows it to be remotely
@@ -519,6 +535,25 @@ public final class Remote extends UnicastRemoteObject
    public Remote(Object item, String localAddr) throws RemoteException {
       super(rssf.port, new RCSF(localAddr), rssf);
       this.item = item;
+      items.add(this);
+   }
+   /**
+    * This method will attempt to make the wrapper no longer remotely invocable.
+    * As a list of all remoted wrappers is maintained, this method will remove
+    * the reference from the list. If a lot of objects are being remoted and
+    * unremoted during the life of the JVM, it is highly recommended to use this
+    * method, rather than the inherited static unexportObject method, as it will
+    * not remove the reference from the internal list.
+    * @param force true to un-remote the object wrapper, even if invocations are in
+    * progress or pending, if false, do not un-remote unless idle.
+    * @return true if the wrapper was successfully un-remoted, false if it is
+    * still remoted.
+    * @throws NoSuchObjectException If this wrapper has already been un-remoted
+    */
+   public boolean unexport(boolean force) throws NoSuchObjectException {
+      boolean worked = UnicastRemoteObject.unexportObject(this, force);
+      if (worked) items.remove(this);
+      return worked;
    }
    /**
     * The sole generic, multi-purpose interface for communication between VMs.
