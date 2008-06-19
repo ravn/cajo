@@ -1,7 +1,13 @@
 package gnu.cajo.utils.extra;
 
-import java.util.LinkedList;
+import gnu.cajo.invoke.Invoke;
 import gnu.cajo.invoke.Remote;
+import gnu.cajo.utils.ItemServer;
+import gnu.cajo.utils.MonitorItem;
+import gnu.cajo.utils.Multicast;
+
+import java.rmi.RemoteException;
+import java.util.LinkedList;
 
 /*
  * cajo asynchronous object method invocation queue
@@ -17,7 +23,7 @@ import gnu.cajo.invoke.Remote;
  * by the Free Software Foundation, at version 3 of the licence, or (at your
  * option) any later version.
  *
- * Th cajo library is distributed in the hope that it will be useful,
+ * The cajo library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public Licence for more details.
@@ -27,79 +33,168 @@ import gnu.cajo.invoke.Remote;
  */
 
 /**
- * This class is a cajo-based implementation of the message based
- * communication paradigm. By virtue of returning successfully, a client can
- * be certain its invocation has been enqueued, and will be invoked on the
- * wrapped object. The client can be either local, or remote, the operation
- * is completely asynchronous.<p>
- * A client enqueues its invocations for the server item, by invoking the
+ * This class is a cajo-based implementation of the message communication
+ * paradigm. One or more producer objects can invoke methods on this
+ * object, and the invocations will be asynchronously performed on one 
+ * <i>(point to point),</i> or more <i>(publish/subscribe),</i> consumer
+ * objects.  A producer, by virtue of having its method invocation return
+ * immediately and successfully, can be certain its invocation has been
+ * enqueued, and will be invoked on the member consumers <i>(if any).</i> The
+ * consumers can be either local or remote objects.<p>
+ * A producer enqueues its invocations for the member consumers, by invoking the
  * corresponding method on its reference to an instance of this object. Its
- * argument(s), if any, will be invoked on the matching method of the server
- * item, in a separate thread. This creates a dynamic buffer of invocations.
- * <p><i><u>Note</u>:</i> the wrapped item can be a remote object reference.
- * This can allow one or more separate JVMs, to perform the invocation
- * enqueue process.
+ * argument(s), if any, will be invoked on the matching method of each of the
+ * consumer objects, in a separate thread. This creates a dynamic buffer of
+ * invocations.<p>
+ * Due to the asynchronous disconnection between the producer and consumer(s),
+ * no results can be returned from the method invocations. If a producer
+ * wishes to receive data from each of the consumers, it could provide a
+ * callback reference as one of the arguments, for example.<p>
+ * Interactions between producers and consumers can be as simple as a single
+ * method taking no arguments - <i>notification,</i> to a method taking a
+ * single
+ * argument - <i>messaging,</i> to multiple methods taking multiple arguments -
+ * <i>remote procedure calls.</i><p>
+ * Finally, this class is serialisable, to allow passing of Queue objects
+ * between machines, and replication of Queue objects, the possibilities this
+ * creates require a bit of thought indeed...
  *
  * @version 1.0, 25-Jun-06
  * @author John Catherino
  */
-public final class Queue implements gnu.cajo.invoke.Invoke {
-   private LinkedList list;
+public class Queue implements Invoke {
+   private static final long serialVersionUID = 1L;
    /**
-    * This is the thread performing the dequeue operation, and invoking
-    * the corresponding method on the wrapped object. It is instantiated
-    * dynamically, upon the first enqueue invocation. If the local JVM wishes
-    * to terminate the operation of this queue, it can invoke interrupt() on
-    * this field.
+    * Some manner of commonly agreed upon descriptor for the subject matter
+    * about which the producers and consumers are interested. It must be
+    * serialisable.
     */
-   public Thread thread;
+   protected final Object topic;
    /**
-    * This is the object for which invocation queueing is being performed.
-    * It can be local to this JVM, or remote.
+    * The list of all pending producer method invocations.
     */
-   public final Object object;
+   protected LinkedList invocations = new LinkedList();
    /**
-    * The constructor simply assigns the provided object reference for
-    * queued method invocation.
-    * @param object The object reference to be wrapped, local or remote.
+    * The list of consumers, remote and local, to receive producer invocations.
     */
-   public Queue(Object object) { this.object = object; }
+   protected LinkedList consumers = new LinkedList();
    /**
-    * This is the method a client, local or remote, would invoke, to be
-    * performed in a message-based fashion.
-    * @param method The public method name on the wrapped object to be
-    * invoked.
-    * @param args The argument(s) to invoke on the wrapped item's method.
-    * It can be a single object, and Object array of arguments, or null.
-    * presumably, the wrapped object has a matching public method signature.
-    * @return null Since the operation is performed asynchronously, there can
-    * be no synchronous return data. A callback object reference can be
-    * provided as an argument, if result data is required. When no arguments
-    * are provided, the operation is essentially a semaphore.
+    * This is the thread performing the asynchronous invocation operation,
+    * invoking the corresponding method on consumer objects. It is
+    * instantiated dynamically, upon the first producer invocation.
+    */
+   protected transient Thread thread;
+   /**
+    * The constructor simply assigns the topic for the object and returns, as
+    * the object is entirely event driven. <i><u>Note</u>:</i> the descriptor
+    * object <i>must</i> be serialisable.
+    * @param topic A descriptor object, mutually agreed upon by all participants
+    */
+   public Queue(Object topic) { this.topic = topic; }
+   /**
+    * This method is used to request the topic of the producer/consumer
+    * community. <i><u>Note</u>:</i> the object returned may be unknown to
+    * caller, thus resulting in a NoClassDefFoundError, in that case, it is
+    * probably not a good idea to join the community as either a producer or
+    * consumer.
+    * @return The community descriptor
+    */
+   public Object topic() { return topic; }
+   /**
+    * This method is used to add an object to list of consumers awaiting
+    * producer invocation. 
+    * @param consumer The object wishing to subscribe
+    */
+   public synchronized void enqueue(Object consumer) {
+      consumers.add(consumer);
+   }
+   /**
+    * This method is used to remove a consumer from the list.
+    * @param consumer The object wishing to unsubscribe
+    */
+   public synchronized void dequeue(Object consumer) {
+      consumers.remove(consumer);
+   }
+   /**
+    * This method is called to suspend method invocation dispatching. Producer
+    * invocations will continue to queue. This method is idempotent.
+    */
+   public synchronized void pause() {
+      if (thread != null && !thread.isInterrupted()) thread.interrupt();
+   }
+   /**
+    * This method is called to resume method invocation dispatching. This
+    * method is idempotent.
+    */
+   public synchronized void resume() {
+      if (thread != null && thread.isInterrupted()) thread = null;
+   }
+   /**
+    * This is the method a producer, local or remote, would invoke, to be
+    * performed in a message-based fashion, asynchronously, on all registered
+    * consumers. This method returns immediately, implicitly guaranteeing the
+    * invocation has been successfully enqueued.
+    * @param method The public method name on the consumer objects to be
+    * invoked
+    * @param args The argument(s) to invoke on the consumer object's method,
+    * there can be none, to simply perform notification, there can be a single
+    * argument to provide data, or there can be a collection to engage a
+    * behaviour, presumably, the subscribed object has a matching public method
+    * signature.
+    * @return null Since consumer invocation  is performed asynchronously, there
+    * can be no synchronous return data, a callback object reference can be
+    * provided as an argument, if result data is required
+
     * @throws java.rmi.RemoteException If the invocation failed to enqueue,
-    * due to a network related error.
+    * due to a network related error
     */
    public synchronized Object invoke(String method, Object args) {
-      if (list == null) {
-         list = new LinkedList();
+      if (thread == null) {
          thread = new Thread(new Runnable() {
             public void run() {
-               try {
+               do {
                   synchronized(Queue.this) {
-                     while (list.size() == 0) Queue.this.wait();
+                     while (invocations.size() == 0) try {
+                	Queue.this.wait();
+                     } catch(InterruptedException x) { break; }
                   }
-                  String method = (String)list.removeFirst();
-                  Object args = list.removeFirst();
-                  Remote.invoke(object, method, args);
-               } catch(InterruptedException x) { return; }
-               catch(Exception x) { x.printStackTrace(); }
+                  String method = (String)invocations.removeFirst();
+                  Object args = invocations.removeFirst();
+                  if (Queue.this.consumers.isEmpty()) continue;
+                  Object consumers[] = Queue.this.consumers.toArray();
+                  for (int i = 0; i < consumers.length; i++) try {
+                     Remote.invoke(consumers[i], method, args);
+                  } catch(RemoteException x) { dequeue(consumers[i]); }
+                  catch(Exception x) {}
+               } while(!thread.isInterrupted());
             }
          });
          thread.start();
       }
-      list.add(method);
-      list.add(args);
+      invocations.add(method);
+      invocations.add(args);
       notify();
       return null;
+   }
+   /**
+    * This method will start up a remotely accessible Queue object, in its own
+    * JVM. For illustrative purposes, the queue object will be wrapped in a
+    * MonitorItem, which outputs to the console. It will bind locally under
+    * its topic name, and announce itself over multicast, using the cajo IANA
+    * UDP address, on port 1198.
+    * @param args The first string, if defined, will be the topic string,
+    * undefined it will be "void", the second, if defined, will be the TCP port
+    * number on which the queue will accept invocations, undefined it will be
+    * 1198, it can be zero, to use an anonymous port
+    * @throws Exception For startup or machine/network configuration issues
+    */
+   public static void main(String args[]) throws Exception {
+      String topic = args.length > 0 ? args[0] : "void";
+      int port = args.length > 1 ? Integer.parseInt(args[1]) : 1198;
+      Remote.config(null, port, null, port);
+      Object queue = new Remote(new MonitorItem(new Queue(topic)));
+      System.out.println("Queue started\n");
+      ItemServer.bind(queue, topic);
+      new Multicast("224.0.23.162", 1198).announce(queue, 32);
    }
 }
