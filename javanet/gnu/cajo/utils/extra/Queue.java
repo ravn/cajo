@@ -117,14 +117,15 @@ public class Queue implements Invoke {
    }
    /**
     * This method is called to suspend method invocation dispatching. Producer
-    * invocations will continue to queue. This method is idempotent.
+    * invocations will continue to queue. This method is iddmpotent. It can
+    * only be invoked locally.
     */
    public synchronized void pause() {
       if (thread != null && !thread.isInterrupted()) thread.interrupt();
    }
    /**
     * This method is called to resume method invocation dispatching. This
-    * method is idempotent.
+    * method is idempotent. It can only be invoked locally.
     */
    public synchronized void resume() {
       if (thread != null && thread.isInterrupted()) thread = null;
@@ -149,7 +150,10 @@ public class Queue implements Invoke {
     * due to a network related error
     */
    public synchronized Object invoke(String method, Object args) {
-      if (thread == null) {
+      if (method.equals("enqueue") && args != null) enqueue(args);
+      else if (method.equals("dequeue") && args != null) dequeue(args);
+      else if (method.equals("topic") && args == null) return topic();
+      else if (thread == null) {
          thread = new Thread(new Runnable() {
             public void run() {
                do {
@@ -166,6 +170,7 @@ public class Queue implements Invoke {
                      Remote.invoke(consumers[i], method, args);
                   } catch(RemoteException x) { dequeue(consumers[i]); }
                   catch(Exception x) {}
+                  catch(Throwable t) {}
                } while(!thread.isInterrupted());
             }
          });
