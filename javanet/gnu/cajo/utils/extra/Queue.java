@@ -134,7 +134,12 @@ public class Queue implements Invoke {
     * This is the method a producer, local or remote, would invoke, to be
     * performed in a message-based fashion, asynchronously, on all registered
     * consumers. This method returns immediately, implicitly guaranteeing the
-    * invocation has been successfully enqueued.
+    * invocation has been successfully enqueued.<p>
+    * <i><u>Note</u>:</i> normally invocation of the methods topic, enque, and
+    * deque will <i>not</i> be passed along to consumers, as they are performed
+    * on the Queue instance. However, invoking topic with any arguments, and
+    * enqueue or dequeue with no arguments, these <i>will</i> be passed on to
+    * consumers, as they do not apply to the Queue instance.
     * @param method The public method name on the consumer objects to be
     * invoked
     * @param args The argument(s) to invoke on the consumer object's method,
@@ -150,10 +155,14 @@ public class Queue implements Invoke {
     * due to a network related error
     */
    public synchronized Object invoke(String method, Object args) {
-      if (method.equals("enqueue") && args != null) enqueue(args);
-      else if (method.equals("dequeue") && args != null) dequeue(args);
-      else if (method.equals("topic") && args == null) return topic();
-      else if (thread == null) {
+      if (method.equals("enqueue") && args != null) {
+         enqueue(args);
+         return null;
+      } else if (method.equals("dequeue") && args != null) {
+         dequeue(args);
+         return null;
+      } else if (method.equals("topic") && args == null) return topic();
+      if (thread == null) {
          thread = new Thread(new Runnable() {
             public void run() {
                do {
