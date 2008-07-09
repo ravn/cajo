@@ -538,6 +538,29 @@ public final class Remote extends UnicastRemoteObject
       items.add(this);
    }
    /**
+    * This constructor allows for complete configuration of an object's
+    * remoting; normally this should be used for rare and highly specialised
+    * cases.
+    * <i><u>Note</u>:</i> the RMIClientSocketFactory <b><i>must</i></b> be
+    * seriallisable.
+    * @param  item The object to make remotely callable.  It may be an
+    * arbitrary object of any type, it can even be a reference to a remote
+    * reference from another host, being re-remoted through this JVM.
+    * @param rcsf The custom client socket factory to be used to communicate
+    * with this item, by remote clients. (please regard carefully the note
+    * above)
+    * @param rssf The custom server socket factory to be used to accept
+    * connections from remote clients.
+    * @throws RemoteExcepiton If the remote instance could not be be created.
+    */
+   public Remote(Object item,
+      RemoteClientSocketFactory rcsf, RemoteClientServerFactory rssf)
+      throws RemoteException {
+      super(port, rcsf, rssf);
+      this.item = item;
+      items.add(this);
+   }
+   /**
     * This method will attempt to make the wrapper no longer remotely invocable.
     * As a list of all remoted wrappers is maintained, this method will remove
     * the reference from the list. If a lot of objects are being remoted and
