@@ -546,6 +546,7 @@ public final class Remote extends UnicastRemoteObject
     * @param  item The object to make remotely callable.  It may be an
     * arbitrary object of any type, it can even be a reference to a remote
     * reference from another host, being re-remoted through this JVM.
+    * @param port The TCP port number on which to communicate with the object
     * @param rcsf The custom client socket factory to be used to communicate
     * with this item, by remote clients. (please regard carefully the note
     * above)
@@ -553,8 +554,8 @@ public final class Remote extends UnicastRemoteObject
     * connections from remote clients.
     * @throws RemoteExcepiton If the remote instance could not be be created.
     */
-   public Remote(Object item,
-      RemoteClientSocketFactory rcsf, RemoteClientServerFactory rssf)
+   public Remote(Object item, int port,
+      RMIClientSocketFactory rcsf, RMIServerSocketFactory rssf)
       throws RemoteException {
       super(port, rcsf, rssf);
       this.item = item;
