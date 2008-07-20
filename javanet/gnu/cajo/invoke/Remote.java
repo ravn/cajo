@@ -80,11 +80,13 @@ public final class Remote extends UnicastRemoteObject
           port = rssf.port;
       }
       public Socket createSocket(String host, int port) throws IOException {
-         Socket s;
-         s = RMISocketFactory.getDefaultSocketFactory().
-            createSocket(this.host, this.port != 0 ? this.port : port);
-         s.setKeepAlive(true);
-         return s;
+         for (int i = 0; i < 5; i++) try { // try to connect, up to 5 times
+            Socket s = RMISocketFactory.getDefaultSocketFactory().
+               createSocket(this.host, this.port != 0 ? this.port : port);
+            s.setKeepAlive(true);
+            return s;
+         } catch(IOException x) { /* silently try again */ }
+         throw new IOException("unable to connect to remote item");
       }
       public boolean equals(Object o) {
          return o instanceof RCSF &&
