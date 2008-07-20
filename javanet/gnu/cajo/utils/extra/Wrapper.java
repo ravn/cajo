@@ -18,7 +18,7 @@ import gnu.cajo.invoke.RemoteInvoke;
  * by the Free Software Foundation, at version 3 of the licence, or (at your
  * option) any later version.
  *
- * Th cajo library is distributed in the hope that it will be useful,
+ * The cajo library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public Licence for more details.
@@ -33,13 +33,16 @@ import gnu.cajo.invoke.RemoteInvoke;
  * type to change between local object/remote/proxy, without affecting the
  * calling code. It enforces compile time type checking, and the standard
  * invocation systax, while still allowing invocation of methods via the
- * reflection based invoke paradigm. <i>Note:</i> A subclass could potentially
- * even <i>dynamically</i> change the inner object at <u>runtime</u>.
+ * reflection based invoke paradigm. It also promotes <i>"lazy instantiation,"
+ * </i> as the wrapped reference will not be loaded into the runtime unless
+ * and until it is needed. If the wrapped object url is compatible, the wrapper
+ * may be freely passed between JVM instances.
  *
  * @version 1.0, 27-Apr-04 Initial release
  * @author John Catherino
  */
 public class Wrapper implements Invoke {
+   private static final long serialVersionUID = 1L;
    /**
     * The object being wrapped by the reflection based invocation paradigm.
     * It may be a reference to a remote object, or a proxy sent by a remote
