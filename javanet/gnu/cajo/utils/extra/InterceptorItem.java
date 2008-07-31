@@ -9,7 +9,7 @@ import gnu.cajo.invoke.*;
  *
  * For issues or suggestions mailto:cajo@dev.java.net
  *
- * This file AuditorItem.java is part of the cajo library.
+ * This file InteceptorItem.java is part of the cajo library.
  *
  * The cajo library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public Licence as published
@@ -56,7 +56,7 @@ public class InterceptorItem implements Invoke {
     */
    public final Object item;
    /**
-    * This object is used a signal from an interceptor object. It is
+    * This object is used a signal from an interceptor object. When it is
     * returned from a method invocation, it means that the interceptor object
     * wants to have the intercepted object process the invocation instead.
     */
