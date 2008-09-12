@@ -511,9 +511,7 @@ public final class Remote extends UnicastRemoteObject
     * @throws RemoteExcepiton If the remote instance could not be be created.
     */
    public Remote(Object item) throws RemoteException {
-      super(rssf.port, rcsf, rssf);
-      this.item = item;
-      items.add(this);
+      this(item, rssf.port, rcsf, rssf);
    }
    /**
     * The constructor takes <i>any</i> object, and allows it to be remotely
@@ -535,9 +533,7 @@ public final class Remote extends UnicastRemoteObject
     * @throws RemoteExcepiton If the remote instance could not be be created.
     */
    public Remote(Object item, String localAddr) throws RemoteException {
-      super(rssf.port, new RCSF(localAddr), rssf);
-      this.item = item;
-      items.add(this);
+      this(item, rssf.port, new RCSF(localAddr), rssf);
    }
    /**
     * This constructor allows for complete configuration of an object's
