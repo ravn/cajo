@@ -55,8 +55,9 @@ public final class Cajo implements Grail {
       private Registrar() {}
       /**
        * This method is called either when a Cajo instance starts up, or
-       * exports an object reference. All operating servers will respond by
-       * sending a copy of their registries.
+       * exports an object reference. All operating servers will request the
+       * collection of references owned by the remote JVM, and
+       * correspondingly send a copy of their registries.
        * @param multicast A reference to the announcing JVM
        * @return null To keep the multicase object listening
        */
@@ -64,6 +65,7 @@ public final class Cajo implements Grail {
          try {
             if (items.size() > 0 )
                multicast.item.invoke("register", items);
+            register((Vector)multicast.item.invoke("request", null));
          } catch(Exception x) { x.printStackTrace(); }
          return null; // pass any list to announcer & keep listening
       }
@@ -74,7 +76,7 @@ public final class Cajo implements Grail {
        * @param elements A collection of remote object references
        */
       public void register(Vector elements) { // include all responders
-         synchronized(items) {
+         if (elements != null && elements.size() > 0) synchronized(items) {
             for (int i = 0; i < elements.size(); i++)
                if (!(items.contains(elements.elementAt(i))))
                   items.add(elements.elementAt(i));
@@ -285,8 +287,7 @@ public final class Cajo implements Grail {
    public void register(String hostname, int port) throws Exception {
       Object reg = Remote.getItem("//"+hostname+':'+port+"/registrar");
       if (items.size() > 0) Remote.invoke(reg, "register", items);
-      Vector entries = (Vector)Remote.invoke(reg, "request", null);
-      registrar.register(entries);
+      registrar.register((Vector)Remote.invoke(reg, "request", null));
    }
    /**
     * Technically this method is unrelated to the class. It provides
