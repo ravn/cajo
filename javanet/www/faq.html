@@ -78,6 +78,7 @@
                                          <b> How can I ... ?</b><br>
                                            <a href=#21>How can I determine my cajo.jar library release number?</a><br>
                                            <a href=#22>How can I launch a generic proxy hosting JVM?</a><br>
+                                           <a href=#23>How can my container shut down all exported objects?</a><br>
                                          <b> Can I ... ?</b><br>
                                            <a href=#4>Can I forcibly disconnect a client?</a><br>
                                            <a href=#5>Can I restrict my server only to local clients?</a><br>
@@ -430,9 +431,9 @@
                                       where the host security policy looks something like:
 
 <tt><pre>
-   grant { // allow proxies to make network connections
-      permission java.net.SocketPermission "*", "connect, accept, resolve";
-   };
+     grant { // allow proxies to make network connections
+        permission java.net.SocketPermission "*", "connect, accept, resolve";
+     };
 </pre></tt>
 
                                       This will launch a generic proxy host, bound under the name "main", operating
@@ -443,6 +444,12 @@
                                       command line <a href=docs/gnu/cajo/utils/ItemServer.html#main(java.lang.String[])>arguments</a>
                                       accepted.<br><br>
 
+
+                                      <a id="23"></a><b><u>23. How can my container shut down all exported objects?</u></b>
+                                      The static <a href=docs/gnu/cajo/invoke/Remote.html#shutdown()>shutdown()</a>
+                                      method of the gnu.cajo.invoke.Remote class will forcibly disconnect all
+                                      clients currently connected to exported objects. The objects can be made
+                                      remotely accessible again, by re-remoting their references.<br><br>
 
                                     </span>
                                  </td>
@@ -472,7 +479,8 @@
          <td width="95%" valign="top" background="ventro/bar_bg.gif">
             <table width="100%" height="31" border="0" cellpadding="0" cellspacing="0">
                <tr>
-                  <td style="vertical-align:middle"><span class="style11">&copy; 2004 John Catherino, <a href=license.html>GNU FDL</a></span></td>
+                  <td style="vertical-align:middle"><span class="style11">&copy; 2004 <a href=http://wiki.java.net/bin/view/People/JohnCatherino>John Catherino</a>,
+                  <a href=license.html>GNU FDL</a></span></td>
                   <td width="53%"><div align="right"></div></td></tr></table></td>
                   <td width="3%"><img src="ventro/bar_Right.gif" width="10" height="35"></td></tr></table></td>
                </tr>
