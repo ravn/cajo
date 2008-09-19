@@ -150,6 +150,15 @@
                                      functionality, making little to no use of its remote link back to its
                                      sender.<br><br>
 
+                                     &nbsp&nbsp&nbsp&nbsp<b><i>*<u>NB</u>:</i></b> When using <a href=http://wiki.java.net/bin/view/Communications/TransparentProxy>
+                                     Transparent Item Proxies</a>, e.g. the <a href=http://weblogs.java.net/blog/cajo/archive/2007/09/simple_interjvm.html>
+                                     grail</a>, it is <i>highly recommended</i> to have <u>each</u> method
+                                     signature, in the client interface, declare that it throws <tt>
+                                     java.rmi.RemoteException</tt>. Whilst this is technically not <i>required;</i>
+                                     The benefit is that it will <i>force</i> wrapping remote invocations in a
+                                     try/catch block, to manage when remote method invocations go bad, for network
+                                     related reasons.<br><br>
+
                                      Lastly, I find it extremely helpful to print, frame, memorize, and post
                                      somewhere near your monitor, the eight <a href=http://blogs.sun.com/jag/resource/Fallacies.html>
                                      fallacies</a> of distributed computing. You could put it right next to your
