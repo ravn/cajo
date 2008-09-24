@@ -639,11 +639,17 @@ public final class Remote extends UnicastRemoteObject
     * the collection of listening clients becomes empty. If the wrapped
     * object whishes to be notified of being unreferenced, it need only
     * implement the java.rmi.server.Unreferenced interface itself, and the
-    * invocation will be passed along. Highest thanks to Petr Stepan, for the
-    * suggestion for this addition.
+    * invocation will be passed along. Normally it is used to close any open
+    * resources, needed to serve its clients. As a side-effect: the wrapped
+    * object will be unexported automatically, before calling its unexport
+    * method. Highest thanks to Petr Stepan, for the suggestion for this
+    * most excellent addition.
     */
    public void unreferenced() {
-      if (item instanceof Unreferenced) ((Unreferenced)item).unreferenced();
+      if (item instanceof Unreferenced) {
+         try { unexport(true); } catch(NoSuchObjectException x) {}
+         ((Unreferenced)item).unreferenced();
+      }
    }
    /**
     * The application method loads a zipped marshalled object (zedmob) from a
