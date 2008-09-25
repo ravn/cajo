@@ -97,6 +97,7 @@ public final class Remote extends UnicastRemoteObject
    private static Object proxy;
    private static Registry registry;
    private static Vector items = new Vector();
+   private boolean unexportOnUnreference;
    /**
     * A global reference to the remote client socket factory.  This is the
     * factory remote VMs will use to communicate with local items.
@@ -640,16 +641,37 @@ public final class Remote extends UnicastRemoteObject
     * object whishes to be notified of being unreferenced, it need only
     * implement the java.rmi.server.Unreferenced interface itself, and the
     * invocation will be passed along. Normally it is used to close any open
-    * resources, needed to serve its clients. As a side-effect: the wrapped
-    * object will be unexported automatically, before calling its unexport
-    * method. Highest thanks to Petr Stepan, for the suggestion for this
-    * most excellent addition.
+    * resources, needed to serve its clients. Highest thanks to Petr Stepan,
+    * for the suggestion for this most excellent addition.
     */
    public void unreferenced() {
-      if (item instanceof Unreferenced) {
+      if (unexportOnUnreference) {
          try { unexport(true); } catch(NoSuchObjectException x) {}
          ((Unreferenced)item).unreferenced();
       }
+   }
+   /**
+    * This method controls the automatic-unexporting of a remote reference
+    * when it is no longer referenced by any clients. Often an application
+    * will provide a remote reference to a special short-term use object on
+    * the client side. The RMI runtime does not automatically unexport remote
+    * references, as they typically belong to server objects. Remoted object
+    * references used for temporary transactions, e.g. Futures, can quickly
+    * accumulate into a large memory leak. Once unexported, this remote
+    * object wrapper is no longer remotely invocable. The wrapped object can
+    * be provided to a new instance of Remote, to make it remotely invocable
+    * again. It effectively places the lifetime of this object under the
+    * control of the client(s), rather than the server, which is normally the
+    * case. Quite simply, it causes the unexport method to be called
+    * implicitly, when the wrapper becomes unreferenced by all clients.
+    * Very handy and important!
+    * @return A reference to this wrapper, purely to allow the convenient
+    * construct of:<p><tt>
+    * return(new Remote(tempObj).clientScope();</tt>
+    */
+   public Remote clientScope() {
+      unexportOnUnreference = true;
+      return this;
    }
    /**
     * The application method loads a zipped marshalled object (zedmob) from a
