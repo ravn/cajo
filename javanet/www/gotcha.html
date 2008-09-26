@@ -86,6 +86,7 @@
                                         <li><a href=#7>Configuring Remote</a> &nbsp <i>(corrected)</i>
                                         <li><a href=#8>Excessive Decomposition</a>
                                         <li><a href=#9>Method Visibility</a>
+                                        <li><a href=#10>Reference Lifetime</a>
                                      </ol>
 
                            
@@ -245,8 +246,33 @@
                                      could be repeatedly invoked remotely. Unless all possible clients are known
                                      to be well behaved, an object should have <u><i>no</i></u> public methods it
                                      does <u><i>not</i></u> want a client to be able to call. This gotcha is the
-                                     corollary to the <a href=faq.html#14>FAQ #14</a>.
+                                     corollary to the <a href=faq.html#14>FAQ #14</a>.<br><br>
 
+
+                                     <a id="10"></a><b><u>10. Reference Lifetime:</u></b> When remote references to
+                                     objects are created, normally they last for the life of the server JVM.
+                                     Typically, this is what one would expect, when creating service objects.
+                                     However, there are times when the lifetime of a remote reference is <i>"too
+                                     long."</i>
+                                     <br><br>Typically one of two scenarios come into play:<ul>
+                                     <li> All of the remoted objects need to be shut down, typically needed by
+                                     application server containers. To accomodate this, the Remote.shutdown()
+                                     method is provided, it terminates <i>all</i> outstanding remote references.
+                                     It is also recommended if the server would like to exit normally, without
+                                     having to call System.exit().<br><br>
+                                     <li> Remote references to objects that are used by a client for a
+                                     <i>short-term,</i> e.g. to
+                                     monitor a transaction progress, whose lifetime is dictated by the clients,
+                                     rather than the server. When remoting these objects, it is <u>essential</u>
+                                     to use a special Remote method e.g.:<blockquote><tt>
+                                        return new Remote(clientMonitor).clientScope();
+                                     </tt></blockquote>This will prevent the <u><i>memory leak</i></u> that would
+                                     occur if regular remote references to short-term objects were returned. The
+                                     method is named as such because, in this case, the lifetime of the remote
+                                     reference is under the control of the clients, rather than the server. I.e.
+                                     when the one (or more) clients no longer refer to the remote reference, it
+                                     will then be disposed to the heapspace automatically. (Otherwise you would
+                                     have to invoke Remote.unexport() on the reference manually)
 
                                     </span>
                                  </td>
@@ -275,7 +301,8 @@
          <td width="95%" valign="top" background="ventro/bar_bg.gif">
             <table width="100%" height="31" border="0" cellpadding="0" cellspacing="0">
                <tr>
-                  <td style="vertical-align:middle"><span class="style11">&copy; 2004 GNU FDL</span></td>
+                  <td style="vertical-align:middle"><span class="style11">&copy; 2004 <a href=http://wiki.java.net/bin/view/People/JohnCatherino>
+                  John Catherino</a>, GNU FDL</span></td>
                   <td width="53%"><div align="right"></div></td></tr></table></td>
                   <td width="3%"><img src="ventro/bar_Right.gif" width="10" height="35"></td></tr></table></td>
                </tr>
