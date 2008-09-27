@@ -645,10 +645,9 @@ public final class Remote extends UnicastRemoteObject
     * for the suggestion for this most excellent addition.
     */
    public void unreferenced() {
-      if (unexportOnUnreference) {
-         try { unexport(true); } catch(NoSuchObjectException x) {}
-         ((Unreferenced)item).unreferenced();
-      }
+      if (unexportOnUnreference) try { unexport(true); }
+      catch(NoSuchObjectException x) {}
+      if (item instanceof Unreferenced) ((Unreferenced)item).unreferenced();
    }
    /**
     * This method controls the automatic-unexporting of a remote reference
