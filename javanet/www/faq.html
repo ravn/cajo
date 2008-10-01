@@ -140,13 +140,13 @@
                                       <a id="4"></a><b><u>4. Can I forcibly disconnect a client?</u></b> The answer is
                                       yes, but it will take a little effort. In RMI it is possible to terminate an
                                       object's remoteness, but it will mean for <u>all</u> remote VMs connected to
-                                      it. If you want to disconnect a <i>specific</i> client, you need to uniquely
-                                      remote the object reference given to that client using the
+                                      remoted instance. If you want to disconnect a <i>specific</i> client, you
+                                      need to uniquely remote the object reference given to that client, using the
                                       <a href=docs/gnu/cajo/invoke/Remote.html>Remote</a> class. Then you can
-                                      invoke the remote wrapper's <a href=http://java.sun.com/j2se/1.4.2/docs/api/java/rmi/server/UnicastRemoteObject.html#unexportObject(java.rmi.Remote,%20boolean)>
-                                      unexportObject()</a> method, which it inherits from UnicastRemoteObject. This
-                                      can be used to forcibly terminate all remote connections to that wrapper, and
-                                      even to check if any remote invocations were in progress (or pending) on it.<br><br>
+                                      invoke the remote wrapper's <a href=docs/gnu/cajo/invoke/Remote.html#unexport(boolean)>
+                                      unexport()</a> method. This will forcibly terminate all remote connections to
+                                      that wrapper, and even to pend and report if any remote invocations were in
+                                      progress (or pending) on it.<br><br>
 
                                       <a id="5"></a><b><u>5. Can I restrict my server only to local clients?</u></b>
                                       This is an intriguing question; fortunately the answer is <u>yes</u>! To make
