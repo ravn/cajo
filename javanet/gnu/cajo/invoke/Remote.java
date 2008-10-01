@@ -579,6 +579,21 @@ public final class Remote extends UnicastRemoteObject
       return worked;
    }
    /**
+    * This this method overrides the implementation provided by
+    * the superclass UnicastRemoteObject. It will route the invocation to the
+    * instance unexport method of this class, to properly remove the remote
+    * reference from the internal list of exported objects. This list is
+    * needed to support the static shutdown method provided by this class.
+    * 
+    * @deprecated It is strongly recommended to use the instance method
+    * unexport, for improved code clarity.
+    */
+    public static boolean unexportObject(java.rmi.Remote obj, boolean force)
+       throws NoSuchObjectException {
+       return obj instanceof Remote ? ((Remote)obj).unexport(force) :
+          UnicastRemoteObject.unexportObject(obj, force);
+    }
+   /**
     * The sole generic, multi-purpose interface for communication between VMs.
     * This function may be called reentrantly, so the inner object <i>must</i>
     * synchronize its critical sections as necessary. Technically, it simply
@@ -666,7 +681,7 @@ public final class Remote extends UnicastRemoteObject
     * Very handy and important!
     * @return A reference to this wrapper, purely to allow the convenient
     * construct of:<p><tt>
-    * return(new Remote(tempObj).clientScope();</tt>
+    * return(new Remote(tempObj).clientScope());</tt>
     */
    public Remote clientScope() {
       unexportOnUnreference = true;
