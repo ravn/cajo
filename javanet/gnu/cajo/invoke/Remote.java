@@ -64,14 +64,13 @@ public final class Remote extends UnicastRemoteObject
          return ss;
       }
       public boolean equals(Object o) {
-         return o instanceof RSSF &&
-               ((RSSF)o).port == port;
+         return o instanceof RSSF && ((RSSF)o).port == port;
       }
       public int hashCode() { return getClass().hashCode() + port; }
    }
    private static final class RCSF
       implements RMIClientSocketFactory, Serializable {
-      private static final long serialVersionUID = 0x6060842L; // ;-) B-52s
+      private static final long serialVersionUID = 0x6060842L; // B-52s  ;-)
       private int port;
       private String host;
       private RCSF() {}
@@ -80,17 +79,14 @@ public final class Remote extends UnicastRemoteObject
           port = rssf.port;
       }
       public Socket createSocket(String host, int port) throws IOException {
-         for (int i = 0; i < 5; i++) try { // try to connect, up to 5 times
-            Socket s = RMISocketFactory.getDefaultSocketFactory().
-               createSocket(this.host, this.port != 0 ? this.port : port);
-            s.setKeepAlive(true);
-            return s;
-         } catch(IOException x) { /* silently try again */ }
-         throw new IOException("unable to connect to remote item");
+         Socket s = RMISocketFactory.getDefaultSocketFactory().
+            createSocket(host, port);
+//            createSocket(this.host, this.port);
+         s.setKeepAlive(true);
+         return s;
       }
       public boolean equals(Object o) {
-         return o instanceof RCSF &&
-               ((RCSF)o).port == port;
+         return o instanceof RCSF && ((RCSF)o).port == port;
       }
       public int hashCode() { return getClass().hashCode() + port; }
    }
@@ -108,17 +104,6 @@ public final class Remote extends UnicastRemoteObject
     * factory the local items use to communicate with remote VMs.
     */
    public static final RSSF rssf = new RSSF();
-   static { // provide a default configuration; anonymous port & local name:
-      try { // equivalent of a Remote.config(null, 0, null, 0);
-         rssf.host = InetAddress.getLocalHost().getHostName();
-         rcsf.host = rssf.host;
-         rssf.port = 0;
-         rcsf.port = 0;
-         try { // this won't work if running as an applet
-            System.setProperty("java.rmi.server.useLocalHostname", "true");
-         } catch(SecurityException x) {}
-      } catch(Exception x) {}
-   }
    /**
     * This method is provided to obtain the server's host name.
     * This is useful when the host can have multiple addresses, either
@@ -182,16 +167,23 @@ public final class Remote extends UnicastRemoteObject
     * is being used.  If the clientPort field is 0, i.e. anonymous, its port
     * value will be automatically assigned to match the server, even if the
     * server port is also anonymous.
-    * @throws java.net.UnknownHostException If the IP address or name of the
-    * serverHost can not be resolved.
     */
    public static void config(String serverHost, int serverPort,
-      String clientHost, int clientPort) throws java.net.UnknownHostException {
+      String clientHost, int clientPort) {
       if (serverHost != null) rssf.host = serverHost;
       rcsf.host = clientHost != null ? clientHost : rssf.host;
       rssf.port =
          serverPort != 0 ? serverPort : clientPort != 0 ? clientPort : 0;
       rcsf.port = clientPort != 0 ? clientPort : serverPort;
+//      try { // this won't work if we're running as an applet
+//         System.setProperty("java.rmi.server.hostname", rcsf.host);
+//      } catch(SecurityException x) { /* but then it's not necessary */ }
+   }
+   static { // provide default configuration: anonymous port & local address
+      try {
+         String defaulthost = InetAddress.getLocalHost().getHostAddress();
+         config(defaulthost, 0, defaulthost, 0);
+      } catch(java.net.UnknownHostException x) {}
    }
    /**
     * This method configures the server's TCP parameters for RMI through HTTP
@@ -229,12 +221,10 @@ public final class Remote extends UnicastRemoteObject
     * non-null.
     * @param password The proxy account password required for permission, if
     * non-null.
-    * @throws java.net.UnknownHostException If the IP address or name of the
-    * local host interface can not be determined.
     */
    public static void config(int serverPort, String clientHost, int clientPort,
       String proxyHost, int proxyPort, final String username,
-      final String password) throws java.net.UnknownHostException {
+      final String password) {
       config(null, serverPort, clientHost, clientPort);
       try { // this won't work if running as an applet
          if (proxyHost != null) {
