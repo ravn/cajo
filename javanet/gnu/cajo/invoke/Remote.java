@@ -175,9 +175,9 @@ public final class Remote extends UnicastRemoteObject
       rssf.port =
          serverPort != 0 ? serverPort : clientPort != 0 ? clientPort : 0;
       rcsf.port = clientPort != 0 ? clientPort : serverPort;
-//      try { // this won't work if we're running as an applet
-//         System.setProperty("java.rmi.server.hostname", rcsf.host);
-//      } catch(SecurityException x) { /* but then it's not necessary */ }
+      try { // this won't work if we're running as an applet
+         System.setProperty("java.rmi.server.hostname", rcsf.host);
+      } catch(SecurityException x) { /* but then it's not necessary */ }
    }
    static { // provide default configuration: anonymous port & local address
       try {
@@ -240,7 +240,7 @@ public final class Remote extends UnicastRemoteObject
                }
             );
          }
-      } catch (SecurityException x) {}
+      } catch (SecurityException x) { /* but then it's not necessary */ }
    }
    /**
     * This method will brutally un-remote all currently remotely invocable
@@ -456,32 +456,31 @@ public final class Remote extends UnicastRemoteObject
       throws Exception {
       if (item instanceof Invoke) return ((Invoke)item).invoke(method, args);
       if (args instanceof Object[]) {
-        if (((Object[])args).length == 0) try {
-           return item.getClass().getMethod(method, null).invoke(item, null);
-        } catch(NoSuchMethodException x) {}
-        else {
-           Object[] o_args = (Object[])args;
-           Class[]  c_args = new Class[o_args.length];
-           for(int i = 0; i < o_args.length; i++)
-              c_args[i] = o_args[i] != null ? o_args[i].getClass() : null;
-           Method m = findBestMethod(item, method, c_args);
-           if (m != null) return m.invoke(item, o_args);
-        }
-     }
-     if (args != null) {
-        Method m = findBestMethod(item, method, new Class[]{ args.getClass() });
-        if (m != null) return m.invoke(item, new Object[]{ args });
-     } else try {
-        return item.getClass().getMethod(method, null).invoke(item, null);
-     } catch(NoSuchMethodException x) {}
-     try {
-        return item.getClass().getMethod(method, new Class[]{ Object.class }).
-           invoke(item, new Object[]{ args });
-     } catch(NoSuchMethodException x) {
-        throw new NoSuchMethodException(item.getClass().getName() + '.' +
-           method + args == null ? "()" : '(' +
-              args.getClass().getName() + ')');
-     }
+         if (((Object[])args).length == 0) try {
+            return item.getClass().getMethod(method, null).invoke(item, null);
+         } catch(NoSuchMethodException x) {}
+         else {
+            Object[] o_args = (Object[])args;
+            Class[]  c_args = new Class[o_args.length];
+            for(int i = 0; i < o_args.length; i++)
+               c_args[i] = o_args[i] != null ? o_args[i].getClass() : null;
+            Method m = findBestMethod(item, method, c_args);
+            if (m != null) return m.invoke(item, o_args);
+         }
+      }
+      if (args != null) {
+         Method m = findBestMethod(item, method, new Class[]{ args.getClass() });
+         if (m != null) return m.invoke(item, new Object[]{ args });
+      } else try {
+         return item.getClass().getMethod(method, null).invoke(item, null);
+      } catch(NoSuchMethodException x) {}
+      try {
+         return item.getClass().getMethod(method, new Class[]{ Object.class }).
+            invoke(item, new Object[]{ args });
+      } catch(NoSuchMethodException x) {
+         throw new NoSuchMethodException(item.getClass().getName() + '.' +
+            method + args == null ? "()" : '(' + args.getClass().getName() + ')');
+      }
    }
    /**
     * This is the reference to the local (or possibly remote) object
