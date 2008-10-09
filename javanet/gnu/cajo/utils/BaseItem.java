@@ -45,16 +45,14 @@ public class BaseItem {
     */
    protected MainThread runnable;
    /**
-    * A reference to the proxy served by this item.  It is assigned by the
-    * {@link ItemServer ItemServer} during its bind operation. It is
-    * the item's proxy, if it has one, otherwise a remote reference to itself,
-    * encased in a {@link java.rmi.MarshalledObject MarshalledObject}
+    * A reference to the proxy served by this item, if it has one.  It is
+    * assigned by the {@link ItemServer ItemServer} during its bind
+    * operation.
     */
-   protected MarshalledObject mob;
+   protected MarshalledObject proxy;
    /**
-    * A reference to the item's processing thread. It can be
-    * {@link java.lang.Thread#interrupted interrupted}, to signal the item to
-    * perform an orderly shutdown.
+    * A reference to the item's processing thread. It can be used to
+    * interrupt the thread, to signal the item to perform an orderly shutdown.
     */
    public Thread thread;
    /**
@@ -89,13 +87,12 @@ public class BaseItem {
     * This remotely invokable method is called by remote clients to install
     * their proxies in this VM. This invocation will only succeed if
     * the acceptProxies method of the {@link ItemServer ItemServer} has been
-    * called. The received proxy's init method will be invoked with a reference
-    * to itself, remoted in the context of this VM.  This is done to initialize
-    * the proxy, and provide it with a handle to pass to other remote items,
-    * on which they can contact this proxy. The remote proxy reference will
-    * be returned to the caller, providing an interface on which to
-    * asynchronously call its proxy.
-    * 
+    * called. The received proxy's init method will be invoked with a
+    * reference to itself, remoted in the context of this VM.  This is done
+    * to initialise the proxy, and provide it with a handle to pass to other
+    * remote items, on which they can contact this proxy. The remote proxy
+    * reference will be returned to the caller, providing an interface on
+    * which to asynchronously call its proxy.
     * @param proxy The proxy to run in this VM, it is typically sent as a
     * MarshalledObject, from which it will be extracted automatically.
     * @return A reference to the proxy remoted within this context.
@@ -114,26 +111,24 @@ public class BaseItem {
       return ref;
    }
    /**
-    * This remotely invokable method is called by the remote clients, to
-    * request the server item's default proxy, if it supports one. If it does
-    * not, it will return a remote reference to itself.
-    * @return A the proxy serving this item, or a remote reference to the
-    * item, encased in a {@link java.rmi.MarshalledObject MarshalledObject}.
-    */
-   public MarshalledObject getProxy() { return mob; }
-   /**
     * This method is called by the {@link ItemServer ItemServer} during a
-    * bind operation to set the {@link #mob mob} member.
-    * @param mob The item's proxy object, if it supports one, otherwise a
-    * remote reference to the item itself, either way, encased in a
-    * {@link java.rmi.MarshalledObject MarshalledObject}
+    * bind operation to set the {@link #proxy proxy} member. If the BaseItem
+    * does not support a proxy, it can be given one, just once, by a remote
+    * item. Conceptually this is very powerful, but must be used carefully.
+    * @param proxy The item's proxy object, if it supports one.
     * @throws IllegalArgumentException If the method is called more than
     * once, presumably by a remote item.
     */
-   public void setProxy(MarshalledObject mob) {
-      if (this.mob ==  null) this.mob = mob;
+   public void setProxy(MarshalledObject proxy) {
+      if (this.proxy ==  null) this.proxy = proxy;
       else throw new IllegalArgumentException("Proxy already set");
    }
+   /**
+    * This remotely invokable method is called by the remote clients, to
+    * request the server item's default proxy, if it supports one.
+    * @return A the proxy serving this item, otherwise null.
+    */
+   public MarshalledObject getProxy() { return proxy; }
    /**
     * This method is called by the {@link ItemServer ItemServer} during a
     * bind operation. If the item has a processing thread, meaning its
@@ -191,11 +186,12 @@ public class BaseItem {
     * @return A description of the callable methods, their arguments, returns,
     * and functionality.
     */
-   public String getDescription() { return "not defined"; }
+   public String getDescription() { return "BaseItem: undefined"; }
    /**
     * This method is canonically called when an item announces its reference
     * via the {@link Multicast Multicast} class. It is expected to receive
-    * the URLs of objects that heard the announcement, and wish to be contacted.
+    * the URLs of objects that heard the announcement, and wish to be
+    * contacted.
     * @param url A //host:port/name type URL on which the 'first-contact' object
     * of a remote VM can be reached.
     */
