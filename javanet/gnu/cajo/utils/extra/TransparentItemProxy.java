@@ -117,30 +117,21 @@ public final class TransparentItemProxy implements InvocationHandler {
     * @throws NoSuchMethodException If no matching method can be found
     * on the server item.
     * @throws Exception If the server item rejected the invocation, for
-    * application specific reasons. The cause of the exception will be
-    * automatically unpacked from the internally resulting
-    * java.lang.reflect.InvocationTargetException, to provide the calling
-    * code with the actual exception resulting from the method invocation.
-    * Special thanks to Petr Stepan for pointing out this improvement, and
-    * providing a <a href=http://benpryor.com/blog/index.php?/archives/24-Java-Dynamic-Proxies-and-InvocationTargetException.html>
-    * link</a> to the discussion.
+    * application specific reasons.
     * @throws Throwable For some <i>very</i> unlikely reasons, not outlined
-    * above. (required, sorry)
+    * above. <i>(required, sorry)</i>
     */
    public Object invoke(Object proxy, Method method, Object args[])
       throws Throwable {
-      try {
-         String name = method.getName();
-         if (name.equals("equals")) { // perform shallow equals...
-            return this.equals(args[0]) ? Boolean.TRUE : Boolean.FALSE;
-         } else if (name.equals("hashCode")) // shallow hashCode too...
-            return new Integer(this.hashCode());
-         else if (name.equals("toString")) // shallow toString too...
-            return this.name;
-         else return Remote.invoke(item, name, args);
-      } catch(Throwable t) {
-         if (t instanceof InvocationTargetException)
-            t = ((InvocationTargetException)t).getTargetException();
+      String name = method.getName();
+      if (name.equals("equals")) { // perform shallow equals...
+         return this.equals(args[0]) ? Boolean.TRUE : Boolean.FALSE;
+      } else if (name.equals("hashCode")) // shallow hashCode too...
+         return new Integer(this.hashCode());
+      else if (name.equals("toString")) // shallow toString too...
+         return this.name;
+      try { return Remote.invoke(item, name, args); }
+      catch(Throwable t) {
          if (handler != null)
             return Remote.invoke(handler, "handle",
                new Object[] { proxy, method, args, t });
