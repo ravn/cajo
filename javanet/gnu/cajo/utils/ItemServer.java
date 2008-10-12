@@ -23,7 +23,7 @@ import java.io.IOException;
  * by the Free Software Foundation, at version 3 of the licence, or (at your
  * option) any later version.
  *
- * Th cajo library is distributed in the hope that it will be useful,
+ * The cajo library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public Licence for more details.
@@ -86,29 +86,22 @@ public class ItemServer {
         System.setProperty("java.security.policy", "server.policy");
      System.setProperty("java.rmi.server.useCodebaseOnly", "true");
   }
-  private static Object main;
-  /**
-   * The reference to the sole local rmiregistry of this VM. All binding
-   * operations must make use of this instance, as there can be only one
-   * rmiregistry per session.  All other items bound on this registry will
-   * also have to share the same port.  The port used for the registry will
-   * be the same one used to communicate with all local server instances.
-   * Generally this instance is manipulated solely by the object. However,
-   * it is made public, to allow the application options; such as dynamically
-   * unbinding items, or binding objects of other types.
-   */
-  public static Registry registry;
+  private static Registry registry;
   /**
    * Nothing happens in the default constructor of this class. This is used
    * when the server has its own internal {@link CodebaseServer CodebaseServer}
    * instance running. To take advantage the client loading capability of the
    * CodebaseServer, it must be running in the same instance of the server's VM.
+   * @deprecated Only the static methods of this class are necessary
    */
   public ItemServer() {}
   /**
    * This constructor sets the RMI codebase property for this VM instance.
    * This is necessary if the server is serving proxies, or other types of
    * classes, <b>and</b> is using a common, or remote, code base server.
+   * @deprecated With release 1.118 of the cajo library, this constructor
+   * is unnecessary. Codebase management is handled automatically. Only
+   * the static methods are needed.
    * @param host The public IP address or host name, on which the codebase
    * is being served. It need not be the same physical machine as the item
    * server.
@@ -154,9 +147,9 @@ public class ItemServer {
    * with other applications, checking for already bound items is unnecessary.
    * <p> The provided item will first have its startThread method invoked
    * with a null argument, to signal it to start its main processing thread
-   * (if it has one). Then it will have its setProxy method invoked with remote
-   * reference to itself, with which it can share with remote VMs, in an
-   * application specific manner (again if it has one).
+   * (if it has one). Then it will have its setItem method invoked with
+   * remote reference to itself, with which it can share with remote VMs, in
+   * an application specific manner (again if it has one).
    * @param item The item to be bound.  It may be either local to the machine,
    * or remote, it can even be a proxy from a remote item, if proxy
    * {@link #acceptProxies acceptance} was enabled for this VM.
@@ -166,19 +159,9 @@ public class ItemServer {
    * settings.
    * @throws RemoteException If the registry could not be created.
    */
-  public static synchronized Remote bind(Object item, String name)
-     throws RemoteException {
-     if (registry == null) {
-        registry = LocateRegistry.
-           createRegistry(Remote.getServerPort(), Remote.rcsf, Remote.rssf);
-     }
-     Remote handle = item instanceof Remote ? (Remote)item : new Remote(item);
-     try {
-        Remote.invoke(item, "startThread", null);
-        Remote.invoke(item, "setProxy", new MarshalledObject(handle));
-     } catch(Exception x) {}
-     registry.rebind(name, handle);
-     return handle;
+  public static Remote bind(Object item, String name) throws RemoteException {
+     try  { return bind(item, name, null); }
+     catch(IOException x) { return null; } // can't happen, no proxy
   }
   /**
    * This method is used to bind a proxy serving item. It will remote a
@@ -194,24 +177,31 @@ public class ItemServer {
    * {@link #acceptProxies acceptance} was enabled for this VM.
    * @param name The name under which to bind the item reference in the
    * local rmiregistry.
-   * @param proxy The proxy item to be sent to requesting clients.
+   * @param proxy The proxy item to be sent to requesting clients, it is
+   * normally encased in a java.rmi.MarshalledObject, for efficiency. If it
+   * is not when passed in, it will be, automatically.
    * @return A remoted reference to the item within the context of this VM's
    * settings.
    * @throws RemoteException If the registry could not be created.
+   * @throws IOException If the provided proxy item is not serialisable.
    */
-  public static synchronized Remote
-     bind(Object item, String name, Object proxy) throws RemoteException {
-     if (registry == null) {
-        registry = LocateRegistry.
-           createRegistry(Remote.getServerPort(), Remote.rcsf, Remote.rssf);
-     }
+  public static synchronized Remote bind(Object item, String name,
+     Object proxy) throws RemoteException, IOException {
      Remote handle = item instanceof Remote ? (Remote)item : new Remote(item);
-     try { Remote.invoke(proxy, "setItem", handle); }
-     catch(Exception x) {}
-     try {
-        Remote.invoke(item, "startThread", null);
-        Remote.invoke(item, "setProxy", new MarshalledObject(proxy));
-     } catch(Exception x) {}
+     if (proxy != null) {
+        try { Remote.invoke(proxy, "setItem", handle); }
+        catch(Exception x) { /* method unimplemented, odd, but OK? */ }
+        if (!(proxy instanceof MarshalledObject))
+           proxy = new MarshalledObject(proxy);
+        try { Remote.invoke(item, "setProxy", proxy); }
+        catch(Exception x) { /* method unimplemented, odd, but OK? */ }
+     }
+     try { Remote.invoke(item, "startThread", null); }
+     catch(Exception x) { /* method unimplemented, that's OK */ }
+     if (registry == null)
+        registry = LocateRegistry.createRegistry(Remote.getDefaultServerPort(),
+           Remote.getDefaultClientSocketFactory(),
+               Remote.getDefaultServerSocketFactory());
      registry.rebind(name, handle);
      return handle;
   }
@@ -266,7 +256,8 @@ public class ItemServer {
      ClassNotFoundException, InstantiationException, IllegalAccessException,
      RemoteException {
      Class c = new JarClassLoader(file).loadClass(item);
-     return bind(c.newInstance(), name);
+     try { return bind(c.newInstance(), name, null); }
+     catch(IOException x) { return null; } // can't happen, no proxy
   }
   /**
    * The application loads either a zipped marshalled object (zedmob) from a
@@ -301,11 +292,9 @@ public class ItemServer {
       String localHost  = args.length > 3 ? args[3] : null;
       int localPort     = args.length > 4 ? Integer.parseInt(args[4]) : 0;
       Remote.config(localHost, localPort, clientHost, clientPort);
-      main = Remote.getItem(url);
-      if (args.length > 5)
-         Remote.invoke(main, "setItem", Remote.getItem(args[5]));
-      main = bind(main, "main");
-      new Multicast().announce((Remote)main, 16);
+      Remote main = new Remote(Remote.getItem(url));
+      Object proxy = args.length > 5 ? Remote.getItem(args[5]) : null;
+      new Multicast().announce(bind(main, "main", proxy), 16);
       acceptProxies();
       System.out.println("Server started: " +
          DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL).
@@ -313,13 +302,13 @@ public class ItemServer {
       System.out.print("Serving item ");
       System.out.print(args[0]);
       System.out.println(" bound under the name main");
-      System.out.print("locally  operating on ");
-      System.out.print(Remote.getServerHost());
+      System.out.print("internally operating on\t");
+      System.out.print(Remote.getDefaultServerHost());
       System.out.print(" port ");
-      System.out.println(Remote.getServerPort());
-      System.out.print("remotely operating on ");
-      System.out.print(Remote.getClientHost());
+      System.out.println(Remote.getDefaultServerPort());
+      System.out.print("externally operating on\t");
+      System.out.print(Remote.getDefaultClientHost());
       System.out.print(" port ");
-      System.out.println(Remote.getClientPort());
+      System.out.println(Remote.getDefaultClientPort());
    }
 }

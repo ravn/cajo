@@ -36,7 +36,7 @@ import java.lang.reflect.Method;
 /**
  * This class takes any object, and allows it to be called from
  * remote VMs. This class eliminates the need to maintain multiple
- * specialized stubs for multiple, application specific objects. It
+ * specialised stubs for multiple, application specific objects. It
  * effectively allows any object to be remoted, and makes all of
  * the object's public methods, including its static ones, remotely callable.
  * It also contains several very useful utility methods, to further support
@@ -51,88 +51,121 @@ public final class Remote extends UnicastRemoteObject
    private static final class RSSF implements RMIServerSocketFactory {
       private int port;
       private String host;
+      private RCSF rcsf;
+      private RSSF(String host, int port) {
+         this.host = host;
+         this.port = port;
+      }
       public ServerSocket createServerSocket(int port) throws IOException {
          ServerSocket ss = host == null ?
             RMISocketFactory.getDefaultSocketFactory().
                createServerSocket(this.port) :
             new ServerSocket(this.port, 50, InetAddress.getByName(host));
-         if (host == null) host = ss.getInetAddress().getHostName();
-         if (this.port == 0) {
-            this.port = ss.getLocalPort();
-            rcsf.port = this.port;
-         } else if (rcsf.port == 0) rcsf.port = this.port;
+         if (this.host == null)
+            this.host = ss.getInetAddress().getHostAddress();
+         if (this.port == 0) this.port = ss.getLocalPort();
+         if (rcsf != null) {
+            if (rcsf.host == null)
+               rcsf.host = InetAddress.getLocalHost().getHostAddress();
+            if (rcsf.port == 0) rcsf.port = this.port;
+            Remote.defaultServerHost = this.host;
+            Remote.defaultServerPort = this.port;
+            Remote.defaultClientHost = rcsf.host;
+            Remote.defaultClientPort = rcsf.port;
+            rcsf = null;
+         }
          return ss;
       }
       public boolean equals(Object o) {
          return o instanceof RSSF && ((RSSF)o).port == port;
       }
-      public int hashCode() { return getClass().hashCode() + port; }
+      public int hashCode() { return getClass().hashCode() ^ port; }
    }
    private static final class RCSF
       implements RMIClientSocketFactory, Serializable {
-      private static final long serialVersionUID = 0x6060842L; // B-52s  ;-)
+      private static final long serialVersionUID = 0x6060842L; // B-52s ;-)
       private int port;
       private String host;
       private RCSF() {}
-      private RCSF(String localAddr) {
-          host = localAddr;
-          port = rssf.port;
+      private RCSF(String host, int port) {
+          host = host;
+          port = port;
       }
       public Socket createSocket(String host, int port) throws IOException {
          Socket s = RMISocketFactory.getDefaultSocketFactory().
-            createSocket(host, port);
-//            createSocket(this.host, this.port);
-         s.setKeepAlive(true);
+            createSocket(this.host, this.port);
          return s;
       }
       public boolean equals(Object o) {
          return o instanceof RCSF && ((RCSF)o).port == port;
       }
-      public int hashCode() { return getClass().hashCode() + port; }
+      public int hashCode() { return getClass().hashCode() ^ port; }
    }
-   private static Object proxy;
-   private static Registry registry;
    private static Vector items = new Vector();
    private boolean unexportOnUnreference;
+   // the static configuration, used for default for remoting
+   private static String defaultServerHost, defaultClientHost;
+   private static int defaultServerPort, defaultClientPort;
+   private static RCSF defaultRCSF;
+   private static RSSF defaultRSSF;
    /**
-    * A global reference to the remote client socket factory.  This is the
-    * factory remote VMs will use to communicate with local items.
+    * This is the default RMIServerSocketFactory on which left unspecified,
+    * items are being remoted. Its value can be changed via the static
+    * config method.
+    * @return The server socket factory on which the item is accepting
+    * inbound connections
     */
-   public static final RCSF rcsf = new RCSF();
+   public static RMIServerSocketFactory getDefaultServerSocketFactory() {
+      return defaultRSSF;
+   }
    /**
-    * A global reference to the remote server socket factory.  This is the
-    * factory the local items use to communicate with remote VMs.
+    * This is the default RMIClientSocketFactory on which left unspecified,
+    * items are being remoted. Its value can be changed via the static
+    * config method.
+    * @return The client socket factory on which the item is accepting
+    * inbound connections
     */
-   public static final RSSF rssf = new RSSF();
+   public static RMIClientSocketFactory getDefaultClientSocketFactory() {
+      return defaultRCSF;
+   }
    /**
-    * This method is provided to obtain the server's host name.
-    * This is useful when the host can have multiple addresses, either
-    * because it has multiple network interface cards, or is multi-homed. 
-    * @return The server address on which the item is remoted.
+    * This is the default server host address on which left unspecified,
+    * items are being remoted. Its value can be changed via the static
+    * config method.
+    * @return The network interface on which the item is accepting
+    * inbound connections
     */
-   public static String getServerHost() { return rssf.host; }
+   public static String getDefaultServerHost() {
+      return defaultRSSF != null ? defaultRSSF.host : "Unassigned";
+   }
    /**
-    * This method is provided to obtain the local  server socket port
-    * number. This can be particularly useful if the host was remoted on an
-    * anonymous port.  If a firewall is in use, this inbound port must be made
-    * accessible to outside clients.
-    * @return The local ServerSocket port number on which the item is remoted.
+    * This is the default client port on which left unspecified,
+    * items are being remoted. Its value can be changed via the static
+    * config method. It is generally the same as the default server port,
+    * unless port translation is being used
+    * @return The network interface TCP port on which the item is accepting
+    * inbound connections
     */
-   public static int getServerPort() { return rssf.port; }
+   public static int getDefaultServerPort()    { return defaultRSSF.port; }
    /**
-    * This method is provided to obtain the host name remote clients will
-    * use to contact this server. This can be different from the local server
-    * name or address if NAT is being used.
-    * @return The server address clients use to connect to the server.
+    * This is the default server network address on which left unspecified,
+    * clients connect to remoted items. Its value can be changed via the
+    * static config method. It is typically different from the default
+    * server host if the remoted items are operating behind NAT.
+    * @return The network interface on which the the item is accepting
+    * inbound connections from clients
     */
-   public static String getClientHost() { return rcsf.host; }
+   public static String getDefaultClientHost() {
+      return defaultRCSF != null ? defaultRCSF.host : "Unassigned";
+   }
    /**
-    * This method is provided to obtain the socket port number the remote
-    * client must use to contact the server.  This can be different from
-    * the server port number if port translation is being used.
-    * @return The port clients must connect on to reach the server.
+    * This is the default server host port on which left unspecified,
+    * items are being remoted. Its value can be changed via the static
+    * config method.
+    * @return The network interface TCP port on which the item is accepting
+    * inbound connections
     */
-   public static int getClientPort() { return rcsf.port; }
+   public static int getDefaultClientPort()    { return defaultRCSF.port; }
    /**
     * This method configures the server's TCP parameters for RMI.  It allows
     * complete specification of client-side and server-side ports and
@@ -143,14 +176,16 @@ public final class Remote extends UnicastRemoteObject
     * control how the sockets will be configured locally, the second two
     * control how a remote object's sockets will be configured to communicate
     * with this server.
-    * <p><i><u>Note</u>:</i> If this class is to be configured, it must be
-    * done <b>before</b> any items are remoted.
-    * @param serverHost The local domain name, or IP address of this host.
-    * If null, it will use the primary network interface. Typically it is
-    * specified when the server has multiple phyisical network interfaces, or
-    * is multi-homed, i.e. having multiple logical network interfaces. It can
-    * <i>also</i> be specified as "0.0.0.0" to use <i><u>all</u></i> of the
-    * machine's network interfaces.
+    * <p><i><u>Note</u>:</i> If this class is to be specifically configured,
+    * it must be done <b>before</b> any items are remoted. It can be called
+    * only one time, any subsequent calls will result in an
+    * IllegalArgumentException being thrown.
+    * @param serverHost The local network interface on which the item will
+    * will be remotely invokable. Typically it is specified when the server
+    * has multiple phyisical network interfaces, or is multi-homed, i.e.
+    * having multiple logical network interfaces. The value can be null,
+    * which will make the item accessible on <i>all</i> network interfaces,
+    * this is identical to providing the special port address "0.0.0.0".
     * @param serverPort Specifies the local port on which the server is
     * serving clients. It can be zero, to use an anonymous port. If firewalls
     * are being used, it must be an accessible port, into this server. If this
@@ -170,20 +205,17 @@ public final class Remote extends UnicastRemoteObject
     */
    public static void config(String serverHost, int serverPort,
       String clientHost, int clientPort) {
-      if (serverHost != null) rssf.host = serverHost;
-      rcsf.host = clientHost != null ? clientHost : rssf.host;
-      rssf.port =
-         serverPort != 0 ? serverPort : clientPort != 0 ? clientPort : 0;
-      rcsf.port = clientPort != 0 ? clientPort : serverPort;
-      try { // this won't work if we're running as an applet
-         System.setProperty("java.rmi.server.hostname", rcsf.host);
-      } catch(SecurityException x) { /* but then it's not necessary */ }
+      Remote.defaultRCSF = new RCSF(clientHost, clientPort);
+      Remote.defaultRSSF = new RSSF(serverHost, serverPort);
+      Remote.defaultRSSF.rcsf = Remote.defaultRCSF;
+      Remote.defaultServerHost = serverHost;
+      Remote.defaultClientHost = clientHost;
    }
    static { // provide default configuration: anonymous port & local address
-      try {
-         String defaulthost = InetAddress.getLocalHost().getHostAddress();
-         config(defaulthost, 0, defaulthost, 0);
-      } catch(java.net.UnknownHostException x) {}
+      String defaulthost = "127.0.0.1";
+      try { defaulthost = InetAddress.getLocalHost().getHostAddress(); }
+      catch(java.net.UnknownHostException x) {}
+      config(defaulthost, 0, defaulthost, 0);
    }
    /**
     * This method configures the server's TCP parameters for RMI through HTTP
@@ -222,8 +254,8 @@ public final class Remote extends UnicastRemoteObject
     * @param password The proxy account password required for permission, if
     * non-null.
     */
-   public static void config(int serverPort, String clientHost, int clientPort,
-      String proxyHost, int proxyPort, final String username,
+   public static void config(int serverPort, String clientHost,
+      int clientPort, String proxyHost, int proxyPort, final String username,
       final String password) {
       config(null, serverPort, clientHost, clientPort);
       try { // this won't work if running as an applet
@@ -370,13 +402,13 @@ public final class Remote extends UnicastRemoteObject
     */
    public static Class autobox(Class arg) {
       return arg.isPrimitive() ?
-         arg == Boolean.TYPE   ? Boolean.class   :
-         arg == Byte.TYPE      ? Byte.class      :
-         arg == Character.TYPE ? Character.class :
-         arg == Short.TYPE     ? Short.class     :
-         arg == Integer.TYPE   ? Integer.class   :
-         arg == Long.TYPE      ? Long.class      :
-         arg == Float.TYPE     ? Float.class     : Double.class : arg;
+         arg == boolean.class  ? Boolean.class   :
+         arg == byte.class     ? Byte.class      :
+         arg == char.class     ? Character.class :
+         arg == short.class    ? Short.class     :
+         arg == int.class      ? Integer.class   :
+         arg == long.class     ? Long.class      :
+         arg == float.class    ? Float.class     : Double.class : arg;
    }
    /**
     * This method attempts to resolve the argument inheritance blindness in
@@ -450,36 +482,51 @@ public final class Remote extends UnicastRemoteObject
     * @throws IllegalArgumentException If the method argument is null.
     * @throws NoSuchMethodException If no matching method can be found.
     * @throws Exception If the item rejected the invocation, for application
-    * specific reasons.
+    * specific reasons. The cause of the exception will be automatically
+    * unpacked from an internally resulting
+    * java.lang.reflect.InvocationTargetException, to provide the calling
+    * code with the actual exception resulting from the method invocation.
+    * Special thanks to Petr Stepan for pointing out this improvement, and
+    * providing a <a href=http://benpryor.com/blog/index.php?/archives/24-Java-Dynamic-Proxies-and-InvocationTargetException.html>
+    * link</a> to the discussion.
     */
    public static Object invoke(Object item, String method, Object args)
       throws Exception {
-      if (item instanceof Invoke) return ((Invoke)item).invoke(method, args);
-      if (args instanceof Object[]) {
-         if (((Object[])args).length == 0) try {
+      try {
+         if (item instanceof Invoke)
+            return ((Invoke)item).invoke(method, args);
+         if (args instanceof Object[]) {
+            if (((Object[])args).length == 0) try {
+               return item.getClass().getMethod(method, null).
+                  invoke(item, null);
+            } catch(NoSuchMethodException x) {}
+            else {
+               Object[] o_args = (Object[])args;
+               Class[]  c_args = new Class[o_args.length];
+               for(int i = 0; i < o_args.length; i++)
+                  c_args[i] = o_args[i] != null ? o_args[i].getClass() : null;
+               Method m = findBestMethod(item, method, c_args);
+               if (m != null) return m.invoke(item, o_args);
+            }
+         }
+         if (args != null) {
+            Method m =
+               findBestMethod(item, method, new Class[]{ args.getClass() });
+            if (m != null) return m.invoke(item, new Object[]{ args });
+         } else try {
             return item.getClass().getMethod(method, null).invoke(item, null);
          } catch(NoSuchMethodException x) {}
-         else {
-            Object[] o_args = (Object[])args;
-            Class[]  c_args = new Class[o_args.length];
-            for(int i = 0; i < o_args.length; i++)
-               c_args[i] = o_args[i] != null ? o_args[i].getClass() : null;
-            Method m = findBestMethod(item, method, c_args);
-            if (m != null) return m.invoke(item, o_args);
+         try {
+            return item.getClass().
+               getMethod(method, new Class[]{ Object.class }).
+                  invoke(item, new Object[]{ args });
+         } catch(NoSuchMethodException x) {
+            throw new NoSuchMethodException(item.getClass().getName() +
+               '.' + method + (args == null ? "()" :
+                  '(' + args.getClass().getName() + ')'));
          }
-      }
-      if (args != null) {
-         Method m = findBestMethod(item, method, new Class[]{ args.getClass() });
-         if (m != null) return m.invoke(item, new Object[]{ args });
-      } else try {
-         return item.getClass().getMethod(method, null).invoke(item, null);
-      } catch(NoSuchMethodException x) {}
-      try {
-         return item.getClass().getMethod(method, new Class[]{ Object.class }).
-            invoke(item, new Object[]{ args });
-      } catch(NoSuchMethodException x) {
-         throw new NoSuchMethodException(item.getClass().getName() + '.' +
-            method + args == null ? "()" : '(' + args.getClass().getName() + ')');
+      } catch(java.lang.reflect.InvocationTargetException x) {
+         throw (Exception)x.getTargetException();
       }
    }
    /**
@@ -501,40 +548,39 @@ public final class Remote extends UnicastRemoteObject
     * @throws RemoteExcepiton If the remote instance could not be be created.
     */
    public Remote(Object item) throws RemoteException {
-      this(item, rssf.port, rcsf, rssf);
+      this(item, Remote.defaultRSSF.port, Remote.defaultRSSF, Remote.defaultRCSF);
    }
    /**
     * The constructor takes <i>any</i> object, and allows it to be remotely
     * invoked. If the object implements the {@link Invoke Invoke} interface,
     * it will route all remote invocations directly to it. Otherwise it will
-    * use Java reflection to attempt to invoke the remote calls directly on the
-    * object's public methods.
+    * use Java reflection to attempt to invoke the remote calls directly on
+    * the object's public methods.
     * @param  item The object to make remotely callable.  It may be an
     * arbitrary object of any type, it can even be a reference to a remote
     * reference from another host, being re-remoted through this JVM.
-    * @param localAddr The NAT internal address. This is used to remote
-    * objects for use by clients <i>inside</i> a NAT subnet. This is often
-    * needed for routers like LinkSys, which do not allow clients inside the
-    * NAT subnet to use a hosts external address. For example, the externally
-    * accessible reference could be created from the single-argument
-    * constructor under the name and bound under the name <tt>externalItem,</tt>
-    * and the locally accessible item could be created with this constructor,
-    * and bound under the name <tt>internalItem.</tt>
+    * @param host The network interface on which clients will communicate
+    * with this item. It is typically specified when clients have more than
+    * one.
+    * @param port The TCP port over which the server and client will communicate 
     * @throws RemoteExcepiton If the remote instance could not be be created.
     */
-   public Remote(Object item, String localAddr) throws RemoteException {
-      this(item, rssf.port, new RCSF(localAddr), rssf);
+   public Remote(Object item, String host, int port) throws RemoteException {
+      this(item, port, new RSSF(host, port), new RCSF(host, port));
    }
    /**
     * This constructor allows for complete configuration of an object's
     * remoting; normally this should be used for rare and highly specialised
-    * cases.
+    * cases. Any or all of the parameters can be null (or zero in the case
+    * of the port) to use the default static values. Most often this used to
+    * add encrypted sockets to the framework.
     * <i><u>Note</u>:</i> the RMIClientSocketFactory <b><i>must</i></b> be
     * seriallisable.
     * @param  item The object to make remotely callable.  It may be an
     * arbitrary object of any type, it can even be a reference to a remote
     * reference from another host, being re-remoted through this JVM.
-    * @param port The TCP port number on which to communicate with the object
+    * @param port The server TCP port number on which the server will
+    * be operating.
     * @param rcsf The custom client socket factory to be used to communicate
     * with this item, by remote clients. (please regard carefully the note
     * above)
@@ -542,9 +588,8 @@ public final class Remote extends UnicastRemoteObject
     * connections from remote clients.
     * @throws RemoteExcepiton If the remote instance could not be be created.
     */
-   public Remote(Object item, int port,
-      RMIClientSocketFactory rcsf, RMIServerSocketFactory rssf)
-      throws RemoteException {
+   public Remote(Object item, int port, RMIServerSocketFactory rssf,
+      RMIClientSocketFactory rcsf) throws RemoteException {
       super(port, rcsf, rssf);
       this.item = item;
       items.add(this);
@@ -573,7 +618,6 @@ public final class Remote extends UnicastRemoteObject
     * instance unexport method of this class, to properly remove the remote
     * reference from the internal list of exported objects. This list is
     * needed to support the static shutdown method provided by this class.
-    * 
     * @deprecated It is strongly recommended to use the instance method
     * unexport, for improved code clarity.
     */
@@ -709,10 +753,8 @@ public final class Remote extends UnicastRemoteObject
       config(localHost, localPort, clientHost, clientPort);
       try { System.setProperty("java.rmi.server.disableHttp", "true"); }
       catch(SecurityException x) {}
-      proxy = getItem(args[0]);
-         if (args.length > 5) invoke(proxy, "setItem", getItem(args[5]));
-         registry =
-            LocateRegistry.createRegistry(getServerPort(), rcsf, rssf);
-         registry.bind("main", new Remote(proxy));
+      Object proxy = getItem(args[0]);
+      if (args.length > 5) invoke(proxy, "setItem", getItem(args[5]));
+      gnu.cajo.utils.ItemServer.bind(proxy, "main");
    }
 }

@@ -110,19 +110,16 @@ public final class CodebaseServer extends Thread {
     * its own executable jar file, if that fails, then it will check the local
     * filesystem. The jars could represent individual proxies, or
     * general-purpose shared libraries.
-    * <p>
-    * The first jar named in the array will be assumed to be the jar containing
-    * the main client class.
-    * <p>
-    * <i><u>Note</u>:</i> if this value is null, it indicates that the proxy
+    * <p>The first jar named in the array will be assumed to be the jar
+    * containing the main client class.
+    * <p><i><u>Note</u>:</i> if this value is null, it indicates that the proxy
     * codebase is <i>not</i> in a jar. The server will then look first in its
     * own jar file for the class files to send, and if not found, it will next
     * look in its working directory. This feature provides an extremely simple,
     * essentially zero-configuration, approach to proxy codebase service. It
     * also provides complete general-purpose web service as well, supporting
     * documentaions pages, images, and even a favicon.ico.
-    * <p>
-    * The server determines the name of the jar file in which it is running
+    * <p>The server determines the name of the jar file in which it is running
     * courtesy of a very cool hack published by Laird Nelson in his weblog: <a
     * href=http://weblogs.java.net/pub/wlg/1874>http://weblogs.java.net/pub/wlg/1874</a>
     * Thanks Laird! This is used to allow the server to serve all the jar files
@@ -190,16 +187,14 @@ public final class CodebaseServer extends Thread {
          temp = temp.substring(temp.lastIndexOf('/') + 1);
       } else temp = "\""; // server not in a jar file
       thisJar = temp.endsWith("cajo.jar") ? "\"" : temp;
-      ss = Remote.getServerHost() == null
+      ss = Remote.getDefaultServerHost() == null
          ? new ServerSocket(port)
-         : new ServerSocket(port, 50, InetAddress.getByName(Remote.getServerHost()));
+         : new ServerSocket(port, 50, InetAddress.getByName(Remote.getDefaultServerHost()));
       serverPort = port == 0 ? ss.getLocalPort() : port;
       CodebaseServer.port = serverPort; // legacy
-      String loc = "http://" + Remote.getClientHost() + ':'
-         + CodebaseServer.port + '/';
       tip = ("<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n"
          + "<jnlp spec=\"1.5+\"\r\n" + "  codebase=" + "\"http://"
-         + Remote.getClientHost() + ':' + serverPort + "\"\r\n").getBytes();
+         + Remote.getDefaultClientHost() + ':' + serverPort + "\"\r\n").getBytes();
       base = new StringBuffer("  <information>\r\n"
          + "    <title>" + title + "</title>\r\n"
          + "    <vendor>" + (vendor != null ? vendor : "The cajo project") + "</vendor>\r\n"
@@ -220,6 +215,8 @@ public final class CodebaseServer extends Thread {
       base.append(client);
       base.append("\">\r\n");
       xml = base.toString().getBytes();
+      String loc = "http://" + Remote.getDefaultClientHost() + ':'
+         + CodebaseServer.port + '/';
       base = new StringBuffer();
       if (jars != null) {
          for (int i = 0; i < jars.length; i++) {
@@ -239,7 +236,6 @@ public final class CodebaseServer extends Thread {
     * This constructor will start up the server's codebase transport mechanism
     * on the specified port, using the specified codebase jar file, with the
     * specified clent.
-    * 
     * @param base The path and name of the file containing the proxy codebase
     * jar file.
     * @param port The TCP port on which to serve the codebase, and client
@@ -257,7 +253,6 @@ public final class CodebaseServer extends Thread {
    /**
     * This constructor simply calls the three argument constructor, providing
     * the standard cajo generic graphical client as the client argument.
-    * 
     * @param base The path and name of the file containing the proxy codebase
     * jar file.
     * @param port The TCP port on which to serve the codebase, and client
@@ -273,7 +268,6 @@ public final class CodebaseServer extends Thread {
     * server. The log can range from System.out, to a network OutputStream.
     * <i><u>Note</u>:</i> Only one log stream can be assigned to the
     * CodebaseServer at any given time.
-    * 
     * @param log The OutputStream to record the client requests. If this
     * argument is null, no change will take place.
     */
@@ -286,14 +280,11 @@ public final class CodebaseServer extends Thread {
     * also support installing the hosting {@link gnu.cajo.invoke.Client Client},
     * or application specific host, in a Java-enabled browser, or as a web start
     * application via JNLP.
-    * <p>
-    * The format of a browser's proxy request URL one required, and five
+    * <p> The format of a browser's proxy request URL one required, and five
     * optional parameters, utilizing the following format:
-    * <p>
-    * <code>
+    * <p><code>
     * http://serverHost[:serverPort]/[clientPort][:localPort][-proxyName][!]
-    * </code>
-    * <p>
+    * </code><p>
     * Where the parameters have the following meanings:
     * <ul>
     * <li><i>serverHost</i> The domain name, or IP address of the proxy
@@ -373,8 +364,7 @@ public final class CodebaseServer extends Thread {
                         ? itemName.substring(ib + 1, ic) : "main";
                      Integer.parseInt(clientPort); // test URL validity
                      Integer.parseInt(localPort); // test URL vaidity
-                     ItemServer.registry.lookup(proxyName); // test URL validity
-                     int proxyPort = Remote.getClientPort();
+                     int proxyPort = Remote.getDefaultClientPort();
                      if (itemName.indexOf('!') == -1) { // Applet request
                         byte iex[] = ( // used by Exploder:
                            "<PARAM NAME=\"clientHost\" VALUE=\"" + clientHost
@@ -403,7 +393,7 @@ public final class CodebaseServer extends Thread {
                         byte obj[] = ("  href=\"" + clientPort + ':'
                            + localPort + '-' + proxyName + "!\">\r\n").getBytes();
                         byte arg[] = ("    <argument>//"
-                           + Remote.getClientHost() + ':' + proxyPort + '/'
+                           + Remote.getDefaultClientHost() + ':' + proxyPort + '/'
                            + proxyName + "</argument>\r\n"
                            + "    <argument>" + clientPort
                            + "</argument>\r\n" + "    <argument>"

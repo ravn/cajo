@@ -43,12 +43,12 @@ import java.rmi.MarshalledObject;
  * @author John Catherino
  */
 public final class Multicast implements Runnable {
-   private static Remote proxy;
-   private static Registry registry;
-   private static Multicast mcast;
-   private final InetAddress host;
    private Object callback;
    private Thread thread;
+   /**
+    * The network interface on which this multicast object is listening
+    */
+   public final InetAddress host;
    /**
     * A reference to the address on which this object is operating. It is
     * referenced by the called listener, and is valid for the duration of the
@@ -81,14 +81,18 @@ public final class Multicast implements Runnable {
     * this object will announce and listen is set to 1198, which is is also
     * assigned by the IANA, for cajo object reference acquisition.  The object
     * will listen on the same network interface being used for the server's RMI
-    * communication.
+    * communication. It sends and listens on the machine's default network
+    * interface
     * @throws java.net.UnknownHostException If the default network interface
     * could not be resolved, <i>not very likely</i>.
     */
-   public Multicast() throws UnknownHostException { this("224.0.23.162", 1198); }
+   public Multicast() throws UnknownHostException {
+      this(null, "224.0.23.162", 1198);
+   }
    /**
-    * The full constructor allows creation of Multicast objects on any
-    * appropriate address, and port number. It uses the same network interface
+    * This constructor allows creation of Multicast objects on any
+    * appropriate multicast address, and port number. It uses the default
+    * network interface.
     * being used for the server's RMI communication.
     * @param address The multicast socket domain name, or address, on which
     * this object will listen.  It can be any address in the range 224.0.0.1
@@ -100,9 +104,30 @@ public final class Multicast implements Runnable {
     * @throws java.net.UnknownHostException If the specified host address
     * could not be resolved, or is invalid.
     */
-   public Multicast(String address, int port)
+   public Multicast(String address, int port) throws UnknownHostException {
+      this(null, address, port);
+   }
+   /**
+    * The full constructor allows creation of Multicast objects on any
+    * appropriate address, and port number. It uses the same network interface
+    * being used for the server's RMI communication.
+    * @ param host The network interface on which to send or receive multicasts,
+    * specified when a machine has more than one, otherwise use "0.0.0.0" to
+    * send and receive on all of them
+    * @param address The multicast socket domain name, or address, on which
+    * this object will listen.  It can be any address in the range 224.0.0.1
+    * through 239.255.255.255.
+    * @param port The UDP port number on which this object will announce and
+    * listen, its value can be 0 - 65535. It is completely independent of all
+    * TCP port numbers. Application specific meaning could be assigned to port
+    * numbers, to identify broadcast types.
+    * @throws java.net.UnknownHostException If the specified host address
+    * could not be resolved, or is invalid.
+    */
+   public Multicast(String host, String address, int port)
       throws UnknownHostException {
-      this.host = InetAddress.getByName(Remote.getServerHost());
+      if (host == null) host = InetAddress.getLocalHost().getHostAddress();
+      this.host = InetAddress.getByName(host);
       this.address = address;
       this.port = port;
    }
@@ -275,28 +300,18 @@ public final class Multicast implements Runnable {
     * item as the sole argument to a setItem method.
     * </ul>
     */
-   public static void main(String args[]) {
-      try {
-         if (args.length == 0) args = new String[] { "///main" };
-         String clientHost = args.length > 1 ? args[1] : null;
-         int clientPort    = args.length > 2 ? Integer.parseInt(args[2]) : 0;
-         String localHost  = args.length > 3 ? args[3] : null;
-         int localPort     = args.length > 4 ? Integer.parseInt(args[4]) : 0;
-         Remote.config(localHost, localPort, clientHost, clientPort);
-         try {
-            System.setSecurityManager(new java.rmi.RMISecurityManager());
-            System.setProperty("java.rmi.server.disableHttp", "true");
-         } catch(SecurityException x) {}
-         Object proxy = Remote.getItem(args[0]);
-         if (args.length > 5)
-            Remote.invoke(proxy, "setItem", Remote.getItem(args[5]));
-         Multicast.proxy = new Remote(proxy);
-         registry = LocateRegistry.
-            createRegistry(Remote.getServerPort(), Remote.rcsf, Remote.rssf);
-         registry.bind("main", Multicast.proxy);
-         mcast = new Multicast();
-         mcast.announce(Multicast.proxy, 16);
-         mcast.listen(proxy);
-      } catch (Exception x) { x.printStackTrace(); }
+   public static void main(String args[]) throws Exception {
+      if (args.length == 0) args = new String[] { "///main" };
+      String clientHost = args.length > 1 ? args[1] : null;
+      int clientPort    = args.length > 2 ? Integer.parseInt(args[2]) : 0;
+      String localHost  = args.length > 3 ? args[3] : null;
+      int localPort     = args.length > 4 ? Integer.parseInt(args[4]) : 0;
+      Remote.config(localHost, localPort, clientHost, clientPort);
+      ItemServer.acceptProxies();
+      Remote item = new Remote(Remote.getItem(args[0]));
+      if (args.length > 5) Remote.invoke(item, "setProxy", Remote.getItem(args[5]));
+      Multicast m = new Multicast();
+      m.announce(ItemServer.bind(item, "main"), 16);
+      m.listen(item);
    }
 }
