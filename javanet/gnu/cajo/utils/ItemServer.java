@@ -242,7 +242,7 @@ public class ItemServer {
    * @throws RemoteException If the registry could not be created.
    * @throws IOException If the provided proxy item is not serialisable.
    */
-  public static synchronized Remote bind(Object item, String name,
+  public static Remote bind(Object item, String name,
      Object proxy) throws RemoteException, IOException {
      return bind(item, name, proxy, null, null, 0);
   }
