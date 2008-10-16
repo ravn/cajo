@@ -4,13 +4,16 @@ import gnu.cajo.invoke.*;
 import java.rmi.registry.*;
 import java.text.DateFormat;
 import java.rmi.RemoteException;
-import java.rmi.MarshalledObject;
 import java.net.URL;
+import java.util.HashMap;
 import java.io.InputStream;
 import java.io.IOException;
+import java.rmi.MarshalledObject;
+import java.rmi.server.RMIClientSocketFactory;
+import java.rmi.server.RMIServerSocketFactory;
 
 /*
- * Standard Item Server Utility
+ * Standard Item Registry Utility
  * Copyright (C) 1999 John Catherino
  * The cajo project: https://cajo.dev.java.net
  *
@@ -34,9 +37,8 @@ import java.io.IOException;
 /**
  * These routines are used for server item construction.  The items can be
  * utilized by remote clients to compose larger, cooperative, functionality.
- * It creates an rmiregistry automatically, upon class loading, since any given
- * VM instance can only have one.  It will be used to bind all item servers for
- * external access.  A given application can bind as many items as it wants.
+ * It can be used to bind all item servers for external access.  A given
+ * application can bind as many items as it wants.
  * <p>A security policy file, named "server.policy" will be loaded from the
  * local directory. By default, the policy file need only allow the following
  * permissions:
@@ -87,21 +89,21 @@ public class ItemServer {
      System.setProperty("java.rmi.server.useCodebaseOnly", "true");
   }
   private static Registry registry;
+  private static HashMap registries;
   /**
    * Nothing happens in the default constructor of this class. This is used
    * when the server has its own internal {@link CodebaseServer CodebaseServer}
    * instance running. To take advantage the client loading capability of the
    * CodebaseServer, it must be running in the same instance of the server's VM.
-   * @deprecated Only the static methods of this class are necessary
+   * @deprecated As only the static methods of this class are necessary now.
    */
   public ItemServer() {}
   /**
    * This constructor sets the RMI codebase property for this VM instance.
    * This is necessary if the server is serving proxies, or other types of
    * classes, <b>and</b> is using a common, or remote, code base server.
-   * @deprecated With release 1.118 of the cajo library, this constructor
-   * is unnecessary. Codebase management is handled automatically. Only
-   * the static methods are needed.
+   * @deprecated Normally use of this constructor is not necessary, as the
+   * CodebaseServer class manages this property automatically when used.
    * @param host The public IP address or host name, on which the codebase
    * is being served. It need not be the same physical machine as the item
    * server.
@@ -116,19 +118,19 @@ public class ItemServer {
      System.setProperty("java.rmi.server.codebase", codebase);
   }
   /**
-   * This method enables this VM to host proxies, and accept other mobile code,
-   * from other remote servers. Hosting mobile code can result in the
+   * This method enables this VM to host proxies, and accept other mobile
+   * code, from other remote servers. Hosting mobile code can result in the
    * overloading of this server VM, either accidentially, or maliciously.
    * Therefore hosting should be done either in a trusted environment, or on
-   * a non-essential VM. Hosting of mobile code is disabled by default.
+   * a non-essential JVM. Hosting of mobile code is disabled by default.
    * <p><i>Note:</i> accepting proxies may be disabled via a command line
-   * argument at the server's startup, in which case, this will accomplish
-   * nothing.  The loading of proxies can be prohibited when launching the
-   * server with the <b>-Djava.security.manager</b> switch. It installs a
-   * default SecurityManager, which will not allow the loading of proxies, or
-   * any other type of mobile code, and prohibits itself from being replaced
-   * by the application. <i>Note:</i> this is an <i>extremely</i> important
-   * command line switch; worth <u>memorizing</u>!
+   * argument at the server's startup, in which case, this method will
+   * accomplish nothing.  The loading of proxies can be prohibited when
+   * launching the server with the <b>-Djava.security.manager</b> switch. It
+   * installs a default SecurityManager, which will not allow the loading of
+   * proxies, or any other type of mobile code, and prohibits itself from
+   * being replaced by the application. <i>Note:</i> this is an
+   * <i>extremely</i> important command line switch; worth <u>memorizing</u>!
    * @throws SecurityException If a SecurityManager is already installed, and
    * explicitly prohibits itself from being replaced.
    */
@@ -145,11 +147,11 @@ public class ItemServer {
    * rmiregistry, to more easily allow the application to dynamically replace
    * server items at runtime, if necessary. Since the registry is not shared
    * with other applications, checking for already bound items is unnecessary.
-   * <p> The provided item will first have its startThread method invoked
-   * with a null argument, to signal it to start its main processing thread
-   * (if it has one). Then it will have its setItem method invoked with
+   * <p> The provided item will first have its setItem method invoked with
    * remote reference to itself, with which it can share with remote VMs, in
-   * an application specific manner (again if it has one).
+   * an application specific manner <i>(if it has one)</i>. Then it will have
+   * its startThread method invoked with no argument, to signal it to start
+   * its main processing thread <i>(again, if it has one)</i>.
    * @param item The item to be bound.  It may be either local to the machine,
    * or remote, it can even be a proxy from a remote item, if proxy
    * {@link #acceptProxies acceptance} was enabled for this VM.
@@ -160,50 +162,8 @@ public class ItemServer {
    * @throws RemoteException If the registry could not be created.
    */
   public static Remote bind(Object item, String name) throws RemoteException {
-     try  { return bind(item, name, null); }
+     try  { return bind(item, name, null, null, null, 0); }
      catch(IOException x) { return null; } // can't happen, no proxy
-  }
-  /**
-   * This method is used to bind a proxy serving item. It will remote a
-   * reference to the server item, and bind in it the local rmiregistry under
-   * the name provided. If the proxy has a setItem method, it will be called
-   * with a remote reference to the serving item. Next, the item will have its
-   * startThread method invoked (if it has one) with a null argument, to
-   * signal it to start its main processing thread. Then it will have its
-   * setProxy method invoked, (again if it has one) with a MarshalledObject
-   * containing the proxy item.
-   * @param item The item to be bound.  It may be either local to the machine,
-   * or remote, it can even be a proxy from a remote item, if proxy
-   * {@link #acceptProxies acceptance} was enabled for this VM.
-   * @param name The name under which to bind the item reference in the
-   * local rmiregistry.
-   * @param proxy The proxy item to be sent to requesting clients, it is
-   * normally encased in a java.rmi.MarshalledObject, for efficiency. If it
-   * is not when passed in, it will be, automatically.
-   * @return A remoted reference to the item within the context of this VM's
-   * settings.
-   * @throws RemoteException If the registry could not be created.
-   * @throws IOException If the provided proxy item is not serialisable.
-   */
-  public static synchronized Remote bind(Object item, String name,
-     Object proxy) throws RemoteException, IOException {
-     Remote handle = item instanceof Remote ? (Remote)item : new Remote(item);
-     if (proxy != null) {
-        try { Remote.invoke(proxy, "setItem", handle); }
-        catch(Exception x) { /* method unimplemented, odd, but OK? */ }
-        if (!(proxy instanceof MarshalledObject))
-           proxy = new MarshalledObject(proxy);
-        try { Remote.invoke(item, "setProxy", proxy); }
-        catch(Exception x) { /* method unimplemented, odd, but OK? */ }
-     }
-     try { Remote.invoke(item, "startThread", null); }
-     catch(Exception x) { /* method unimplemented, that's OK */ }
-     if (registry == null)
-        registry = LocateRegistry.createRegistry(Remote.getDefaultServerPort(),
-           Remote.getDefaultClientSocketFactory(),
-               Remote.getDefaultServerSocketFactory());
-     registry.rebind(name, handle);
-     return handle;
   }
   /**
    * This method is used to bind a server item, contained in its own jar file
@@ -232,7 +192,8 @@ public class ItemServer {
    * reduce the size of your server plug-in item jars!</blockquote>
    * <i>Note:</i> plug-in items typically do not support proxies. This
    * is because the system rmi codebase property is typically set by the
-   * master server, to serve its own proxy jar file, when it has one.
+   * master server, to serve its own proxy jar file, when it has one. There
+   * can be only one codebase for a given JVM instance.
    * @param name The name to bind the loaded server item in the registry.
    * @param item The name of the class from which to instantiate the item.
    * Example: myclass.mypackage.MyServerObject
@@ -256,8 +217,99 @@ public class ItemServer {
      ClassNotFoundException, InstantiationException, IllegalAccessException,
      RemoteException {
      Class c = new JarClassLoader(file).loadClass(item);
-     try { return bind(c.newInstance(), name, null); }
+     try { return bind(c.newInstance(), name, null, null, null, 0); }
      catch(IOException x) { return null; } // can't happen, no proxy
+  }
+  /**
+   * This method is used to bind a proxy serving item in the defalut local
+   * registry. It will remote a reference to the server item, and bind it
+   * under the name provided. If the proxy has a setItem method, it will be
+   * called with a remote reference to the serving item. Next it will have
+   * its setProxy method invoked, <i>(again if it has one)</i> with a
+   * MarshalledObject containing the proxy item. Finally the item will have
+   * its startThread method invoked <i>(if it has one)</i> with no argument,
+   * to signal it to start its main processing thread.
+   * @param item The item to be bound.  It may be either local to the machine,
+   * or remote, it can even be a proxy from a remote item, if proxy
+   * {@link #acceptProxies acceptance} was enabled for this VM.
+   * @param name The name under which to bind the item reference in the
+   * local rmiregistry.
+   * @param proxy The proxy item to be sent to requesting clients, it is
+   * normally encased in a java.rmi.MarshalledObject, for efficiency. If it
+   * is not when passed in, it will be, automatically.
+   * @return A remoted reference to the item within the context of this VM's
+   * settings.
+   * @throws RemoteException If the registry could not be created.
+   * @throws IOException If the provided proxy item is not serialisable.
+   */
+  public static synchronized Remote bind(Object item, String name,
+     Object proxy) throws RemoteException, IOException {
+     return bind(item, name, proxy, null, null, 0);
+  }
+  /**
+   * This method is used to bind a proxy serving item with complete
+   * configurability. It will remote a reference to the server item, and
+   * bind in it a local rmiregistry under the name ant the TCP port provided.
+   * If the proxy has a setItem method, it will be called with a remote
+   * reference to the serving item. Then it will have its setProxy method
+   * invoked, <i>(if it has one)</i> with a MarshalledObject containing the
+   * proxy item. The item will then have its startThread method invoked
+   * <i>(again if it has one)</i> with no argument, to signal it to start its
+   * main processing thread.
+   * @param item The item to be bound.  It may be either local to the machine,
+   * or remote, it can even be a proxy from a remote item, if proxy
+   * {@link #acceptProxies acceptance} was enabled for this VM.
+   * @param name The name under which to bind the item reference in the
+   * a local rmiregistry.
+   * @param proxy The proxy item to be sent to requesting clients, it is
+   * normally encased in a java.rmi.MarshalledObject, for efficiency. If it
+   * is not when passed in, it will be, automatically.
+   * @param ssf The custom RMIServerSocketFactory to be used by the registry,
+   * typically something using strong cryptography. This value can be null,
+   * to indicate using the default socket factory for the JVM.
+   * @param ssf The custom RMIClientSocketFactory to be used by the registry,
+   * typically something using strong cryptography. This value can be null,
+   * to indicate using the default socket factory for the JVM.
+   * @param port The TCP port on which both this registry, and the binding
+   * object will accept connections. This value can be zero, to indicate
+   * using the default registry settings for the JVM. <p><i><u>Note</u>:</i>
+   * a given port will only support one given set of socket factories, the
+   * first ones bound.
+   * @return A remoted reference to the item within the context of this VM's
+   * settings.
+   * @throws RemoteException If the registry could not be created.
+   * @throws IOException If the provided proxy item is not serialisable.
+   */
+  public static synchronized Remote bind(Object item, String name,
+     Object proxy, RMIServerSocketFactory ssf, RMIClientSocketFactory csf,
+     int port) throws RemoteException, IOException {
+     Remote handle = item instanceof Remote ? (Remote)item : new Remote(item);
+     if (proxy != null) {
+        try { Remote.invoke(proxy, "setItem", handle); }
+        catch(Exception x) { /* method unimplemented, odd, but OK? */ }
+        if (!(proxy instanceof MarshalledObject))
+           proxy = new MarshalledObject(proxy);
+        try { Remote.invoke(item, "setProxy", proxy); }
+        catch(Exception x) { /* method unimplemented, odd, but OK? */ }
+     }
+     try { Remote.invoke(item, "startThread", null); }
+     catch(Exception x) { /* method unimplemented, that's OK */ }
+     if (csf == null || ssf == null) {
+        if (registry == null)
+           registry = LocateRegistry.createRegistry(
+              Remote.getDefaultServerPort(),
+                 Remote.getDefaultClientSocketFactory(),
+                     Remote.getDefaultServerSocketFactory());
+        registry.rebind(name, handle);
+     } else {
+        Registry custom = (Registry)registries.get(new Integer(port));
+        if (custom == null) {
+           custom = LocateRegistry.createRegistry(port, csf, ssf);
+           registries.put(new Integer(port), custom);
+        }
+        custom.rebind(name, handle);
+     }
+     return handle;
   }
   /**
    * The application loads either a zipped marshalled object (zedmob) from a
