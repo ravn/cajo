@@ -77,46 +77,19 @@
                                      tears'</i> can be as useful for learning as the source documentation itself.
 
                                      <ol>
-                                        <li><a href=#1>Argument Types</a> &nbsp <i>(corrected)</i>
-                                        <li><a href=#2>Long Delays</a>
-                                        <li><a href=#3>Network Realities</a>
-                                        <li><a href=#4>Firewalled Clients</a>
-                                        <li><a href=#5>Marshalling Objects</a>
-                                        <li><a href=#6>Sending Proxies</a>
-                                        <li><a href=#7>Configuring Remote</a> &nbsp <i>(corrected)</i>
-                                        <li><a href=#8>Excessive Decomposition</a>
-                                        <li><a href=#9>Method Visibility</a>
-                                        <li><a href=#10>Reference Lifetime</a>
+                                        <li><a href=#1>Long Delays</a>
+                                        <li><a href=#2>Network Realities</a>
+                                        <li><a href=#3>Firewalled Clients</a>
+                                        <li><a href=#4>Marshalling Objects</a>
+                                        <li><a href=#5>Sending Proxies</a>
+                                        <li><a href=#6>Configuring Remote</a> &nbsp <i>(corrected)</i>
+                                        <li><a href=#7>Excessive Decomposition</a>
+                                        <li><a href=#8>Method Visibility</a>
+                                        <li><a href=#9>Reference Lifetime</a>
                                      </ol>
 
                            
-                                     <a id="1"></a><b><u>1. Argument Types:</u></b> <strike>When executing an
-                                     inovke method on an item, Java reflection requires the argument types to
-                                     match exactly.  Unfortunately reflection does not recognize inheritance
-                                     trees.  For example, if class B extends class A, and an item method declares
-                                     an argument of type A, you cannot send it an object of type B and have it
-                                     work!-(  This results in the much dreaded <code>NoSuchMethodException</code>;
-                                     if you haven't got one yet, you probably will soon.  This gotcha can be so
-                                     inconvenient that the framework makes a special case for Objects extending
-                                     the Invoke interface.  They are always typecast into Invoke. Therefore: to
-                                     receive a local, remote, or proxy item reference, a method signature must
-                                     declare the argument to be of type Invoke.</strike><br><br>
-
-                                     &nbsp&nbsp&nbsp&nbsp<b>*<u>Update</u>:</b> (08-Jan-04) A
-                                     <i>significant</i> improvement to the project codebase was uploaded, which
-                                     <u>eliminates</u> this <i>"gotcha"</i>. It was most generously proposed by
-                                     project member <b>frelars</b> (aka Fredrik Larsen), with assistance by project
-                                     member <b>li_ma</b> (aka Li Ma). It will now traverse method argument
-                                     inheritance trees, to find a properly fitting method: Well done Guys!<br><br>
-
-                                     &nbsp&nbsp&nbsp&nbsp<b>*<u>Update</u>:</b> (08-Aug-05) Prior to today; server
-                                     methods could only accept object arguments, and provide object returns. A
-                                     very significant improvement was proposed by project member <b>zacwolfe</b>
-                                     (aka Zac Wolfe). It provides implicit autoboxing during reflective method
-                                     lookup: Server objects can now use primitive types in its arguments,
-                                     <i>and</i> returns: Thanks Zac!<br><br>
-
-                                     <a id="2"></a><b><u>2. Long delays:</u></b> When each remote invocation takes
+                                     <a id="1"></a><b><u>1. Long delays:</u></b> When each remote invocation takes
                                      a really long time to execute, there is a common problem.  RMI attempts to
                                      do a reverse-DNS lookup before each invocation. In theory, this is for
                                      security purposes, so there is no way to disable it. The problem is; when
@@ -127,14 +100,15 @@
                                      i.e. the hosts file.  This is a text file containing address/host name pairs,
                                      which the operating system will check first, before attempting a DNS lookup.<br><br>
 
-                                     On *nix-type boxes (Solaris/Linux/BSD/OSX...) the file is typically:
-                                     /etc/hosts<br>
-                                     On Windows boxes, it is typically: \WINDOWS\system32\drivers\etc\hosts<br><br>
+                                     On *nix-type systems (Solaris/Linux/BSD/OSX...) the file is in: /etc/hosts
+                                     &nbsp; <i>(ok, i know you guys knew that ;-)</i><br>
+                                     On Windows systems, it is typically: \WINDOWS\system32\drivers\etc\hosts
+                                     &nbsp; <i>(yet who knows where microsoft will move it next)</i><br><br>
 
                                      Here you would put the IP address/host name pairs for the machines that do
                                      not have DNS support.<br><br>
 
-                                     <a id="3"></a><b><u>3. Network Realities:</u></b> While it is very simple to
+                                     <a id="2"></a><b><u>2. Network Realities:</u></b> While it is very simple to
                                      write code without regard to locality or remoteness of objects, it is very
                                      important to remember that any remote invocation can fail, or block for a
                                      very long time, if there is a problem with the network, or the target machine
@@ -151,7 +125,8 @@
                                      functionality, making little to no use of its remote link back to its
                                      sender.<br><br>
 
-                                     &nbsp&nbsp&nbsp&nbsp<b><i>*<u>NB</u>:</i></b> When using <a href=http://wiki.java.net/bin/view/Communications/TransparentProxy>
+                                     &nbsp&nbsp&nbsp&nbsp<b>*<a href=http://dictionary.reference.com/browse/nota%20bene title="Nota Bene">
+                                     NB</a>:</b> When using <a href=http://wiki.java.net/bin/view/Communications/TransparentProxy>
                                      Transparent Item Proxies</a>, e.g. the <a href=http://weblogs.java.net/blog/cajo/archive/2007/09/simple_interjvm.html>
                                      grail</a>, it is <i>highly recommended</i> to have <u>each</u> method
                                      signature, in the client interface, declare that it throws <tt>
@@ -163,10 +138,10 @@
                                      Lastly, I find it extremely helpful to print, frame, memorize, and post
                                      somewhere near your monitor, the eight <a href=http://blogs.sun.com/jag/resource/Fallacies.html>
                                      fallacies</a> of distributed computing. You could put it right next to your
-                                     printout of the famous Internet RFC <a href=http://www.faqs.org/rfcs/rfc1925.html>
-                                     1925</a>: The Twelve Networking Truths.<br><br>
+                                     printout of the famous Internet RFC 1925: <a href=http://www.faqs.org/rfcs/rfc1925.html>
+                                     The Twelve Networking Truths</a>.<br><br>
 
-                                     <a id="4"></a><b><u>4. Firewalled Clients:</u></b> Very often a client item
+                                     <a id="3"></a><b><u>3. Firewalled Clients:</u></b> Very often a client item
                                      is operating behind a firewall that prohibits inbound socket connections. If
                                      server callbacks are necessary for the design, this posed a real problem. A
                                      solution to this issue is provided through two specialised classes in the
@@ -180,7 +155,7 @@
                                      example application, please visit our <a href=http://wiki.java.net/bin/view/Communications/FirewalledClients>
                                      firewalled clients</a> wiki page.<br><br>
 
-                                     <a id="5"></a><b><u>5. Marshalling Objects:</u></b> Sometimes, when sending
+                                     <a id="4"></a><b><u>4. Marshalling Objects:</u></b> Sometimes, when sending
                                      large objects, particularly those which are a large graph of objects,
                                      exceptions can randomly occur during deserialisation. While this is not a
                                      defect in the framework, it can be very annoying. One particularly helpful
@@ -192,7 +167,7 @@
                                      failure during transmission. The reason why this failure occurs, and even why
                                      this technique helps to fix it, is still a mystery. (see also item 6 below)<br><br>
 
-                                     <a id="6"></a><b><u>6. Sending Proxies:</u></b> Proxy objects, when sent
+                                     <a id="5"></a><b><u>5. Sending Proxies:</u></b> Proxy objects, when sent
                                      from remote JVMs, typically arrive in a Marshalled Object. There is a
                                      <i>very</i> important reason for this. A proxy is an object whose codebase
                                      is typically foreign to its hosting VM. When a proxy is extracted from the
@@ -207,16 +182,12 @@
                                      annotation, with which proxy objects can be freely sent between remote
                                      JVMs.<br><br>
 
-                                     <a id="7"></a><b><u>7. Configuring Remote:</u></b> You should call Remote.<a href=nonav/docs/gnu/cajo/invoke/Remote.html#config(java.lang.String,%20int,%20java.lang.String,%20int)>config</a>
+                                     <a id="6"></a><b><u>6. Configuring Remote:</u></b> You should call Remote.<a href=nonav/docs/gnu/cajo/invoke/Remote.html#config(java.lang.String,%20int,%20java.lang.String,%20int)>config</a>
                                      once, in the lifetime of the server, typically shortly after startup. It
                                      configures the TCP settings for network communication. Specifying port
                                      1099, which is the <i>default</i> port for the Java RMIRegistry,
                                      eliminates the need to explicitly specify a port number, in a server lookup
-                                     URL. <strike>If you attempt to remote an object, either through ItemServer.
-                                     <a href=nonav/docs/gnu/cajo/utils/ItemServer.html#bind(java.lang.Object,%20java.lang.String)>bind</a>,
-                                     or Multicast.<a href=nonav/docs/gnu/cajo/utils/Multicast.html#announce(java.lang.Object,%20int)>announce</a>,
-                                     <i>before</i> doing this; a NullPointerException <u>will</u> occur.</strike>
-                                     <br><br>
+                                     URL.<br><br>
 
                                      &nbsp&nbsp&nbsp&nbsp<b>*<u>Update</u>:</b> (01-Jun-05) A convenience
                                      mechanism to provide a <i>useful-guess</i> at TCP configuration has now
@@ -230,7 +201,7 @@
                                      it is <i>highly</i> recommended to use this port when configuring remote for
                                      primary servers.<br><br>
 
-                                     <a id="8"></a><b><u>8. Excessive Decomposition:</u></b> The interfaces to
+                                     <a id="7"></a><b><u>7. Excessive Decomposition:</u></b> The interfaces to
                                      remote objects should tend to favor functional richnes, over logical
                                      abstraction. Unlike an all-local object application; a remote procedure call
                                      is a temporally expensive activity. This <i>strongly</i> favors the creation
@@ -238,7 +209,7 @@
                                      methods, to be used when remoting. In other words: <i>"Export trees,
                                      <u>not</u> leaves."</i></a><br><br>
 
-                                     <a id="9"></a><b><u>9. Method Visibility:</u></b> When an object is made
+                                     <a id="8"></a><b><u>8. Method Visibility:</u></b> When an object is made
                                      remotely accessible via <a href=docs/gnu/cajo/invoke/Remote.html>Remote</a>,
                                      <i>all</i> of its public methods, <i>including</i> its static ones, can be
                                      invoked by a remote JVM. This would make remoting an object that extended
@@ -249,11 +220,11 @@
                                      corollary to the <a href=faq.html#14>FAQ #14</a>.<br><br>
 
 
-                                     <a id="10"></a><b><u>10. Reference Lifetime:</u></b> When remote references to
+                                     <a id="9"></a><b><u>9. Reference Lifetime:</u></b> When remote references to
                                      objects are created, normally they last for the life of the server JVM.
                                      Typically, this is what one would expect, when creating service objects.
-                                     However, there are times when the lifetime of a remote reference is <i>"too
-                                     long."</i>
+                                     However, there are times when the lifetime of a remote reference is
+                                     <i>"too long."</i>
                                      <br><br>Typically one of two scenarios come into play:<ul>
                                      <li> All of the remoted objects need to be shut down, typically needed by
                                      application server containers. To accomodate this, the Remote.shutdown()
@@ -267,7 +238,7 @@
                                      to use a special Remote method e.g.:<blockquote><tt>
                                         return new Remote(clientMonitor).clientScope();
                                      </tt></blockquote>This will prevent the <u><i>memory leak</i></u> that would
-                                     occur if regular remote references to short-term objects were returned. The
+                                     occur, if remote references to short-term objects were returned. The
                                      method is named as such because, in this case, the lifetime of the remote
                                      reference is under the control of the clients, rather than the server. I.e.
                                      when the one (or more) clients no longer refer to the remote reference, it
