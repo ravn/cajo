@@ -221,6 +221,9 @@ public final class Remote extends UnicastRemoteObject
       try { defaulthost = InetAddress.getLocalHost().getHostAddress(); }
       catch(java.net.UnknownHostException x) {}
       config(defaulthost, 0, defaulthost, 0);
+      Runtime.getRuntime().addShutdownHook(new Thread() {
+         public void run() { Remote.shutdown(); }
+      });
    }
    /**
     * This method configures the server's TCP parameters for RMI through HTTP
