@@ -61,8 +61,10 @@ public final class Remote extends UnicastRemoteObject
             RMISocketFactory.getDefaultSocketFactory().
                createServerSocket(this.port) :
             new ServerSocket(this.port, 50, InetAddress.getByName(host));
-         if (this.host == null)
-            this.host = ss.getInetAddress().getHostAddress();
+         if (host == null) {
+            host = ss.getInetAddress().getHostAddress();
+            System.setProperty("java.rmi.server.hostname", host);
+         }
          if (this.port == 0) this.port = ss.getLocalPort();
          if (rcsf != null) {
             if (rcsf.host == null)
@@ -210,6 +212,9 @@ public final class Remote extends UnicastRemoteObject
       Remote.defaultRSSF.rcsf = Remote.defaultRCSF;
       Remote.defaultServerHost = serverHost;
       Remote.defaultClientHost = clientHost;
+      if (serverHost != null) try { // won't work if running as applet
+         System.setProperty("java.rmi.server.hostname", serverHost);
+      } catch(SecurityException x) { /* but then it's not necessary */ }
    }
    static { // provide default configuration: anonymous port & local address
       String defaulthost = "127.0.0.1";
