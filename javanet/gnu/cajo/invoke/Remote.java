@@ -111,6 +111,14 @@ public final class Remote extends UnicastRemoteObject
    private static RCSF defaultRCSF;
    private static RSSF defaultRSSF;
    /**
+    * If the remote wrapper is being garbage collected, and it hasn't already
+    * been explicitly unexported, let's do that now, as a courtesy.
+    */
+   protected void finalize() throws Throwable {
+      super.finalize();
+      unexport(true);
+   }
+   /**
     * This is the default RMIServerSocketFactory on which left unspecified,
     * items are being remoted. Its value can be changed via the static
     * config method.
