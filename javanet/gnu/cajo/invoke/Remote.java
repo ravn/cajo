@@ -175,7 +175,7 @@ public final class Remote extends UnicastRemoteObject
     * @return The network interface TCP port on which the item is accepting
     * inbound connections
     */
-   public static int getDefaultClientPort()    { return defaultRCSF.port; }
+   public static int getDefaultClientPort() { return defaultRCSF.port; }
    /**
     * This method configures the server's TCP parameters for RMI.  It allows
     * complete specification of client-side and server-side ports and
@@ -229,9 +229,11 @@ public final class Remote extends UnicastRemoteObject
       try { defaulthost = InetAddress.getLocalHost().getHostAddress(); }
       catch(java.net.UnknownHostException x) {}
       config(defaulthost, 0, defaulthost, 0);
-      Runtime.getRuntime().addShutdownHook(new Thread() {
-         public void run() { Remote.shutdown(); }
-      });
+      try { // won't work if running as applet
+         Runtime.getRuntime().addShutdownHook(new Thread() {
+            public void run() { Remote.shutdown(); }
+         });
+      } catch(SecurityException x) { /* but then it's not necessary */ }
    }
    /**
     * This method configures the server's TCP parameters for RMI through HTTP
