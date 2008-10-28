@@ -215,8 +215,10 @@ public final class CodebaseServer extends Thread {
       base.append(client);
       base.append("\">\r\n");
       xml = base.toString().getBytes();
-      String loc = "http://" + Remote.getDefaultClientHost() + ':'
-         + CodebaseServer.port + '/';
+      String loc = "http://" + (Remote.getDefaultClientHost() != null ?
+         Remote.getDefaultClientHost() :
+            InetAddress.getLocalHost().getHostAddress())
+               + ':' + CodebaseServer.port + '/';
       base = new StringBuffer();
       if (jars != null) {
          for (int i = 0; i < jars.length; i++) {
