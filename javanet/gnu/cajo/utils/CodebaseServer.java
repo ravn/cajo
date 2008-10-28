@@ -194,7 +194,10 @@ public final class CodebaseServer extends Thread {
       CodebaseServer.port = serverPort; // legacy
       tip = ("<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n"
          + "<jnlp spec=\"1.5+\"\r\n" + "  codebase=" + "\"http://"
-         + Remote.getDefaultClientHost() + ':' + serverPort + "\"\r\n").getBytes();
+         + (Remote.getDefaultClientHost() != null
+         ? Remote.getDefaultClientHost()
+         : InetAddress.getLocalHost().getHostAddress()) + ':' + serverPort
+         + "\"\r\n").getBytes();
       base = new StringBuffer("  <information>\r\n"
          + "    <title>" + title + "</title>\r\n"
          + "    <vendor>" + (vendor != null ? vendor : "The cajo project") + "</vendor>\r\n"
