@@ -23,10 +23,10 @@ public class Main { // General purpose server startup pattern
 //      Multicast mc = new Multicast();
    // monitor the item, just for fun:
       MonitorItem mi = new MonitorItem(new TestItem(), System.out);
+   // start up the codebase and applet service: (before first remoting item!)
+      CodebaseServer cs = new CodebaseServer("proxy.jar", httpPort);
    // here's the crux:
       Remote item = ItemServer.bind(mi, "main", pl);
-   // start up the codebase and applet service: (after remoting item)
-      CodebaseServer cs = new CodebaseServer("proxy.jar", httpPort);
    // multicast our startup, just for fun:
    // The monitor will log a startThread exception, normal for calling twice.
 //      mc.announce(item, 16);
