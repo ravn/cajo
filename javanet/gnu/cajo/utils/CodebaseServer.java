@@ -18,7 +18,7 @@ import gnu.cajo.invoke.Remote;
  * by the Free Software Foundation, at version 3 of the licence, or (at your
  * option) any later version.
  *
- * Th cajo library is distributed in the hope that it will be useful,
+ * The cajo library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public Licence for more details.
