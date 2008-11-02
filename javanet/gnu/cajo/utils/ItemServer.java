@@ -267,7 +267,7 @@ public class ItemServer {
    * @param ssf The custom RMIServerSocketFactory to be used by the registry,
    * typically something using strong cryptography. This value can be null,
    * to indicate using the default socket factory for the JVM.
-   * @param ssf The custom RMIClientSocketFactory to be used by the registry,
+   * @param csf The custom RMIClientSocketFactory to be used by the registry,
    * typically something using strong cryptography. This value can be null,
    * to indicate using the default socket factory for the JVM.
    * @param port The TCP port on which both this registry, and the binding

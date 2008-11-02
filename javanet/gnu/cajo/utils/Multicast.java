@@ -111,7 +111,7 @@ public final class Multicast implements Runnable {
     * The full constructor allows creation of Multicast objects on any
     * appropriate address, and port number. It uses the same network interface
     * being used for the server's RMI communication.
-    * @ param host The network interface on which to send or receive multicasts,
+    * @param host The network interface on which to send or receive multicasts,
     * specified when a machine has more than one, otherwise use "0.0.0.0" to
     * send and receive on all of them
     * @param address The multicast socket domain name, or address, on which
