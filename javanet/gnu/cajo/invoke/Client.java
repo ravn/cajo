@@ -5,7 +5,6 @@ import javax.swing.*;
 import java.awt.event.*;
 import java.rmi.registry.*;
 import java.rmi.MarshalledObject;
-import java.security.AccessControlException;
 
 /*
  * Graphical Proxy Loader Applet / Application
@@ -284,7 +283,7 @@ public final class Client extends java.applet.Applet {
             String title = "cajo Proxy Viewer";
             try {
                title = System.getProperty("gnu.cajo.invoke.Client.title");
-            } catch (AccessControlException x) {} // won't work in WebStart
+            } catch (Exception x) {} // won't work in WebStart
             proxy = frame((Component)proxy, title + " - " + args[0]);
          }
       } else new Loader();
