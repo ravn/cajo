@@ -5,7 +5,7 @@ import javax.swing.*;
 import java.awt.event.*;
 import java.rmi.registry.*;
 import java.rmi.MarshalledObject;
-
+import java.security.AccessControlException;
 
 /*
  * Graphical Proxy Loader Applet / Application
@@ -21,7 +21,7 @@ import java.rmi.MarshalledObject;
  * by the Free Software Foundation, at version 3 of the licence, or (at your
  * option) any later version.
  *
- * Th cajo library is distributed in the hope that it will be useful,
+ * The cajo library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public Licence for more details.
@@ -147,7 +147,7 @@ public final class Client extends java.applet.Applet {
             add((Component)proxy);
             validate();
          }
-      } catch (Exception x) { x.printStackTrace(System.err); }
+      } catch (Exception x) { x.printStackTrace(); }
    }
    /**
     * This method is called from the AppleContext, each time the applet
@@ -265,28 +265,28 @@ public final class Client extends java.applet.Applet {
     * <li><tt>args[4] - </tt>The optional internal client host name,
     * if multi home/NIC.</ul>
     */
-   public static void main(String args[]) {
-      try {
-         if (System.getSecurityManager() == null)
-            System.setSecurityManager(new NoSecurityManager());
-         if (args.length > 0) {
-            int clientPort    = args.length > 1 ? Integer.parseInt(args[1]) : 0;
-            String clientHost = args.length > 2 ? args[2] : null;
-            int localPort     = args.length > 3 ? Integer.parseInt(args[3]) : 0;
-            String localHost  = args.length > 4 ? args[4] : "0.0.0.0";
-            Remote.config(localHost, localPort, clientHost, clientPort);
-            proxy = Remote.getItem(args[0]);
-            proxy = Remote.invoke(proxy, "getProxy", null);
-            if (proxy instanceof MarshalledObject)
-               proxy = ((MarshalledObject)proxy).get();
-            if (!(proxy instanceof RemoteInvoke))
-               proxy = Remote.invoke(proxy, "init", new Remote(proxy));
-            if (proxy instanceof Component) {
-               String title = System.getProperty("gnu.cajo.invoke.Client.title");
-               if (title == null) title = "cajo Proxy Viewer";
-               proxy = frame((Component)proxy, title + " - " + args[0]);
-            }
-         } else new Loader();
-      } catch (Exception x) { x.printStackTrace(); }
+   public static void main(String args[]) throws Exception {
+      if (System.getSecurityManager() == null)
+         System.setSecurityManager(new NoSecurityManager());
+      if (args.length > 0) {
+         int clientPort    = args.length > 1 ? Integer.parseInt(args[1]) : 0;
+         String clientHost = args.length > 2 ? args[2] : null;
+         int localPort     = args.length > 3 ? Integer.parseInt(args[3]) : 0;
+         String localHost  = args.length > 4 ? args[4] : "0.0.0.0";
+         Remote.config(localHost, localPort, clientHost, clientPort);
+         proxy = Remote.getItem(args[0]);
+         proxy = Remote.invoke(proxy, "getProxy", null);
+         if (proxy instanceof MarshalledObject)
+            proxy = ((MarshalledObject)proxy).get();
+         if (!(proxy instanceof RemoteInvoke))
+            proxy = Remote.invoke(proxy, "init", new Remote(proxy));
+         if (proxy instanceof Component) {
+            String title = "cajo Proxy Viewer";
+            try {
+               title = System.getProperty("gnu.cajo.invoke.Client.title");
+            } catch (AccessControlException x) {} // won't work in WebStart
+            proxy = frame((Component)proxy, title + " - " + args[0]);
+         }
+      } else new Loader();
    }
 }

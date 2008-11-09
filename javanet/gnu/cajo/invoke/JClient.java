@@ -5,6 +5,7 @@ import javax.swing.*;
 import java.rmi.registry.*;
 import java.rmi.MarshalledObject;
 import java.awt.event.WindowListener;
+import java.security.AccessControlException;
 
 /*
  * Graphical Proxy Loader JApplet
@@ -204,41 +205,40 @@ public final class JClient extends JApplet {
     * <li><tt>args[4] - </tt>The optional internal client host name,
     * if multi home/NIC.</ul>
     */
-   public static void main(final String args[]) {
-      try {
-         if (System.getSecurityManager() == null)
-            System.setSecurityManager(new NoSecurityManager());
-         if (args.length > 0) {
-            int clientPort    = args.length > 1 ? Integer.parseInt(args[1]) : 0;
-            String clientHost = args.length > 2 ? args[2] : null;
-            int localPort     = args.length > 3 ? Integer.parseInt(args[3]) : 0;
-            String localHost  = args.length > 4 ? args[4] : "0.0.0.0";
-            Remote.config(localHost, localPort, clientHost, clientPort);
-            proxy = Remote.getItem(args[0]);
-            proxy = Remote.invoke(proxy, "getProxy", null);
-            if (proxy instanceof MarshalledObject)
-               proxy = ((MarshalledObject)proxy).get();
-            if (!(proxy instanceof RemoteInvoke)) {
-               SwingUtilities.invokeLater(new Runnable() {
-                  public void run() {
-                     try {
-                        proxy = Remote.invoke(proxy, "init", new Remote(proxy));
-                        if (proxy instanceof Component) {
-                           String title = System.getProperty("gnu.cajo.invoke.JClient.title");
-                           if (title == null) title = "cajo Proxy Viewer";
-                           JFrame frame = new JFrame(title + " - " + args[0]);
-                           if (proxy instanceof WindowListener)
-                              frame.addWindowListener((WindowListener)proxy);
-                           frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                           frame.getContentPane().add((Component)proxy);
-                           frame.pack();
-                           frame.setVisible(true);
-                        } // otherwise non-graphical proxy
-                     } catch(Exception x) { x.printStackTrace(); }
-                  }
-               });
-            }
-         } else System.err.println("No source URL provided");
-      } catch(Exception x) { x.printStackTrace(); }
+   public static void main(final String args[]) throws Exception {
+      if (System.getSecurityManager() == null)
+         System.setSecurityManager(new NoSecurityManager());
+      if (args.length > 0) {
+         int clientPort    = args.length > 1 ? Integer.parseInt(args[1]) : 0;
+         String clientHost = args.length > 2 ? args[2] : null;
+         int localPort     = args.length > 3 ? Integer.parseInt(args[3]) : 0;
+         String localHost  = args.length > 4 ? args[4] : "0.0.0.0";
+         Remote.config(localHost, localPort, clientHost, clientPort);
+         proxy = Remote.getItem(args[0]);
+         proxy = Remote.invoke(proxy, "getProxy", null);
+         if (proxy instanceof MarshalledObject)
+            proxy = ((MarshalledObject)proxy).get();
+         if (!(proxy instanceof RemoteInvoke)) {
+            SwingUtilities.invokeLater(new Runnable() {
+               public void run() {
+                  try {
+                     proxy = Remote.invoke(proxy, "init", new Remote(proxy));
+                     if (proxy instanceof Component) {
+                        String title = "cajo Proxy Viewer";
+                        try { title = System.getProperty("gnu.cajo.invoke.JClient.title"); }
+                        catch(AccessControlException x) {} // won't work in WebStart
+                        JFrame frame = new JFrame(title + " - " + args[0]);
+                        if (proxy instanceof WindowListener)
+                           frame.addWindowListener((WindowListener)proxy);
+                        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                        frame.getContentPane().add((Component)proxy);
+                        frame.pack();
+                        frame.setVisible(true);
+                     } // otherwise non-graphical proxy
+                  } catch(Exception x) { x.printStackTrace(); }
+               }
+            });
+         }
+      } else System.err.println("No source URL provided");
    }
 }
