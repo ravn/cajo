@@ -132,7 +132,7 @@ public final class TransparentItemProxy implements InvocationHandler {
          // perform shallow hashCode...
          if (hashcode == null) hashcode = new Integer(this.hashCode());
          return hashcode;
-      } else if (name.equals("equals") && args.length == 1) {
+      } else if (name.equals("equals") && args != null && args.length == 1) {
           // perform shallow equals...
          return args[0].equals(this) ? Boolean.TRUE : Boolean.FALSE;
       } else try { return Remote.invoke(item, name, args); }
