@@ -23,7 +23,7 @@ import java.lang.reflect.InvocationTargetException;
  * by the Free Software Foundation, at version 3 of the licence, or (at your
  * option) any later version.
  *
- * Th cajo library is distributed in the hope that it will be useful,
+ * The cajo library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public Licence for more details.
@@ -70,6 +70,7 @@ import java.lang.reflect.InvocationTargetException;
 public final class TransparentItemProxy implements InvocationHandler {
    private final Object item;
    private final Object name;
+   private Integer hashcode;
    private TransparentItemProxy(Object item) {
       this.item = item;
       Object temp = null;
@@ -124,13 +125,17 @@ public final class TransparentItemProxy implements InvocationHandler {
    public Object invoke(Object proxy, Method method, Object args[])
       throws Throwable {
       String name = method.getName();
-      if (name.equals("equals")) { // perform shallow equals...
-         return this.equals(args[0]) ? Boolean.TRUE : Boolean.FALSE;
-      } else if (name.equals("hashCode")) // shallow hashCode too...
-         return new Integer(this.hashCode());
-      else if (name.equals("toString")) // shallow toString too...
+      if (name.equals("toString") && (args == null || args.length == 0)) {
+         // perform shallow toString...
          return this.name;
-      try { return Remote.invoke(item, name, args); }
+      } else if (name.equals("hashCode") && (args == null || args.length == 0)) {
+         // perform shallow hashCode...
+         if (hashcode == null) hashcode = new Integer(this.hashCode());
+         return hashcode;
+      } else if (name.equals("equals") && args.length == 1) {
+          // perform shallow equals...
+         return args[0].equals(this) ? Boolean.TRUE : Boolean.FALSE;
+      } else try { return Remote.invoke(item, name, args); }
       catch(Throwable t) {
          if (handler != null)
             return Remote.invoke(handler, "handle",
