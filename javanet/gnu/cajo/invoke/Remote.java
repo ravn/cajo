@@ -5,7 +5,6 @@ import java.net.*;
 import java.rmi.*;
 import java.util.zip.*;
 import java.rmi.server.*;
-import java.rmi.registry.*;
 import java.util.Vector;
 import java.util.LinkedList;
 import java.lang.reflect.Method;
@@ -90,8 +89,8 @@ public final class Remote extends UnicastRemoteObject
       private String host;
       private RCSF() {}
       private RCSF(String host, int port) {
-          host = host;
-          port = port;
+          this.host = host;
+          this.port = port;
       }
       public Socket createSocket(String host, int port) throws IOException {
          Socket s = RMISocketFactory.getDefaultSocketFactory().
@@ -220,8 +219,8 @@ public final class Remote extends UnicastRemoteObject
       Remote.defaultRSSF.rcsf = Remote.defaultRCSF;
       Remote.defaultServerHost = serverHost;
       Remote.defaultClientHost = clientHost;
-      if (serverHost != null) try { // won't work if running as applet
-         System.setProperty("java.rmi.server.hostname", serverHost);
+      if (clientHost != null) try { // won't work if running as applet
+         System.setProperty("java.rmi.server.hostname", clientHost);
       } catch(SecurityException x) { /* but then it's not necessary */ }
    }
    static { // provide default configuration: anonymous port & local address
