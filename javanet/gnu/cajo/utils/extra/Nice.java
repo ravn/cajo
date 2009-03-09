@@ -16,7 +16,7 @@ import gnu.cajo.invoke.Remote;
  * by the Free Software Foundation, at version 3 of the licence, or (at your
  * option) any later version.
  *
- * Th cajo library is distributed in the hope that it will be useful,
+ * The cajo library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public Licence for more details.
@@ -24,7 +24,6 @@ import gnu.cajo.invoke.Remote;
  * You should have received a copy of the GNU Lesser General Public Licence
  * along with this library. If not, see http://www.gnu.org/licenses/lgpl.html
  */
-
 /**
  * This class wraps an object, and dynamically alters the priority of the
  * invocation thread at runtime. Normally, the thread is moved to lowest
@@ -62,7 +61,8 @@ public final class Nice implements Invoke {
     * priority from normal. Typically the invocation thread is set to minimum
     * priority, but can also be used to evelate the thread to maximum
     * priority, if desired. When the invocation is complete, the thread will
-    * be restored to its original priority.
+    * be restored to its original priority, to prevent potential side affects
+    * if an invocation is local.
     * @param  method The name of the method to invoke on the wrapped object
     * @param  args The data relevant to the invocation. It can be a single
     * object, an array, or null
@@ -71,8 +71,7 @@ public final class Nice implements Invoke {
     * @throws Exception As needed by the object, also, a
     * java.rmi.RemoteException can be thrown for network related reasons
     */
-   public Object invoke(final String method, final Object args)
-      throws Exception {
+   public Object invoke(final String method, final Object args) throws Exception {
       final Thread thread = Thread.currentThread();
       final int priority  = thread.getPriority();
       thread.setPriority(fast ? Thread.MAX_PRIORITY : Thread.MIN_PRIORITY);
