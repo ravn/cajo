@@ -69,7 +69,9 @@ public final class Nice implements Invoke {
     * @return The method result defined by a wrapped object's implementation,
     * if any
     * @throws Exception As needed by the object, also, a
-    * java.rmi.RemoteException can be thrown for network related reasons
+    * java.rmi.RemoteException can be thrown for network related reasons,
+    * also a SecurityException can be thrown, if the codebase does not have
+    * permission from the SecurityManager to alter thread priority.
     */
    public Object invoke(final String method, final Object args) throws Exception {
       final Thread thread = Thread.currentThread();
