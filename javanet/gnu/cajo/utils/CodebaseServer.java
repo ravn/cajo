@@ -3,6 +3,8 @@ package gnu.cajo.utils;
 import java.io.*;
 import java.net.*;
 import gnu.cajo.invoke.Remote;
+import java.util.Date;
+import java.text.SimpleDateFormat;
 
 /*
  * RMI Codebase and Graphical Proxy Server
@@ -41,36 +43,38 @@ import gnu.cajo.invoke.Remote;
  * @author John Catherino
  */
 public final class CodebaseServer extends Thread {
-   private static final byte[] bye = ( // http headers:
-      "HTTP/1.0 404 Not Found\r\n"
+   private static final SimpleDateFormat formatter =
+      new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z");
+   private static final byte[] // http headers:
+       bye = ("HTTP/1.0 404 Not Found\r\n" // unsupported request
          + "Content-type: text/html\r\n"
          + "Connection: close\r\n\r\n"
          + "<html><head><title>404: URL Not Found</title></head><body>"
          + "<h1>404 - Not Found</h1>"
-         + "The requested resource does not exist on this server.<br><br>"
+         + "The requested resource is not available from this server.<br><br>"
          + "<hr><i>gnu.cajo.utils.CodebaseServer - The cajo project: "
          + "<a href=https://cajo.dev.java.net>https://cajo.dev.java.net</a>."
          + "</i></body></html>").getBytes(),
       apl = ("HTTP/1.0 200 OK\r\n" + "Content-type: text/html\r\n"
          + "Cache-control: must-revalidate\r\n"
-         + "Connection: close\r\n\r\n").getBytes(),
-      jar = ("HTTP/1.0 200 OK\r\n"
-         + "Content-type: application/x-java-archive\r\n"
-         + "Cache-control: must-revalidate\r\n"
-         + "Connection: close\r\n\r\n").getBytes(),
-      cls = ("HTTP/1.0 200 OK\r\n"
-         + "Content-type: application/x-java-vm\r\n"
-         + "Cache-control: must-revalidate\r\n"
-         + "Connection: close\r\n\r\n").getBytes(),
+         + "Connection: close\r\n\r\n").getBytes(), // for applets
       jws = ("HTTP/1.0 200 OK\r\n"
          + "Content-type: application/x-java-jnlp-file\r\n"
          + "Cache-control: must-revalidate\r\n"
-         + "Connection: close\r\n\r\n").getBytes(), end = ( // http
-      // footers:
-      "PLUGINSPAGE=\"http://java.sun.com/j2se/1.5.0/download.html\">\r\n"
+         + "Connection: close\r\n\r\n").getBytes(), // for WebStart
+      jarHdr = ("HTTP/1.0 200 OK\r\n" // for jar files
+         + "Content-type: application/x-java-archive\r\n"
+         + "Cache-control: must-revalidate\r\n"
+         + "Last-Modified: ").getBytes(),
+      classHdr = ("HTTP/1.0 200 OK\r\n" // for class files
+         + "Content-type: application/x-java-vm\r\n"
+         + "Cache-control: must-revalidate\r\n"
+         + "Last-Modified: ").getBytes(),
+      end = ( // http footers:
+         "PLUGINSPAGE=\"http://java.sun.com/j2se/1.5.0/download.html\">\r\n"
          + "</EMBED></COMMENT></OBJECT></CENTER></BODY></HTML>")
-         .getBytes(), out = ("  </application-desc>\r\n" + "</jnlp>")
-         .getBytes();
+         .getBytes(),
+      out = ("  </application-desc>\r\n" + "</jnlp>").getBytes();
    private final byte[] top, mid, tip, xml;
    private final String thisJar;
    private final ServerSocket ss;
@@ -116,9 +120,7 @@ public final class CodebaseServer extends Thread {
     * codebase is <i>not</i> in a jar. The server will then look first in its
     * own jar file for the class files to send, and if not found, it will next
     * look in its working directory. This feature provides an extremely simple,
-    * essentially zero-configuration, approach to proxy codebase service. It
-    * also provides complete general-purpose web service as well, supporting
-    * documentaions pages, images, and even a favicon.ico.
+    * essentially zero-configuration, approach to proxy codebase service.
     * <p>The server determines the name of the jar file in which it is running
     * courtesy of a very cool hack published by Laird Nelson in his weblog: <a
     * href=http://weblogs.java.net/pub/wlg/1874>http://weblogs.java.net/pub/wlg/1874</a>
@@ -160,26 +162,30 @@ public final class CodebaseServer extends Thread {
       top = ("<HTML><HEAD><TITLE>" // create instance specific response data:
          + title
          + "</TITLE>\r\n"
-         + "<META NAME=\"description\" content=\"Graphical cajo proxy client\"/>\r\n"
-         + "<META NAME=\"copyright\" content=\"Copyright (c) 1999 John Catherino\"/>\r\n"
-         + "<META NAME=\"author\" content=\"John Catherino\"/>\r\n"
-         + "<META NAME=\"generator\" content=\"CodebaseServer\"/>\r\n"
+         + "<META NAME=\"description\" content=\"Graphical cajo proxy client\">\r\n"
+         + "<META NAME=\"copyright\" content=\"Copyright (c) 1999 John Catherino\">\r\n"
+         + "<META NAME=\"author\" content=\"John Catherino\">\r\n"
+         + "<META NAME=\"generator\" content=\"CodebaseServer\">\r\n"
          + "</HEAD><BODY leftmargin=\"0\" topmargin=\"0\" marginheight=\"0\" marginwidth=0 rightmargin=\"0\">\r\n"
          + "<CENTER><OBJECT classid=\"clsid:8AD9C840-044E-11D1-B3E9-00805F499D93\"\r\n"
          + "WIDTH=\"100%\" HEIGHT=\"100%\"\r\n"
+         + "<PARAM NAME=\"draggable\"  VALUE=\"true\">\r\n"
          + "CODEBASE=\"http://java.sun.com/products/plugin/autodl/jinstall-1_5_0-windows-i586.cab#Version=1,5,0,0\">\r\n"
          + "<PARAM NAME=\"archive\" VALUE=\""
          + base.toString()
          + "\">\r\n"
          + "<PARAM NAME=\"type\" VALUE=\"application/x-java-applet;version=1.5\">\r\n"
-         + "<PARAM NAME=\"code\" VALUE=\"" + temp + "\">\r\n").getBytes();
+         + "<PARAM NAME=\"code\" VALUE=\"" + temp + "\">\r\n"
+         ).getBytes();
       mid = ("<COMMENT><EMBED type=\"application/x-java-applet;version=1.5\"\r\n"
          + "ARCHIVE=\""
          + base.toString()
          + "\"\r\n"
          + "CODE=\""
          + temp
-         + "\"\r\n" + "WIDTH=\"100%\" HEIGHT=\"100%\"\r\n").getBytes();
+         + "\"\r\n" + "WIDTH=\"100%\" HEIGHT=\"100%\"\r\n"
+         + "DRAGGABLE=\"true\"\r\n"
+         ).getBytes();
       temp = CodebaseServer.class.getName().replace('.', '/') + ".class";
       temp = CodebaseServer.class.getClassLoader().getResource(temp).toString();
       if (temp.indexOf('!') != -1) {
@@ -318,13 +324,13 @@ public final class CodebaseServer extends Thread {
     * item servers will not be able to use the client service feature, as it is
     * unique to the VM in which the CodebaseServer is running.
     * <p>
-    * As a safety precaution, the server will send any requested file in or
-    * below its working directory <i>except</i> the jar file of the server
-    * itself. Typically people do not want to give this file out.
+    * As a safety precaution, the server will send any requested jar or class
+    * file in or below its working directory <i>except</i> the jar file of the
+    * server itself. Typically people do not want to give this file out.
     */
    public void run() {
       try {
-         byte msg[] = new byte[0xf000];
+         byte msg[] = new byte[0x8000];
          while (!isInterrupted()) {
             Socket s = ss.accept();
             try {
@@ -413,19 +419,24 @@ public final class CodebaseServer extends Thread {
                         os.write(out);
                      }
                   } catch (Exception x) { os.write(bye); }
-               } else if (!itemName.endsWith(thisJar)) {
-                  try { // file request: send contents
+               } else if (!itemName.endsWith(thisJar)) { // file request
+                  if (itemName.endsWith(".jar")  || itemName.endsWith(".class")) try {
                      InputStream ris = getClass().getResourceAsStream(itemName);
                      if (ris == null) // resource not inside server jar
                      ris = new FileInputStream('.' + itemName);
-                     os.write(itemName.endsWith(".jar") ? jar : cls);
+                     os.write(itemName.endsWith(".jar") ? jarHdr : classHdr);
+                     os.write(formatter.format(new Date(new File('.' +
+                        itemName).lastModified())).getBytes());
+                     os.write("\r\nConnection: close\r\n\r\n".getBytes());
                      for (int i = ris.read(msg); i != -1; i = ris.read(msg))
                         os.write(msg, 0, i);
                      ris.close();
                   } catch (Exception x) { os.write(bye); }
+                  else os.write(bye); // only jar or class files will be sent
                } else os.write(bye); // no other requests are honored
+               os.flush(); // make sure all bytes are sent
                os.close(); // terminate client connection
-               is.close();
+               is.close(); // terminate further requests from client
             } catch (Exception x) { x.printStackTrace(); }
             try { s.close(); } catch (Exception x) { x.printStackTrace(); }
          }
@@ -433,10 +444,11 @@ public final class CodebaseServer extends Thread {
       try { ss.close(); } catch (Exception x) { x.printStackTrace(); }
    }
    /**
-    * The application creates a utility server to share any files in the in its
-    * working directory and subdirectories. It is extremely useful for
-    * application development. If a port number is provided as an argument, it
-    * will be used, otherwise it will be opened on an anonymous port.
+    * The application creates a utility server to share any jar and class
+    * files in the in its working directory and subdirectories. It is
+    * extremely useful for application development. If a port number is
+    * provided as an argument, it will be used, otherwise it will be opened
+    * on an anonymous port.
     */
    public static void main(String args[]) throws Exception {
       CodebaseServer c = args.length == 0
