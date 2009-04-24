@@ -543,7 +543,8 @@ public final class Remote extends UnicastRemoteObject
                   '(' + args.getClass().getName() + ')'));
          }
       } catch(java.lang.reflect.InvocationTargetException x) {
-         throw (Exception)x.getTargetException();
+         Throwable t = x.getTargetException();
+         throw t instanceof Exception ? (Exception)t : new Exception(t);
       }
    }
    /**
