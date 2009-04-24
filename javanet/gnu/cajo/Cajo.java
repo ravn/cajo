@@ -59,14 +59,15 @@ public final class Cajo implements Grail {
        * collection of references owned by the remote JVM, and
        * correspondingly send a copy of their registries.
        * @param multicast A reference to the announcing JVM
-       * @return null To keep the multicase object listening
+       * @return null To keep the multicast object listening
+       * @throws Exception if the request for remote references failed, or the
+       * sending its reference collection failed, for either network, or
+       * application specific reasons.
        */
-      public Object multicast(Multicast multicast) {
-         try {
-            if (items.size() > 0 )
-               multicast.item.invoke("register", items);
-            register((Vector)multicast.item.invoke("request", null));
-         } catch(Exception x) { x.printStackTrace(); }
+      public Object multicast(Multicast multicast) throws Exception {
+         if (items.size() > 0 )
+            multicast.item.invoke("register", items);
+         register((Vector)multicast.item.invoke("request", null));
          return null; // pass any list to announcer & keep listening
       }
       /**
@@ -251,10 +252,7 @@ public final class Cajo implements Grail {
       for (int i = 0; i < elements.length; i++) try {
          Object match = Remote.invoke(elements[i], null, params);
          if (Boolean.TRUE.equals(match)) list.add(elements[i]);
-      } catch(Exception x) {
-         items.removeElement(elements[i]);
-         x.printStackTrace();
-      }
+      } catch(Exception x) { items.removeElement(elements[i]); }
       return list.toArray();
    }
    /**
