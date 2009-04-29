@@ -46,7 +46,7 @@ public final class CodebaseServer extends Thread {
    private static final SimpleDateFormat formatter =
       new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z");
    private static final byte[] // http headers:
-       bye = ("HTTP/1.0 404 Not Found\r\n" // unsupported request
+      bye = ("HTTP/1.0 404 Not Found\r\n" // unsupported request
          + "Content-type: text/html\r\n"
          + "Connection: close\r\n\r\n"
          + "<html><head><title>404: URL Not Found</title></head><body>"
@@ -56,19 +56,17 @@ public final class CodebaseServer extends Thread {
          + "<a href=https://cajo.dev.java.net>https://cajo.dev.java.net</a>."
          + "</i></body></html>").getBytes(),
       apl = ("HTTP/1.0 200 OK\r\n" + "Content-type: text/html\r\n"
-         + "Cache-control: must-revalidate\r\n"
+         + "Last-Modified: " + formatter.format(new Date()) + "\r\n"
          + "Connection: close\r\n\r\n").getBytes(), // for applets
       jws = ("HTTP/1.0 200 OK\r\n"
          + "Content-type: application/x-java-jnlp-file\r\n"
-         + "Cache-control: must-revalidate\r\n"
+         + "Last-Modified: " + formatter.format(new Date()) + "\r\n"
          + "Connection: close\r\n\r\n").getBytes(), // for WebStart
       jarHdr = ("HTTP/1.0 200 OK\r\n" // for jar files
          + "Content-type: application/x-java-archive\r\n"
-         + "Cache-control: must-revalidate\r\n"
          + "Last-Modified: ").getBytes(),
       classHdr = ("HTTP/1.0 200 OK\r\n" // for class files
          + "Content-type: application/x-java-vm\r\n"
-         + "Cache-control: must-revalidate\r\n"
          + "Last-Modified: ").getBytes(),
       end = ( // http footers:
          "PLUGINSPAGE=\"http://java.sun.com/j2se/1.5.0/download.html\">\r\n"
@@ -168,7 +166,7 @@ public final class CodebaseServer extends Thread {
          + "<META NAME=\"generator\" content=\"CodebaseServer\">\r\n"
          + "</HEAD><BODY leftmargin=\"0\" topmargin=\"0\" marginheight=\"0\" marginwidth=0 rightmargin=\"0\">\r\n"
          + "<CENTER><OBJECT classid=\"clsid:8AD9C840-044E-11D1-B3E9-00805F499D93\"\r\n"
-         + "WIDTH=\"100%\" HEIGHT=\"100%\"\r\n"
+         + "WIDTH=\"100%\" HEIGHT=\"100%\">\r\n"
          + "<PARAM NAME=\"draggable\"  VALUE=\"true\">\r\n"
          + "CODEBASE=\"http://java.sun.com/products/plugin/autodl/jinstall-1_5_0-windows-i586.cab#Version=1,5,0,0\">\r\n"
          + "<PARAM NAME=\"archive\" VALUE=\""
@@ -178,12 +176,8 @@ public final class CodebaseServer extends Thread {
          + "<PARAM NAME=\"code\" VALUE=\"" + temp + "\">\r\n"
          ).getBytes();
       mid = ("<COMMENT><EMBED type=\"application/x-java-applet;version=1.5\"\r\n"
-         + "ARCHIVE=\""
-         + base.toString()
-         + "\"\r\n"
-         + "CODE=\""
-         + temp
-         + "\"\r\n" + "WIDTH=\"100%\" HEIGHT=\"100%\"\r\n"
+         + "ARCHIVE=\"" + base.toString() + "\"\r\n"
+         + "CODE=\"" + temp + "\"\r\n" + "WIDTH=\"100%\" HEIGHT=\"100%\"\r\n"
          + "DRAGGABLE=\"true\"\r\n"
          ).getBytes();
       temp = CodebaseServer.class.getName().replace('.', '/') + ".class";
