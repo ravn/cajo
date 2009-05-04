@@ -186,8 +186,11 @@
 
                                       <li>Project member Boris Lemus, who following an extensive overhaul of the
                                       of the gnu.cajo.Remote package, discovered two errors which broke operation
-                                      using NAT. He dug deep into the inner workings of the framework to find the
-                                      errors, corrected and tested it, and generously submitted a patch.<br><br>
+                                      using NAT. He dug deep into the inner workings of the class to find the
+                                      errors, corrected and tested it, and generously submitted a patch.
+                                      Also, he discovered that gnu.cajo.utils.CodebaseServer needed to provide
+                                      a <tt>Last-Modified</tt> tag in the HTTP response headers, otherwise server
+                                      resources would be re-fetched -- <i>even</i> if they had not changed!<br><br>
 
                                       <li>More to come...
                                     </span>
