@@ -156,7 +156,7 @@ public class MonitorItem implements Invoke {
             try {
                if (oos != null) {
                   oos.writeObject( new MarshalledObject(new Object[] {
-                     clientHost, item.getClass().getName(), // may not be serializable!
+                     clientHost, item.getClass().getName() + " hashcode " + item.hashCode(),
                      method, args, result, new Long(++count), new Long(time),
                      new Long(time - oldtime), new Integer(run),
                      new Integer(freeMemory)
@@ -166,7 +166,7 @@ public class MonitorItem implements Invoke {
                   ps.print("Caller host = ");
                   ps.print(clientHost);
                   ps.print("\nObject call = ");
-                  ps.print(item.getClass().getName());
+                  ps.print(item.getClass().getName() + " hashcode " + item.hashCode());
                   ps.print("\nMethod call = ");
                   ps.print(method);
                   ps.print("\nMethod args = ");
