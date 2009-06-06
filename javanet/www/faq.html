@@ -144,9 +144,9 @@
                                       need to uniquely remote the object reference given to that client, using the
                                       <a href=docs/gnu/cajo/invoke/Remote.html>Remote</a> class. Then you can
                                       invoke the remote wrapper's <a href=docs/gnu/cajo/invoke/Remote.html#unexport(boolean)>
-                                      unexport()</a> method. This will forcibly terminate all remote connections to
-                                      that wrapper, and even to pend and report if any remote invocations were in
-                                      progress (or pending) on it.<br><br>
+                                      unexport(true)</a> method. This will forcibly terminate all remote connections
+                                      to that wrapper, even to clients currently attempting to execute methods, and
+                                      report if any remote invocations were in progress (or pending) on it.<br><br>
 
                                       <a id="5"></a><b><u>5. Can I restrict my server only to local clients?</u></b>
                                       This is an intriguing question; fortunately the answer is <u>yes</u>! To make
