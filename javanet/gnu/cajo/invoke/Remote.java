@@ -104,8 +104,10 @@ public final class Remote extends UnicastRemoteObject
       }
       public int hashCode() { return getClass().hashCode() ^ port; }
    }
-   private static HashMap cache = new HashMap();
-   private static Vector items = new Vector();
+   private static final HashMap cache  = new HashMap();
+   private static final Vector items   = new Vector();
+   private static final Class[] NULL   = new Class[0];
+   private static final Class[] OBJECT = new Class[] { Object.class };
    private boolean unexportOnUnreference;
    // the static configuration, used for default for remoting
    private static String defaultServerHost, defaultClientHost;
@@ -444,12 +446,14 @@ public final class Remote extends UnicastRemoteObject
     * method.
     * @param method The name of the method, which is to be invoked.
     * @param args The class representations of the arguments to be
-    * provided to the method.
+    * provided to the method, it can be either null or length 0, if the
+    * method takes no arguments
     * @return The most applicable method, which will accept all of these
     * arguments, or null, if none match.
     */
    public static Method findBestMethod(
       Object item, String method, Class[] args) {
+      if (args == null) args = NULL;
       HashMap methods = (HashMap)cache.get(item);
       if (methods != null) { // item already chached?
          HashMap arguments = (HashMap)methods.get(method);
@@ -461,17 +465,20 @@ public final class Remote extends UnicastRemoteObject
          }
       } // else lookup best method...
       ArrayList matchList = new ArrayList();
-      Method[] ms = item.getClass().getMethods();
-      list: for(int i = 0; i < ms.length; i++) { // list compatible methods
-         if (ms[i].getName().equals(method) &&
-            ms[i].getParameterTypes().length == args.length) {
-            for (int j = 0; j < args.length; j++)
-               if (args[j] != null && !autobox(ms[i].getParameterTypes()[j]).
-                  isAssignableFrom(args[j])) continue list;
-            matchList.add(ms[i]);
+      if (((Object[])args).length > 0) {
+         Method[] ms = item.getClass().getMethods();
+         list: for(int i = 0; i < ms.length; i++) { // list compatible methods
+            if (ms[i].getName().equals(method) &&
+               ms[i].getParameterTypes().length == args.length) {
+               for (int j = 0; j < args.length; j++)
+                  if (args[j] != null && !autobox(ms[i].getParameterTypes()[j]).
+                     isAssignableFrom(args[j])) continue list;
+               matchList.add(ms[i]);
+            }
          }
-      }
-      if (matchList.size() == 0) return null; // no joy :(
+         if (matchList.size() == 0) return null; // no joy :(
+      } else try { matchList.add(item.getClass().getMethod(method, null)); }
+      catch(NoSuchMethodException x) { return null; } // no no-arg method :(
       Method best = matchList.size() == 1 ? (Method)matchList.get(0) : null;
       if (best == null) { // if more than one method match, find a close one
          for (int i = 0, goodness = -1; i < matchList.size(); i++) {
@@ -533,38 +540,29 @@ public final class Remote extends UnicastRemoteObject
    public static Object invoke(Object item, String method, Object args)
       throws Exception {
       try {
-         if (item instanceof Invoke)
+         if (item instanceof Invoke) // if possible, delegate
             return ((Invoke)item).invoke(method, args);
-         if (args instanceof Object[]) {
-            if (((Object[])args).length == 0) try {
-               return item.getClass().getMethod(method, null).
-                  invoke(item, null);
-            } catch(NoSuchMethodException x) {}
-            else {
-               Object[] o_args = (Object[])args;
-               Class[]  c_args = new Class[o_args.length];
-               for(int i = 0; i < o_args.length; i++)
-                  c_args[i] = o_args[i] != null ? o_args[i].getClass() : null;
-               Method m = findBestMethod(item, method, c_args);
-               if (m != null) return m.invoke(item, o_args);
-            }
+         if (args instanceof Object[]) { // multiple arguments
+            Object[] o_args = (Object[])args;
+            Class[]  c_args = new Class[o_args.length];
+            for(int i = 0; i < o_args.length; i++)
+               c_args[i] = o_args[i] != null ? o_args[i].getClass() : null;
+            Method m = findBestMethod(item, method, c_args);
+            if (m != null) return m.invoke(item, o_args);
          }
-         if (args != null) {
+         if (args != null) { // single argument
             Method m =
                findBestMethod(item, method, new Class[]{ args.getClass() });
             if (m != null) return m.invoke(item, new Object[]{ args });
-         } else try {
-            return item.getClass().getMethod(method, null).invoke(item, null);
-         } catch(NoSuchMethodException x) {}
-         try {
-            return item.getClass().
-               getMethod(method, new Class[]{ Object.class }).
-                  invoke(item, new Object[]{ args });
-         } catch(NoSuchMethodException x) {
-            throw new NoSuchMethodException(item.getClass().getName() +
-               '.' + method + (args == null ? "()" :
-                  '(' + args.getClass().getName() + ')'));
+         } else { // no argument
+            Method m = findBestMethod(item, method, NULL);
+            if (m != null) return m.invoke(item, null);
          }
+         Method m = findBestMethod(item, method, OBJECT); // hail mary!
+         if (m != null) return m.invoke(item, new Object[]{ args });
+         throw new NoSuchMethodException(item.getClass().getName() +
+            '.' + method + (args == null ? "()" :
+               '(' + args.getClass().getName() + ')'));
       } catch(java.lang.reflect.InvocationTargetException x) {
          Throwable t = x.getTargetException();
          throw t instanceof Exception ? (Exception)t : new Exception(t);
