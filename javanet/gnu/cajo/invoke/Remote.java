@@ -5,8 +5,10 @@ import java.net.*;
 import java.rmi.*;
 import java.util.zip.*;
 import java.rmi.server.*;
+import java.util.Arrays;
 import java.util.Vector;
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.lang.reflect.Method;
 
 /*
@@ -102,6 +104,7 @@ public final class Remote extends UnicastRemoteObject
       }
       public int hashCode() { return getClass().hashCode() ^ port; }
    }
+   private static HashMap cache = new HashMap();
    private static Vector items = new Vector();
    private boolean unexportOnUnreference;
    // the static configuration, used for default for remoting
@@ -447,38 +450,58 @@ public final class Remote extends UnicastRemoteObject
     */
    public static Method findBestMethod(
       Object item, String method, Class[] args) {
-      LinkedList matchList = new LinkedList();
+      HashMap methods = (HashMap)cache.get(item);
+      if (methods != null) { // item already chached?
+         HashMap arguments = (HashMap)methods.get(method);
+         if (arguments != null) { // method already chached?
+            Object[] argumentSet = arguments.keySet().toArray();
+            for (int i = 0; i < argumentSet.length; i++)
+               if (Arrays.equals(args, (Class[])argumentSet[i]))
+                  return (Method)arguments.get(argumentSet[i]);
+         }
+      } // else lookup best method...
+      ArrayList matchList = new ArrayList();
       Method[] ms = item.getClass().getMethods();
-      // Find any matching methods in the item and put them in a list:
-      list: for(int i = 0; i < ms.length; i++) {
+      list: for(int i = 0; i < ms.length; i++) { // list compatible methods
          if (ms[i].getName().equals(method) &&
             ms[i].getParameterTypes().length == args.length) {
             for (int j = 0; j < args.length; j++)
                if (args[j] != null && !autobox(ms[i].getParameterTypes()[j]).
-                  isAssignableFrom(args[j]))
-                     continue list;
+                  isAssignableFrom(args[j])) continue list;
             matchList.add(ms[i]);
          }
       }
-      // now pick the closest match, if any:
-      if (matchList.size() > 1) {
-         Method best  = null;
-         int goodness = -1;
-         for (int i = 0; i < matchList.size(); i++) {
+      if (matchList.size() == 0) return null; // no joy :(
+      Method best = matchList.size() == 1 ? (Method)matchList.get(0) : null;
+      if (best == null) { // if more than one method match, find a close one
+         for (int i = 0, goodness = -1; i < matchList.size(); i++) {
             int closeness = 0;
             Method m = (Method)matchList.get(i);
             for (int j = 0; j < args.length; j++)
                if (args[j] != null && args[j].
                   isAssignableFrom(autobox(m.getParameterTypes()[j])))
                      closeness++;
-            if (closeness == args.length) return m; // closest fit
             if (closeness > goodness) {
                best = m;
+               if (closeness == args.length) break; // won't find better fit
                goodness = closeness;
             }
          }
-         return best;
-      } else return matchList.size() > 0 ? (Method)matchList.get(0) : null;
+      }
+      synchronized(cache) { // update lookup cache...
+         methods = (HashMap)cache.get(item);
+         if (methods == null) {
+            methods = new HashMap();
+            cache.put(item, methods);
+         }
+         HashMap arguments = (HashMap)methods.get(method);
+         if (arguments == null) {
+            arguments = new HashMap();
+            methods.put(method, arguments);
+         }
+         if (arguments.get(args) == null) arguments.put(args, best);
+      }
+      return best;
    }
    /**
     * This function may be called reentrantly, so the item object <i>must</i>
@@ -626,9 +649,11 @@ public final class Remote extends UnicastRemoteObject
     * @throws NoSuchObjectException If this wrapper has already been un-remoted
     */
    public boolean unexport(boolean force) throws NoSuchObjectException {
-      boolean worked = UnicastRemoteObject.unexportObject(this, force);
-      if (worked) items.remove(this);
-      return worked;
+      if (UnicastRemoteObject.unexportObject(this, force)) {
+         items.remove(this);
+         cache.remove(item);
+         return true;
+      } else return false;
    }
    /**
     * This this method overrides the implementation provided by
