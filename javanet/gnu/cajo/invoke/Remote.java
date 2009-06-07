@@ -308,6 +308,7 @@ public final class Remote extends UnicastRemoteObject
             try { Remote.unexportObject((Remote)items.elementAt(i), true); }
             catch(NoSuchObjectException x) {}
          items.clear();
+         cache.clear();
       }
    }
    /**
@@ -454,7 +455,7 @@ public final class Remote extends UnicastRemoteObject
    public static Method findBestMethod(
       Object item, String method, Class[] args) {
       if (args == null) args = NULL;
-      HashMap methods = (HashMap)cache.get(item);
+      HashMap methods = (HashMap)cache.get(item.getClass());
       if (methods != null) { // item already chached?
          HashMap arguments = (HashMap)methods.get(method);
          if (arguments != null) { // method already chached?
@@ -496,10 +497,10 @@ public final class Remote extends UnicastRemoteObject
          }
       }
       synchronized(cache) { // update lookup cache...
-         methods = (HashMap)cache.get(item);
+         methods = (HashMap)cache.get(item.getClass());
          if (methods == null) {
             methods = new HashMap();
-            cache.put(item, methods);
+            cache.put(item.getClass(), methods);
          }
          HashMap arguments = (HashMap)methods.get(method);
          if (arguments == null) {
@@ -648,7 +649,6 @@ public final class Remote extends UnicastRemoteObject
     */
    public boolean unexport(boolean force) throws NoSuchObjectException {
       if (UnicastRemoteObject.unexportObject(this, force)) {
-         items.remove(this);
          cache.remove(item);
          return true;
       } else return false;
