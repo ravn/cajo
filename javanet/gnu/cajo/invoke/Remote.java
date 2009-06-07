@@ -465,7 +465,7 @@ public final class Remote extends UnicastRemoteObject
          }
       } // else lookup best method...
       ArrayList matchList = new ArrayList();
-      if (((Object[])args).length > 0) {
+      if (((Object[])args).length > 0) { // if multiple arguments...
          Method[] ms = item.getClass().getMethods();
          list: for(int i = 0; i < ms.length; i++) { // list compatible methods
             if (ms[i].getName().equals(method) &&
@@ -480,7 +480,7 @@ public final class Remote extends UnicastRemoteObject
       } else try { matchList.add(item.getClass().getMethod(method, null)); }
       catch(NoSuchMethodException x) { return null; } // no no-arg method :(
       Method best = matchList.size() == 1 ? (Method)matchList.get(0) : null;
-      if (best == null) { // if more than one method match, find a close one
+      if (best == null) { // if more than one method match...
          for (int i = 0, goodness = -1; i < matchList.size(); i++) {
             int closeness = 0;
             Method m = (Method)matchList.get(i);
@@ -539,9 +539,9 @@ public final class Remote extends UnicastRemoteObject
     */
    public static Object invoke(Object item, String method, Object args)
       throws Exception {
+      if (item instanceof Invoke) // if possible, delegate
+         return ((Invoke)item).invoke(method, args);
       try {
-         if (item instanceof Invoke) // if possible, delegate
-            return ((Invoke)item).invoke(method, args);
          if (args instanceof Object[]) { // multiple arguments
             Object[] o_args = (Object[])args;
             Class[]  c_args = new Class[o_args.length];
