@@ -308,7 +308,7 @@ public final class Remote extends UnicastRemoteObject
             try { Remote.unexportObject((Remote)items.elementAt(i), true); }
             catch(NoSuchObjectException x) {}
          items.clear();
-         cache.clear();
+         synchronized(cache) { cache.clear(); }
       }
    }
    /**
@@ -649,7 +649,7 @@ public final class Remote extends UnicastRemoteObject
     */
    public boolean unexport(boolean force) throws NoSuchObjectException {
       if (UnicastRemoteObject.unexportObject(this, force)) {
-         cache.remove(item);
+         items.remove(this);
          return true;
       } else return false;
    }
