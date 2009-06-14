@@ -104,16 +104,15 @@ public final class Remote extends UnicastRemoteObject
       }
       public int hashCode() { return getClass().hashCode() ^ port; }
    }
-   private static final HashMap cache  = new HashMap();
-   private static final Vector items   = new Vector();
-   private static final Class[] NULL   = new Class[0];
-   private static final Class[] OBJECT = new Class[] { Object.class };
-   private boolean unexportOnUnreference;
    // the static configuration, used for default for remoting
    private static String defaultServerHost, defaultClientHost;
    private static int defaultServerPort, defaultClientPort;
    private static RCSF defaultRCSF;
    private static RSSF defaultRSSF;
+   private static final HashMap cache = new HashMap();
+   private static final Vector items  = new Vector();
+   private static final Class[] NULL  = {}, OBJECT = { Object.class };
+   private boolean unexportOnUnreference;
    /**
     * If the remote wrapper is being garbage collected, and it hasn't already
     * been explicitly unexported, let's do that now, as a courtesy.
@@ -412,7 +411,7 @@ public final class Remote extends UnicastRemoteObject
       return item;
    }
    /**
-    * This method emulates server J5SE argument autoboxing. It is used by
+    * This method emulates server Java5 argument autoboxing. It is used by
     * {@link #findBestMethod findBestMethod}. This technique has been most
     * graciously championed by project member <b>Zac Wolfe</b>. It allows
     * public server methods to use primitive types for arguments, <i>and</i>
@@ -496,7 +495,7 @@ public final class Remote extends UnicastRemoteObject
             }
          }
       }
-      synchronized(cache) { // update lookup cache...
+      synchronized(cache) { // update lookup cache, if necessary...
          methods = (HashMap)cache.get(item.getClass());
          if (methods == null) {
             methods = new HashMap();
