@@ -127,7 +127,7 @@ public final class Cajo implements Grail {
             searching: for (int i = 0; i < inames.length; i++) {
                for (int j = 0; j < mnames.length; j++) {
                   if (mnames[j].equals(inames[i])
-                     && (ireturns[i].equals(Void.TYPE)
+                     && (ireturns[i].equals(void.class)
                      || Remote.autobox(ireturns[i]).
                      isAssignableFrom(Remote.autobox(mreturns[j])))) {
                      Class  margs[] = methods[j].getParameterTypes();
