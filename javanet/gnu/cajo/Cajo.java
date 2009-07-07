@@ -8,7 +8,7 @@ import gnu.cajo.utils.extra.TransparentItemProxy;
 import java.lang.reflect.Method;
 import java.io.IOException;
 import java.util.Vector;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.rmi.RemoteException;
 
 /*
@@ -247,7 +247,7 @@ public final class Cajo implements Grail {
          args[i]    = methods[i].getParameterTypes();
       }
       Object params     = new Object[] { returns, names, args };
-      LinkedList list   = new LinkedList();
+      ArrayList list    = new ArrayList();
       Object elements[] = items.toArray();
       for (int i = 0; i < elements.length; i++) try {
          Object match = Remote.invoke(elements[i], null, params);
