@@ -204,8 +204,10 @@ public final class Cajo implements Grail {
       ItemServer.bind(registrar, "registrar");
    }
    /**
-    * This method makes an object's public methods, whether instance or
-    * static, remotely invocable. If not all methods are safe to be made
+    * This method makes any object's public methods, whether instance or
+    * static, remotely invocable. As the object being remoted is already
+    * instantiated, there is no <i>artificial</i> requirement for it to
+    * implement a no-arg constructor. If not all methods are safe to be made
     * remotely invocable, then wrap the object with a special-case <a href=http://en.wikipedia.org/wiki/Decorator_pattern>
     * decorator</a>.<p>
     * <i><u>Note</u>:</i> if an object is exported more than once, it will be
