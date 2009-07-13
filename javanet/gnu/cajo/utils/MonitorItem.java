@@ -121,7 +121,10 @@ public class MonitorItem implements Invoke {
     * <li> The run time of the invocation time, in milliseconds
     * <li> The free memory percentage, following the invocation</ul>
     * If the write operation to the log file results in an exception, the
-    * stack trace of will be printed to System.err.
+    * stack trace of will be printed to System.err.<p>
+    * <i><u>Note</u>:</i> Logging may be activated and deactivated
+    * administratively as needed on both an instance-wide basis via the field
+    * LOCALOFF, and on a class-wide basis via the static field CLASSOFF.
     * @param method The internal object's public method being called.
     * @param  args The arguments to pass to the internal object's method.
     * @return The sychronous data, if any, resulting from the invocation.
