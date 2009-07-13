@@ -23,7 +23,7 @@ import java.io.ObjectOutputStream;
  * by the Free Software Foundation, at version 3 of the licence, or (at your
  * option) any later version.
  *
- * Th cajo library is distributed in the hope that it will be useful,
+ * The cajo library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public Licence for more details.
@@ -52,6 +52,18 @@ import java.io.ObjectOutputStream;
 public class MonitorItem implements Invoke {
    private final OutputStream os;
    private long count, oldtime = System.currentTimeMillis();
+   /**
+    * This flag can be used to selectively enable and disable monitoring
+    * on a class-wide level. By default it is set to false, when true, no
+    * output to any logstream will take place.
+    */
+   public static boolean CLASSOFF;
+   /**
+    * This flag can be used to selectively enable and disable monitoring
+    * on a instance-wide level. By default it is set to false, when true, no
+    * output to the logstream will take place.
+    */
+   public boolean LOCALOFF;
    /**
     * The object being monitored. It is declared as public to allow the
     * reference of the MontorItem, and its wrapped object, from a single
@@ -119,6 +131,7 @@ public class MonitorItem implements Invoke {
     * @throws Exception If the internal object's method rejects the invocation.
     */
    public Object invoke(String method, Object args) throws Exception {
+      if (CLASSOFF || LOCALOFF) return Remote.invoke(item, method, args);
       long time = System.currentTimeMillis();
       Object result = null;
       try { return result = Remote.invoke(item, method, args); }
