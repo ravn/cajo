@@ -49,9 +49,13 @@ import java.lang.reflect.InvocationTargetException;
  * customise the way they use remote items as a function of the interfaces
  * implemented.
  *
- * <p>If an item can be best represented with a single interface, it would be
+ * <p>The proxy instances returned from this class are serialisable; proxies
+ * can be frozen/thawed to storage, and passed to other JVMs over the
+ * network.
+ *
+ * <p>If an item can be best represented with a single interface, it might be
  * well to consider using a {@link Wrapper Wrapper} class instead. It is
- * conceptually much simpler.
+ * conceptually much simpler, though lacks the syntactical transparency.
  *
  * <p><i><u>Note</u>:</i> Unfortunately, this class only works with JREs 1.3
  * and higher. Therefore I was reluctant to include it in the official
