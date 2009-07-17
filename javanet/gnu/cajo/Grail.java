@@ -29,6 +29,9 @@ public interface Grail {
     * Additionally, the registry hosting this reference must have the ability
     * to dynamically detect, and be detected, by other similar registries; to
     * create an implicit universal: <i>Meta-Registry.</i>
+    * <p><i><u>Note</u>:</i> There is <u>no</u> <i>silly</i> requirement that
+    * the object being exported implement a no-arg constructor; any
+    * syntactically valid class definition will work.
     * @param object The <a href=http://en.wikipedia.org/wiki/Plain_Old_Java_Object>
     * POJO</a> to be made remotely invocable, i.e. there is no requirement
     * for it to implement any special interfaces, nor to be derived from any
