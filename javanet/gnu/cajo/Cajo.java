@@ -180,16 +180,20 @@ public final class Cajo implements Grail {
     * internal and external addresses are requried. If not, then both
     * addresses can be the same, or null arguments can be used.
     * @param port The TCP port to be used for communications, for servers
-    * it is canonically the IANA assigned cajo port of 1198, for clients it
+    * canonically it is the IANA assigned cajo port of 1198, for clients it
     * can be any value, including 0, meaining chosen from any unused port
     * available at the time of startup
-    * @param serverHost The <i>external</i> address or host name of the NAT
-    * router, if no NAT router is being used; if the computer has more than
-    * one network interface the special address 0.0.0.0 can be used, to
-    * provide service on all of the interfaces
-    * @param clientHost The <i>internal</i> address or host name; if the host
-    * has only one network interface, or wishes to use all of them, the
-    * argument can be null
+    * @param serverHost The local network interface on which the item will
+    * will be remotely invokable. Typically it is specified when the server
+    * has multiple phyisical network interfaces, or is multi-homed, i.e.
+    * having multiple logical network interfaces. The value can be null,
+    * which will make the item accessible on <i>all</i> network interfaces,
+    * this is identical to providing the special port address "0.0.0.0".
+    * @param clientHost The host name, or IP address the remote client will
+    * use to communicate with this server.  If null, it will be the same as
+    * serverHost resolution.  This would need to be explicitly specified if
+    * the server is operating behind NAT; i.e. when the server's subnet IP
+    * address is <i>not</i> the same as its address outside the subnet.
     * @throws UnknownHostException If the either host address/name cannot be
     * resolved, or is invalid
     * @throws IOException If the startup announcement datagram packet could
@@ -300,7 +304,7 @@ public final class Cajo implements Grail {
           Cajo.class.getResourceAsStream("/readme.txt");
        byte text[] = new byte[is.available()];
        is.read(text);
-       System.out.println(new String(text));
        is.close();
+       System.out.println(new String(text));
     }
 }
