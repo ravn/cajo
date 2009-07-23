@@ -19,7 +19,7 @@ import java.io.*;
  * by the Free Software Foundation, at version 3 of the licence, or (at your
  * option) any later version.
  *
- * Th cajo library is distributed in the hope that it will be useful,
+ * The cajo library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public Licence for more details.
@@ -29,14 +29,14 @@ import java.io.*;
  */
 
 /**
- * This class is used to transfer its internal proxy item as a zipped
+ * This class is used to transfer its internal proxy object as a zipped
  * marshalled object (zedmob). It will decompress the proxy automatically on
  * arrival at the client. This will incur a small runtime penalty, however, if
  * the proxy is large and highly compressable, or the data link is slow, or the
  * cost per byte to transmit data is high, this can become highly advantageous.
  * The proxy is serialized and compressed once the server reference is
  * provided to it by the {@link ItemServer ItemServer} during the binding of
- * its server item. After that it can no longer be modified at the server.<p>
+ * its server object. After that it can no longer be modified at the server.<p>
  * If the server loads proxies into its runtime, i.e. it is not using a
  * {@link ProxyLoader ProxyLoader}, it is <i>highly recommended</i>  to use
  *  zipped proxies, since processor horsepower is increaseing steadily, while
@@ -71,7 +71,7 @@ public class ZippedProxy implements Invoke {
     * reference is provided by the {@link ItemServer ItemServer}, after that,
     * it is serialized into the payload array, and discarded.  If there are no
     * other references to the proxy, it will be garbage collected.
-    * @param proxy The internal proxy item.
+    * @param proxy The internal proxy object.
     */
    public ZippedProxy(Object proxy) { this.proxy = proxy; }
    /**
@@ -79,7 +79,7 @@ public class ZippedProxy implements Invoke {
     * the sending VM, to store a remote reference to itself.  Following that,
     * it is only invoked by the receiving VM.  Following its arrival at the
     * host VM, the proxy will be decompressed at its first invocation.
-    * @param method The public method to invoke on the internal proxy item,
+    * @param method The public method to invoke on the internal proxy object,
     * following the initial invocation, which is used to compress the proxy.
     * @param args First the remote server reference, following that,
     * callback data from any outside VMs to be given to the internal proxy.

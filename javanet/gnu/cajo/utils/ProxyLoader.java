@@ -17,7 +17,7 @@ import java.io.*;
  * by the Free Software Foundation, at version 3 of the licence, or (at your
  * option) any later version.
  *
- * Th cajo library is distributed in the hope that it will be useful,
+ * The cajo library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public Licence for more details.
@@ -32,8 +32,8 @@ import java.io.*;
  * not directly referenced by the server before sending them to the client.
  * This is extremely helpful when the server provides a large number of
  * proxies.  This wrapper object requires only a small number of bytes in the
- * server's VM, to represent a proxy item of arbitrary size.  Upon its arrival
- * at the hosting VM, it will reconstruct the internally referenced proxy item,
+ * server's VM, to represent a proxy object of arbitrary size.  Upon its arrival
+ * at the hosting VM, it will reconstruct the internally referenced proxy object,
  * either by construction or deserialization, and initialize it such that any
  * proxy object can be handled via this class. This will also conserve
  * bandwidth, as proxies in the codebase jar file are compressed.
@@ -51,7 +51,7 @@ public final class ProxyLoader implements Invoke {
    private RemoteInvoke server;
    private transient Object proxy;
    /**
-    * The constructor creates a small wrapper object referencing a proxy item
+    * The constructor creates a small wrapper object referencing a proxy object
     * solely by name, but not loading its object into the server's VM runtime.
     * It is simply a server-side representation of the proxy, but not the
     * proxy itself.
@@ -61,8 +61,8 @@ public final class ProxyLoader implements Invoke {
     */
    public ProxyLoader(String handle) { this.handle = handle; }
    /**
-    * This function may be called reentrantly, so the inner item <i>must</i>
-    * synchronize its critical sections as necessary. Its first invocation is
+    * This function may be called reentrantly, so the inner object <i>must</i>
+    * synchronise its critical sections as necessary. Its first invocation is
     * performed by the {@link ItemServer ItemServer}, to provide a remote
     * reference to itself, for proxy callbacks.  The second invocation
     * is by the client, to provide a remoted reference to the ProxyLoader, to
@@ -70,14 +70,14 @@ public final class ProxyLoader implements Invoke {
     * this point the ProxyLoader will reconstitute the proxy object, and pass
     * it the two previous arguments, respectively. All subsequent invocations
     * are routed directly to the created proxy itself.
-    * @param  method The method to invoke on the internal item.
+    * @param  method The method to invoke on the internal object.
     * @param args The arguments to provide to the method for its invocation.
     * It can be a single object, an array of objects, or null.
     * @return The sychronous data, if any, resulting from the invocation.
     * @throws java.rmi.RemoteException For network communication related
     * reasons.
     * @throws NoSuchMethodException If no matching method can be found.
-    * @throws Exception If the internal item rejects the request, for any
+    * @throws Exception If the internal object rejects the request, for any
     * application specific reason.
     */
    public Object invoke(String method, Object args) throws Exception {

@@ -35,10 +35,10 @@ import java.rmi.server.RMIServerSocketFactory;
  * along with this library. If not, see http://www.gnu.org/licenses/lgpl.html
  */
 /**
- * These routines are used for server item construction.  The items can be
+ * These routines are used for server object construction.  The objects can be
  * utilized by remote clients to compose larger, cooperative, functionality.
- * It can be used to bind all item servers for external access.  A given
- * application can bind as many items as it wants.
+ * It can be used to bind all object servers for external access.  A given
+ * application can bind as many objects as it wants.
  * <p>A security policy file, named "server.policy" will be loaded from the
  * local directory. By default, the policy file need only allow the following
  * permissions:
@@ -54,7 +54,7 @@ import java.rmi.server.RMIServerSocketFactory;
  * <li> Proxies can only create server sockets only on non-priviliged local ports.
  * <li> Proxies can only create client sockets to any remote port, on any host.
  * </ul><i>Note:</i> if  the {@link gnu.cajo.invoke.Remote Remote} class needs
- * configuration, it must be done <b>before</b> binding an item, since doing
+ * configuration, it must be done <b>before</b> binding an object, since doing
  * this will use the server's assigned name and port number. Configuration is
  * accomplished by calling its {@link gnu.cajo.invoke.Remote#config config}
  * static method. Also, by default, acceptance of proxies is disabled.
@@ -63,7 +63,7 @@ import java.rmi.server.RMIServerSocketFactory;
  * @author John Catherino
  */
 public class ItemServer {
-  // a small utility ClassLoader, to load server plug-in items from jar files.
+  // a small utility ClassLoader, to load server plug-in objects from jar files.
   private static final class JarClassLoader extends ClassLoader {
      final String path;
      JarClassLoader(String jarFile) { path = "jar:file:" + jarFile + "!/"; }
@@ -105,7 +105,7 @@ public class ItemServer {
    * @deprecated Normally use of this constructor is not necessary, as the
    * CodebaseServer class manages this property automatically when used.
    * @param host The public IP address or host name, on which the codebase
-   * is being served. It need not be the same physical machine as the item
+   * is being served. It need not be the same physical machine as the object
    * server.
    * @param port The TCP port on which the codebase server is operating.
    * @param codebase The path/filename of the jar file containing the
@@ -139,25 +139,26 @@ public class ItemServer {
      System.setSecurityManager(new java.rmi.RMISecurityManager());
   }
   /**
-   * This method remotes the provided item in the local rmiregistry. The
-   * registry will not be created until the binding of the first item, to
+   * This method remotes the provided object in the local rmiregistry. The
+   * registry will not be created until the binding of the first object, to
    * allow the opportunity for the {@link gnu.cajo.invoke.Remote Remote}
    * class' network settings to be {@link gnu.cajo.invoke.Remote#config
    * configured}. Strictly speaking, it performs a rebind operation on the
    * rmiregistry, to more easily allow the application to dynamically replace
-   * server items at runtime, if necessary. Since the registry is not shared
-   * with other applications, checking for already bound items is unnecessary.
-   * <p> The provided item will first have its setItem method invoked with
+   * server objects at runtime, if necessary. Since the registry is not shared
+   * with other applications, checking for already bound objects is
+   * unnecessary.
+   * <p> The provided object will first have its setItem method invoked with
    * remote reference to itself, with which it can share with remote VMs, in
    * an application specific manner <i>(if it has one)</i>. Then it will have
    * its startThread method invoked with no argument, to signal it to start
    * its main processing thread <i>(again, if it has one)</i>.
-   * @param item The item to be bound.  It may be either local to the machine,
-   * or remote, it can even be a proxy from a remote item, if proxy
+   * @param item The object to be bound.  It may be either local to the
+   * machine, or remote, it can even be a proxy from a remote object, if proxy
    * {@link #acceptProxies acceptance} was enabled for this VM.
-   * @param name The name under which to bind the item reference in the
+   * @param name The name under which to bind the object reference in the
    * local rmiregistry.
-   * @return A remoted reference to the item within the context of this VM's
+   * @return A remoted reference to the object within the context of this VM's
    * settings.
    * @throws RemoteException If the registry could not be created.
    */
@@ -166,41 +167,41 @@ public class ItemServer {
      catch(IOException x) { return null; } // can't happen, no proxy
   }
   /**
-   * This method is used to bind a server item, contained in its own jar file
-   * into this server's VM, for binding at runtime. This <i>plug-in</i>
-   * item's codebase will be loaded into the <i>master</i> server's runtime,
-   * from the the item's jar file. The plug-in item's class will have its
-   * <tt>newInstance</tt> method invoked, to create the item for binding;
-   * therefore the plug-in item is required to have a no-arg constructor. The
-   * instantiated class is handled to the <tt>bind(object, name)</tt> method
-   * of this class, for final processing.<p>
-   * This allows server items to be modularised, into multiple standalone jar
-   * files. This method can be called several times, for items in the same jar
-   * file. It can even be called with the file name of the running master
-   * server jar itself. This is to aid in the creation of server configuration
-   * scripts, containing the names of files, names of classes, and names under
-   * which to bind the server objects. I have left the file parser out, as
-   * there are two predominant approaches for this; .ini files for the Windows
-   * crowd, and XML files for the rest of the world. Feel free to devise
-   * your own format!<p>
+   * This method is used to bind a server object, contained in its own jar
+   * file into this server's VM, for binding at runtime. This <i>plug-in</i>
+   * object's codebase will be loaded into the <i>master</i> server's runtime,
+   * from the the object's jar file. The plug-in object's class will have its
+   * <tt>newInstance</tt> method invoked, to create the object for binding;
+   * therefore the plug-in object is required to have a no-arg constructor.
+   * The instantiated class is handled to the <tt>bind(object, name)</tt>
+   * method of this class, for final processing.<p>
+   * This allows server objects to be modularised, into multiple standalone
+   * jar files. This method can be called several times, for objects in the
+   * same jar file. It can even be called with the file name of the running
+   * master server jar itself. This is to aid in the creation of server
+   * configuration scripts, containing the names of files, names of classes,
+   * and names under which to bind the server objects. I have left the file
+   * parser out, as there are two predominant approaches for this; .ini files
+   * for the Windows crowd, properties files, and XML files for the rest of
+   * the world. Feel free to devise your own format!<p>
    * Now for an ultra important, <i><u>super cool</u></i> optimisation:<p>
    * When compiling plug-in modules, make use of the javac <tt>-classpath
    * yourpath/masterserver.jar</tt> option. This has a really great
    * advantage:<blockquote>
    * It will prevent the needless recompilation of utility classes
    * already contained in the master server. This can <i>significantly</i>
-   * reduce the size of your server plug-in item jars!</blockquote>
-   * <i>Note:</i> plug-in items typically do not support proxies. This
+   * reduce the size of your server plug-in object jars!</blockquote>
+   * <i>Note:</i> plug-in objects typically do not support proxies. This
    * is because the system rmi codebase property is typically set by the
    * master server, to serve its own proxy jar file, when it has one. There
    * can be only one codebase for a given JVM instance.
-   * @param name The name to bind the loaded server item in the registry.
-   * @param item The name of the class from which to instantiate the item.
+   * @param name The name to bind the loaded server object in the registry.
+   * @param item The name of the class from which to instantiate the object.
    * Example: myclass.mypackage.MyServerObject
    * @param file The absolute/relative path/filename where to find the jar
    * file.
    * Example: myitem.jar or plugins/myitem.jar or /usr/local/jar/myitem.jar
-   * @return A remoted reference to the item within the context of this VM's
+   * @return A remoted reference to the object within the context of this VM's
    * settings.
    * @throws NullPointerException If the jar file referenced in the file
    * argument could not be found in the filesystem.
@@ -221,47 +222,47 @@ public class ItemServer {
      catch(IOException x) { return null; } // can't happen, no proxy
   }
   /**
-   * This method is used to bind a proxy serving item in the defalut local
-   * registry. It will remote a reference to the server item, and bind it
+   * This method is used to bind a proxy serving object in the defalut local
+   * registry. It will remote a reference to the server object, and bind it
    * under the name provided. If the proxy has a setItem method, it will be
-   * called with a remote reference to the serving item. Next it will have
+   * called with a remote reference to the serving object. Next it will have
    * its setProxy method invoked, <i>(again if it has one)</i> with a
-   * MarshalledObject containing the proxy item. Finally the item will have
+   * MarshalledObject containing the proxy object. Finally the object will have
    * its startThread method invoked <i>(if it has one)</i> with no argument,
    * to signal it to start its main processing thread.
-   * @param item The item to be bound.  It may be either local to the machine,
-   * or remote, it can even be a proxy from a remote item, if proxy
+   * @param item The object to be bound.  It may be either local to the
+   * machine, or remote, it can even be a proxy from a remote object, if proxy
    * {@link #acceptProxies acceptance} was enabled for this VM.
-   * @param name The name under which to bind the item reference in the
+   * @param name The name under which to bind the object reference in the
    * local rmiregistry.
-   * @param proxy The proxy item to be sent to requesting clients, it is
+   * @param proxy The proxy object to be sent to requesting clients, it is
    * normally encased in a java.rmi.MarshalledObject, for efficiency. If it
    * is not when passed in, it will be, automatically.
-   * @return A remoted reference to the item within the context of this VM's
+   * @return A remoted reference to the object within the context of this VM's
    * settings.
    * @throws RemoteException If the registry could not be created.
-   * @throws IOException If the provided proxy item is not serialisable.
+   * @throws IOException If the provided proxy object is not serialisable.
    */
   public static Remote bind(Object item, String name,
      Object proxy) throws RemoteException, IOException {
      return bind(item, name, proxy, null, null, 0);
   }
   /**
-   * This method is used to bind a proxy serving item with complete
-   * configurability. It will remote a reference to the server item, and
+   * This method is used to bind a proxy serving object with complete
+   * configurability. It will remote a reference to the server object, and
    * bind in it a local rmiregistry under the name ant the TCP port provided.
    * If the proxy has a setItem method, it will be called with a remote
-   * reference to the serving item. Then it will have its setProxy method
+   * reference to the serving object. Then it will have its setProxy method
    * invoked, <i>(if it has one)</i> with a MarshalledObject containing the
-   * proxy item. The item will then have its startThread method invoked
+   * proxy object. The object will then have its startThread method invoked
    * <i>(again if it has one)</i> with no argument, to signal it to start its
    * main processing thread.
-   * @param item The item to be bound.  It may be either local to the machine,
-   * or remote, it can even be a proxy from a remote item, if proxy
+   * @param item The object to be bound.  It may be either local to the
+   * machine, or remote, it can even be a proxy from a remote object, if proxy
    * {@link #acceptProxies acceptance} was enabled for this VM.
-   * @param name The name under which to bind the item reference in the
+   * @param name The name under which to bind the object reference in the
    * a local rmiregistry.
-   * @param proxy The proxy item to be sent to requesting clients, it is
+   * @param proxy The proxy object to be sent to requesting clients, it is
    * normally encased in a java.rmi.MarshalledObject, for efficiency. If it
    * is not when passed in, it will be, automatically.
    * @param ssf The custom RMIServerSocketFactory to be used by the registry,
@@ -275,10 +276,10 @@ public class ItemServer {
    * using the default registry settings for the JVM. <p><i><u>Note</u>:</i>
    * a given port will only support one given set of socket factories, the
    * first ones bound.
-   * @return A remoted reference to the item within the context of this VM's
+   * @return A remoted reference to the object within the context of this VM's
    * settings.
    * @throws RemoteException If the registry could not be created.
-   * @throws IOException If the provided proxy item is not serialisable.
+   * @throws IOException If the provided proxy object is not serialisable.
    */
   public static synchronized Remote bind(Object item, String name,
      Object proxy, RMIServerSocketFactory ssf, RMIClientSocketFactory csf,
@@ -313,7 +314,7 @@ public class ItemServer {
   }
   /**
    * The application loads either a zipped marshalled object (zedmob) from a
-   * URL, a file, or alternately, it will fetch a remote item reference from
+   * URL, a file, or alternately, it will fetch a remote object reference from
    * an rmiregistry. It uses the {@link gnu.cajo.invoke.Remote#getItem getitem}
    * method of the {@link gnu.cajo.invoke.Remote Remote} class. The
    * application startup will be announced over a default
@@ -332,10 +333,10 @@ public class ItemServer {
    * <li> args[2] The optional external client port number, if using NAT.
    * <li> args[3] The optional internal client host name, if multi home/NIC.
    * <li> args[4] The optional internal client port number, if using NAT.
-   * <li> args[5] The optional URL where to get a proxy item: file://
+   * <li> args[5] The optional URL where to get a proxy object: file://
    * http:// ftp:// ..., //host:port/name (rmiregistry), /path/name
    * (serialized), or path/name (class).  It will be passed into the loaded
-   * item as the sole argument to its setItem method.<ul>
+   * object as the sole argument to its setItem method.<ul>
    */
    public static void main(String args[]) throws Exception {
       String url        = args.length > 0 ? args[0] : null;

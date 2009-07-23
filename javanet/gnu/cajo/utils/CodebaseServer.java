@@ -301,20 +301,21 @@ public final class CodebaseServer extends Thread {
     * <li><i>localPort</i> The client's internal port number on which the
     * remote proxy can be reached. Unspecified, it will be selected anonymously
     * by the client at runtime.
-    * <li><i>proxyName</i> The registered name of the proxy serving item, by
-    * default "main", however a single server can support multiple items.
+    * <li><i>proxyName</i> The registered name of the proxy serving object, by
+    * default "main", however a single server can support multiple service
+    * objects.
     * <li><i>!</i> This operator causes the proxy to be sent using JNLP. This
     * will launch the proxy as an application on the client using WebStart.
     * </ul>
     * <p>
-    * To unspecify any optional item, simply omit it, from the URL, along with
-    * its preceeding delimiter, if any. The <u>order</u> of the arguments must
-    * be maintained however.
+    * To unspecify any optional object, simply omit it, from the URL, along
+    * with its preceeding delimiter, if any. The <u>order</u> of the arguments
+    * must be maintained however.
     * <p>
-    * <i>Note:</i> other item servers can share this instance, by placing their
-    * proxy classes or jar files in the same working directory. However, those
-    * item servers will not be able to use the client service feature, as it is
-    * unique to the VM in which the CodebaseServer is running.
+    * <i>Note:</i> other object servers can share this instance, by placing
+    * their proxy classes or jar files in the same working directory. However,
+    * those object servers will not be able to use the client service feature,
+    * as it is unique to the VM in which the CodebaseServer is running.
     * <p>
     * As a safety precaution, the server will send any requested jar or class
     * file in or below its working directory <i>except</i> the jar file of the

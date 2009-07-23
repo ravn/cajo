@@ -22,7 +22,7 @@ import java.net.MalformedURLException;
  * by the Free Software Foundation, at version 3 of the licence, or (at your
  * option) any later version.
  *
- * Th cajo library is distributed in the hope that it will be useful,
+ * The cajo library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public Licence for more details.
@@ -33,10 +33,10 @@ import java.net.MalformedURLException;
 
 /**
  * A standard abstract base class for proxy objects.  Proxies are remote
- * object interfaces to server items.  They are intended to offload routine
- * processing.  They differ from server items in that they are sent to remote
- * VMs to operate, and are often not even instantiated in the runtime of the
- * server's VM.
+ * object interfaces to server objects.  They are intended to offload routine
+ * processing.  They differ from server objects in that they are sent to
+ * remote VMs to operate, and are often not even instantiated in the runtime
+ * of the server's VM.
  * 
  * @version 1.0, 01-Nov-99 Initial release
  * @author John Catherino
@@ -86,13 +86,13 @@ public abstract class BaseProxy implements Serializable {
     */
    public String strings[];
    /**
-    * The main processing thread of this Item.  An item can be either entirely,
-    * event driven, i.e. executing only when its methods are being invoked,
-    * or can also have a thread of its own. If non-null, it will be started
-    * upon its arrival at the host via the client's proxy inialization
+    * The main processing thread of this object.  An object can be either
+    * entirely, event driven, i.e. executing only when its methods are being
+    * invoked, or can also have a thread of its own. If non-null, it will be
+    * started upon its arrival at the host via the client's proxy inialisation
     * invocation.<br><br>
     * This is an an inner class of BaseProxy, to allow its implementations
-    * access to the item's private and protected members and methods.
+    * access to the object's private and protected members and methods.
     * This is critical because <b>all</b> public methods of BaseProxy can be
     * invoked by remote objects, just like with local objects.
     */
@@ -112,7 +112,7 @@ public abstract class BaseProxy implements Serializable {
     * A standard base class for graphical proxy objects. A graphical proxy
     * provides a user interface to itself which can be displayed at the
     * receiving VM. It is implemented as an inner class of BaseProxy, to allow
-    * its subclass implementations access to its outer item's private and
+    * its subclass implementations access to its outer object's private and
     * protected members and methods. This is critical because <b>all</b> public
     * methods of BaseProxy can be invoked by remote objects, just like with
     * local objects.
@@ -154,7 +154,7 @@ public abstract class BaseProxy implements Serializable {
    /**
     * This function is called by the {@link ItemServer ItemServer} during its
     * bind operation.
-    * @param  item A remote reference to the server item, on which the proxy
+    * @param  item A remote reference to the server object, on which the proxy
     * may asynchronously call back to it.
     */
    public void setItem(RemoteInvoke item) {
@@ -166,7 +166,7 @@ public abstract class BaseProxy implements Serializable {
     * arrival.  The client will provide a reference to the proxy, remoted in
     * the context of the client's VM.  This value will be saved in the
     * {@link #remoteThis remoteThis} member, and can be provided to other
-    * remote items, on which they can contact the proxy.
+    * remote objects, on which they can contact the proxy.
     * If the proxy has a string bundle, the localized strings most
     * closely matching the locale of the receiving host will be loaded. If the
     * proxy is graphical in nature, i.e. provides a graphical user interface,
@@ -198,21 +198,21 @@ public abstract class BaseProxy implements Serializable {
       return container;
    }
    /**
-    * A method will load either an item, or a zipped marshalled object
-    * (zedmob) of an item, from a URL, file, or from a remote rmiregistry.
-    * If the item is in a local file, it can be either inside the server's
-    * jar file, or on its local file system.<p> Loading an item from a file
+    * A method will load either an object, or a zipped marshalled object
+    * (zedmob) of an object, from a URL, file, or from a remote rmiregistry.
+    * If the object is in a local file, it can be either inside the server's
+    * jar file, or on its local file system.<p> Loading an object from a file
     * can be specified in one of three ways:<p><ul>
     * <li>As a URL; in the format file://path/name.
     * <li>As a class file; in the format path/name
-    * <li>As a serialized item; in the format /path/name</ul><p>
+    * <li>As a serialized object; in the format /path/name</ul><p>
     * @param url The URL where to get the object: file://, http://, ftp://,
     * /path/name, path/name, or //[host][:port]/[name]. The host, port,
     * and name, are all optional. If missing the host is presumed local, the
     * port 1099, and the name "main". The referenced resource can be
     * returned as a MarshalledObject, it will be extracted automatically.
     * If the URL is null, it will be assumed to be ///.
-    * @return A remote reference to the item contained in the URL. It may be
+    * @return A remote reference to the object contained in the URL. It may be
     * either local, or remote to this VM.
     * @throws RemoteException if the remote registry could not be reached,
     * or the remote instance could not be be created.

@@ -21,7 +21,7 @@ import java.net.MalformedURLException;
  * by the Free Software Foundation, at version 3 of the licence, or (at your
  * option) any later version.
  *
- * Th cajo library is distributed in the hope that it will be useful,
+ * The cajo library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public Licence for more details.
@@ -31,40 +31,41 @@ import java.net.MalformedURLException;
  */
 
 /**
- * A standard base class for server items.  Server items differ from proxy
- * items in that they never leave their host VM.
+ * An optional base class for server objects.  Server objects differ from
+ * proxy objects in that they never leave their host VM.
  * 
  * @version 1.0, 01-Nov-99 Initial release
  * @author John Catherino
  */
 public class BaseItem {
    /**
-    * A reference to the item's processing code.  If non-null, it will be
+    * A reference to the object's processing code.  If non-null, it will be
     * started automatically binding in the rmiregistry.  Its thread can be
     * accessed through the thread member.
     */
    protected MainThread runnable;
    /**
-    * A reference to the proxy served by this item, if it has one.  It is
+    * A reference to the proxy served by this object, if it has one.  It is
     * assigned by the {@link ItemServer ItemServer} during its bind
     * operation.
     */
    protected MarshalledObject proxy;
    /**
-    * A reference to the item's processing thread. It can be used to
-    * interrupt the thread, to signal the item to perform an orderly shutdown.
+    * A reference to the object's processing thread. It can be used to
+    * interrupt the thread, to signal the object to perform an orderly
+    * shutdown.
     */
    public Thread thread;
    /**
-    * The main processing thread of this Item.  An item can be either entirely,
-    * event driven, i.e. executing only when its methods are being invoked,
-    * or can also have a thread of its own. If non-null, it will be started
-    * upon its binding by the {@link ItemServer ItemServer}, where its
-    * {@link #startThread startThread} method will be invoked.<br><br>
+    * The main processing thread of this object.  An object can be either
+    * entirely, event driven, i.e. executing only when its methods are being
+    * invoked, or can also have a thread of its own. If non-null, it will be
+    * started upon its binding by the {@link ItemServer ItemServer}, where
+    * its {@link #startThread startThread} method will be invoked.<br><br>
     * This is an an inner class of BaseItem, to allow its implementations
-    * access to the item's private and protected members and methods.
+    * access to the object's private and protected members and methods.
     * This is critical because <b>all</b> public methods of BaseItem can be
-    * invoked by remote objects, just like with local objects.
+    * invoked by remote objects, just as with local objects.
     */
    public abstract class MainThread implements Runnable {
       /**
@@ -79,8 +80,8 @@ public class BaseItem {
       public abstract void run();
    }
    /**
-    * The constructor does nothing, server item configuration is to be done by
-    * application specific subclasses.
+    * The constructor does nothing, server item configuration is to be done
+    * by application specific subclasses.
     */
    public BaseItem() {}
    /**
@@ -90,7 +91,7 @@ public class BaseItem {
     * called. The received proxy's init method will be invoked with a
     * reference to itself, remoted in the context of this VM.  This is done
     * to initialise the proxy, and provide it with a handle to pass to other
-    * remote items, on which they can contact this proxy. The remote proxy
+    * remote objects, on which they can contact this proxy. The remote proxy
     * reference will be returned to the caller, providing an interface on
     * which to asynchronously call its proxy.
     * @param proxy The proxy to run in this VM, it is typically sent as a
@@ -115,9 +116,9 @@ public class BaseItem {
     * bind operation to set the {@link #proxy proxy} member. If the BaseItem
     * does not support a proxy, it can be given one, just once, by a remote
     * item. Conceptually this is very powerful, but must be used carefully.
-    * @param proxy The item's proxy object, if it supports one.
+    * @param proxy The object's proxy object, if it supports one.
     * @throws IllegalArgumentException If the method is called more than
-    * once, presumably by a remote item.
+    * once, presumably by a remote object.
     */
    public void setProxy(MarshalledObject proxy) {
       if (this.proxy ==  null) this.proxy = proxy;
@@ -125,8 +126,8 @@ public class BaseItem {
    }
    /**
     * This remotely invokable method is called by the remote clients, to
-    * request the server item's default proxy, if it supports one.
-    * @return A the proxy serving this item, otherwise null.
+    * request the server object's default proxy, if it supports one.
+    * @return A the proxy serving this object, otherwise null.
     */
    public MarshalledObject getProxy() { return proxy; }
    /**
@@ -145,21 +146,21 @@ public class BaseItem {
       }
    }
    /**
-    * A method will load either an item, or a zipped marshalled object
-    * (zedmob) of an item, from a URL, file, or from a remote rmiregistry.
-    * If the item is in a local file, it can be either inside the server's
-    * jar file, or on its local file system.<p> Loading an item from a file
+    * A method will load either an object, or a zipped marshalled object
+    * (zedmob) of an object, from a URL, file, or from a remote rmiregistry.
+    * If the object is in a local file, it can be either inside the server's
+    * jar file, or on its local file system.<p> Loading an object from a file
     * can be specified in one of three ways:<p><ul>
     * <li>As a URL; in the format file://path/name.
     * <li>As a class file; in the format path/name
-    * <li>As a serialized item; in the format /path/name</ul><p>
+    * <li>As a serialized object; in the format /path/name</ul><p>
     * @param url The URL where to get the object: file://, http://, ftp://,
     * /path/name, path/name, or //[host][:port]/[name]. The host, port,
     * and name, are all optional. If missing the host is presumed local, the
     * port 1099, and the name "main". The referenced resource can be
     * returned as a MarshalledObject, it will be extracted automatically.
     * If the URL is null, it will be assumed to be ///.
-    * @return A remote reference to the item contained in the URL. It may be
+    * @return A remote reference to the object contained in the URL. It may be
     * either local, or remote to this VM.
     * @throws RemoteException if the remote registry could not be reached,
     * or the remote instance could not be be created.
@@ -188,12 +189,12 @@ public class BaseItem {
     */
    public String getDescription() { return "BaseItem: undefined"; }
    /**
-    * This method is canonically called when an item announces its reference
+    * This method is canonically called when an object announces its reference
     * via the {@link Multicast Multicast} class. It is expected to receive
     * the URLs of objects that heard the announcement, and wish to be
     * contacted.
-    * @param url A //host:port/name type URL on which the 'first-contact' object
-    * of a remote VM can be reached.
+    * @param url A //host:port/name type URL on which the 'first-contact'
+    * object of a remote VM can be reached.
     */
    public void contact(String url) {}
 }

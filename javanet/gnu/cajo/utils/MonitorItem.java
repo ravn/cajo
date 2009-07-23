@@ -42,9 +42,9 @@ import java.io.ObjectOutputStream;
  * service the invocation, and the approximate percentage of free memory
  * available at the completion of the operation.  Subclassing of MonitorItem
  * is allowed; primarily to create self-monitoring classes.
- * <p><i>Note:</i> monitoring an item can be expensive in runtime efficiency.
+ * <p><i>Note:</i> monitoring an object can be expensive in runtime efficiency.
  * It is best used for debug and performance analysis, during development, or
- * in production, for items that would not be called very frequently.
+ * in production, for objects that would not be called very frequently.
  *
  * @version 1.0, 01-Nov-99 Initial release
  * @author John Catherino
