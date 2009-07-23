@@ -14,7 +14,7 @@ package gnu.cajo.invoke;
  * by the Free Software Foundation, at version 3 of the licence, or (at your
  * option) any later version.
  *
- * Th cajo library is distributed in the hope that it will be useful,
+ * The cajo library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public Licence for more details.
@@ -26,20 +26,20 @@ package gnu.cajo.invoke;
 /**
  * The Remote Component Communication Interface, and reason for this package.
  * An empty extension of the Invoke interface, it allows both local, and
- * remote items, i.e. those from another VM, to be handled interchangably in
+ * remote objects, i.e. those from another VM, to be handled interchangably in
  * code, through their superclass interface Invoke. When a VM wishes to allow
- * remote access to an item, the local item would be passed to the constructor
- * of the {@link Remote Remote} class included in this package. <p>The
- * implementation is so trivial, it is included it here:<p>
- * <code>public interface RemoteInvoke extends Invoke, Remote {}</code><p>
- * <i>Note:</i> this interface is nevere implemented by classes directly,
- * rather, a client only uses this interface to test if an item is remote, in
- * cases where that would be of interest to the application.<p> To test the
- * locality of an item reference:<p>
+ * remote access to an object, the local object would be passed to the
+ * constructor of the {@link Remote Remote} class included in this package.
+ * <p>The implementation is so trivial, it is included it here:<p>
+ * <code>public interface RemoteInvoke extends Invoke, Remote {}</code>
+ * <p><i>Note:</i> this interface is never implemented by classes directly,
+ * rather, a client only uses this interface to test if an object is remote,
+ * in cases where that would be of interest to the application.
+ *<p> To test the locality of an object reference:<p>
  * <pre>
- * if (foo instanceof RemoteInvoke) { // the item is remote
+ * if (foo instanceof RemoteInvoke) { // the object reference is remote
  *    ...
- * } else { // the item is local
+ * } else { // the object reference is local
  *   ...
  * }
  * </pre>
