@@ -268,7 +268,8 @@ public final class CodebaseServer extends Thread {
    }
    /**
     * This method can be used to log the client requests of the Codebase
-    * server. The log can range from System.out, to a network OutputStream.
+    * server. The log can range from System.out, to a network socket
+    * OutputStream.<p>
     * <i><u>Note</u>:</i> Only one log stream can be assigned to the
     * CodebaseServer at any given time.
     * @param log The OutputStream to record the client requests. If this
@@ -323,7 +324,7 @@ public final class CodebaseServer extends Thread {
     */
    public void run() {
       try {
-         byte msg[] = new byte[0x8000];
+         byte msg[] = new byte[0x1000]; // allocate a 4k data transfer buffer
          while (!isInterrupted()) {
             Socket s = ss.accept();
             try {
@@ -438,10 +439,9 @@ public final class CodebaseServer extends Thread {
    }
    /**
     * The application creates a utility server to share any jar and class
-    * files in the in its working directory and subdirectories. It is
-    * extremely useful for application development. If a port number is
-    * provided as an argument, it will be used, otherwise it will be opened
-    * on an anonymous port.
+    * files in its working directory and subdirectories. It is very useful in
+    * application development. If a port number is provided as an argument,
+    * it will be used, otherwise it will be opened on an anonymous port.
     */
    public static void main(String args[]) throws Exception {
       CodebaseServer c = args.length == 0
