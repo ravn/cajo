@@ -72,18 +72,18 @@ import java.lang.reflect.InvocationTargetException;
  * @author John Catherino
  */
 public final class TransparentItemProxy implements InvocationHandler {
-   private final Object item;
-   private final Object name;
-   private Integer hashcode;
-   private TransparentItemProxy(Object item) {
+   private TransparentItemProxy(Object item) { // invisible helper monkey
       this.item = item;
       Object temp = null;
       try { temp = Remote.invoke(item, "toString", null); }
-      catch(Exception x) {
-         throw new IllegalArgumentException(x.getLocalizedMessage());
+      catch(Throwable t) {
+         throw new IllegalArgumentException(t.getLocalizedMessage());
       }
       name = temp;
    }
+   private final Object item;
+   private final Object name;
+   private Integer hashcode;
    /**
     * An optional centralised invocation error handler. If an invocation on
     * a remote object results in a checked or unchecked exception being thrown;
@@ -151,7 +151,8 @@ public final class TransparentItemProxy implements InvocationHandler {
     * This generates a class definition for a remote object reference at
     * runtime, and returns a local object instance. The resulting dynamic
     * proxy object will implement all the interfaces provided.
-    * @param item A reference to a remote server object.
+    * @param item A reference to a <i>presumably</i> remote server object,
+    * though a local object instance could be used just as well
     * @param interfaces The list of interface classes for the dynamic proxy
     * to implement. Typically, these are provided thus; <tt>new Class[] {
     * Interface1.class, Interface2.class, ... }</tt>
