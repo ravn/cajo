@@ -8,6 +8,7 @@ import gnu.cajo.utils.extra.TransparentItemProxy;
 import java.lang.reflect.Method;
 import java.io.IOException;
 import java.util.Vector;
+import java.util.HashMap;
 import java.util.ArrayList;
 import java.rmi.RemoteException;
 
@@ -45,6 +46,7 @@ public final class Cajo implements Grail {
    private final Multicast multicast;
    private final Vector items = new Vector();
    private final Registrar registrar = new Registrar();
+   private final HashMap references = new HashMap();
    /**
     * This internal helper class maintains a registry of exported objects.
     * It cannot be instantiated outside this class, it is made public only
@@ -170,6 +172,10 @@ public final class Cajo implements Grail {
          try { return Remote.invoke(object, method, args); }
          catch(RemoteException x) { // if object is not responsive
             items.remove(object);   // remove it from our collection
+            synchronized(references) {
+               HashMap methodSets = (HashMap)references.remove(object);
+               if (methodSets != null) methodSets.clear();
+            }
             throw x;
          }
       }
@@ -274,8 +280,17 @@ public final class Cajo implements Grail {
     * local method invocations will be transparently passed on to the remote
     */
    public Object proxy(Object reference, Class methodSetInterface) {
-      return TransparentItemProxy.
-         getItem(new Purger(reference), new Class[] { methodSetInterface });
+      HashMap methodSets = (HashMap)references.get(reference);
+      Object proxy =
+         methodSets != null ? methodSets.get(methodSetInterface) : null;
+      if (proxy == null) synchronized(references) {
+         proxy = TransparentItemProxy.getItem(
+            new Purger(reference), new Class[] { methodSetInterface });
+         if (methodSets == null) methodSets = new HashMap();
+         methodSets.put(methodSetInterface, proxy);
+         references.put(reference, methodSets);
+      }
+      return proxy;
    }
    /**
     * This method is used to manually collect remote registry entries. The
