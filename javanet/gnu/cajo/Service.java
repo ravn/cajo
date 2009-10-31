@@ -74,21 +74,21 @@ package gnu.cajo;
  */
 public interface Service {
    /**
-    * used by clients, to send their proxy objects to remote services. A
-    * proxy is a serialisable object that on arrival at the service, is
-    * initialised with a local reference to the service object on which to
-    * perform its work.
+    * used by servers to install proxies in client's local JVM, and by
+    * clients to install proxies in the server's local JVM. A proxy is a
+    * serialisable object that on arrival at the target JVM, is initialised
+    * with a reference to the service object, on which it can communicate.
     */
    interface Proxy extends java.io.Serializable {
       /**
-       * called by the service JVM, upon receiving a client proxy object.
-       * The proxy can then prepare itself for operation. However, this
-       * method should return quickly; therefore, clients requiring lengthy
-       * initialisation times should perform such work in an internally
-       * created thread.
-       * @param localService a local reference to the service object.
+       * called by the JVM upon receiving a proxy object. The proxy can then
+       * prepare itself for operation. However, this method should return
+       * quickly; therefore, proxies requiring lengthy initialisation times
+       * should perform such work in an internally created thread.
+       * @param service a reference to the service object, local for client
+       * proxies, remote for service proxies.
        */
-      void init(Object localService);
+      void init(Object service);
    }
    /**
     * used to send a client's proxy code to run at the service. The client's
@@ -108,14 +108,14 @@ public interface Service {
     * used to request a client-side running, server proxy interface. It is
     * considered an <i>important & common courtesy</i> of clients to request
     * it, before attempting to use the service reference directly. It allows
-    * the service to potentially offload some computing
-    * load to the client, temporarily.
-    * @return a local object implementing the service interface, which is
-    * typically internally in contact with the remote service object.
+    * the service to potentially offload some computing load to the client,
+    * temporarily. It's a bit like the client asking: <i>May I help?</i>
+    * @return a local object supporting the service interface, which will be
+    * initialised on arrival, with a reference to its remote service.
     * <b>NB:</b> If a service does not support client proxies, it will return
     * <i><u>null</u></i>.
     */
-   Object requestProxy();
+   Proxy requestProxy();
    /**
     * whilst semantically unrelated to this service, is just too useful to
     * leave out. Services typically exist as either development, or
