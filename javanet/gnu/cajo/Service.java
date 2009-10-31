@@ -111,9 +111,12 @@ public interface Service {
     * the service to potentially offload some computing load to the client,
     * temporarily. It's a bit like the client asking: <i>May I help?</i>
     * @return a local object supporting the service interface, which will be
-    * initialised on arrival, with a reference to its remote service.
-    * <b>NB:</b> If a service does not support client proxies, it will return
-    * <i><u>null</u></i>.
+    * initialised on arrival, with a reference to its remote service. A
+    * client should not request a proxy unless it has enabled proxy
+    * acceptance, which is normally disabled by default; as this would cause a
+    * ClassNotFoundException to be thrown at the server, which must then be
+    * discarded by the server. <b>NB:</b> If a service does not support client
+    * proxies, it will return <i><u>null</u></i>.
     */
    Proxy requestProxy();
    /**
