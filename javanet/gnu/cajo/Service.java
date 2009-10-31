@@ -36,20 +36,25 @@ package gnu.cajo;
  * <p>
  * All services are defined as <i>plain-old</i> Java interfaces. These
  * interfaces may contain:<ul>
- * <li> Manifest constants: any static final objects or primitives of use
- * <li> Custom inner class definitions for:
+ * <li>Manifest constants: any static final objects or primitives of use
+ * <li>Custom inner class definitions for:
  * <ul><li>arguments <li>returns <li>exceptions</ul>
- * <li> Custom inner interface definitons: used for either arguments, or
+ * <li>Custom inner interface definitons: used for either arguments, or
  * returns
- * <li> The collection of shared functions implemented by the service</ul>
+ * <li>The collection of shared methods implemented by the service</ul>
  * <p>
- * Technically speaking, these service signatures may be either functions
- * (i.e. static) or instance methods. They should be considered
- * <i>referentially opaque</i>; i.e. invoking the same service function, with
- * the same arguments, at different times is <i>not</i> guaranteed to return
- * the same result. Also, all service methods are <i>reentrant,</i> meaning
- * that multiple clients may be executing them <i>simultaneously.</i>
- * <p>
+ * Technically speaking:<ul>
+ * <li>The service method signatures may be either static or instance
+ * methods on the implementation.
+ * <li>Service methods should be considered <i>referentially opaque</i>; i.e.
+ * invoking the same method, with the same arguments, at different times is
+ * <i>not</i> guaranteed to return the same result.
+ * <li><u>All</u> service methods are <i>reentrant,</i> meaning that multiple
+ * clients can be executing them <i>simultaneously.</i>
+ * <li>Whilst not explicitly declared, any service method invocations
+ * could fail for network related reasons, resulting in a
+ * java.rmi.RemoteException being thrown implicitly.
+ * </ul><p>
  * A single JVM may furnish as many service objects as it wishes. Normally,
  * related service interfaces are grouped into packages. Typically the
  * javadoc package.html file is used to provide a detailed explanation of the
@@ -60,11 +65,8 @@ package gnu.cajo;
  * enhancements should be handled through <i>subclasses</i> of the
  * original service interface, to ensure backward compatibility.
  * <p>
- * <b>NB:</b> this service interface is completely cajo project agnostic, as
- * all service definitions properly should be. It should also be well
- * remembered, whilst not explicitly declared, any service method invocation
- * could fail for network related reasons, resulting in a
- * java.rmi.RemoteException being thrown implicitly.
+ * <b>NB:</b> The service interface is completely cajo project agnostic, as
+ * all service definitions properly should be.
  *
  * @author <a href=http://wiki.java.net/bin/view/People/JohnCatherino>
  * John Catherino</a>
@@ -92,8 +94,7 @@ public interface Service {
     * This method is used to send a client's proxy code to run at the
     * service. The client's code runs in the address space of the service
     * JVM. A proxy enabled service need not support client proxies, in which
-    * case a ClassNotFound exception will be thrown by the service,
-    * implicitly.
+    * case a ClassNotFound exception will be thrown implicitly.
     * @param proxy An object to be instantiated at the service, which will
     * be provided a local reference to the service upon its arrival
     * @return A remote reference to the proxy object, installed in the
@@ -110,7 +111,7 @@ public interface Service {
     * load to the client, temporarily.
     * @return A local object implementing the service interface, which is
     * typically internally in contact with the remote service object.
-    * <b>NB:</b>If a service does not support client proxies, it will return
+    * <b>NB:</b> If a service does not support client proxies, it will return
     * <i><u>null</u></i>.
     */
    Object requestProxy();
