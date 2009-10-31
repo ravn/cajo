@@ -71,7 +71,9 @@ import java.lang.reflect.InvocationTargetException;
  * @version 1.1, 11-Nov-05 Support multiple interfaces
  * @author John Catherino
  */
-public final class TransparentItemProxy implements InvocationHandler {
+public final class TransparentItemProxy implements
+   InvocationHandler, java.io.Serializable {
+   private static final long serialVersionUID = 1L;
    private TransparentItemProxy(Object item) { // invisible helper monkey
       this.item = item;
       Object temp = null;
@@ -103,7 +105,7 @@ public final class TransparentItemProxy implements InvocationHandler {
     * the appropriate result, or throw a hopefully more descriptive error.
     * <i><u>Note</u>:</i> the <tt>toString()</tt> method can be invoked
     * on the proxy object, to determine its identity, or the handler could
-    * maintain a map of proxies, to proxy-specific handler objects.     
+    * maintain a map of proxies, to proxy-specific handler objects.
     */
     public static Object handler;
    /**
@@ -112,7 +114,7 @@ public final class TransparentItemProxy implements InvocationHandler {
     * transparently. This allows the local runtime to perform remote item
     * invocations, while appearing syntactically identical to local ones.
     * @param proxy The local object on which the method was invoked, it is
-    * <i>ignored</i> in this context.
+    * passed only to the error handler(s), if installed.
     * @param method The method to invoke on the object, in this case the
     * server item.
     * @param args The arguments to provide to the method, if any.
@@ -140,11 +142,10 @@ public final class TransparentItemProxy implements InvocationHandler {
           // perform shallow equals...
          return args[0].equals(this) ? Boolean.TRUE : Boolean.FALSE;
       } else try { return Remote.invoke(item, name, args); }
-      catch(Throwable t) {
-         if (handler != null)
-            return Remote.invoke(handler, "handle",
-               new Object[] { proxy, method, args, t });
-         else throw t;
+      catch(Throwable t) { // object method invocation error
+         if (handler != null) return Remote.invoke(handler, "handle",
+            new Object[] { proxy, method, args, t });
+         throw t;
       }
    }
    /**
