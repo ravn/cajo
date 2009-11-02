@@ -31,10 +31,10 @@ package gnu.cajo;
  * proxies, or both.
  * <p>
  * This service would typically be implemented in situations where the
- * benefit is greater to send all, or a portion, of the service <i>code</i>
- * to the receiver; rather than having a lot of <i>data</i> being passed
- * back or forth. This pattern is also ideal for the provision of graphical
- * user interfaces between JVMs.
+ * benefit is greater to send all, or a portion, of the <i>code</i>
+ * to the receiver; instead of passing a lot of <i>data</i> back or forth.
+ * This pattern is also ideal for the provision of graphical user interfaces
+ * to requesting JVMs.
  * <p>
  * All services are defined as <i>plain-old</i> Java interfaces. Typically
  * these interfaces contain:<ul>
@@ -79,11 +79,14 @@ public interface Service {
     * This class is both used by servers to install proxies in a client's JVM,
     * and by clients to install proxies in a server's JVM. A proxy is a
     * serialisable object that on arrival at the target JVM, is initialised
-    * with a reference to the service object, on which it can communicate.
+    * with a local to the service object, on which it can communicate. A
+    * service would send proxies to offload client processing and storage
+    * needs. A client would send proxies to perform highly interactive
+    * operation, on potentially large datasets.
     */
    interface Proxy extends java.io.Serializable {
       /**
-       * called by the JVM upon receiving a proxy object. The proxy can then
+       * called by the client on receiving a proxy object. The proxy can then
        * prepare itself for operation. However, this method should return
        * quickly; therefore, proxies requiring lengthy initialisation times
        * should perform such work in an internally created thread.
@@ -115,10 +118,10 @@ public interface Service {
     * <i>common courtesy</i> of clients to request it, if their use scenario
     * permits, before making use the service reference directly. It allows
     * the service to potentially offload some computing or storage
-    * requirements to the client, temporarily. It's a bit like the client
+    * requirements to the client temporarily. It's a bit like the client
     * asking: <i>may I help with my requests?</i>
     * @return a local object also supporting the service interface, which
-    * will be will be provided with a remote reference to its service.
+    * will be provided with a remote reference to its service.
     * <br><b>NB:</b> If a service does not support client proxies, it will
     * return <i><u>null</u></i>.
     * @throws ClassNotFoundException if the client JVM does not accept
@@ -134,8 +137,8 @@ public interface Service {
     * correctness. Generally speaking, test/demo/development services
     * interact with each other exclusively, and real/production services
     * behave similarly. However, exceptions <i>can</i> be permitted...
-    * @return false if this service is a test demo or development
-    * implementation, else true if this is a production service.
+    * @return false if this service is a test, demo, or development
+    * implementation; true if this is a production service.
     */
    boolean isReal();
 }
