@@ -74,6 +74,7 @@ import java.lang.reflect.InvocationTargetException;
 public final class TransparentItemProxy implements
    InvocationHandler, java.io.Serializable {
    private static final long serialVersionUID = 1L;
+   private static final Object NULL[] = {};
    private final Object item;
    private Object hashCode, toString;  // most recently cached values
    private TransparentItemProxy(Object item) { // invisible helper monkey
@@ -125,42 +126,46 @@ public final class TransparentItemProxy implements
    public Object invoke(Object proxy, Method method, Object args[])
       throws Throwable {
       String name = method.getName();
-      if (name.equals("hashCode") && (args == null || args.length == 0))
-         try { return hashCode = Remote.invoke(item, name, args); }
-         catch(Throwable t) {
-            return handler == null ? hashCode :
-              Remote.invoke(handler, "handle",
-                 new Object[] { item, method, args, t });
-         } // for hashCode, return current, or most recently cached value
-      if (name.equals("toString") && (args == null || args.length == 0))
-         try { return toString = Remote.invoke(item, name, args); }
-         catch(Throwable t) {
-            return handler == null ? toString :
-               Remote.invoke(handler, "handle",
-                 new Object[] { item, method, args, t });
-         } // for toString, return current, or most recently cached value
-      if (name.equals("equals") && (args == null || args.length <= 1))
-         try { return Remote.invoke(item, name, args); }
+      if (args == null) args = NULL; // eliminate repetitive null tests
+      if (name.equals("hashCode")) {
+         if (args.length == 0)
+            try { return hashCode = Remote.invoke(item, name, args); }
+            catch(Throwable t) {
+               return handler == null ? hashCode :
+                  Remote.invoke(handler, "handle",
+                    new Object[] { item, method, args, t });
+            } // for hashCode, return current, or most recently cached value
+      } else if (name.equals("toString")) {
+         if (args.length == 0)
+            try { return toString = Remote.invoke(item, name, args); }
+            catch(Throwable t) {
+               return handler == null ? toString :
+                  Remote.invoke(handler, "handle",
+                     new Object[] { item, method, args, t });
+            } // for toString, return current, or most recently cached value
+      } else if (name.equals("equals")) {
+         if (args.length == 1) try { return Remote.invoke(item, name, args); }
          catch(Throwable t) {
             return handler != null ? Boolean.FALSE :
                Remote.invoke(handler, "handle",
                   new Object[] { item, method, args, t });
          } // return equality, or false, on communication error
-      if (name.equals("wait")) // cannot invoke Object.wait methods
-         if ((args == null || args.length == 0) ||
-            (args[0] instanceof Long && (args.length <= 1 ? true :
-               args[1] instanceof Long) && (args.length <=2 ? true :
-                  args[2] instanceof Integer)))
-                     throw new IllegalMonitorStateException(
-                        "Cannot wait on remote object");
-      if ((name.equals("notify") || name.equals("notifyAll")) &&
-         (args == null || args.length == 0)) // cannot use Object.notify too
-         throw new IllegalMonitorStateException("Cannot notify remote object");
+      } else if (name.equals("wait")) {
+         if (args.length == 0 ||
+            (args[0] instanceof Long  && (args.length <= 1 ? true :
+             args[1] instanceof Long) && (args.length <= 2 ? true :
+             args[2] instanceof Integer)))
+                throw new IllegalMonitorStateException(
+                   "Cannot wait on remote object");
+      } else if (name.equals("notify") || name.equals("notifyAll"))
+         if (args.length == 0)
+            throw new IllegalMonitorStateException(
+               "Cannot notify remote object");
       try { return Remote.invoke(item, name, args); }
       catch(Throwable t) { // object method invocation error
          if (handler != null) return Remote.invoke(handler, "handle",
             new Object[] { item, method, args, t });
-         throw t; // pass up unhandled exception, rare but often serious
+         throw t; // pass up unhandled exception, rare but usually serious
       }
    }
    /**
