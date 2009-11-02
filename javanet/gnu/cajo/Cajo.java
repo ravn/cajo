@@ -271,7 +271,9 @@ public final class Cajo implements Grail {
     * This method instantiates a <a href=http://java.sun.com/j2se/1.3/docs/guide/reflection/proxy.html>
     * Dynamic Proxy</a> at the client, which implements the method set
     * specified. This allows a remote object reference to be used in a
-    * semantically identical fashion as if it were local.
+    * semantically identical fashion as if it were local. <i><u>Note</u>:</i>
+    * the dynamic proxy returned by this method is serialisable, meaning it
+    * may be freely passed between JVMs, or even saved to storage.
     * @param reference A reference to a remote object returned by the
     * lookup method of this interface
     * @param methodSetInterface The set <i>(or subset)</i> of public methods,
