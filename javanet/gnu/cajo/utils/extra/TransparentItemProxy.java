@@ -146,6 +146,16 @@ public final class TransparentItemProxy implements
                Remote.invoke(handler, "handle",
                   new Object[] { item, method, args, t });
          } // return equality, or false, on communication error
+      if (name.equals("wait")) // cannot invoke Object.wait methods
+         if (args == null || args.length == 0)
+            throw new IllegalMonitorStateException("Cannot wait on remote object");
+         else if (args[0] instanceof Long && (args.length > 1 ?
+            args[1] instanceof Long : true))
+               throw new IllegalMonitorStateException(
+                  "Cannot wait on remote object");
+      if ((name.equals("notify") || name.equals("notifyAll")) &&
+         (args == null || args.length == 0)) // cannot use Object.notify too
+         throw new IllegalMonitorStateException("Cannot notify remote object");
       try { return Remote.invoke(item, name, args); }
       catch(Throwable t) { // object method invocation error
          if (handler != null) return Remote.invoke(handler, "handle",
