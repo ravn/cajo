@@ -3,6 +3,7 @@ package gnu.cajo.utils.extra;
 import gnu.cajo.invoke.*;
 import java.lang.reflect.*;
 import java.io.IOException;
+import java.io.Serializable;
 
 import java.rmi.RemoteException;
 import java.rmi.NotBoundException;
@@ -71,8 +72,8 @@ import java.lang.reflect.InvocationTargetException;
  * @version 1.1, 11-Nov-05 Support multiple interfaces
  * @author John Catherino
  */
-public final class TransparentItemProxy implements
-   InvocationHandler, java.io.Serializable {
+public final class TransparentItemProxy
+   implements InvocationHandler, Serializable {
    private static final long serialVersionUID = 1L;
    private static final Object NULL[] = {};
    private final Object item;
@@ -144,12 +145,14 @@ public final class TransparentItemProxy implements
                      new Object[] { item, method, args, t });
             } // for toString, return current, or most recently cached value
       } else if (name.equals("equals")) {
-         if (args.length == 1) try { return Remote.invoke(item, name, args); }
-         catch(Throwable t) {
-            return handler != null ? Boolean.FALSE :
-               Remote.invoke(handler, "handle",
-                  new Object[] { item, method, args, t });
-         } // return equality, or false, on communication error
+         if (args.length == 1)
+            if (args[0] instanceof Serializable) try {
+               return Remote.invoke(item, name, args);
+            } catch(Throwable t) {
+               return handler != null ? Boolean.FALSE :
+                  Remote.invoke(handler, "handle",
+                     new Object[] { item, method, args, t });
+            } else return Boolean.FALSE;
       } else if (name.equals("wait")) {
          if (args.length == 0 ||
             (args[0] instanceof Long  && (args.length <= 1 ? true :
