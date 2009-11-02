@@ -129,7 +129,7 @@ public final class TransparentItemProxy implements
       if (args == null) args = NULL; // eliminate repetitive null tests
       if (name.equals("hashCode")) {
          if (args.length == 0)
-            try { return hashCode = Remote.invoke(item, name, args); }
+            try { return hashCode = Remote.invoke(item, name, null); }
             catch(Throwable t) {
                return handler == null ? hashCode :
                   Remote.invoke(handler, "handle",
@@ -137,7 +137,7 @@ public final class TransparentItemProxy implements
             } // for hashCode, return current, or most recently cached value
       } else if (name.equals("toString")) {
          if (args.length == 0)
-            try { return toString = Remote.invoke(item, name, args); }
+            try { return toString = Remote.invoke(item, name, null); }
             catch(Throwable t) {
                return handler == null ? toString :
                   Remote.invoke(handler, "handle",
@@ -161,7 +161,7 @@ public final class TransparentItemProxy implements
          if (args.length == 0)
             throw new IllegalMonitorStateException(
                "Cannot notify remote object");
-      try { return Remote.invoke(item, name, args); }
+      try { return Remote.invoke(item, name, args.length == 0 ? null : args); }
       catch(Throwable t) { // object method invocation error
          if (handler != null) return Remote.invoke(handler, "handle",
             new Object[] { item, method, args, t });
