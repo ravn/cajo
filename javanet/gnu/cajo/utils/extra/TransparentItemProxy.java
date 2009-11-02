@@ -74,18 +74,15 @@ import java.lang.reflect.InvocationTargetException;
 public final class TransparentItemProxy implements
    InvocationHandler, java.io.Serializable {
    private static final long serialVersionUID = 1L;
+   private final Object item;
+   private Object hashCode, toString;  // most recently cached values
    private TransparentItemProxy(Object item) { // invisible helper monkey
       this.item = item;
-      Object temp = null;
-      try { temp = Remote.invoke(item, "toString", null); }
-      catch(Throwable t) {
+      try { hashCode = Remote.invoke(item, "hashCode", null); }
+      catch(Throwable t) { // test that object reference actucally works
          throw new IllegalArgumentException(t.getLocalizedMessage());
       }
-      name = temp;
    }
-   private final Object item;
-   private final Object name;
-   private Integer hashcode;
    /**
     * An optional centralised invocation error handler. If an invocation on
     * a remote object results in a checked or unchecked exception being thrown;
@@ -94,27 +91,24 @@ public final class TransparentItemProxy implements
     * It is expected that this object will implement a method of the following
     * signature:<p>
     * <blockquote><tt>
-    * public Object handle(Object proxy, String method, Object args[], Throwable t)
+    * public Object handle(Object item, String method, Object args[], Throwable t)
     * throws Throwable; </tt></blockquote><p>
     * The first arguments are as follows:<ul>
-    * <li>the local proxy to the remote object generating the error
+    * <li>the remote item reference on which the method was being invoked
     * <li>the method that was called on the remote object
     * <li>the arguments that were provided in the method call
     * <li>the error that resulted from the invocation</ul>
     * The handler will either successfully recover from the error, and return
     * the appropriate result, or throw a hopefully more descriptive error.
-    * <i><u>Note</u>:</i> the <tt>toString()</tt> method can be invoked
-    * on the proxy object, to determine its identity, or the handler could
-    * maintain a map of proxies, to proxy-specific handler objects.
     */
-    public static Object handler;
+   public static Object handler;
    /**
     * This method, inherited from InvocationHandler, simply passes all object
     * method invocations on to the remote object, automatically and
     * transparently. This allows the local runtime to perform remote item
     * invocations, while appearing syntactically identical to local ones.
-    * @param proxy The local object on which the method was invoked, it is
-    * passed only to the error handler(s), if installed.
+    * @param proxy The localllu created proxy object on which the method was
+    * originally invoked, it is not used for this class.
     * @param method The method to invoke on the object, in this case the
     * server item.
     * @param args The arguments to provide to the method, if any.
@@ -131,21 +125,32 @@ public final class TransparentItemProxy implements
    public Object invoke(Object proxy, Method method, Object args[])
       throws Throwable {
       String name = method.getName();
-      if (name.equals("toString") && (args == null || args.length == 0)) {
-         // perform shallow toString...
-         return this.name;
-      } else if (name.equals("hashCode") && (args == null || args.length == 0)) {
-         // perform shallow hashCode...
-         if (hashcode == null) hashcode = new Integer(this.hashCode());
-         return hashcode;
-      } else if (name.equals("equals") && args != null && args.length == 1) {
-          // perform shallow equals...
-         return args[0].equals(this) ? Boolean.TRUE : Boolean.FALSE;
-      } else try { return Remote.invoke(item, name, args); }
+      if (name.equals("hashCode") && (args == null || args.length == 0))
+         try { return hashCode = Remote.invoke(item, name, args); }
+         catch(Throwable t) {
+            return handler == null ? hashCode :
+              Remote.invoke(handler, "handle",
+                 new Object[] { item, method, args, t });
+         } // for hashCode, return current, or most recently cached value
+      if (name.equals("toString") && (args == null || args.length == 0))
+         try { return toString = Remote.invoke(item, name, args); }
+         catch(Throwable t) {
+            return handler == null ? toString :
+               Remote.invoke(handler, "handle",
+                 new Object[] { item, method, args, t });
+         } // for toString, return current, or most recently cached value
+      if (name.equals("equals") && (args == null || args.length <= 1))
+         try { return Remote.invoke(item, name, args); }
+         catch(Throwable t) {
+            return handler != null ? Boolean.FALSE :
+               Remote.invoke(handler, "handle",
+                  new Object[] { item, method, args, t });
+         } // return equality, or false, on communication error
+      try { return Remote.invoke(item, name, args); }
       catch(Throwable t) { // object method invocation error
          if (handler != null) return Remote.invoke(handler, "handle",
-            new Object[] { proxy, method, args, t });
-         throw t;
+            new Object[] { item, method, args, t });
+         throw t; // pass up unhandled exception, rare but often serious
       }
    }
    /**
