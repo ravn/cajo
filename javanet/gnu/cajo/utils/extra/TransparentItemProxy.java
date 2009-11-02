@@ -128,7 +128,7 @@ public final class TransparentItemProxy
       throws Throwable {
       String name = method.getName();
       if (args == null) args = NULL; // eliminate repetitive null tests
-      if (name.equals("hashCode")) {
+      if (name.equals("hashCode")) { // Object class methods cannot throw
          if (args.length == 0)
             try { return hashCode = Remote.invoke(item, name, null); }
             catch(Throwable t) {
@@ -149,9 +149,8 @@ public final class TransparentItemProxy
             if (args[0] instanceof Serializable) try {
                return Remote.invoke(item, name, args);
             } catch(Throwable t) {
-               return handler != null ? Boolean.FALSE :
-                  Remote.invoke(handler, "handle",
-                     new Object[] { item, method, args, t });
+               return handler != null ? Remote.invoke(handler, "handle",
+                  new Object[] { item, method, args, t }) : Boolean.FALSE;
             } else return Boolean.FALSE;
       } else if (name.equals("wait")) {
          if (args.length == 0 ||
