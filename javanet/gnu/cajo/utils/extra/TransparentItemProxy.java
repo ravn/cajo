@@ -3,7 +3,7 @@ package gnu.cajo.utils.extra;
 import gnu.cajo.invoke.*;
 import java.lang.reflect.*;
 import java.io.IOException;
-import java.io.Serializable;
+//import java.io.Serializable;
 
 import java.rmi.RemoteException;
 import java.rmi.NotBoundException;
@@ -73,17 +73,17 @@ import java.lang.reflect.InvocationTargetException;
  * @author John Catherino
  */
 public final class TransparentItemProxy
-   implements InvocationHandler, Serializable {
+   implements InvocationHandler, java.io.Serializable {
    private static final long serialVersionUID = 1L;
    private static final Object NULL[] = {};
    private final Object item;
-   private Object hashCode, toString;  // most recently cached values
+   private Object toString;  // most recently cached value
    private TransparentItemProxy(Object item) { // invisible helper monkey
-      this.item = item;
-      try { hashCode = Remote.invoke(item, "hashCode", null); }
+      try { Remote.invoke(item, "equals", this); }
       catch(Throwable t) { // test that object reference actucally works
          throw new IllegalArgumentException(t.getLocalizedMessage());
       }
+      this.item = item;
    }
    /**
     * An optional centralised invocation error handler. If an invocation on
@@ -127,47 +127,34 @@ public final class TransparentItemProxy
    public Object invoke(Object proxy, Method method, Object args[])
       throws Throwable {
       String name = method.getName();
-      if (args == null) args = NULL; // eliminate repetitive null tests
-      if (name.equals("hashCode")) { // Object class methods cannot throw
-         if (args.length == 0)
-            try { return hashCode = Remote.invoke(item, name, null); }
-            catch(Throwable t) {
-               return handler == null ? hashCode :
-                  Remote.invoke(handler, "handle",
-                    new Object[] { item, method, args, t });
-            } // for hashCode, return current, or most recently cached value
-      } else if (name.equals("toString")) {
-         if (args.length == 0)
-            try { return toString = Remote.invoke(item, name, null); }
-            catch(Throwable t) {
-               return handler == null ? toString :
-                  Remote.invoke(handler, "handle",
-                     new Object[] { item, method, args, t });
-            } // for toString, return current, or most recently cached value
-      } else if (name.equals("equals")) {
-         if (args.length == 1)
-            if (args[0] instanceof Serializable) try {
-               return Remote.invoke(item, name, args);
-            } catch(Throwable t) {
-               return handler != null ? Remote.invoke(handler, "handle",
-                  new Object[] { item, method, args, t }) : Boolean.FALSE;
-            } else return Boolean.FALSE;
-      } else if (name.equals("wait")) {
+      if (args == null) args = NULL;
+      if (args.length == 0 && name.equals("hashCode")) // shallow hashCode
+         return new Integer(item.hashCode());
+      if (args.length == 1 && name.equals("equals")) // shallow equals
+         return item.equals(args[0]) ? Boolean.TRUE : Boolean.FALSE;
+      if (args.length == 0 && name.equals("toString")) // cached toString
+         try { return toString = Remote.invoke(item, name, null); }
+         catch(Throwable t) { // handle if possible, do NOT throw!
+            return handler != null ? Remote.invoke(handler, "handle",
+               new Object[] { item, method, args, t }) : toString;
+         }
+      if (args.length <= 3 && name.equals("wait")) // cannot call wait
          if (args.length == 0 ||
-            (args[0] instanceof Long  && (args.length <= 1 ? true :
-             args[1] instanceof Long) && (args.length <= 2 ? true :
+            (args[0] instanceof Long  && (args.length < 2 ? true :
+             args[1] instanceof Long) && (args.length < 3 ? true :
              args[2] instanceof Integer)))
                 throw new IllegalMonitorStateException(
                    "Cannot wait on remote object");
-      } else if (name.equals("notify") || name.equals("notifyAll"))
-         if (args.length == 0)
+      if (args.length == 0 && (name.equals("notify") || // cannot call notify
+         name.equals("notifyAll")))
             throw new IllegalMonitorStateException(
                "Cannot notify remote object");
-      try { return Remote.invoke(item, name, args.length == 0 ? null : args); }
-      catch(Throwable t) { // object method invocation error
+      try { // otherwise invoke the method on the remote object
+         return Remote.invoke(item, name, args.length == 0 ? null : args);
+      } catch(Throwable t) { // invocation error, handle if possible or throw
          if (handler != null) return Remote.invoke(handler, "handle",
             new Object[] { item, method, args, t });
-         throw t; // pass up unhandled exception, rare but usually serious
+         throw t;
       }
    }
    /**
