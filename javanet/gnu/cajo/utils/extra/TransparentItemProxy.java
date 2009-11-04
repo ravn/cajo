@@ -127,34 +127,34 @@ public final class TransparentItemProxy
       throws Throwable {
       String name = method.getName();
       if (args == null) args = NULL;
-      if (args.length == 1 && name.equals("equals")) // shallow equals
-         return args[0] == null ? Boolean.FALSE : args[0] == proxy ||
-            Proxy.isProxyClass(args[0].getClass()) &&
-            Proxy.getInvocationHandler(args[0]) instanceof
-               TransparentItemProxy &&
-            item.equals(((TransparentItemProxy)
-               Proxy.getInvocationHandler(args[0])).item)
-            ? Boolean.TRUE : Boolean.FALSE;
-      if (args.length == 0 && name.equals("hashCode")) // shallow hashCode
-         return new Integer(item.hashCode());
-      if (args.length == 0 && name.equals("toString")) // attempt toString
-         try { return Remote.invoke(item, name, null); }
-         catch(Throwable t) { // handle if possible, do NOT throw!
-            return handler != null ? Remote.invoke(handler, "handle",
-               new Object[] { item, method, args, t }) :
-               t.getLocalizedMessage();
-         }
-      if (args.length <= 3 && name.equals("wait")) // cannot call wait
-         if (args.length == 0 ||
-            (args[0] instanceof Long  && (args.length < 2 ? true :
-             args[1] instanceof Long) && (args.length < 3 ? true :
-             args[2] instanceof Integer)))
-                throw new IllegalMonitorStateException(
-                   "Cannot wait on remote object");
-      if (args.length == 0 && (name.equals("notify") || // cannot call notify
-         name.equals("notifyAll")))
+      if (args.length == 0) {
+         if (name.equals("hashCode")) // shallow hashCode
+            return new Integer(item.hashCode());
+         if (name.equals("toString")) // attempt toString
+            try { return Remote.invoke(item, name, null); }
+            catch(Throwable t) { // handle if possible, do NOT throw!
+               return handler != null ? Remote.invoke(handler, "handle",
+                  new Object[] { item, method, args, t }) :
+                  t.getLocalizedMessage(); // oh well...
+            }
+         if (name.equals("notify") || name.equals("notifyAll"))
             throw new IllegalMonitorStateException(
                "Cannot notify remote object");
+      } else if (args.length == 1 && name.equals("equals")) // shallow equals
+         return args[0] == null ? Boolean.FALSE : proxy == args[0] ||
+            Proxy.isProxyClass(args[0].getClass()) &&
+            Proxy.getInvocationHandler(
+               args[0]) instanceof TransparentItemProxy &&
+            item.equals(((TransparentItemProxy)
+               Proxy.getInvocationHandler(args[0])).item) ?
+            Boolean.TRUE : Boolean.FALSE;
+      if (args.length < 4 && name.equals("wait"))
+         if (args.length == 0 ||
+             args[0] instanceof Long  && (args.length < 2 ? true :
+             args[1] instanceof Long) && (args.length < 3 ? true :
+             args[2] instanceof Integer))
+                throw new IllegalMonitorStateException(
+                   "Cannot wait on remote object");
       try { // otherwise invoke the method on the remote object
          return Remote.invoke(item, name, args.length == 0 ? null : args);
       } catch(Throwable t) { // invocation error, handle if possible or throw
@@ -167,8 +167,9 @@ public final class TransparentItemProxy
     * This generates a class definition for a remote object reference at
     * runtime, and returns a local object instance. The resulting dynamic
     * proxy object will implement all the interfaces provided.
-    * @param item A reference to a <i>presumably</i> remote server object,
-    * though a local object instance could be used just as well
+    * @param item A reference to a <i>presumably</i> remote server object;
+    * whilst a local object instance could be used as well, that might be
+    * considered <i>silly,</i> by some.
     * @param interfaces The list of interface classes for the dynamic proxy
     * to implement. Typically, these are provided thus; <tt>new Class[] {
     * Interface1.class, Interface2.class, ... }</tt>
