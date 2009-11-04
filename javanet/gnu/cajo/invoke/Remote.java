@@ -539,9 +539,16 @@ public final class Remote extends UnicastRemoteObject
     */
    public static Object invoke(Object item, String method, Object args)
       throws Exception {
-      if (item instanceof Invoke) // if possible, delegate
-         return ((Invoke)item).invoke(method, args);
-      try {
+      if (item instanceof RemoteInvoke) { // then local equals & hashCode
+         Object arguments[] = args == null ? new Object[] {} :
+            args instanceof Object[] ? (Object[])args : new Object[] { args };
+         if (arguments.length == 0 && method.equals("hashCode"))
+            return new Integer(item.hashCode());
+         else if (arguments.length == 1 && method.equals("equals"))
+            return item.equals(arguments[0]) ? Boolean.TRUE : Boolean.FALSE;
+      }
+      if (item instanceof Invoke) return ((Invoke)item).invoke(method, args);
+      try { // otherwise invoke reflectively...
          if (args instanceof Object[]) { // multiple arguments
             Object[] o_args = (Object[])args;
             Class[]  c_args = new Class[o_args.length];
