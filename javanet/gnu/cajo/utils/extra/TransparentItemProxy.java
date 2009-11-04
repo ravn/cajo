@@ -77,7 +77,6 @@ public final class TransparentItemProxy
    private static final long serialVersionUID = 1L;
    private static final Object NULL[] = {};
    private final Object item;
-   private Object toString;  // most recently cached value
    private TransparentItemProxy(Object item) { // invisible helper monkey
       try { Remote.invoke(item, "equals", this); }
       catch(Throwable t) { // test that object reference actucally works
@@ -110,7 +109,7 @@ public final class TransparentItemProxy
     * transparently. This allows the local runtime to perform remote item
     * invocations, while appearing syntactically identical to local ones.
     * @param proxy The locallly created proxy object on which the method was
-    * originally invoked, it is not used in this method.
+    * originally invoked.
     * @param method The method to invoke on the object, in this case the
     * server item.
     * @param args The arguments to provide to the method, if any.
@@ -128,20 +127,22 @@ public final class TransparentItemProxy
       throws Throwable {
       String name = method.getName();
       if (args == null) args = NULL;
+      if (args.length == 1 && name.equals("equals")) // shallow equals
+         return args[0] == null ? Boolean.FALSE : args[0] == proxy ||
+            Proxy.isProxyClass(args[0].getClass()) &&
+            Proxy.getInvocationHandler(args[0]) instanceof
+               TransparentItemProxy &&
+            item.equals(((TransparentItemProxy)
+               Proxy.getInvocationHandler(args[0])).item)
+            ? Boolean.TRUE : Boolean.FALSE;
       if (args.length == 0 && name.equals("hashCode")) // shallow hashCode
          return new Integer(item.hashCode());
-      if (args.length == 1 && name.equals("equals")) // shallow equals
-         return Proxy.isProxyClass(args[0].getClass()) &&
-            Proxy.getInvocationHandler(args[0])
-               instanceof TransparentItemProxy ?
-                  item.equals(((TransparentItemProxy)Proxy.
-                     getInvocationHandler(args[0])).item) ?
-                       Boolean.TRUE : Boolean.FALSE : Boolean.FALSE;
-      if (args.length == 0 && name.equals("toString")) // cached toString
-         try { return toString = Remote.invoke(item, name, null); }
+      if (args.length == 0 && name.equals("toString")) // attempt toString
+         try { return Remote.invoke(item, name, null); }
          catch(Throwable t) { // handle if possible, do NOT throw!
             return handler != null ? Remote.invoke(handler, "handle",
-               new Object[] { item, method, args, t }) : toString;
+               new Object[] { item, method, args, t }) :
+               t.getLocalizedMessage();
          }
       if (args.length <= 3 && name.equals("wait")) // cannot call wait
          if (args.length == 0 ||
