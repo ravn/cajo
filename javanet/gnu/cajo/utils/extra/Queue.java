@@ -167,13 +167,15 @@ public class Queue implements Invoke {
             public void run() {
                try {
                   do {
+                     String method;
+                     Object args, consumers[];
                      synchronized(Queue.this) {
                         while (invocations.size() == 0) Queue.this.wait();
+                        method = (String)invocations.removeFirst();
+                        args = invocations.removeFirst();
+                        if (Queue.this.consumers.isEmpty()) continue;
+                        consumers = Queue.this.consumers.toArray();
                      }
-                     String method = (String)invocations.removeFirst();
-                     Object args = invocations.removeFirst();
-                     if (Queue.this.consumers.isEmpty()) continue;
-                     Object consumers[] = Queue.this.consumers.toArray();
                      for (int i = 0; i < consumers.length; i++) try {
                         Remote.invoke(consumers[i], method, args);
                      } catch(RemoteException x) { dequeue(consumers[i]); }
