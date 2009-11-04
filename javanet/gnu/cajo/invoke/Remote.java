@@ -109,9 +109,10 @@ public final class Remote extends UnicastRemoteObject
    private static int defaultServerPort, defaultClientPort;
    private static RCSF defaultRCSF;
    private static RSSF defaultRSSF;
-   private static final HashMap cache = new HashMap();
-   private static final Vector items  = new Vector();
-   private static final Class[] NULL  = {}, OBJECT = { Object.class };
+   private static final HashMap cache   = new HashMap();
+   private static final Vector items    = new Vector();
+   private static final Class[] NULL    = {}, OBJECT = { Object.class };
+   private static final Object NOARGS[] = new Object[] {};
    private boolean unexportOnUnreference;
    /**
     * If the remote wrapper is being garbage collected, and it hasn't already
@@ -539,12 +540,12 @@ public final class Remote extends UnicastRemoteObject
     */
    public static Object invoke(Object item, String method, Object args)
       throws Exception {
-      if (item instanceof RemoteInvoke) { // then local equals & hashCode
-         Object arguments[] = args == null ? new Object[] {} :
+      if (item instanceof RemoteInvoke) { // use local equals & hashCode
+         final Object arguments[] = args == null ? NOARGS :
             args instanceof Object[] ? (Object[])args : new Object[] { args };
          if (arguments.length == 0 && method.equals("hashCode"))
             return new Integer(item.hashCode());
-         else if (arguments.length == 1 && method.equals("equals"))
+         if (arguments.length == 1 && method.equals("equals"))
             return item.equals(arguments[0]) ? Boolean.TRUE : Boolean.FALSE;
       }
       if (item instanceof Invoke) return ((Invoke)item).invoke(method, args);
