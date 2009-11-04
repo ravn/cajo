@@ -165,22 +165,22 @@ public class Queue implements Invoke {
       if (thread == null) {
          thread = new Thread(new Runnable() {
             public void run() {
-               do {
-                  synchronized(Queue.this) {
-                     while (invocations.size() == 0) try {
-                	Queue.this.wait();
-                     } catch(InterruptedException x) { break; }
-                  }
-                  String method = (String)invocations.removeFirst();
-                  Object args = invocations.removeFirst();
-                  if (Queue.this.consumers.isEmpty()) continue;
-                  Object consumers[] = Queue.this.consumers.toArray();
-                  for (int i = 0; i < consumers.length; i++) try {
-                     Remote.invoke(consumers[i], method, args);
-                  } catch(RemoteException x) { dequeue(consumers[i]); }
-                  catch(Exception x) {}
-                  catch(Throwable t) {}
-               } while(!thread.isInterrupted());
+               try {
+                  do {
+                     synchronized(Queue.this) {
+                        while (invocations.size() == 0) Queue.this.wait();
+                     }
+                     String method = (String)invocations.removeFirst();
+                     Object args = invocations.removeFirst();
+                     if (Queue.this.consumers.isEmpty()) continue;
+                     Object consumers[] = Queue.this.consumers.toArray();
+                     for (int i = 0; i < consumers.length; i++) try {
+                        Remote.invoke(consumers[i], method, args);
+                     } catch(RemoteException x) { dequeue(consumers[i]); }
+                     catch(Exception x) {}
+                     catch(Throwable t) {}
+                  } while(!thread.isInterrupted());
+               } catch(InterruptedException x) {}
             }
          });
          thread.start();
