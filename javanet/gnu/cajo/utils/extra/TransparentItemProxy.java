@@ -109,8 +109,8 @@ public final class TransparentItemProxy
     * method invocations on to the remote object, automatically and
     * transparently. This allows the local runtime to perform remote item
     * invocations, while appearing syntactically identical to local ones.
-    * @param proxy The localllu created proxy object on which the method was
-    * originally invoked, it is not used for this class.
+    * @param proxy The locallly created proxy object on which the method was
+    * originally invoked, it is not used in this method.
     * @param method The method to invoke on the object, in this case the
     * server item.
     * @param args The arguments to provide to the method, if any.
@@ -131,7 +131,12 @@ public final class TransparentItemProxy
       if (args.length == 0 && name.equals("hashCode")) // shallow hashCode
          return new Integer(item.hashCode());
       if (args.length == 1 && name.equals("equals")) // shallow equals
-         return item.equals(args[0]) ? Boolean.TRUE : Boolean.FALSE;
+         return Proxy.isProxyClass(args[0].getClass()) &&
+            Proxy.getInvocationHandler(args[0])
+               instanceof TransparentItemProxy ?
+                  item.equals(((TransparentItemProxy)Proxy.
+                     getInvocationHandler(args[0])).item) ?
+                       Boolean.TRUE : Boolean.FALSE : Boolean.FALSE;
       if (args.length == 0 && name.equals("toString")) // cached toString
          try { return toString = Remote.invoke(item, name, null); }
          catch(Throwable t) { // handle if possible, do NOT throw!
