@@ -1,26 +1,10 @@
 package gnu.cajo;
 
 /*
- * Proxy Enabled Service Definiton.
- * Copyright (C) 2009 John Catherino
- * The cajo project: https://cajo.dev.java.net
- *
- * For issues or suggestions mailto:cajo@dev.java.net
- *
- * This file Service.java is part of the cajo library.
- *
- * The cajo library is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public Licence as published
- * by the Free Software Foundation, at version 3 of the licence, or (at your
- * option) any later version.
- *
- * The cajo library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Lesser General Public Licence for more details.
- *
- * You should have received a copy of the GNU Lesser General Public Licence
- * along with this library. If not, see http://www.gnu.org/licenses/lgpl.html
+ * A Generic Standard Interface for for distributing proxies between virtual
+ * machines.
+ * Written by John Catherino 17-October-2009
+ * This interface is offered into the public domain.
  */
 
 /**
