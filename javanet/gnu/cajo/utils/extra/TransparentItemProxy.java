@@ -128,8 +128,6 @@ public final class TransparentItemProxy
       String name = method.getName();
       if (args == null) args = NULL;
       if (args.length == 0) {
-         if (name.equals("hashCode")) // shallow hashCode
-            return new Integer(item.hashCode());
          if (name.equals("toString")) // attempt toString
             try { return Remote.invoke(item, name, null); }
             catch(Throwable t) { // handle if possible, do NOT throw!
@@ -139,8 +137,8 @@ public final class TransparentItemProxy
             }
          if (name.equals("notify") || name.equals("notifyAll"))
             throw new IllegalMonitorStateException(
-               "Cannot notify transparent proxy");
-      } else if (args.length == 1 && name.equals("equals")) // shallow equals
+               "Cannot notify transparent proxy object");
+      } else if (args.length == 1 && name.equals("equals")) // special equals
          return args[0] == null ? Boolean.FALSE : proxy == args[0] ||
             Proxy.isProxyClass(args[0].getClass()) &&
             Proxy.getInvocationHandler(
@@ -154,7 +152,7 @@ public final class TransparentItemProxy
              args[1] instanceof Long) && (args.length < 3 ? true :
              args[2] instanceof Integer))
                 throw new IllegalMonitorStateException(
-                   "Cannot wait on transparent proxy");
+                   "Cannot wait on transparent proxy object");
       try { // otherwise invoke the method on the remote object
          return Remote.invoke(item, name, args.length == 0 ? null : args);
       } catch(Throwable t) { // invocation error, handle if possible or throw
@@ -183,7 +181,7 @@ public final class TransparentItemProxy
     * easily tested, via the instanceof operator.
     */
    public static Object getItem(Object item, Class interfaces[]) {
-      if (item instanceof RemoteInvoke) {
+      if (item instanceof java.rmi.Remote) {
          Class suppliment[] = new Class[interfaces.length + 1];
          System.arraycopy(interfaces, 0, suppliment, 1, interfaces.length);
          suppliment[0] = java.rmi.Remote.class;
