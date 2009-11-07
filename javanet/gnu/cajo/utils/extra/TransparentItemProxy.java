@@ -139,7 +139,7 @@ public final class TransparentItemProxy
             }
          if (name.equals("notify") || name.equals("notifyAll"))
             throw new IllegalMonitorStateException(
-               "Cannot notify remote object");
+               "Cannot notify transparent proxy");
       } else if (args.length == 1 && name.equals("equals")) // shallow equals
          return args[0] == null ? Boolean.FALSE : proxy == args[0] ||
             Proxy.isProxyClass(args[0].getClass()) &&
@@ -154,7 +154,7 @@ public final class TransparentItemProxy
              args[1] instanceof Long) && (args.length < 3 ? true :
              args[2] instanceof Integer))
                 throw new IllegalMonitorStateException(
-                   "Cannot wait on remote object");
+                   "Cannot wait on transparent proxy");
       try { // otherwise invoke the method on the remote object
          return Remote.invoke(item, name, args.length == 0 ? null : args);
       } catch(Throwable t) { // invocation error, handle if possible or throw
@@ -168,16 +168,27 @@ public final class TransparentItemProxy
     * runtime, and returns a local object instance. The resulting dynamic
     * proxy object will implement all the interfaces provided.
     * @param item A reference to a <i>presumably</i> remote server object;
-    * whilst a local object instance could be used as well, that might be
-    * considered <i>silly,</i> by some.
+    * a local object instance could be used as well; to distinguish between
+    * these two cases, proxies to remote objects will also implement the
+    * marker interface java.rmi.Remote, on which the proxy may be tested via
+    * the instanceof operator.
     * @param interfaces The list of interface classes for the dynamic proxy
     * to implement. Typically, these are provided thus; <tt>new Class[] {
     * Interface1.class, Interface2.class, ... }</tt>
     * @return A reference to the server item, wrapped in the local object,
     * created at runtime. It can then be typecast into any of the interfaces,
-    * as needed by the client.
+    * as needed by the client. <i><u>Note</u>:</i> if the item reference is
+    * to an object in a remote JVM, the returned proxy will <i>also</i>
+    * implement the marker interface java.rmi.Remote, to allow this fact to be
+    * easily tested, via the instanceof operator.
     */
    public static Object getItem(Object item, Class interfaces[]) {
+      if (item instanceof RemoteInvoke) {
+         Class suppliment[] = new Class[interfaces.length + 1];
+         System.arraycopy(interfaces, 0, suppliment, 1, interfaces.length);
+         suppliment[0] = java.rmi.Remote.class;
+         interfaces = suppliment;
+      }
       return Proxy.newProxyInstance(
          interfaces[0].getClassLoader(), interfaces,
          new TransparentItemProxy(item)
