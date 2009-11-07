@@ -283,7 +283,9 @@ public final class Cajo implements Grail {
     * This method is used to manually collect remote registry entries. The
     * specific addresses or host names of the remote JVMs must be known. It
     * is used to reach JVMs that for some reason are not accessible by UDP.
-    * The method will also share all of its references.
+    * The method will also share all of its references. <i><u>Note</u>:</i>
+    * you will generally want to export all of your service objects first,
+    * before making calls to register.
     * @param hostname The address or domain name of a remote grail JVM
     * @param port The TCP port on which the object is being shared,
     * canonically it 1198
