@@ -107,7 +107,7 @@ public class BaseItem {
          proxy = ((MarshalledObject)proxy).get();
       if (proxy instanceof RemoteInvoke)
          throw new IllegalArgumentException("Proxy must be local");
-      Remote ref = new Remote(proxy);
+      Remote ref = new Remote(proxy).clientScope();
       Remote.invoke(proxy, "init", ref);
       return ref;
    }
