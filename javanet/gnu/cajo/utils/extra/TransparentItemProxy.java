@@ -128,14 +128,16 @@ public final class TransparentItemProxy
       String name = method.getName();
       if (args == null) args = NULL;
       if (args.length == 0) {
-         if (name.equals("toString")) // attempt toString
-            try { return Remote.invoke(item, name, null); }
+         if (name.equals("toString")) { // attempt toString
+            Object string;
+            try { string = Remote.invoke(item, "toString", null); }
             catch(Throwable t) { // handle if possible, do NOT throw!
-               return handler != null ? Remote.invoke(handler, "handle",
+               string = handler != null ? Remote.invoke(handler, "handle",
                   new Object[] { item, method, args, t }) :
                   t.getLocalizedMessage(); // oh well...
             }
-         if (name.equals("notify") || name.equals("notifyAll"))
+            return toString() + "->" + string;
+         } else if (name.equals("notify") || name.equals("notifyAll"))
             throw new IllegalMonitorStateException(
                "Cannot notify transparent proxy object");
       } else if (args.length == 1 && name.equals("equals")) // special equals
@@ -153,7 +155,7 @@ public final class TransparentItemProxy
              args[2] instanceof Integer))
                 throw new IllegalMonitorStateException(
                    "Cannot wait on transparent proxy object");
-      try { // otherwise invoke the method on the remote object
+      try { // otherwise invoke the method on the proxied object
          return Remote.invoke(item, name, args.length == 0 ? null : args);
       } catch(Throwable t) { // invocation error, handle if possible or throw
          if (handler != null) return Remote.invoke(handler, "handle",
