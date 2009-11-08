@@ -215,7 +215,10 @@ public final class Cajo implements Grail {
     * remotely invocable, then wrap the object with a special-case <a href=http://en.wikipedia.org/wiki/Decorator_pattern>
     * decorator</a>.<p>
     * <i><u>Note</u>:</i> if an object is exported more than once, it will be
-    * registered each time, you generally do not want to do this.
+    * registered each time, you generally do not want to do this. Also, if
+    * you plan to use the register method, to contact remote registries
+    * directly, it is <i>highly</i> advisible to export all objects
+    * <i>prior</i> to doing so.
     * @param object The <a href=http://en.wikipedia.org/wiki/Plain_Old_Java_Object>
     * POJO</a> to be made remotely invocable, i.e. there is no requirement
     * for it to implement any special interfaces, nor to be derived from any
@@ -269,7 +272,8 @@ public final class Cajo implements Grail {
     * the dynamic proxy returned by this method is serialisable, meaning it
     * may be freely passed between JVMs, or even saved to storage.
     * @param reference A reference to a remote object returned by the
-    * lookup method of this interface
+    * lookup method of this interface, though actually, any object reference
+    * implementing the client method set would work as well
     * @param methodSetInterface The set <i>(or subset)</i> of public methods,
     * static or instance, that the remote object implements
     * @return A object implementing the method set interface provided, the
