@@ -74,7 +74,7 @@ import java.lang.reflect.InvocationTargetException;
  */
 public final class TransparentItemProxy implements
    InvocationHandler, Serializable {
-   private static final long serialVersionUID = 1L;
+   private static final long serialVersionUID = 2L;
    private static final Object NULL[] = {};
    private final Serializable item; // necessary for proxy to be serialisable
    private TransparentItemProxy(Object item) { // invisible helper monkey
@@ -168,12 +168,17 @@ public final class TransparentItemProxy implements
    /**
     * This generates a class definition for a remote object reference at
     * runtime, and returns a local object instance. The resulting dynamic
-    * proxy object will implement all the interfaces provided.
+    * proxy object will implement all the interfaces provided. <i><u>Note</u>:</i>
+    * if this proxy object is to be passed between JVMs, the item <i>must</i>
+    * be either serialisable (as a completely local proxy) or be wrapped in a
+    * gnu.cajo.invoke.Remote wrapper.
     * @param item A reference to a <i>presumably</i> remote server object;
     * a local object instance could be used as well; to distinguish between
     * these two cases, proxies to remote objects will also implement the
     * marker interface java.rmi.Remote, on which the proxy may be tested via
-    * the instanceof operator.
+    * the instanceof operator. <i><u>Note</u>:</i> a proxy to a
+    * non-serialisable local item must <i>necessarily</i> be indicated as
+    * remote, so as to allow the proxies to be passed between JVMs.
     * @param interfaces The list of interface classes for the dynamic proxy
     * to implement. Typically, these are provided thus; <tt>new Class[] {
     * Interface1.class, Interface2.class, ... }</tt>
@@ -185,7 +190,7 @@ public final class TransparentItemProxy implements
     * easily tested, via the instanceof operator.
     */
    public static Object getItem(Object item, Class interfaces[]) {
-      if (item instanceof java.rmi.Remote) {
+      if (item instanceof java.rmi.Remote || !(item instanceof Serializable)) {
          Class suppliment[] = new Class[interfaces.length + 1];
          System.arraycopy(interfaces, 0, suppliment, 1, interfaces.length);
          suppliment[0] = java.rmi.Remote.class;
