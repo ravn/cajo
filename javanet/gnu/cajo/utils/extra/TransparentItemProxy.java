@@ -3,7 +3,7 @@ package gnu.cajo.utils.extra;
 import gnu.cajo.invoke.*;
 import java.lang.reflect.*;
 import java.io.IOException;
-//import java.io.Serializable;
+import java.io.Serializable;
 
 import java.rmi.RemoteException;
 import java.rmi.NotBoundException;
@@ -72,17 +72,19 @@ import java.lang.reflect.InvocationTargetException;
  * @version 1.1, 11-Nov-05 Support multiple interfaces
  * @author John Catherino
  */
-public final class TransparentItemProxy
-   implements InvocationHandler, java.io.Serializable {
+public final class TransparentItemProxy implements
+   InvocationHandler, Serializable {
    private static final long serialVersionUID = 1L;
    private static final Object NULL[] = {};
-   private final Object item;
+   private final Serializable item; // necessary for proxy to be serialisable
    private TransparentItemProxy(Object item) { // invisible helper monkey
-      try { Remote.invoke(item, "equals", this); }
-      catch(Throwable t) { // test that object reference actucally works
+      try {
+         Remote.invoke(item, "equals", this); // test reference validity
+         this.item = item instanceof Serializable ?
+            (Serializable)item : new Remote(item);
+      } catch(Throwable t) {
          throw new IllegalArgumentException(t.getLocalizedMessage());
       }
-      this.item = item;
    }
    /**
     * An optional centralised invocation error handler. If an invocation on
@@ -149,7 +151,7 @@ public final class TransparentItemProxy
                Proxy.getInvocationHandler(args[0])).item) ?
             Boolean.TRUE : Boolean.FALSE;
       if (args.length < 4 && name.equals("wait"))
-         if (args.length == 0 ||
+         if (args.length < 1 ||
              args[0] instanceof Long  && (args.length < 2 ? true :
              args[1] instanceof Long) && (args.length < 3 ? true :
              args[2] instanceof Integer))
@@ -157,10 +159,10 @@ public final class TransparentItemProxy
                    "Cannot wait on transparent proxy object");
       try { // otherwise invoke the method on the proxied object
          return Remote.invoke(item, name, args.length == 0 ? null : args);
-      } catch(Throwable t) { // invocation error, handle if possible or throw
+      } catch(Throwable t) { // invocation error, handle if possible
          if (handler != null) return Remote.invoke(handler, "handle",
             new Object[] { item, method, args, t });
-         throw t;
+         throw t; // uncaught exception, rare but typically serious...
       }
    }
    /**
