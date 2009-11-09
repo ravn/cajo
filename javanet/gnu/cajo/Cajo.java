@@ -44,15 +44,16 @@ import java.rmi.RemoteException;
 public final class Cajo implements Grail {
    private final Multicast multicast;
    private final Vector items = new Vector();
-   private final Registrar registrar = new Registrar();
+   private final Registrar registrar = new Registrar(items);
    /**
     * This internal helper class maintains a registry of exported objects.
     * It cannot be instantiated outside this class, it is made public only
     * because it is being invoked reflectively. It uses UDP multicasts to
     * find other instances of registries, and shares references between them.
     */
-   public final class Registrar {
-      private Registrar() {}
+   public static final class Registrar {
+      private final Vector items;
+      private Registrar(Vector items) { this.items = items; }
       /**
        * This method is called either when a Cajo instance starts up, or
        * exports an object reference. All operating servers will request the
@@ -98,7 +99,7 @@ public final class Cajo implements Grail {
     * outside this class, it is made public only because it is being invoked
     * reflectively.
     */
-   public final class Searchable implements Invoke { // object matching
+   public static final class Searchable implements Invoke { // object matching
       private final Object object;
       private Searchable(Object object) { this.object = object; }
       /**
@@ -150,9 +151,13 @@ public final class Cajo implements Grail {
     * outside this class, it is made public only because it is being invoked
     * reflectively.
     */
-   public final class Purger implements Invoke {
+   public static final class Purger implements Invoke {
       private final Object object;
-      private Purger(Object object) { this.object = object; }
+      private transient Vector items;
+      private Purger(Object object, Vector items) {
+         this.object = object;
+         this.items = items;
+      }
       /**
        * This method, invoked transparently when any remote server method is
        * called, monitors the progress of the invocation. If the call results
@@ -165,11 +170,10 @@ public final class Cajo implements Grail {
        * @throws Exception For either network, or server object logic related
        * reasons
        */
-      public Object invoke(String method, Object args)
-         throws Exception {
+      public Object invoke(String method, Object args) throws Exception {
          try { return Remote.invoke(object, method, args); }
          catch(RemoteException x) { // if object is not responsive
-            items.remove(object);   // remove it from our collection
+            if (items != null) items.remove(object);
             throw x;
          }
       }
@@ -268,20 +272,25 @@ public final class Cajo implements Grail {
     * This method instantiates a <a href=http://java.sun.com/j2se/1.3/docs/guide/reflection/proxy.html>
     * Dynamic Proxy</a> at the client, which implements the method set
     * specified. This allows a remote object reference to be used in a
-    * semantically identical fashion as if it were local. <i><u>Note</u>:</i>
-    * the dynamic proxy returned by this method is serialisable, meaning it
-    * may be freely passed between JVMs, or even saved to storage.
+    * semantically identical fashion as if it were local. The proxies can,
+    * if the service object reference is serialisable, be freely passed
+    * between JVMs, or persisted to storage for later use.
     * @param reference A reference to a remote object returned by the
     * lookup method of this interface, though actually, any object reference
-    * implementing the client method set would work as well
+    * implementing the client method set would work
     * @param methodSetInterface The set <i>(or subset)</i> of public methods,
-    * static or instance, that the remote object implements
-    * @return A object implementing the method set interface provided, the
-    * local method invocations will be transparently passed on to the remote
+    * static or instance, that the object reference implements
+    * @return An object implementing the method set interface provided.
+    * <p><i><u>Note</u>:</i> if the item reference is to an object in a
+    * remote JVM, the returned proxy will <i>also</i> implement the marker
+    * interface java.rmi.Remote, to allow this fact to be easily tested, via
+    * the instanceof operator.
     */
    public Object proxy(Object reference, Class methodSetInterface) {
-      return TransparentItemProxy.getItem(
-         new Purger(reference), new Class[] { methodSetInterface });
+      return TransparentItemProxy.getItem(new Purger(reference, items),
+         reference instanceof java.rmi.Remote ? 
+            new Class[] { methodSetInterface, java.rmi.Remote.class } :
+            new Class[] { methodSetInterface });
    }
    /**
     * This method is used to manually collect remote registry entries. The
