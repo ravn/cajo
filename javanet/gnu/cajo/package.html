@@ -1,9 +1,9 @@
 <body>
 
 This package provides the two top-level interfaces to the functionality
-of the cajo project. The cajo functionality consists of two fundamental
-pieces, these are represented by the <b>Grail</b> and <b>Service</b>
-<i>interfaces:</i>
+of the <a href=https://cajo.dev.java.net>cajo project</a>. The cajo
+functionality consists of just <i>two</i> fundamental pieces, these are
+represented by the <b>Grail</b> and <b>Service</b> <i>interfaces:</i>
 
 <p><center><img src="../../../gnu/cajo/cajo.png" alt="cajo service model"
 title="cajo architecture diagram"></center>
@@ -14,12 +14,18 @@ finding, and using objects; upon which to invoke procedure calls.<p>
 
 <li>The <b>Service</b> interface defines the cajo proxy model. Proxies are
 objects, requested from the server or sent by a client, to interact with a
-service object, in a local context for the client.
+service object, in a local context for the client.<p>
+
+<li> The <b>Service.Proxy</b> interface defines the method used to pass a
+client or server proxy, depending on context, a reference to a service
+object over, which to communicate.
 </ul>
 
 <p>The Cajo class, and its helper classes, exist purely to implement the
 Grail interface. It also provides one supplimental method, to manually
 collect registry entries, in addition to the default dynamic
-<i>(multicast)</i> mechanism.
+<i>(multicast)</i> mechanism. The cajo project website provides a short and
+simple <a href=http://weblogs.java.net/blog/cajo/archive/2007/09/simple_interjvm.html>
+example<a> of the use of the package.
 
 </body>
