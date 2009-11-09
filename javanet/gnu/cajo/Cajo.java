@@ -46,10 +46,11 @@ public final class Cajo implements Grail {
    private final Vector items = new Vector();
    private final Registrar registrar = new Registrar(items);
    /**
-    * This internal helper class maintains a registry of exported objects.
-    * It cannot be instantiated outside this class, it is made public only
-    * because it is being invoked reflectively. It uses UDP multicasts to
-    * find other instances of registries, and shares references between them.
+    * This internal use only helper class maintains a registry of exported
+    * objects. It cannot be instantiated outside this class, it is made
+    * public only because it is being invoked reflectively. It uses UDP
+    * multicasts to find other instances of registries, and shares references
+    * between them.
     */
    public static final class Registrar {
       private final Vector items;
@@ -94,12 +95,12 @@ public final class Cajo implements Grail {
       public Vector request() { return items; }
    };
    /**
-    * This internal helper class scans an exported object to see if it has
-    * methods matching the client method set. It cannot be instantiated
-    * outside this class, it is made public only because it is being invoked
-    * reflectively.
+    * This internal use only helper class scans an exported object to see if
+    * it has methods matching the client method set. It cannot be
+    * instantiated outside this class, it is made public only because it is
+    * being invoked reflectively.
     */
-   public static final class Searchable implements Invoke { // object matching
+   public static final class Searchable implements Invoke {
       private static final long serialVersionUID = 1L;
       private final Object object;
       private Searchable(Object object) { this.object = object; }
@@ -147,7 +148,7 @@ public final class Cajo implements Grail {
       }
    }
    /**
-    * This internal helper class automatically removes unresponsive
+    * This internal use only helper class automatically removes unresponsive
     * serer references from the internal queue. It cannot be instantiated
     * outside this class, it is made public only because it is being invoked
     * reflectively.
@@ -313,10 +314,10 @@ public final class Cajo implements Grail {
       registrar.register((Vector)Remote.invoke(reg, "request", null));
    }
    /**
-    * Technically this method is unrelated to the class. It provides
-    * an execution point called when the library jar is executed. It
-    * simply copies the contents of the internal readme.txt file to the
-    * console.
+    * Technically this method is unrelated to the class, it is used
+    * to furnish library version information. It provides an execution point
+    * called when the library jar is executed. It simply copies the contents
+    * of the internal readme.txt file to the console.
     */
     public static void main(String args[]) throws Exception {
        java.io.InputStream is =
