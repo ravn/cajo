@@ -50,9 +50,10 @@ import java.lang.reflect.InvocationTargetException;
  * customise the way they use remote items as a function of the interfaces
  * implemented.
  *
- * <p>The proxy instances returned from this class are serialisable; proxies
- * can be frozen/thawed to storage, and passed to other JVMs over the
- * network.
+ * <p>The proxy instances returned from this class are serialisable. Proxies
+ * can be persisted to storage for later use, and passed to other JVMs over
+ * the network. However, the item referenced by the proxy must also be
+ * serialisable necessarily, in order for this feature to work.
  *
  * <p>If an item can be best represented with a single interface, it might be
  * well to consider using a {@link Wrapper Wrapper} class instead. It is
@@ -64,11 +65,6 @@ import java.lang.reflect.InvocationTargetException;
  * discussion</a> in the cajo project Developer's forum, with project member
  * Bharavi Gade, caused me to reconsider.
  *
- * <p><i><u>Also note</u>:</i> The three fundamental object methods; hashCode,
- * equals, and toString, are performed locally. This is because the remote
- * invocation could fail, most unintuitively. This is just to make the class
- * operation much more intuitive.
- *
  * @version 1.1, 11-Nov-05 Support multiple interfaces
  * @author John Catherino
  */
@@ -79,7 +75,7 @@ public final class TransparentItemProxy implements
    private final Serializable item; // necessary for proxy to be serialisable
    private TransparentItemProxy(Object item) { // invisible helper monkey
       try {
-         Remote.invoke(item, "equals", this); // test reference validity
+         Remote.invoke(item, "equals", NULL); // test reference validity
          this.item = item instanceof Serializable ?
             (Serializable)item : new Remote(item);
       } catch(Throwable t) {
@@ -196,9 +192,8 @@ public final class TransparentItemProxy implements
          suppliment[0] = java.rmi.Remote.class;
          interfaces = suppliment;
       }
-      return Proxy.newProxyInstance(
-         interfaces[0].getClassLoader(), interfaces,
-         new TransparentItemProxy(item)
+      return Proxy.newProxyInstance(interfaces[0].getClassLoader(),
+         interfaces, new TransparentItemProxy(item)
       );
    }
    /**
