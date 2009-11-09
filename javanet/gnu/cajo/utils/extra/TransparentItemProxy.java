@@ -188,8 +188,8 @@ public final class TransparentItemProxy implements
    public static Object getItem(Object item, Class interfaces[]) {
       if (item instanceof java.rmi.Remote || !(item instanceof Serializable)) {
          Class suppliment[] = new Class[interfaces.length + 1];
-         System.arraycopy(interfaces, 0, suppliment, 1, interfaces.length);
-         suppliment[0] = java.rmi.Remote.class;
+         System.arraycopy(interfaces, 0, suppliment, 0, interfaces.length);
+         suppliment[interfaces.length] = java.rmi.Remote.class;
          interfaces = suppliment;
       }
       return Proxy.newProxyInstance(interfaces[0].getClassLoader(),
