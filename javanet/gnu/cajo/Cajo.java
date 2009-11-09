@@ -100,6 +100,7 @@ public final class Cajo implements Grail {
     * reflectively.
     */
    public static final class Searchable implements Invoke { // object matching
+      private static final long serialVersionUID = 1L;
       private final Object object;
       private Searchable(Object object) { this.object = object; }
       /**
@@ -152,6 +153,7 @@ public final class Cajo implements Grail {
     * reflectively.
     */
    public static final class Purger implements Invoke {
+      private static final long serialVersionUID = 1L;
       private final Object object;
       private transient Vector items;
       private Purger(Object object, Vector items) {
