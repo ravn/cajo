@@ -160,11 +160,10 @@ public class ItemServer {
    * local rmiregistry.
    * @return A remoted reference to the object within the context of this VM's
    * settings.
-   * @throws RemoteException If the registry could not be created.
+   * @throws IOException For network configuration related issues.
    */
-  public static Remote bind(Object item, String name) throws RemoteException {
-     try  { return bind(item, name, null, null, null, 0); }
-     catch(IOException x) { return null; } // can't happen, no proxy
+  public static Remote bind(Object item, String name) throws IOException {
+     return bind(item, name, null, null, null, 0);
   }
   /**
    * This method is used to bind a server object, contained in its own jar
