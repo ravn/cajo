@@ -149,7 +149,7 @@ public final class Cajo implements Grail {
    }
    /**
     * This internal use only helper class automatically removes unresponsive
-    * serer references from the internal queue. It cannot be instantiated
+    * server references from the internal queue. It cannot be instantiated
     * outside this class, it is made public only because it is being invoked
     * reflectively.
     */
