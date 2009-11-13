@@ -526,7 +526,10 @@ public final class Remote extends UnicastRemoteObject
     * directly to it.
     * @param method The method name to be invoked.
     * @param args The arguments to provide to the method for its invocation.
-    * @return The resulting data, if any, from the invocation.
+    * @return The resulting data, if any, from the invocation. <i><u>Note</u>:</i>
+    * if the result is neither serialisable, nor a remote object reference;
+    * the object, <i>if non-null,</i> will be automatically returned in a
+    * {@link #clientScope clientScope}(d) reference.
     * @throws IllegalArgumentException If the method argument is null.
     * @throws NoSuchMethodException If no matching method can be found.
     * @throws Exception If the item rejected the invocation, for application
@@ -777,8 +780,8 @@ public final class Remote extends UnicastRemoteObject
     * implicitly, when the wrapper becomes unreferenced by all clients.
     * Very handy and important!
     * @return A reference to this wrapper, purely to allow the convenient
-    * construct of:<p><tt>
-    * return(new Remote(tempObj).clientScope());</tt>
+    * construct of:<p>
+    * <tt> return new Remote(tempObj).clientScope();</tt>
     */
    public Remote clientScope() {
       unexportOnUnreference = true;
