@@ -549,25 +549,41 @@ public final class Remote extends UnicastRemoteObject
             return item.equals(arguments[0]) ? Boolean.TRUE : Boolean.FALSE;
       }
       if (item instanceof Invoke) return ((Invoke)item).invoke(method, args);
-      try { // otherwise invoke reflectively...
+      try {
          if (args instanceof Object[]) { // multiple arguments
             Object[] o_args = (Object[])args;
             Class[]  c_args = new Class[o_args.length];
             for(int i = 0; i < o_args.length; i++)
                c_args[i] = o_args[i] != null ? o_args[i].getClass() : null;
             Method m = findBestMethod(item, method, c_args);
-            if (m != null) return m.invoke(item, o_args);
+            if (m != null) {
+               Object result = m.invoke(item, o_args);
+               return result == null || result instanceof Serializable ?
+                  result : new Remote(result).clientScope();
+            }
          }
          if (args != null) { // single argument
             Method m =
                findBestMethod(item, method, new Class[]{ args.getClass() });
-            if (m != null) return m.invoke(item, new Object[]{ args });
+            if (m != null) {
+               Object result = m.invoke(item, new Object[]{ args });
+               return result == null || result instanceof Serializable ?
+                 result : new Remote(result).clientScope();
+            }
          } else { // no argument
             Method m = findBestMethod(item, method, NULL);
-            if (m != null) return m.invoke(item, null);
+            if (m != null) {
+               Object result = m.invoke(item, null);
+               return result == null || result instanceof Serializable ?
+                  result : new Remote(result).clientScope();
+            }
          }
          Method m = findBestMethod(item, method, OBJECT); // hail mary!
-         if (m != null) return m.invoke(item, new Object[]{ args });
+         if (m != null) {
+            Object result =  m.invoke(item, new Object[]{ args });
+            return result == null || result instanceof Serializable ?
+               result : new Remote(result).clientScope();
+         }
          throw new NoSuchMethodException(item.getClass().getName() +
             '.' + method + (args == null ? "()" :
                '(' + args.getClass().getName() + ')'));
