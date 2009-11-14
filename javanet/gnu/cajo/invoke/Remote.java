@@ -527,8 +527,9 @@ public final class Remote extends UnicastRemoteObject
     * @param method The method name to be invoked.
     * @param args The arguments to provide to the method for its invocation.
     * @return The resulting data, if any, from the invocation. <i><u>Note</u>:</i>
-    * if the result is neither serialisable, nor a remote object reference;
-    * the object, <i>if non-null,</i> will be automatically returned in a
+    * if the method invocation is remote, and the result is neither
+    * serialisable, nor a remote object reference; the object,
+    * <i>if non-null,</i> will be automatically returned in a
     * {@link #clientScope clientScope}(d) reference.
     * @throws IllegalArgumentException If the method argument is null.
     * @throws NoSuchMethodException If no matching method can be found.
@@ -561,8 +562,12 @@ public final class Remote extends UnicastRemoteObject
             Method m = findBestMethod(item, method, c_args);
             if (m != null) {
                Object result = m.invoke(item, o_args);
-               return result == null || result instanceof Serializable ?
-                  result : new Remote(result).clientScope();
+               if (result != null && !(result instanceof Serializable)) try {
+                  RemoteServer.getClientHost();
+               } catch(ServerNotActiveException x) {
+                  return new Remote(result).clientScope();
+               }
+               return result;
             }
          }
          if (args != null) { // single argument
@@ -570,22 +575,34 @@ public final class Remote extends UnicastRemoteObject
                findBestMethod(item, method, new Class[]{ args.getClass() });
             if (m != null) {
                Object result = m.invoke(item, new Object[]{ args });
-               return result == null || result instanceof Serializable ?
-                 result : new Remote(result).clientScope();
+               if (result != null && !(result instanceof Serializable)) try {
+                  RemoteServer.getClientHost();
+               } catch(ServerNotActiveException x) {
+                  return new Remote(result).clientScope();
+               }
+               return result;
             }
          } else { // no argument
             Method m = findBestMethod(item, method, NULL);
             if (m != null) {
                Object result = m.invoke(item, null);
-               return result == null || result instanceof Serializable ?
-                  result : new Remote(result).clientScope();
+               if (result != null && !(result instanceof Serializable)) try {
+                  RemoteServer.getClientHost();
+               } catch(ServerNotActiveException x) {
+                  return new Remote(result).clientScope();
+               }
+               return result;
             }
          }
          Method m = findBestMethod(item, method, OBJECT); // hail mary!
          if (m != null) {
-            Object result =  m.invoke(item, new Object[]{ args });
-            return result == null || result instanceof Serializable ?
-               result : new Remote(result).clientScope();
+            Object result = m.invoke(item, new Object[]{ args });
+            if (result != null && !(result instanceof Serializable)) try {
+               RemoteServer.getClientHost();
+            } catch(ServerNotActiveException x) {
+               return new Remote(result).clientScope();
+            }
+            return result;
          }
          throw new NoSuchMethodException(item.getClass().getName() +
             '.' + method + (args == null ? "()" :
