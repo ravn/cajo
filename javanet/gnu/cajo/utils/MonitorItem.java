@@ -149,15 +149,12 @@ public class MonitorItem implements Invoke {
             StackTraceElement stes[] = x.getStackTrace();
             StringBuffer sb = new StringBuffer("localhost <trace>");
             for (int i = 4; i < stes.length; i++) {
-               sb.append("\n     method = ");
-               sb.append(stes[i].getClassName());
-               sb.append('.');
-               sb.append(stes[i].getMethodName());
+               sb.append("\n     method = ").append(stes[i].getClassName());
+               sb.append('.').append(stes[i].getMethodName());
                if (stes[i].getLineNumber() >= 0) { // debug info available
                   sb.append("\n     file   = ");
                   sb.append(stes[i].getFileName());
-                  sb.append(" line ");
-                  sb.append(stes[i].getLineNumber());
+                  sb.append(" line ").append(stes[i].getLineNumber());
                }
             }
             clientHost = sb.toString();
