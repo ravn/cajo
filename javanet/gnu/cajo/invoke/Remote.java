@@ -112,7 +112,7 @@ public final class Remote extends UnicastRemoteObject
    private static final HashMap cache   = new HashMap();
    private static final Vector items    = new Vector();
    private static final Class[] NULL    = {}, OBJECT = { Object.class };
-   private static final Object NOARGS[] = new Object[] {};
+   private static final Object[] NOARGS = {};
    private boolean unexportOnUnreference;
    /**
     * If the remote wrapper is being garbage collected, and it hasn't already
@@ -530,7 +530,7 @@ public final class Remote extends UnicastRemoteObject
     * if the method invocation is remote, and the result is neither
     * serialisable, nor a remote object reference; the object,
     * <i>if non-null,</i> will be automatically returned in a
-    * {@link #clientScope clientScope}(d) reference.
+    * {@link gnu.cajo.utils.extra.TransparentItemProxy TransparentItemProxy}.
     * @throws IllegalArgumentException If the method argument is null.
     * @throws NoSuchMethodException If no matching method can be found.
     * @throws Exception If the item rejected the invocation, for application
@@ -542,71 +542,52 @@ public final class Remote extends UnicastRemoteObject
     * providing a <a href=http://benpryor.com/blog/index.php?/archives/24-Java-Dynamic-Proxies-and-InvocationTargetException.html>
     * link</a> to the discussion.
     */
-   public static Object invoke(Object item, String method, Object args)
-      throws Exception {
-      if (item instanceof RemoteInvoke) { // use local equals & hashCode
-         final Object arguments[] = args == null ? NOARGS :
-            args instanceof Object[] ? (Object[])args : new Object[] { args };
-         if (arguments.length == 0 && method.equals("hashCode"))
+   public static Object invoke(final Object item, final String method,
+      final Object args) throws Exception {
+      Object o_args[] = args instanceof Object[] ?
+         (Object[])args : args != null ? new Object[] { args } : NOARGS;
+      if (item instanceof RemoteInvoke) { // special for remote clients...
+         if (o_args.length == 0 && method.equals("hashCode"))
             return new Integer(item.hashCode());
-         if (arguments.length == 1 && method.equals("equals"))
-            return item.equals(arguments[0]) ? Boolean.TRUE : Boolean.FALSE;
+         if (o_args.length == 1 && method.equals("equals"))
+            return item.equals(o_args[0]) ? Boolean.TRUE : Boolean.FALSE;
       }
       if (item instanceof Invoke) return ((Invoke)item).invoke(method, args);
-      try {
-         if (args instanceof Object[]) { // multiple arguments
-            Object[] o_args = (Object[])args;
-            Class[]  c_args = new Class[o_args.length];
-            for(int i = 0; i < o_args.length; i++)
-               c_args[i] = o_args[i] != null ? o_args[i].getClass() : null;
-            Method m = findBestMethod(item, method, c_args);
-            if (m != null) {
-               Object result = m.invoke(item, o_args);
-               if (result != null && !(result instanceof Serializable)) try {
-                  RemoteServer.getClientHost();
-               } catch(ServerNotActiveException x) {
-                  return new Remote(result).clientScope();
-               }
-               return result;
-            }
+      try { // invoke locally
+         Class[] c_args = o_args != NOARGS ? new Class[o_args.length] : NULL;
+         if (c_args != NULL)
+            for (int i = 0; i < c_args.length; i++)
+               c_args[i] = o_args[i] == null ? null : o_args[i].getClass();
+         Method m = findBestMethod(item, method, c_args); // look for it
+         if (m == null && args != null) { // first fallback...
+            c_args = new Class[] { args.getClass() };
+            m = findBestMethod(item, method, c_args);
+            o_args = new Object[] { args };
          }
-         if (args != null) { // single argument
-            Method m =
-               findBestMethod(item, method, new Class[]{ args.getClass() });
-            if (m != null) {
-               Object result = m.invoke(item, new Object[]{ args });
-               if (result != null && !(result instanceof Serializable)) try {
-                  RemoteServer.getClientHost();
-               } catch(ServerNotActiveException x) {
-                  return new Remote(result).clientScope();
-               }
-               return result;
-            }
-         } else { // no argument
-            Method m = findBestMethod(item, method, NULL);
-            if (m != null) {
-               Object result = m.invoke(item, null);
-               if (result != null && !(result instanceof Serializable)) try {
-                  RemoteServer.getClientHost();
-               } catch(ServerNotActiveException x) {
-                  return new Remote(result).clientScope();
-               }
-               return result;
-            }
+         if (m == null) { // final fallback...
+            c_args = new Class[] { args.getClass() };
+            m = findBestMethod(item, method, OBJECT);
+            o_args = new Object[] { args };
          }
-         Method m = findBestMethod(item, method, OBJECT); // hail mary!
-         if (m != null) {
-            Object result = m.invoke(item, new Object[]{ args });
+         if (m != null) { // found a method to call?
+            Object result =
+               m.invoke(item, o_args != NOARGS ? o_args : null);
             if (result != null && !(result instanceof Serializable)) try {
                RemoteServer.getClientHost();
-            } catch(ServerNotActiveException x) {
-               return new Remote(result).clientScope();
-            }
+               return gnu.cajo.utils.extra.TransparentItemProxy.getItem(
+                  new Remote(result).clientScope(),
+                   item.getClass().getMethod(method, c_args).
+                      getReturnType().getInterfaces());
+            } catch(ServerNotActiveException x) {}
             return result;
+         } // else no-joy :-(
+         StringBuffer sb = new StringBuffer(item.getClass().getName());
+         sb.append('.').append(method).append('(');
+         if (c_args.length > 0) for (int i = 0; i < c_args.length; i++) {
+            sb.append(c_args[i] != null ? c_args[i].getName() : "null");
+            if (i + 1 < o_args.length) sb.append(", ");
          }
-         throw new NoSuchMethodException(item.getClass().getName() +
-            '.' + method + (args == null ? "()" :
-               '(' + args.getClass().getName() + ')'));
+         throw new NoSuchMethodException(sb.append(')').toString());
       } catch(java.lang.reflect.InvocationTargetException x) {
          Throwable t = x.getTargetException();
          throw t instanceof Exception ? (Exception)t : new Exception(t);
