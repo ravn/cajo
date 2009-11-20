@@ -73,7 +73,7 @@ public final class TransparentItemProxy implements
    private static final long serialVersionUID = 2L;
    private static final Object NULL[] = {};
    private final Serializable item; // necessary for proxy to be serialisable
-   private TransparentItemProxy(Object item) { // invisible helper monkey
+   private TransparentItemProxy(Object item) {
       try {
          Remote.invoke(item, "equals", NULL); // test reference validity
          this.item = item instanceof Serializable ?
@@ -127,14 +127,15 @@ public final class TransparentItemProxy implements
       if (args == null) args = NULL;
       if (args.length == 0) {
          if (name.equals("toString")) { // attempt toString
-            Object string;
-            try { string = Remote.invoke(item, "toString", null); }
+            StringBuffer sb = new StringBuffer(toString());
+            sb.append("->");
+            try { sb.append(Remote.invoke(item, "toString", null)); }
             catch(Throwable t) { // handle if possible, do NOT throw!
-               string = handler != null ? Remote.invoke(handler, "handle",
+               sb.append(handler != null ? Remote.invoke(handler, "handle",
                   new Object[] { item, method, args, t }) :
-                  t.getLocalizedMessage(); // oh well...
+                  t.getLocalizedMessage()); // oh well...
             }
-            return toString() + "->" + string;
+            return sb.toString();
          } else if (name.equals("notify") || name.equals("notifyAll"))
             throw new IllegalMonitorStateException(
                "Cannot notify transparent proxy object");
@@ -193,8 +194,7 @@ public final class TransparentItemProxy implements
          interfaces = suppliment;
       }
       return Proxy.newProxyInstance(interfaces[0].getClassLoader(),
-         interfaces, new TransparentItemProxy(item)
-      );
+         interfaces, new TransparentItemProxy(item));
    }
    /**
     * This method fetches a server item reference, generates a class
