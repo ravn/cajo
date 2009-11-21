@@ -280,8 +280,8 @@ public class ItemServer {
    * @throws RemoteException If the registry could not be created.
    * @throws IOException If the provided proxy object is not serialisable.
    */
-  public static synchronized Remote bind(Object item, String name,
-     Object proxy, RMIServerSocketFactory ssf, RMIClientSocketFactory csf,
+  public static Remote bind(Object item, String name, Object proxy,
+     RMIServerSocketFactory ssf, RMIClientSocketFactory csf,
      int port) throws RemoteException, IOException {
      Remote handle = item instanceof Remote ? (Remote)item : new Remote(item);
      if (proxy != null) {
@@ -294,20 +294,22 @@ public class ItemServer {
      }
      try { Remote.invoke(item, "startThread", null); }
      catch(Exception x) { /* method unimplemented, that's OK */ }
-     if (csf == null || ssf == null) {
-        if (registry == null)
-           registry = LocateRegistry.createRegistry(
-              Remote.getDefaultServerPort(),
-                 Remote.getDefaultClientSocketFactory(),
-                     Remote.getDefaultServerSocketFactory());
-        registry.rebind(name, handle);
-     } else {
-        Registry custom = (Registry)registries.get(new Integer(port));
-        if (custom == null) {
-           custom = LocateRegistry.createRegistry(port, csf, ssf);
-           registries.put(new Integer(port), custom);
+     synchronized(ItemServer.class) { // time to bind it
+        if (csf == null || ssf == null) {
+           if (registry == null)
+              registry = LocateRegistry.createRegistry(
+                 Remote.getDefaultServerPort(),
+                    Remote.getDefaultClientSocketFactory(),
+                        Remote.getDefaultServerSocketFactory());
+           registry.rebind(name, handle);
+        } else {
+           Registry custom = (Registry)registries.get(new Integer(port));
+           if (custom == null) {
+              custom = LocateRegistry.createRegistry(port, csf, ssf);
+              registries.put(new Integer(port), custom);
+           }
+           custom.rebind(name, handle);
         }
-        custom.rebind(name, handle);
      }
      return handle;
   }
