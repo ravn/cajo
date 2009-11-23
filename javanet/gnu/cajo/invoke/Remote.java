@@ -518,9 +518,7 @@ public final class Remote extends UnicastRemoteObject
     * object's public method via the framework Java reflection mechanism, and
     * the result returned, if any. The method is declared static to centralize
     * the implementation, and allow other derived classes to use this
-    * mechanism without having to reimplement it. If the arguments are being
-    * sent to a remote VM, and are not already encapsulated in a
-    * MarshalledObject, they will be, automatically.
+    * mechanism without having to reimplement it.
     * @param item The object on which to invoke the method. If the item
     * implements the {@link Invoke Invoke} interface, the call will be passed
     * directly to it.
@@ -530,7 +528,8 @@ public final class Remote extends UnicastRemoteObject
     * if the method invocation is remote, and the result is neither
     * serialisable, nor a remote object reference; the object,
     * <i>if non-null,</i> will be automatically returned in a
-    * {@link gnu.cajo.utils.extra.TransparentItemProxy TransparentItemProxy}.
+    * {@link gnu.cajo.utils.extra.TransparentItemProxy TransparentItemProxy},
+    * implementing <i>all</i> of the interfaces of the return object instance.
     * @throws IllegalArgumentException If the method argument is null.
     * @throws NoSuchMethodException If no matching method can be found.
     * @throws Exception If the item rejected the invocation, for application
@@ -557,18 +556,18 @@ public final class Remote extends UnicastRemoteObject
       if (c_args != NULL)
          for (int i = 0; i < c_args.length; i++)
             c_args[i] = o_args[i] == null ? null : o_args[i].getClass();
-      Method m = findBestMethod(item, method, c_args); // look for it
-      if (m == null && args != null) { // first fallback...
+      Method m = findBestMethod(item, method, c_args);
+      if (m == null && args != null) {
          c_args = new Class[] { args.getClass() };
          m = findBestMethod(item, method, c_args);
          o_args = new Object[] { args };
       }
-      if (m == null) { // final fallback...
+      if (m == null) {
          c_args = new Class[] { args.getClass() };
          m = findBestMethod(item, method, OBJECT);
          o_args = new Object[] { args };
       }
-      if (m != null) try { // found a method to call?
+      if (m != null) try {
          Object result = m.invoke(item, o_args != NOARGS ? o_args : null);
          if (result != null && !(result instanceof Serializable)) try {
             RemoteServer.getClientHost();
