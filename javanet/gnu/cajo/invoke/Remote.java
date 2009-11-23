@@ -568,13 +568,8 @@ public final class Remote extends UnicastRemoteObject
          m = findBestMethod(item, method, OBJECT);
          o_args = new Object[] { args };
       }
-      if (m != null) { // found a method to call?
-         try {
-            Object result = m.invoke(item, o_args != NOARGS ? o_args : null);
-         } catch(java.lang.reflect.InvocationTargetException x) {
-            Throwable t = x.getTargetException();
-            throw t instanceof Exception ? (Exception)t : new Exception(t);
-         }
+      if (m != null) try { // found a method to call?
+         Object result = m.invoke(item, o_args != NOARGS ? o_args : null);
          if (result != null && !(result instanceof Serializable)) try {
             RemoteServer.getClientHost();
             return gnu.cajo.utils.extra.TransparentItemProxy.getItem(
@@ -582,7 +577,10 @@ public final class Remote extends UnicastRemoteObject
                   m.getReturnType().getInterfaces());
          } catch(ServerNotActiveException x) { /* not a remote call */ }
          return result;
-      } // else no joy :-(
+      } catch(java.lang.reflect.InvocationTargetException x) {
+         Throwable t = x.getTargetException();
+         throw t instanceof Exception ? (Exception)t : new Exception(t);
+      }
       StringBuffer sb = new StringBuffer(item.getClass().getName());
       sb.append('.').append(method).append('(');
       if (c_args.length > 0) for (int i = 0; i < c_args.length; i++) {
