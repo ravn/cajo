@@ -572,8 +572,7 @@ public final class Remote extends UnicastRemoteObject
          if (result != null && !(result instanceof Serializable)) try {
             RemoteServer.getClientHost();
             return gnu.cajo.utils.extra.TransparentItemProxy.getItem(
-               new Remote(result).clientScope(),
-                  result.getClass().getInterfaces());
+               result, result.getClass().getInterfaces());
          } catch(ServerNotActiveException x) { /* not a remote call */ }
          return result;
       } catch(java.lang.reflect.InvocationTargetException x) {
