@@ -553,45 +553,43 @@ public final class Remote extends UnicastRemoteObject
             return item.equals(o_args[0]) ? Boolean.TRUE : Boolean.FALSE;
       }
       if (item instanceof Invoke) return ((Invoke)item).invoke(method, args);
-      try { // invoke locally
-         Class[] c_args = o_args != NOARGS ? new Class[o_args.length] : NULL;
-         if (c_args != NULL)
-            for (int i = 0; i < c_args.length; i++)
-               c_args[i] = o_args[i] == null ? null : o_args[i].getClass();
-         Method m = findBestMethod(item, method, c_args); // look for it
-         if (m == null && args != null) { // first fallback...
-            c_args = new Class[] { args.getClass() };
-            m = findBestMethod(item, method, c_args);
-            o_args = new Object[] { args };
-         }
-         if (m == null) { // final fallback...
-            c_args = new Class[] { args.getClass() };
-            m = findBestMethod(item, method, OBJECT);
-            o_args = new Object[] { args };
-         }
-         if (m != null) { // found a method to call?
-            Object result =
-               m.invoke(item, o_args != NOARGS ? o_args : null);
-            if (result != null && !(result instanceof Serializable)) try {
-               RemoteServer.getClientHost();
-               return gnu.cajo.utils.extra.TransparentItemProxy.getItem(
-                  new Remote(result).clientScope(),
-                   item.getClass().getMethod(method, c_args).
-                      getReturnType().getInterfaces());
-            } catch(ServerNotActiveException x) {}
-            return result;
-         } // else no-joy :-(
-         StringBuffer sb = new StringBuffer(item.getClass().getName());
-         sb.append('.').append(method).append('(');
-         if (c_args.length > 0) for (int i = 0; i < c_args.length; i++) {
-            sb.append(c_args[i] != null ? c_args[i].getName() : "null");
-            if (i + 1 < o_args.length) sb.append(", ");
-         }
-         throw new NoSuchMethodException(sb.append(')').toString());
-      } catch(java.lang.reflect.InvocationTargetException x) {
-         Throwable t = x.getTargetException();
-         throw t instanceof Exception ? (Exception)t : new Exception(t);
+      Class[] c_args = o_args != NOARGS ? new Class[o_args.length] : NULL;
+      if (c_args != NULL)
+         for (int i = 0; i < c_args.length; i++)
+            c_args[i] = o_args[i] == null ? null : o_args[i].getClass();
+      Method m = findBestMethod(item, method, c_args); // look for it
+      if (m == null && args != null) { // first fallback...
+         c_args = new Class[] { args.getClass() };
+         m = findBestMethod(item, method, c_args);
+         o_args = new Object[] { args };
       }
+      if (m == null) { // final fallback...
+         c_args = new Class[] { args.getClass() };
+         m = findBestMethod(item, method, OBJECT);
+         o_args = new Object[] { args };
+      }
+      if (m != null) { // found a method to call?
+         try {
+            Object result = m.invoke(item, o_args != NOARGS ? o_args : null);
+         } catch(java.lang.reflect.InvocationTargetException x) {
+            Throwable t = x.getTargetException();
+            throw t instanceof Exception ? (Exception)t : new Exception(t);
+         }
+         if (result != null && !(result instanceof Serializable)) try {
+            RemoteServer.getClientHost();
+            return gnu.cajo.utils.extra.TransparentItemProxy.getItem(
+               new Remote(result).clientScope(),
+                  m.getReturnType().getInterfaces());
+         } catch(ServerNotActiveException x) { /* not a remote call */ }
+         return result;
+      } // else no joy :-(
+      StringBuffer sb = new StringBuffer(item.getClass().getName());
+      sb.append('.').append(method).append('(');
+      if (c_args.length > 0) for (int i = 0; i < c_args.length; i++) {
+         sb.append(c_args[i] != null ? c_args[i].getName() : "null");
+         if (i + 1 < o_args.length) sb.append(", ");
+      }
+      throw new NoSuchMethodException(sb.append(')').toString());
    }
    /**
     * This is the reference to the local (or possibly remote) object
