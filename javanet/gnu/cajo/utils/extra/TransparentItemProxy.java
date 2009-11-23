@@ -75,12 +75,13 @@ public final class TransparentItemProxy implements
    private Object item;
    private void writeObject(java.io.ObjectOutputStream out)
       throws java.io.IOException {
-      if (!(item instanceof Remote)) item = new Remote(item).clientScope();
+      if (!(item instanceof Serializable))
+         item = new Remote(item).clientScope();
       out.defaultWriteObject();
    }
    private TransparentItemProxy(Object item) {
       try {
-         Remote.invoke(item, "equals", NULL); // test reference validity
+         Remote.invoke(item, "toString", NULL); // test reference validity
          this.item = item;
       } catch(Throwable t) {
          throw new IllegalArgumentException(t.getLocalizedMessage());
