@@ -574,7 +574,7 @@ public final class Remote extends UnicastRemoteObject
             RemoteServer.getClientHost();
             return gnu.cajo.utils.extra.TransparentItemProxy.getItem(
                new Remote(result).clientScope(),
-                  m.getReturnType().getInterfaces());
+                  result.getClass().getInterfaces());
          } catch(ServerNotActiveException x) { /* not a remote call */ }
          return result;
       } catch(java.lang.reflect.InvocationTargetException x) {
