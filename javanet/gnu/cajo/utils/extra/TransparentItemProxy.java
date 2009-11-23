@@ -70,7 +70,7 @@ import java.lang.reflect.InvocationTargetException;
  */
 public final class TransparentItemProxy implements
    InvocationHandler, Serializable {
-   private static final long serialVersionUID = 2L;
+   private static final long serialVersionUID = 3L;
    private static final Object NULL[] = {};
    private Object item;
    private void writeObject(java.io.ObjectOutputStream out)
@@ -178,9 +178,9 @@ public final class TransparentItemProxy implements
     * a local object instance could be used as well; to distinguish between
     * these two cases, proxies to remote objects will also implement the
     * marker interface java.rmi.Remote, on which the proxy may be tested via
-    * the instanceof operator. <i><u>Note</u>:</i> a proxy to a
-    * non-serialisable local item must <i>necessarily</i> be indicated as
-    * remote, so as to allow the proxies to be passed between JVMs.
+    * the instanceof operator. <i><u>Note</u>:</i> a non-serialisable local
+    * item will be automatically remoted when serialised, so as to allow the
+    * proxies to be passed between JVMs.
     * @param interfaces The list of interface classes for the dynamic proxy
     * to implement. Typically, these are provided thus; <tt>new Class[] {
     * Interface1.class, Interface2.class, ... }</tt>
