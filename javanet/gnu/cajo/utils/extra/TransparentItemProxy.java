@@ -72,12 +72,16 @@ public final class TransparentItemProxy implements
    InvocationHandler, Serializable {
    private static final long serialVersionUID = 2L;
    private static final Object NULL[] = {};
-   private final Serializable item; // necessary for proxy to be serialisable
+   private Object item;
+   private void writeObject(java.io.ObjectOutputStream out)
+      throws java.io.IOException {
+      if (!(item instanceof Remote)) item = new Remote(item).clientScope();
+      out.defaultWriteObject();
+   }
    private TransparentItemProxy(Object item) {
       try {
          Remote.invoke(item, "equals", NULL); // test reference validity
-         this.item = item instanceof Serializable ?
-            (Serializable)item : new Remote(item);
+         this.item = item;
       } catch(Throwable t) {
          throw new IllegalArgumentException(t.getLocalizedMessage());
       }
