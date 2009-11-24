@@ -45,6 +45,10 @@ public final class Cajo implements Grail {
    private final Multicast multicast;
    private final Vector items = new Vector();
    private final Registrar registrar = new Registrar(items);
+   protected void finalize() throws Throwable {
+      Remote.shutdown();
+      super.finalize();
+   }
    /**
     * This internal use only helper class maintains a registry of exported
     * objects. It cannot be instantiated outside this class, it is made
