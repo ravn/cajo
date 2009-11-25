@@ -300,6 +300,21 @@ public final class Cajo implements Grail {
             new Class[] { methodSetInterface });
    }
    /**
+    * This method is used to allow clients to pass references to its own
+    * local objects, to other JVMs. Normally all arguments are passed by
+    * value, meaning copies are sent to the remote JVM. Sometimes however,
+    * what is needed is for all users to have a reference to the same object
+    * instance, on which to perform operations.
+    * @param object The local client object for which a pass-by-reference is
+    * sought
+    * @return A proxy object, implementing all of the interfaces of the
+    * wrapped object argument, it will even work in the local context
+    */
+   public Object proxy(Object object) {
+      return TransparentItemProxy.getItem(object,
+         object.getClass().getInterfaces());
+   }
+   /**
     * This method is used to manually collect remote registry entries. The
     * specific addresses or host names of the remote JVMs must be known. It
     * is used to reach JVMs that for some reason are not accessible by UDP.
