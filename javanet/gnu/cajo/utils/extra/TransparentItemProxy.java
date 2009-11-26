@@ -153,11 +153,6 @@ public final class TransparentItemProxy implements
                 throw new IllegalMonitorStateException(
                    "Cannot wait on transparent proxy object");
       try { // otherwise invoke the method on the proxied object
-         if (item instanceof RemoteInvoke)
-            for (int i = 0; i < args.length; i++)
-               if (args[i] != null && !(args[i] instanceof Serializable))
-                  args[i] =
-                     getItem(args[i], args[i].getClass().getInterfaces());
          return Remote.invoke(item, name, args.length == 0 ? null : args);
       } catch(Throwable t) { // invocation error, handle if possible
          if (handler != null) return Remote.invoke(handler, "handle",

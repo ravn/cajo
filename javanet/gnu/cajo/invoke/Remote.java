@@ -550,6 +550,10 @@ public final class Remote extends UnicastRemoteObject
             return new Integer(item.hashCode());
          if (o_args.length == 1 && method.equals("equals"))
             return item.equals(o_args[0]) ? Boolean.TRUE : Boolean.FALSE;
+         for (int i = 0; i < o_args.length; i++)
+            if (o_args[i] != null && !(o_args[i] instanceof Serializable))
+               o_args[i] = gnu.cajo.utils.extra.TransparentItemProxy.getItem(
+                  o_args[i], o_args[i].getClass().getInterfaces());
       }
       if (item instanceof Invoke) return ((Invoke)item).invoke(method, args);
       Class[] c_args = o_args != NOARGS ? new Class[o_args.length] : NULL;
