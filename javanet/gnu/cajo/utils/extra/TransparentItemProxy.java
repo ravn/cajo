@@ -79,14 +79,7 @@ public final class TransparentItemProxy implements
          item = new Remote(item).clientScope();
       out.defaultWriteObject();
    }
-   private TransparentItemProxy(Object item) {
-      try {
-         Remote.invoke(item, "toString", NULL); // test reference validity
-         this.item = item;
-      } catch(Throwable t) {
-         throw new IllegalArgumentException(t.getLocalizedMessage());
-      }
-   }
+   private TransparentItemProxy(Object item) { this.item = item; }
    /**
     * An optional centralised invocation error handler. If an invocation on
     * a remote object results in a checked or unchecked exception being thrown;
