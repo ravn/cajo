@@ -288,16 +288,10 @@ public final class Cajo implements Grail {
     * @param methodSetInterface The set <i>(or subset)</i> of public methods,
     * static or instance, that the object reference implements
     * @return An object implementing the method set interface provided.
-    * <p><i><u>Note</u>:</i> if the item reference is to an object in a
-    * remote JVM, the returned proxy will <i>also</i> implement the marker
-    * interface java.rmi.Remote, to allow this fact to be easily tested, via
-    * the instanceof operator.
     */
    public Object proxy(Object reference, Class methodSetInterface) {
       return TransparentItemProxy.getItem(new Purger(reference, items),
-         reference instanceof java.rmi.Remote ? 
-            new Class[] { methodSetInterface, java.rmi.Remote.class } :
-            new Class[] { methodSetInterface });
+         new Class[] { methodSetInterface });
    }
    /**
     * This method is used to allow clients to pass references to its own
