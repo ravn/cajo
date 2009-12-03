@@ -550,10 +550,16 @@ public final class Remote extends UnicastRemoteObject
             return new Integer(item.hashCode());
          if (o_args.length == 1 && method.equals("equals"))
             return item.equals(o_args[0]) ? Boolean.TRUE : Boolean.FALSE;
-         for (int i = 0; i < o_args.length; i++)
-            if (o_args[i] != null && !(o_args[i] instanceof Serializable))
+         for (int i = 0; i < o_args.length; i++) {
+            if (o_args[i] != null && !(o_args[i] instanceof Serializable)) {
+               ArrayList interfaces = new ArrayList();
+               for (Class c = o_args[i].getClass(); c != null;
+                  c = c.getSuperclass())
+                  interfaces.addAll(Arrays.asList(c.getInterfaces()));
                o_args[i] = gnu.cajo.utils.extra.TransparentItemProxy.getItem(
-                  o_args[i], o_args[i].getClass().getInterfaces());
+                  o_args[i], (Class[])interfaces.toArray(new Class[0]));
+            }
+         }
       }
       if (item instanceof Invoke) return ((Invoke)item).invoke(method, args);
       Class[] c_args = o_args != NOARGS ? new Class[o_args.length] : NULL;
@@ -575,8 +581,11 @@ public final class Remote extends UnicastRemoteObject
          Object result = m.invoke(item, o_args != NOARGS ? o_args : null);
          if (result != null && !(result instanceof Serializable)) try {
             RemoteServer.getClientHost();
+            ArrayList interfaces = new ArrayList();
+            for (Class c = result.getClass(); c != null; c = c.getSuperclass())
+               interfaces.addAll(Arrays.asList(c.getInterfaces()));
             return gnu.cajo.utils.extra.TransparentItemProxy.getItem(
-               result, result.getClass().getInterfaces());
+               result, (Class[])interfaces.toArray(new Class[0]));
          } catch(ServerNotActiveException x) { /* not a remote call */ }
          return result;
       } catch(java.lang.reflect.InvocationTargetException x) {
