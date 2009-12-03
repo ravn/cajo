@@ -8,6 +8,7 @@ import java.rmi.server.*;
 import java.util.Arrays;
 import java.util.Vector;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.HashMap;
 import java.lang.reflect.Method;
 
@@ -552,7 +553,7 @@ public final class Remote extends UnicastRemoteObject
             return item.equals(o_args[0]) ? Boolean.TRUE : Boolean.FALSE;
          for (int i = 0; i < o_args.length; i++) {
             if (o_args[i] != null && !(o_args[i] instanceof Serializable)) {
-               ArrayList interfaces = new ArrayList();
+               HashSet interfaces = new HashSet();
                for (Class c = o_args[i].getClass(); c != null;
                   c = c.getSuperclass())
                   interfaces.addAll(Arrays.asList(c.getInterfaces()));
@@ -581,7 +582,7 @@ public final class Remote extends UnicastRemoteObject
          Object result = m.invoke(item, o_args != NOARGS ? o_args : null);
          if (result != null && !(result instanceof Serializable)) try {
             RemoteServer.getClientHost();
-            ArrayList interfaces = new ArrayList();
+            HashSet interfaces = new HashSet();
             for (Class c = result.getClass(); c != null; c = c.getSuperclass())
                interfaces.addAll(Arrays.asList(c.getInterfaces()));
             return gnu.cajo.utils.extra.TransparentItemProxy.getItem(
