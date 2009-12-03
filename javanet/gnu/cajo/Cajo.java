@@ -6,8 +6,9 @@ import gnu.cajo.utils.Multicast;
 import gnu.cajo.utils.ItemServer;
 import gnu.cajo.utils.extra.TransparentItemProxy;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Vector;
 import java.util.ArrayList;
 import java.rmi.RemoteException;
@@ -305,8 +306,8 @@ public final class Cajo implements Grail {
     * @return A proxy object, implementing all of the interfaces of the
     * wrapped object argument, it will even work in the local context
     */
-   public Object proxy(Object object) {
-      ArrayList interfaces = new ArrayList();
+   public static Object proxy(Object object) {
+      HashSet interfaces = new HashSet();
       for (Class c = object.getClass(); c != null; c = c.getSuperclass())
          interfaces.addAll(Arrays.asList(c.getInterfaces()));
       return TransparentItemProxy.getItem(object,

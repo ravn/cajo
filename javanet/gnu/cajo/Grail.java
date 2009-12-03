@@ -88,17 +88,4 @@ public interface Grail {
     * local method invocations will be transparently passed onto the remote
     */
    Object proxy(Object reference, Class methodSetInterface);
-   /**
-    * This method is used to allow clients to pass references to its own
-    * local objects, to other JVMs. Normally all arguments are passed by
-    * value, meaning copies are sent to the remote JVM. Sometimes however,
-    * what is needed is for all users to have a reference to the same object
-    * instance, on which to perform operations. This is necessary in the case
-    * for example, where an argument object cannot be made serialisable.
-    * @param object The local client object for which a pass-by-reference is
-    * sought
-    * @return A proxy object, implementing all of the interfaces of the
-    * wrapped object argument, it must even work in the local context
-    */
-   public Object proxy(Object object);
 }
