@@ -6,6 +6,7 @@ import gnu.cajo.utils.Multicast;
 import gnu.cajo.utils.ItemServer;
 import gnu.cajo.utils.extra.TransparentItemProxy;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.io.IOException;
 import java.util.Vector;
 import java.util.ArrayList;
@@ -305,8 +306,11 @@ public final class Cajo implements Grail {
     * wrapped object argument, it will even work in the local context
     */
    public Object proxy(Object object) {
+      ArrayList interfaces = new ArrayList();
+      for (Class c = object.getClass(); c != null; c = c.getSuperclass())
+         interfaces.addAll(Arrays.asList(c.getInterfaces()));
       return TransparentItemProxy.getItem(object,
-         object.getClass().getInterfaces());
+         (Class[])interfaces.toArray(new Class[0]));
    }
    /**
     * This method is used to manually collect remote registry entries. The
