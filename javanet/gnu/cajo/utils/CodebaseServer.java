@@ -405,7 +405,9 @@ public final class CodebaseServer extends Thread {
                      }
                   } catch (Exception x) { os.write(bye); }
                } else if (!itemName.endsWith("service.jar")) { // file request
-                  if (itemName.endsWith(".jar")  || itemName.endsWith(".class")) try {
+                  if (itemName.endsWith(".jar") ||
+                     itemName.endsWith(".class") ||
+                     itemName.equals("/favicon.ico")) try {
                      InputStream ris = getClass().getResourceAsStream(itemName);
                      if (ris == null) // resource not inside server jar
                      ris = new FileInputStream('.' + itemName);
