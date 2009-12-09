@@ -48,6 +48,7 @@ public final class CodebaseServer extends Thread {
    private static final byte[] // http headers:
       bye = ("HTTP/1.0 404 Not Found\r\n" // unsupported request
          + "Content-type: text/html\r\n"
+         + "Server: cajo/CodebaseServer\r\n"
          + "Connection: close\r\n\r\n"
          + "<html><head><title>404: URL Not Found</title></head><body>"
          + "<h1>404 - Not Found</h1>"
@@ -55,19 +56,26 @@ public final class CodebaseServer extends Thread {
          + "<hr><i>gnu.cajo.utils.CodebaseServer - The cajo project: "
          + "<a href=https://cajo.dev.java.net>https://cajo.dev.java.net</a>."
          + "</i></body></html>").getBytes(),
-      apl = ("HTTP/1.0 200 OK\r\n" + "Content-type: text/html\r\n"
+      apl = ("HTTP/1.0 200 OK\r\n"
+         + "Content-type: text/html\r\n"
+         + "Server: cajo/CodebaseServer\r\n"
          + "Last-Modified: " + formatter.format(new Date()) + "\r\n"
          + "Connection: close\r\n\r\n").getBytes(), // for applets
       jws = ("HTTP/1.0 200 OK\r\n"
          + "Content-type: application/x-java-jnlp-file\r\n"
+         + "Server: cajo/CodebaseServer\r\n"
          + "Last-Modified: " + formatter.format(new Date()) + "\r\n"
          + "Connection: close\r\n\r\n").getBytes(), // for WebStart
       jarHdr = ("HTTP/1.0 200 OK\r\n" // for jar files
          + "Content-type: application/x-java-archive\r\n"
-         + "Last-Modified: ").getBytes(),
+         + "Server: cajo/CodebaseServer\r\n").getBytes(), // for WebStart
       classHdr = ("HTTP/1.0 200 OK\r\n" // for class files
          + "Content-type: application/x-java-vm\r\n"
-         + "Last-Modified: ").getBytes(),
+         + "Server: cajo/CodebaseServer\r\n").getBytes(), // for WebStart
+      imgHdr = ("HTTP/1.0 200 OK\r\n" // for image files
+         + "Content-type: image/jpeg\r\n"
+         + "Server: cajo/CodebaseServer\r\n").getBytes(), // for WebStart
+
       end = ( // http footers:
          "PLUGINSPAGE=\"http://java.sun.com/j2se/1.5.0/download.html\">\r\n"
          + "</EMBED></COMMENT></OBJECT></CENTER></BODY></HTML>")
@@ -416,7 +424,8 @@ public final class CodebaseServer extends Thread {
                      InputStream ris = getClass().getResourceAsStream(itemName);
                      if (ris == null) // resource not inside server jar
                      ris = new FileInputStream('.' + itemName);
-                     os.write(itemName.endsWith(".jar") ? jarHdr : classHdr);
+                     os.write(itemName.endsWith(".jar") ? jarHdr :
+                        itemName.endsWith(".class") ? classHdr : imgHdr);
                      os.write(formatter.format(new Date(new File('.' +
                         itemName).lastModified())).getBytes());
                      os.write("\r\nConnection: close\r\n\r\n".getBytes());
