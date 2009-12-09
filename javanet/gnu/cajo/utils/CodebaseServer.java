@@ -74,7 +74,6 @@ public final class CodebaseServer extends Thread {
          .getBytes(),
       out = ("  </application-desc>\r\n" + "</jnlp>").getBytes();
    private final byte[] top, mid, tip, xml;
-   private final String thisJar;
    private final ServerSocket ss;
    private PrintStream log;
    /**
@@ -119,11 +118,10 @@ public final class CodebaseServer extends Thread {
     * own jar file for the class files to send, and if not found, it will next
     * look in its working directory. This feature provides an extremely simple,
     * essentially zero-configuration, approach to proxy codebase service.
-    * <p>The server determines the name of the jar file in which it is running
-    * courtesy of a very cool hack published by Laird Nelson in his weblog: <a
-    * href=http://weblogs.java.net/pub/wlg/1874>http://weblogs.java.net/pub/wlg/1874</a>
-    * Thanks Laird! This is used to allow the server to serve all the jar files
-    * in its working directory tree <i>except</i> its own.
+    * <p>As a special safety feature, if the jar from which the service items
+    * are running is given the <i>special</> name <tt>service.jar</tt> it
+    * <b>not</i> be allowed to be requested over the network. This would be
+    * important for example, if you did not wish to share the server.jar file.
     * @param port The TCP port on which to serve the codebase, and client
     * applet. It can be zero, to use an anonymous port. If zero, the actual port
     * selected by the OS at runtime will be stored in the
@@ -178,13 +176,6 @@ public final class CodebaseServer extends Thread {
          + "CODE=\"" + temp + "\"\r\n" + "WIDTH=\"100%\" HEIGHT=\"100%\"\r\n"
          + "DRAGGABLE=\"true\"\r\n"
          ).getBytes();
-      temp = CodebaseServer.class.getName().replace('.', '/') + ".class";
-      temp = CodebaseServer.class.getClassLoader().getResource(temp).toString();
-      if (temp.indexOf('!') != -1) {
-         temp = temp.substring(temp.lastIndexOf(':'), temp.lastIndexOf('!'));
-         temp = temp.substring(temp.lastIndexOf('/') + 1);
-      } else temp = "\""; // server not in a jar file
-      thisJar = temp.endsWith("cajo.jar") ? "\"" : temp;
       ss = Remote.getDefaultServerHost() == null
          ? new ServerSocket(port)
          : new ServerSocket(port, 50, InetAddress.getByName(Remote.getDefaultServerHost()));
@@ -413,7 +404,7 @@ public final class CodebaseServer extends Thread {
                         os.write(out);
                      }
                   } catch (Exception x) { os.write(bye); }
-               } else if (!itemName.endsWith(thisJar)) { // file request
+               } else if (!itemName.endsWith("service.jar")) { // file request
                   if (itemName.endsWith(".jar")  || itemName.endsWith(".class")) try {
                      InputStream ris = getClass().getResourceAsStream(itemName);
                      if (ris == null) // resource not inside server jar
