@@ -228,6 +228,7 @@ public final class Multicast implements Runnable {
       if (thread == null) {
          this.callback = callback;
          thread = new Thread(this);
+         thread.setDaemon(true);
          thread.start();
       } else throw new IllegalArgumentException("Already listening");
    }
