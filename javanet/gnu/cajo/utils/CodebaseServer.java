@@ -232,6 +232,7 @@ public final class CodebaseServer extends Thread {
          base.append(System.getProperty("java.rmi.server.codebase"));
       }
       System.setProperty("java.rmi.server.codebase", base.toString());
+      setDaemon(true); // don't stay awake just because of us
       start(); // ready to accept clients
    }
    /**
