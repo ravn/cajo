@@ -2,7 +2,6 @@ package util;
 
 import gnu.cajo.Cajo;
 import gnu.cajo.invoke.Remote;
-import gnu.cajo.invoke.Invoke;
 import gnu.cajo.utils.ItemServer;
 import java.rmi.MarshalledObject;
 import java.util.List;
@@ -26,7 +25,7 @@ import java.util.ArrayList;
  * John Catherino</a>
  */
 public abstract class BaseService {
-   private final Invoke loader;
+   private final Object loader;
    private MarshalledObject mob;
    private List<Descriptor> descriptors = new ArrayList<Descriptor>();
    /**

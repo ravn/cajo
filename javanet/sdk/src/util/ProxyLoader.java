@@ -1,7 +1,6 @@
 package util;
 
 import gnu.cajo.invoke.Remote;
-import gnu.cajo.invoke.Invoke;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 
@@ -20,7 +19,7 @@ import java.io.ObjectInputStream;
  * @author <a href=http://wiki.java.net/bin/view/People/JohnCatherino>
  * John Catherino</a>
  */
-final class ProxyLoader implements Invoke {
+final class ProxyLoader implements gnu.cajo.invoke.Invoke {
    private static final long serialVersionUID = 0L;
    private final String handle; // name of the proxy class
    private Object server; // reference to the remote service

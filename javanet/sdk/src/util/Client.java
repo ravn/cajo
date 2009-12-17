@@ -30,13 +30,16 @@ import gnu.cajo.invoke.Remote;
  */
 public final class Client extends JApplet {
    private static Object proxy;
-   Client() {}
+   /**
+    * The default constructor performs no function.
+    */
+   public Client() {}
    /**
     * This method provides the standard mechanism to identify this JApplet.
     * @return The identification string for this JApplet.
     */
    public String getAppletInfo() {
-      return "cajo Proxy Applet, by John Catherino";
+      return "cajo Controller Applet, by John Catherino";
    }
    /**
     * This method describes the optional client parameters. There are five
