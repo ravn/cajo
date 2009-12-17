@@ -1,0 +1,43 @@
+<project name="Test" default="build">
+   <target name="javadoc">
+      <delete dir="doc"/>
+      <mkdir dir="doc"/>
+      <javadoc destdir="doc" author="true" overview="src/overview.html"
+         windowtitle="Example cajo service">
+         <fileset dir="src"/>
+      </javadoc>
+   </target>
+   <target name="start">
+      <java classpath="service.jar:grail.jar" classname="Main" fork="true"/>
+   </target>
+   <target name="build">
+      <delete><fileset dir="." includes="client.jar controller.jar server.jar"/></delete>
+      <javac srcdir="src" classpath="grail.jar" includes="util/Client.java"/>
+      <jar basedir="src" jarfile="client.jar" includes="util/*.class">
+         <manifest><attribute name="Main-Class" value="util.Client"/></manifest>
+      </jar>
+      <delete><fileset dir="src/util" includes="*.class"/></delete>
+      <!-- compile all application specific controllers/services here... -->
+      <javac srcdir="src" classpath="grail.jar" includes="
+
+         controller/TestController.java
+
+         service/TestService.java
+
+      "/>
+      <jar basedir="src" jarfile="controller.jar"
+         includes="util/BaseController*.class util/ProxyLoader.class
+         controller/*.class view/*.class view/gui/*.class view/inc/*.*"/>
+      <delete><fileset dir="src" includes="controller/*.class view/*.class
+         view/gui/*.class util/BaseController*.class"/>
+      </delete>
+      <javac srcdir="src" classpath="grail.jar" includes="Main.java"/>
+      <jar basedir="src" jarfile="service.jar"
+         includes="*.class util/*.class service/*.class">
+         <manifest><attribute name="Main-Class" value="Main"/></manifest>
+      </jar>
+      <delete>
+         <fileset dir="src" includes="*.class util/*.class service/*.class"/>
+      </delete>
+   </target>
+</project>

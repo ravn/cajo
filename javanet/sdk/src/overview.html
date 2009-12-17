@@ -1,0 +1,60 @@
+<body>
+
+The <a href=https://cajo.dev.java.net>cajo</a> grail SDK is used for
+transparent distributed computing between remote Java Virtual Machines,
+providing client user interfaces via Applets and WebStart. Through the cajo
+<a href=http://weblogs.java.net/blog/cajo/archive/2007/09/simple_interjvm.htm>
+grail</a> mechanism, services can dynamically discover and use each other, by
+specified functionality. Also, via the cajo <a href=https://cajo.dev.java.net/server.html>
+CodebaseServer</a> mechanism, rich internet distributed user interfaces to
+the service objects can be provided.<p>
+
+The <a href=http://today.java.net/pub/a/today/200l7/04/24/top-50-john-catherino-project-cajo-interview.html>
+cajo grail framework</a> allows Java Virtual Machines to dynamically
+distribute their functionality, and user interfaces, across the network
+transparently. It essentially creates a <i>seamless continuum</i> between
+cooperating remote Java Virtual Machines, or in other words, a <a href=http://weblogs.java.net/pub/wlg/1715>
+World Wide Virtual Machine</a>. <i>(wwvm)</i> The twelve classes defined
+in this SDK, along with the included <a href=https://cajo.dev.java.net/nonav/docs/gnu/cajo/Cajo.html>
+Cajo</a> object, can provide full functional completeness.<p>
+
+A typical cajo server deployment consists minimally of the following
+<i><u>seven</u></i> files:<ul>
+ <li> <b>grail.jar</b> - the standard cajo grail library
+ <li> <b>client.jar</b> - the standard cajo controller GUI viewer
+ <li> <b>service.jar</b> - the implementation(s) of the service(s)
+ <li> <b>controller.jar</b> - <i>hot swappable</i>
+ <li> <b>favicon.ico</b> - give the Applet a little style
+ <li> <b>splash.jpeg</b> - give the WebStart app a little style
+ <li> <b>icon.gif</b> - provide the WebStart app its own icon<br><br>
+ <li> <i>optionally,</i> any other library jars needed by either controllers,
+      or services.*<br><br>
+      <i>*NB:</i> the CodebaseServer class will send any jar files in its
+      immediate and subdirectories, with the notable exception of
+      service.jar; service-only jars are conventionally renamed with
+      the .zip extension, to stop the codebase server from sending them.
+      The .zip and .jar file formats are identical as far as the Java
+      runtime environment is concerned.<br><br>
+
+      A <i>hot-swappable</i> controller.jar means that new user interfaces
+      can be developed for <i>currently running services.</i> Simply
+      overwriting the controller.jar file will cause all subsequent
+      Applet/WebStart clients to use the <i>new</i> views.</ul>
+
+To view the service client in a full-screen Java Applet, visit the
+http service, e.g. <tt>http://myhost:port/name</tt>. (port and name can be
+omitted if they are 80, and main, respectively) The application can also
+be started via WebStart by visiting the server thusly:
+<tt>http://myhost:port/name/!</tt> (note the addition of the exclamation
+mark!) Following the WebStart launch, the system will ask if you wish a
+shortcut icon placed on the desktop. If yes, clicking on this icon can be
+used for all subsequent client application launches.<p>
+
+<u>Notes from a network perspective</u>:<ul>
+ <li> Servers need to have <u>two</u> open inbound ports <i>(typically 80
+      and 1196)</i>
+ <li> Clients can operate with <u>all</u> of their inbound ports closed
+ <li> Servers <i>and</i> clients both <u>can</u> be behind NAT routers
+</ul>
+
+</body>
