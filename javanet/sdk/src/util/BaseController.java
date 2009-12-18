@@ -82,4 +82,24 @@ public abstract class BaseController implements java.io.Serializable {
     * missing resource issues
     */
    public abstract JComponent getView() throws Exception;
+   /**
+    * This method is called when the widget is operating as an Applet, and
+    * is loaded into the browser, <i>before</i> becoming visible.
+    */
+   public void init() {}
+   /**
+    * This method is called when the widget is operating as an Applet, and
+    * becomes visible.
+    */
+   public void start() {}
+   /**
+    * This method is called when the widget is operating as an Applet, and
+    * becomes invisible.
+    */
+   public void stop() {}
+   /**
+    * This method is called when the widget is operating as an Applet, and
+    * disposed.
+    */
+   public void destroy() {}
 }

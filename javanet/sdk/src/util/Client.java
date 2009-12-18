@@ -4,7 +4,6 @@ import java.awt.*;
 import javax.swing.*;
 import java.rmi.registry.*;
 import java.rmi.MarshalledObject;
-import java.awt.event.WindowListener;
 import gnu.cajo.invoke.Remote;
 
 /*
@@ -45,31 +44,26 @@ public final class Client extends JApplet {
     * This method describes the optional client parameters. There are five
     * such parameters which can be specified:
     * <ul>
-    * <li>The <code>proxyName</code> parameter is the name of the proxy server
-    * item registered in the server's rmiregistry.  Unspecified it will be
-    * "main".
+    * <li>The <code>proxyName</code> parameter is the name of the service
+    * object registered in the server's registry.
     * <li>The <code>proxyPort</code> parameter is the outbound port number on
-    * which to contact the proxy server.  Unspecified it will be 1198.  If the
-    * client is operating behind a firewall, the must be a permitted outbound
-    * port.
+    * which to contact the server.
     * <li>The <code>clientHost</code> parameter is the external domain name or
-    * IP address the server must use to callback its proxy.  It may need to
-    * be specified if the client is operating behind a NAT router. Unspecified
-    * it will be the client's default host address.
+    * IP address the server must use to callback its view.  It would need to
+    * be specified if the client is operating behind a NAT router.
     * <li>The <code>clientPort</code> parameter is the external inbound port
-    * number on which the server can contact its proxy. It may need to be
+    * number on which the server can contact its view. It would need to be
     * specified if the client is behind NAT, to map to the correct local port.
     * If a firewall is being used, it must be a permitted inbound port.
-    * Unspecified, it will be the same as the local port value below.
     * <li>The <code>localPort</code> parameter is the internal inbound port
     * number on which the server can contact its proxy. It may need to be
-    * specified if the client is behind NAT, to map to the correct remote port.
-    * Unspecified, it will be anonymous.
+    * specified if the client is using port forwarding, <i>(unlikely)</i> to
+    * map to the correct remote port.
     * </ul>
     * When using Client from the command line, it is possible to set the
     * Client frame explicitly. To do this, simply type:<br><br><tt>
-    * java -cp client.jar:grail.jar -Dgnu.cajo.invoke.Client.title="My Frame Title"
-    * util.Client //myHost:1198/test</tt><br><br>
+    * java -cp client.jar:grail.jar -Dgnu.cajo.invoke.Client.title="My Frame
+    * Title" util.Client //myHost:1198/test</tt><br><br>
     * @return The parameter / information array.
     */
    public String[][] getParameterInfo() {
@@ -83,15 +77,11 @@ public final class Client extends JApplet {
    }
    /**
     * This method connects back to its hosting server and requests the item
-    * from the server's rmiregistry. Next it will invoke a getProxy(null) on
-    * the remote reference to request its proxy item.  If the item returns the
-    * proxy in a MarshalledObject, it will be extracted automatically. If the
-    * returned object is a proxy, the client will invoke its init method,
-    * passing it a remote reference itself, and to obtain its primary
-    * graphical Component representation, which will then be added into the
-    * JApplet via the Swing event dispatch thread. The proxy can pass this
-    * remote reference back to its hosting item, or to other remote items, on
-    * which they can asynchronously call it back.
+    * from the server's rmiregistry. Next it will invoke a getController() on
+    * the remote reference to request its proxy item. The returned object
+    * will have its init method invoked to obtain its graphical JComponent
+    * representation, which will then be added into the JApplet via the Swing
+    * event dispatch thread.
     */
     public void init() {
       try {
@@ -111,8 +101,8 @@ public final class Client extends JApplet {
          SwingUtilities.invokeAndWait(new Runnable() {
             public void run() {
                try {
-                  proxy = Remote.invoke(proxy, "getView", null);
-                  getContentPane().add((Component)proxy);
+                  add((JComponent)Remote.invoke(proxy, "getView", null));
+                  Remote.invoke(proxy, "init", null);
                   validate();
                } catch(Exception x) { showStatus(x.getLocalizedMessage()); }
             }
@@ -121,9 +111,7 @@ public final class Client extends JApplet {
    }
    /**
     * This method is called from the AppleContext, each time the JApplet
-    * becomes visible. It will attempt to invoke a no-arg start method on
-    * the proxy, in the event that it supports one. Support of the method
-    * by the proxy is optional.
+    * becomes visible.
     */
    public void start() {
       try { Remote.invoke(proxy, "start", null); }
@@ -131,9 +119,7 @@ public final class Client extends JApplet {
    }
    /**
     * This method is called from the AppleContext, each time the JApplet
-    * becomes invisible. It will attempt to invoke a no-arg stot method on
-    * the proxy, in the event that it supports one. Support of the method
-    * by the proxy is optional.
+    * becomes invisible.
     */
    public void stop() {
       try { Remote.invoke(proxy, "stop", null); }
@@ -141,9 +127,7 @@ public final class Client extends JApplet {
    }
    /**
     * This method is called from the AppleContext, when the JApplet is being
-    * disposed. It will attempt to invoke a no-arg destroy method on
-    * the proxy, in the event that it supports one. Support of the method
-    * by the proxy is optional.
+    * disposed.
     */
    public void destroy() {
       try { Remote.invoke(proxy, "destroy", null); }
@@ -154,7 +138,7 @@ public final class Client extends JApplet {
     * URL argument provided, it will use the static Remote.getItem method of
     * the Remote class to contact the server. It will then invoke a
     * null-argument getController on the resulting reference to request the
-    * primary proxy object of the item.<br><br>
+    * primary view object of the service.<br><br>
     * When using the Client from the command line, it is possible to set the
     * Client frame title explicitly. To do this, simply type:<br><br><tt>
     * java -cp cajo.jar -Dutil.Client.title="My Frame Title"
@@ -165,7 +149,7 @@ public final class Client extends JApplet {
     * special, administrative process needs to be run locally. It can also be
     * used when a machine wishes to aid a service, offering up its computing
     * resources.<br><br>
-    * To restrict client proxies permissions, use a startup invocation
+    * To restrict controller's permissions, use a startup invocation
     * similar to the following:<br><br>
     * <tt>java -cp client.jar:grail.jar -Djava.security.manager
     * -Djava.security.policy=controller.policy util.Client ...</tt><br><br>
@@ -195,7 +179,7 @@ public final class Client extends JApplet {
          int clientPort    = args.length > 1 ? Integer.parseInt(args[1]) : 0;
          String clientHost = args.length > 2 ? args[2] : null;
          int localPort     = args.length > 3 ? Integer.parseInt(args[3]) : 0;
-         String localHost  = args.length > 4 ? args[4] : "0.0.0.0";
+         String localHost  = args.length > 4 ? args[4] : null;
          Remote.config(localHost, localPort, clientHost, clientPort);
          proxy = Remote.getItem(args[0]);
          proxy = Remote.invoke(proxy, "getController", null);
@@ -203,16 +187,13 @@ public final class Client extends JApplet {
          SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                try {
-                  proxy = Remote.invoke(proxy, "getView", null);
                   String title = "cajo Proxy Viewer";
                   try { title = System.getProperty("util.Client.title"); }
                   catch(Exception x) {} // won't work in WebStart
+                  proxy = Remote.invoke(proxy, "getView", null);
                   JFrame frame = new JFrame(title + " - " + args[0]);
-                  if (proxy instanceof WindowListener)
-                     frame.addWindowListener((WindowListener)proxy);
-                  frame.setDefaultCloseOperation(
-                     JFrame.DISPOSE_ON_CLOSE);
-                  frame.getContentPane().add((Component)proxy);
+                  frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                  frame.add((JComponent)proxy);
                   frame.pack();
                   frame.setVisible(true);
                } catch(Exception x) { x.printStackTrace(); }
