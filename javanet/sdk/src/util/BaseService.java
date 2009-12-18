@@ -17,10 +17,9 @@ import java.util.ArrayList;
 
 /**
  * The service is a publicly invocable ordinary Java object. All of its
- * public methods, either instance or static, can be invoked by remote JVMs.
- * It is often recommended to use this class as a wrapper, exposing specific
- * methods of its aggregate cache. This class may, or may not, provide a
- * graphical user interface for clients.
+ * public methods, <i>either instance or static,</i> can be invoked by remote
+ * JVMs. It is often recommended to use this class as a wrapper, exposing
+ * specific methods of its aggregate cache.
  * @author <a href=http://wiki.java.net/bin/view/People/JohnCatherino>
  * John Catherino</a>
  */
@@ -39,7 +38,7 @@ public abstract class BaseService {
     * The constructor will locally bind the service under the name provided,
     * and join the <a href=http://weblogs.java.net/blog/cajo/archive/2007/09/simple_interjvm.html>
     * cajo federation</a>.
-    * @param handle The class name of the controller to instantiate on
+    * @param handle The class name of the controller to instantiate upon
     * arrival at the client JVM. <i>(e.g. controller.TestController)</i><br>
     * <i>NB:</i> the handle can be null, if the service wishes to provide no
     * GUI for clients.
@@ -167,7 +166,8 @@ public abstract class BaseService {
    }
    /**
     * This method is used by subclasses to add their unique method
-    * descriptions. The contents are returned via the getDescription menthod.
+    * descriptions. The contents are returned via the <tt>getDescription</tt>
+    * method.
     * @param function The name of the function
     * @param description An explanation of what this function does
     * @param arguments The descriptions of the arguments this function takes
@@ -211,22 +211,22 @@ public abstract class BaseService {
     * cajo</a> object by which service objects can publish themselves,
     * and search for other services via the <a href=http://weblogs.java.net/blog/cajo/archive/2007/09/simple_interjvm.html>
     * grail</a> framework.
-    * <i>NB:</i> two important points: all arguments or returns must be either
-    * serialisable, or proxied via the single-argument Cajo.proxy method;
-    * objects are passed by value, <i>(i.e. copies)</i> unless by proxied via
-    * Cajo.
+    * <i>NB:</i> two important points: all arguments, or returns, must be
+    * either serialisable, or proxied via the single-argument Cajo.proxy
+    * method; objects are passed by value, <i>(i.e. copies)</i> unless by
+    * proxied via Cajo.
     */
    public static Cajo cajo;
    /**
     * This method is called by remote clients to request the service's
     * controller for its GUI. It is the fundamental public method of
-    * services providing graphical unser interfaces. If the service does not
-    * provide a client GUI, the method will return null.
+    * services providing graphical user interfaces. If the service does not
+    * provide a client GUI, this method will return <i>null.</i>
     * @return java.rmi.MarshalledObject The controller object, embedded in
-    * a marshalled object, to preserve its codebase annotation. <i>NB:</i>
-    * this reference is serialisable, and may be freely passed between
-    * JVMs, the controller extracted via the get method will not properly
-    * pass.
+    * a marshalled object, to preserve its codebase annotation.<p>
+    * <i>NB:</i> this reference is serialisable, and may be freely passed
+    * between JVMs, the controller extracted via the get method will not
+    * properly pass.
     */
    public final MarshalledObject getController() {
       if (mob == null && loader != null) try {
@@ -236,9 +236,9 @@ public abstract class BaseService {
       return mob;
    }
    /**
-    * This method is called by remote clients, to get a standardised,
+    * This method is called by remote clients, to get a standardised
     * destription of the service's functions.
-    * @return An html encoded description of the functionality of the service
+    * @return An HTML encoded description of the functionality of the service
     */
    public final String getDescription() {
       return Descriptor.format(description, descriptors);
