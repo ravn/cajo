@@ -11,11 +11,11 @@ package service;
 /**
  * This class creates a service, with a corresponding client GUI. It is
  * normally completely unaware of the <a href=https://cajo.dev.java.net>cajo</a>
- * grail framework. It uses the static cajo member of its inherited
- * BaseService class, on which to find and interact with other services.<p>
- * <i>NB:</i> all public methods, either static or instance, will be made
- * publically invocable, so be careful: <i>e.g. no <tt>public static void
- * main</tt> function.</i>
+ * grail framework. It uses the static Cajo member of its inherited
+ * BaseService class, on which to find, and interact with other services.<p>
+ * <i>NB:</i> all public methods, <i>either static or instance,</i> will be made
+ * publically invocable, so be careful: <i>e.g. a <tt>public static void
+ * main</tt> function is not recommended.</i>
  * @author <a href=http://wiki.java.net/bin/view/People/JohnCatherino>
  * John Catherino</a>
  */
