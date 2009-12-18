@@ -11,12 +11,12 @@ import javax.swing.JComponent;
  */
 
 /**
- * This class creates a controller, for a corresponging client GUI. It is
+ * This class creates a controller, for a corresponding client GUI. It is
  * normally completely unaware of the <a href=https://cajo.dev.java.net>cajo</a>
- * grail framework. Its role is to <i>'map'</i> its corresponding View object
- * onto its service object. <i>NB:</i> the more work that can be done here
- * at the controller, the less busy, and ultimately more scalable, the server
- * will be.
+ * grail framework. Its role is to <i>'map'</i> its View object onto its
+ * service object. <i>NB:</i> the more work that can be done here at the
+ * controller, the less busy, and ultimately more scalable, the server will
+ * be.
  * @author <a href=http://wiki.java.net/bin/view/People/JohnCatherino>
  * John Catherino</a>
  */
@@ -37,8 +37,8 @@ public class TestController extends util.BaseController {
     */
    public TestController() {}
    /**
-    * This method is called typically once, by a Client object, on arrival
-    * at the host JVM.
+    * This method is called, normally once, by the  util.Client object, on
+    * arrival at the host JVM.
     * @return A graphical user interface, supported by the controller, which
     * maps its operations onto its service object.
     * @throws Exception If the view could not be created, normally for
