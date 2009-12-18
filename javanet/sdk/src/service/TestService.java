@@ -45,9 +45,12 @@ public class TestService extends util.BaseService {
          }
       );
    }
-   // furnish public (pojo) methods/functions you'd like to share
+   // furnish public (pojo) methods/functions you'd like to share...
    /**
-    * Simply an example function, it performs no functionality.
+    * Simply an example function, it performs nothing.
     */
-   public static void fooBar() { System.out.println("fooBar invoked"); }
+   public String fooBar() {
+      System.out.println("fooBar invoked");
+      return "fooBar invocation completed.";
+   }
 }

@@ -25,9 +25,7 @@ public class TestController extends util.BaseController {
    // the method signatures will be matched, therefore, the name and the
    // package of the controller interface do not matter.
    private interface TestInterface {
-      void doThis(String thing);
-      String doThat();
-      String[] doTheOther(String one, String two);
+      Object foo(); // this method does nothing, rather it is just an example
    }
    // This is this interface on which the controller will communicate with
    // its service object.
@@ -46,6 +44,7 @@ public class TestController extends util.BaseController {
     */
    public JComponent getView() throws Exception {
       if (serviceProxy == null) serviceProxy = proxy(TestInterface.class);
+      System.out.println(serviceProxy.foo().toString());
       return new view.TestView();
    }
    /**
