@@ -33,6 +33,8 @@ public final class Main {
     * configuration related issues
     */
    public static void main(final String args[]) throws Exception {
+      gnu.cajo.Cajo.main(null); // optional, but just to be polite ;-)
+
       // get configuration parameters, in this case command line...
       final int port = args.length > 0 ? Integer.parseInt(args[1]) : 1198; 
       final String clientHost = args.length > 1 ? args[1] : null;
