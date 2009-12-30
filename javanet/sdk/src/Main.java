@@ -52,7 +52,7 @@ public final class Main {
       );
       util.BaseService.cajo = new gnu.cajo.Cajo(port, serverHost, clientHost);
 
-      // finally publish services...
+      // finally publish & name services...
       new service.TestService("main");
 
       // finally output a little startup info...
@@ -60,13 +60,14 @@ public final class Main {
       System.out.println(java.text.DateFormat.getDateTimeInstance(
          java.text.DateFormat.FULL, java.text.DateFormat.FULL).
             format(new java.util.Date()));
+      System.out.println();
       System.out.print("internally operating on ");
       System.out.println(gnu.cajo.invoke.Remote.getDefaultServerHost());
       System.out.print("externally operating on ");
       System.out.println(gnu.cajo.invoke.Remote.getDefaultClientHost());
       System.out.print("services using TCP port ");
       System.out.println(gnu.cajo.invoke.Remote.getDefaultServerPort());
-      System.out.print("http service on TCP port ");
+      System.out.print("http server on TCP port ");
       System.out.println(httpPort);
    }
 }
