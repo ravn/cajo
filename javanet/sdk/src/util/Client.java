@@ -42,8 +42,8 @@ public final class Client extends JApplet {
    }
    /**
     * This method describes the optional client parameters. There are five
-    * such parameters which can be specified:
-    * <ul>
+    * such parameters which can be specified: <i>(normally these are all
+    * set automatically by the CodebaseServer class in gnu.cajo.utils)</i><ul>
     * <li>The <code>proxyName</code> parameter is the name of the service
     * object registered in the server's registry.
     * <li>The <code>proxyPort</code> parameter is the outbound port number on
@@ -95,13 +95,14 @@ public final class Client extends JApplet {
          int lPort = localPort  != null ? Integer.parseInt(localPort)  : 0;
          Remote.config(null, lPort, clientHost, cPort);
          proxy = LocateRegistry.getRegistry(getCodeBase().getHost(), pPort).
-            lookup(proxyName != null ? proxyName : "main");
+            lookup(proxyName);
          proxy = Remote.invoke(proxy, "getController", null);
          proxy = ((MarshalledObject)proxy).get();
          SwingUtilities.invokeAndWait(new Runnable() {
             public void run() {
                try {
-                  add((JComponent)Remote.invoke(proxy, "getView", null));
+                  getContentPane().add((JComponent)
+                     Remote.invoke(proxy, "getView", null));
                   Remote.invoke(proxy, "init", null);
                   validate();
                } catch(Exception x) { showStatus(x.getLocalizedMessage()); }
@@ -191,9 +192,9 @@ public final class Client extends JApplet {
                   try { title = System.getProperty("util.Client.title"); }
                   catch(Exception x) {} // won't work in WebStart
                   proxy = Remote.invoke(proxy, "getView", null);
-                  JFrame frame = new JFrame(title + " - " + args[0]);
+                  JFrame frame = new JFrame(title + '-' + args[0]);
                   frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-                  frame.add((JComponent)proxy);
+                  frame.getContentPane().add((JComponent)proxy);
                   frame.pack();
                   frame.setVisible(true);
                } catch(Exception x) { x.printStackTrace(); }
