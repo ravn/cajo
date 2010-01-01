@@ -1,15 +1,4 @@
 <project name="Test" default="build">
-   <target name="javadoc">
-      <delete dir="doc"/>
-      <mkdir dir="doc"/>
-      <javadoc destdir="doc" author="true" overview="src/overview.html"
-         windowtitle="Example cajo service">
-         <fileset dir="src"/>
-      </javadoc>
-   </target>
-   <target name="start">
-      <java classpath="service.jar:grail.jar" classname="Main" fork="true"/>
-   </target>
    <target name="build">
       <delete><fileset dir="." includes="client.jar controller.jar server.jar"/></delete>
       <javac srcdir="src" classpath="grail.jar" includes="util/Client.java"/>
@@ -39,5 +28,16 @@
       <delete>
          <fileset dir="src" includes="*.class util/*.class service/*.class"/>
       </delete>
+   </target>
+   <target name="start">
+      <java classpath="service.jar:grail.jar" classname="Main" fork="true"/>
+   </target>
+   <target name="javadoc">
+      <delete dir="doc"/>
+      <mkdir dir="doc"/>
+      <javadoc destdir="doc" author="true" overview="src/overview.html"
+         windowtitle="Example cajo service">
+         <fileset dir="src"/>
+      </javadoc>
    </target>
 </project>
