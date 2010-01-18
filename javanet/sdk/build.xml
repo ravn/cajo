@@ -1,9 +1,14 @@
+<!-- cajo example build file, feel free to modify to meet your needs! -->
 <project name="Test" default="build">
    <target name="build">
-      <delete><fileset dir="." includes="client.jar controller.jar server.jar"/></delete>
+      <delete>
+         <fileset dir="." includes="client.jar controller.jar server.jar"/>
+      </delete>
       <javac srcdir="src" classpath="grail.jar" includes="util/Client.java"/>
       <jar basedir="src" jarfile="client.jar" includes="util/*.class">
-         <manifest><attribute name="Main-Class" value="util.Client"/></manifest>
+         <manifest>
+            <attribute name="Main-Class" value="util.Client"/>
+         </manifest>
       </jar>
       <delete><fileset dir="src/util" includes="*.class"/></delete>
       <!-- compile all application specific controllers/services here... -->
@@ -30,12 +35,14 @@
       </delete>
    </target>
    <target name="start">
+      <!-- a handy target to launch a cajo server -->
       <java classpath="service.jar:grail.jar" classname="Main" fork="true"/>
    </target>
    <target name="javadoc">
-      <delete dir="doc"/>
-      <mkdir dir="doc"/>
-      <javadoc destdir="doc" author="true" overview="src/overview.html"
+      <!-- open doc/index.html in a browser to view the documentation -->
+      <delete dir="doc"/><mkdir dir="doc"/>
+      <javadoc destdir="doc" author="true"
+         overview="src/overview.html"
          windowtitle="Example cajo service">
          <fileset dir="src"/>
       </javadoc>
