@@ -172,11 +172,11 @@ public final class Client extends JApplet {
     */
    public static void main(final String args[]) throws Exception {
       if (System.getSecurityManager() == null) System.setSecurityManager(
-         new SecurityManager() {
+         new SecurityManager() { // allow loaded controllers FULL permissions
             public void checkPermission(java.security.Permission perm) {}
          }
       );
-      if (args.length > 0) {
+      if (args.length > 0) { // parse command line arguments
          int clientPort    = args.length > 1 ? Integer.parseInt(args[1]) : 0;
          String clientHost = args.length > 2 ? args[2] : null;
          int localPort     = args.length > 3 ? Integer.parseInt(args[3]) : 0;
