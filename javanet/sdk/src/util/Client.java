@@ -200,6 +200,6 @@ public final class Client extends JApplet {
                } catch(Exception x) { x.printStackTrace(); }
             }
          });
-      } else System.err.println("No source URL provided");
+      } else System.err.println("No service URL provided");
    }
 }
