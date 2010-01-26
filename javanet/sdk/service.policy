@@ -1,6 +1,9 @@
-grant codeBase "file:${java.class.path}" { // local classes can do anything
+grant codeBase "file:grail.jar" {
    permission java.security.AllPermission;
-};
-grant { // allow controllers to make network connexions... risky (if bots)
+}; // the grail library can do anything it wants,
+grant codeBase "file:service.jar" {
+   permission java.security.AllPermission;
+}; // the service library can do anything it wants,
+grant { // allow controllers only network connexions... risky (if bots)
    permission java.net.SocketPermission "*", "connect, accept, resolve";
 }; // you can optionally remove connect, or accept, if you wish
