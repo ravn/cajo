@@ -49,8 +49,8 @@ public class TestService extends util.BaseService {
    /**
     * Simply an example function, it performs nothing.
     */
-   public String fooBar() {
-      System.out.println("fooBar invoked");
+   public String foo() {
+      System.out.println("foo invoked");
       return "fooBar invocation completed.";
    }
 }
