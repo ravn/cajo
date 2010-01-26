@@ -79,9 +79,10 @@ public final class Client extends JApplet {
     * This method connects back to its hosting server and requests the item
     * from the server's rmiregistry. Next it will invoke a getController() on
     * the remote reference to request its proxy item. The returned object
-    * will have its init method invoked to obtain its graphical JComponent
+    * will have its getView method invoked to obtain its graphical JComponent
     * representation, which will then be added into the JApplet via the Swing
-    * event dispatch thread.
+    * event dispatch thread. The method invocation is passed on to the
+    * controller. <i>(if it implements one)</i>
     */
     public void init() {
       try {
@@ -103,7 +104,8 @@ public final class Client extends JApplet {
                try {
                   getContentPane().add((JComponent)
                      Remote.invoke(proxy, "getView", null));
-                  Remote.invoke(proxy, "init", null);
+                  try { Remote.invoke(proxy, "init", null); }
+                  catch(Exception x) {} // if not supported... ok
                   validate();
                } catch(Exception x) { showStatus(x.getLocalizedMessage()); }
             }
@@ -112,27 +114,27 @@ public final class Client extends JApplet {
    }
    /**
     * This method is called from the AppleContext, each time the JApplet
-    * becomes visible.
+    * becomes visible. The method invocation is passed on to the controller.
+    * <i>(if it implements one)</i>
     */
    public void start() {
-      try { Remote.invoke(proxy, "start", null); }
-      catch(Exception x) { showStatus(x.getLocalizedMessage()); }
+      try { Remote.invoke(proxy, "start", null); } catch(Exception x) {}
    }
    /**
     * This method is called from the AppleContext, each time the JApplet
-    * becomes invisible.
+    * becomes invisible. The method invocation is passed on to the controller.
+    * <i>(if it implements one)</i>
     */
    public void stop() {
-      try { Remote.invoke(proxy, "stop", null); }
-      catch(Exception x) { showStatus(x.getLocalizedMessage()); }
+      try { Remote.invoke(proxy, "stop", null); } catch(Exception x) {}
    }
    /**
     * This method is called from the AppleContext, when the JApplet is being
-    * disposed.
+    * disposed. The method invocation is passed on to the controller.
+    * <i>(if it implements one)</i>
     */
    public void destroy() {
-      try { Remote.invoke(proxy, "destroy", null); }
-      catch(Exception x) { showStatus(x.getLocalizedMessage()); }
+      try { Remote.invoke(proxy, "destroy", null); } catch(Exception x) {}
    }
    /**
     * The application creates a graphical Component proxy hosting VM. With the
