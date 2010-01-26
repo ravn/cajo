@@ -2,7 +2,7 @@
 <project name="Test" default="build">
    <target name="build">
       <delete>
-         <fileset dir="." includes="client.jar controller.jar server.jar"/>
+         <fileset dir="." includes="client.jar controller.jar service.jar"/>
       </delete>
       <javac srcdir="src" classpath="grail.jar" includes="util/Client.java"/>
       <jar basedir="src" jarfile="client.jar" includes="util/*.class">
@@ -11,6 +11,7 @@
          </manifest>
       </jar>
       <delete><fileset dir="src/util" includes="*.class"/></delete>
+
       <!-- compile all application specific controllers/services here... -->
       <javac srcdir="src" classpath="grail.jar" includes="
 
@@ -19,6 +20,7 @@
          service/TestService.java
 
       "/>
+
       <jar basedir="src" jarfile="controller.jar"
          includes="util/BaseController*.class util/ProxyLoader.class
          controller/*.class view/*.class view/gui/*.class view/inc/*.*"/>
@@ -34,12 +36,15 @@
          <fileset dir="src" includes="*.class util/*.class service/*.class"/>
       </delete>
    </target>
-   <target name="start">
-      <!-- a handy target to launch a cajo server -->
-      <java classpath="service.jar:grail.jar" classname="Main" fork="true"/>
+   <target name="start"> <!-- a handy target to launch the server -->
+      <java
+         classpath="service.jar:grail.jar"
+         classname="Main" fork="true" failonerror="true" maxmemory="128m">
+         <sysproperty key="java.security.policy" value="service.policy"/>
+         <arg value="1198"/>
+      </java>
    </target>
-   <target name="javadoc">
-      <!-- open doc/index.html in a browser to view the documentation -->
+   <target name="javadoc"> <!-- open doc/index.html in a browser to view -->
       <delete dir="doc"/><mkdir dir="doc"/>
       <javadoc destdir="doc" author="true"
          overview="src/overview.html"

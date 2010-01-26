@@ -20,7 +20,8 @@ public final class Main {
     * graphical service furnishing JVM. It will create and assign services
     * to registry names in code.<p>
     * @param args The startup can take up to four <i>optional</i>
-    * configuration parameters, in order:<ul>
+    * configuration parameters, in order: (i.e. all previous options must
+    * be provided)<ul>
     * <li><tt>args[0] - </tt>The server port number, if using NAT.
     * <i>(typically 1198)</i>
     * <li><tt>args[1] - </tt>The external client host name, if using NAT.
@@ -35,13 +36,13 @@ public final class Main {
    public static void main(final String args[]) throws Exception {
       gnu.cajo.Cajo.main(null); // optional, but just to be polite ;-)
 
-      // get configuration parameters, in this case command line...
-      final int port = args.length > 0 ? Integer.parseInt(args[1]) : 1198; 
+      // get configuration parameters, in this case from the command line...
+      final int port = args.length > 0 ? Integer.parseInt(args[0]) : 1198; 
       final String clientHost = args.length > 1 ? args[1] : null;
       final String serverHost = args.length > 2 ? args[2] : null;
       final int httpPort = args.length > 3 ? Integer.parseInt(args[3]) : 80;
 
-      // next configure system...
+      // now configure the server...
       new gnu.cajo.utils.CodebaseServer( // configure codebase service
          // these are the list of jars needed exclusively by the controller
          new String[] { "client.jar", "controller.jar", "grail.jar" },
@@ -49,13 +50,15 @@ public final class Main {
          "Example cajo graphical proxy", // web page title
          "The cajo project", // company identification
          "icon.gif", "splash.jpeg" // icon & splash screen
-      );
+      ); // config codebase server first, then cajo
       util.BaseService.cajo = new gnu.cajo.Cajo(port, serverHost, clientHost);
+      // Important: comment the next line, unless you trust the services
+//      gnu.cajo.utils.ItemServer.acceptProxies(); // allow controllers here?
 
-      // finally publish & name services...
+      // create & name services...
       new service.TestService("main");
 
-      // finally output a little startup info...
+      // finally output a little startup information...
       System.out.print("server started ");
       System.out.println(java.text.DateFormat.getDateTimeInstance(
          java.text.DateFormat.FULL, java.text.DateFormat.FULL).

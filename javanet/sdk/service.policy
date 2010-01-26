@@ -1,0 +1,6 @@
+grant codeBase "file:${java.class.path}" { // local classes can do anything
+   permission java.security.AllPermission;
+};
+grant { // allow controllers to make network connexions... risky (if bots)
+   permission java.net.SocketPermission "*", "connect, accept, resolve";
+}; // you can optionally remove connect, or accept, if you wish
