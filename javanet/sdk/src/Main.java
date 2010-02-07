@@ -43,7 +43,6 @@ public final class Main {
       final int httpPort = args.length > 3 ? Integer.parseInt(args[3]) : 80;
 
       // now configure the server...
-      util.BaseService.cajo = new gnu.cajo.Cajo(port, serverHost, clientHost);
       new gnu.cajo.utils.CodebaseServer( // configure codebase service
          // these are the list of jars needed exclusively by the controller
          new String[] { "client.jar", "controller.jar", "grail.jar" },
@@ -51,7 +50,8 @@ public final class Main {
          "Example cajo graphical proxy", // web page title
          "The cajo project", // company identification
          "icon.gif", "splash.jpeg" // icon & splash screen
-      );
+      ); // start codebase service first, then create the cajo object!
+      util.BaseService.cajo = new gnu.cajo.Cajo(port, serverHost, clientHost);
       // Important: comment the next line, unless you trust the services
 //      gnu.cajo.utils.ItemServer.acceptProxies(); // allow controllers here?
 
@@ -72,5 +72,6 @@ public final class Main {
       System.out.println(gnu.cajo.invoke.Remote.getDefaultServerPort());
       System.out.print("http server on TCP port ");
       System.out.println(httpPort);
+      System.out.println();
    }
 }
