@@ -187,8 +187,9 @@ public final class Client extends JApplet {
          proxy = Remote.getItem(args[0]);
          proxy = Remote.invoke(proxy, "getController", null);
          proxy = ((MarshalledObject)proxy).get();
-         proxy = Remote.invoke(proxy, "getView", null);
-         if (proxy != null) SwingUtilities.invokeLater(new Runnable() {
+         final JComponent view =
+            (JComponent)Remote.invoke(proxy, "getView", null);
+         if (view != null) SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                try {
                   String title = "cajo Proxy Viewer";
@@ -196,7 +197,7 @@ public final class Client extends JApplet {
                   catch(Exception x) {} // won't work in WebStart
                   JFrame frame = new JFrame(title + '-' + args[0]);
                   frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-                  frame.getContentPane().add((JComponent)proxy);
+                  frame.getContentPane().add(view);
                   frame.pack();
                   frame.setVisible(true);
                } catch(Exception x) { x.printStackTrace(); }

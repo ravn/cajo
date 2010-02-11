@@ -77,7 +77,10 @@ public abstract class BaseController implements java.io.Serializable {
     * This method is called by the client, to get the view object associated
     * with this controller, to display in its own frame.
     * @return javax.swing.JComponent A graphical component which can then
-    * be consolidated into any container for viewing.
+    * be consolidated into any container for viewing. <b><i>NB:</i></b>
+    * the method <i>may</i> return null, if the controller has no primary
+    * view. Whilst permitted, doing this<i>will</i> mess up use by the applet
+    * client, which <i>must</i> assume the controller has a default view.
     * @throws Exception if the view could not be created, typically due to
     * missing resource issues
     */
