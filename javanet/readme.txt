@@ -1,4 +1,4 @@
-cajo library release 1.141 10-Mar-10
+cajo library release 1.142 12-Mar-10
 
                      ___  _
                     / ,_`(_) ___
@@ -16,7 +16,7 @@ Home of the World Wide Virtual Machine (WWVM)
 Here you will find full source code, detailed documentation,
 illustrative examples, and multiple support fora.
 
-Copyright (c) 1999 John Catherino
+Copyright (c) 1999 - 2010 John Catherino
 
 The cajo library is Free Software. You may distribute it and/or
 modify it under the terms of the GNU Lesser General Public Licence,
