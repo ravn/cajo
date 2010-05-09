@@ -63,7 +63,11 @@ public interface Grail {
     * server types exactly, they can be subclasses.</ul><p>
     * <b><i><u>Notes</u>:</i></b> If the client interface has superinterfaces,
     * their methods must also be matched similarly. Method arguments, and
-    * returns, are alowed to be <i>primitive</i> types as well.
+    * returns, are alowed to be <i>primitive</i> types as well. Also,
+    * exceptions will <i>not</i> be matched, either way; this means that
+    * the client interface can specify more or less exceptions than the
+    * remote method throws, similarly, the remote method may throw more or
+    * less exceptions than the client specifies.
     * @param methodSetInterface The interface of methods that remote objects
     * are required to support
     * @return An array of remote object references, specific to the
