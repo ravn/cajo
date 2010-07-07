@@ -760,20 +760,18 @@ public final class Remote extends UnicastRemoteObject
       zedmob(os, this);
    }
    /**
-    * This method is called by the RMI runtime sometime after it determines
-    * the collection of listening clients becomes empty. If the wrapped
+    * This method is called by the RMI runtime after it determines the
+    * current collection of listening clients is empty. If the wrapped
     * object whishes to be notified of being unreferenced, it need only
-    * implement the java.rmi.server.Unreferenced interface itself, and the
-    * invocation will be passed along. Normally it is used to close any open
-    * resources, needed to serve its clients. Highest thanks to Petr Stepan,
-    * for the suggestion for this most excellent addition.
+    * implement the <tt>java.rmi.server.Unreferenced</tt> interface itself,
+    * and the invocation will be passed along. Normally it is used to close
+    * any open resources, needed to serve its clients. Highest thanks to
+    * Petr Stepan, for the suggestion for this most excellent addition.
     */
    public void unreferenced() {
       if (unexportOnUnreference) try { unexport(true); }
       catch(NoSuchObjectException x) {}
-      if (item instanceof Unreferenced)
-         try { Remote.invoke(item, "unreferenced", null); }
-         catch(Exception x) {}
+      if (item instanceof Unreferenced) ((Unreferenced)item).unreferenced();
    }
    /**
     * This method controls the automatic-unexporting of a remote reference
