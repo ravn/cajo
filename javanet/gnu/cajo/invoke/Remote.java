@@ -563,6 +563,9 @@ public final class Remote extends UnicastRemoteObject
          }
       }
       if (item instanceof Invoke) return ((Invoke)item).invoke(method, args);
+      if (o_args.length == 0 && item instanceof Unreferenced &&
+         method.equals("unreferenced"))
+            throw new RuntimeException("Remote unreferenced call blocked");
       Class[] c_args = o_args != NOARGS ? new Class[o_args.length] : NULL;
       if (c_args != NULL)
          for (int i = 0; i < c_args.length; i++)
@@ -768,9 +771,9 @@ public final class Remote extends UnicastRemoteObject
    public void unreferenced() {
       if (unexportOnUnreference) try { unexport(true); }
       catch(NoSuchObjectException x) {}
-      if (item instanceof Unreferenced) try {
-         Remote.invoke(item, "unreferenced", null);
-      } catch(Exception x) {}
+      if (item instanceof Unreferenced)
+         try { Remote.invoke(item, "unreferenced", null); }
+         catch(Exception x) {}
    }
    /**
     * This method controls the automatic-unexporting of a remote reference
