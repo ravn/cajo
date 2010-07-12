@@ -551,6 +551,9 @@ public final class Remote extends UnicastRemoteObject
             return new Integer(item.hashCode());
          if (o_args.length == 1 && method.equals("equals"))
             return item.equals(o_args[0]) ? Boolean.TRUE : Boolean.FALSE;
+         if (o_args.length == 0 && item instanceof Unreferenced &&
+            method.equals("unreferenced"))
+               throw new RuntimeException("remote unreferenced call blocked");
          for (int i = 0; i < o_args.length; i++) {
             if (o_args[i] != null && !(o_args[i] instanceof Serializable)) {
                HashSet interfaces = new HashSet();
@@ -563,9 +566,6 @@ public final class Remote extends UnicastRemoteObject
          }
       }
       if (item instanceof Invoke) return ((Invoke)item).invoke(method, args);
-      if (o_args.length == 0 && item instanceof Unreferenced &&
-         method.equals("unreferenced"))
-            throw new RuntimeException("Remote unreferenced call blocked");
       Class[] c_args = o_args != NOARGS ? new Class[o_args.length] : NULL;
       if (c_args != NULL)
          for (int i = 0; i < c_args.length; i++)
