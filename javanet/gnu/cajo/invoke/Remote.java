@@ -117,11 +117,14 @@ public final class Remote extends UnicastRemoteObject
    private boolean unexportOnUnreference;
    /**
     * If the remote wrapper is being garbage collected, and it hasn't already
-    * been explicitly unexported, let's do that now, as a courtesy.
+    * been manually unexported, let's do that now, as a courtesy.
+    * @throws Throwable due to Object class method definition, this method
+    * will throw nothing
     */
    protected void finalize() throws Throwable {
+      try { unexport(true); }
+      catch(NoSuchObjectException x) {}
       super.finalize();
-      unexport(true);
    }
    /**
     * This is the default RMIServerSocketFactory on which left unspecified,
@@ -548,7 +551,7 @@ public final class Remote extends UnicastRemoteObject
          (Object[])args : args != null ? new Object[] { args } : NOARGS;
       if (item instanceof RemoteInvoke) { // special for remote clients...
          if (o_args.length == 0) {
-            if (item instanceof Unreferenced &&  method.equals("unreferenced"))
+            if (item instanceof Unreferenced && method.equals("unreferenced"))
                throw new RuntimeException("remote unreferenced call blocked");
             if (method.equals("hashCode")) return new Integer(item.hashCode());
          } else if (o_args.length == 1 && method.equals("equals"))
