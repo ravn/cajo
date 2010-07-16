@@ -249,8 +249,8 @@ public final class Client extends java.applet.Applet {
     * ... gnu.cajo.invoke.Client ... </tt><br><br>
     * See the project client <a href=https://cajo.dev.java.net/client.html>
     * documentation</a>, for more details.<br><br>
-    * The startup can take up to five additional optional configuration
-    * parameters, in this order:<ul>
+    * @param args The startup can take up to five additional optional
+    * configuration parameters, in this order:<ul>
     * <li><tt>args[0] - </tt>The URL where to get the graphical proxy item:<br>
     * file:// http:// ftp:// ..., //host:port/name (rmiregistry), /path/name
     * (serialized), or path/name (class).<br>

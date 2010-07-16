@@ -190,7 +190,7 @@ public final class JClient extends JApplet {
     * ... gnu.cajo.invoke.JClient ... </tt><br><br>
     * See the project client <a href=https://cajo.dev.java.net/client.html>
     * documentation</a>, for more details.<br><br>
-    * The startup requires one mandatory, and up to four optional
+    * @param args The startup requires one mandatory, and up to four optional
     * configuration parameters, in this order:<ul>
     * <li><tt>args[0] - </tt>The URL where to get the graphical proxy item:<br>
     * file:// http:// ftp:// ..., //host:port/name (rmiregistry), /path/name
