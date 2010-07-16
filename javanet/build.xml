@@ -5,10 +5,10 @@
     </description>
     <target name="library">
         <!-- the standard library deployment package -->  
-        <javac srcdir="." target="1.2" source="1.2" includes="gnu/cajo/invoke/*.java"/> 
-        <javac srcdir="." target="1.2" source="1.2" includes="gnu/cajo/utils/*.java"/> 
-        <javac srcdir="." target="1.2" source="1.2" includes="gnu/cajo/utils/extra/*.java"/> 
-        <javac srcdir="." target="1.2" source="1.2" includes="gnu/cajo/*.java"/> 
+        <javac includeAntRuntime="false" srcdir="." target="1.2" source="1.2" includes="gnu/cajo/invoke/*.java"/> 
+        <javac includeAntRuntime="false" srcdir="." target="1.2" source="1.2" includes="gnu/cajo/utils/*.java"/> 
+        <javac includeAntRuntime="false" srcdir="." target="1.2" source="1.2" includes="gnu/cajo/utils/extra/*.java"/> 
+        <javac includeAntRuntime="false" srcdir="." target="1.2" source="1.2" includes="gnu/cajo/*.java"/> 
         <rmic stubversion="vcompat" classname="gnu.cajo.invoke.Remote" base="."/>
         <delete>
             <fileset dir="." includes="
@@ -38,9 +38,9 @@
     </target>
     <target name="grail">
         <!-- the grail library deployment package -->  
-        <javac srcdir="." target="1.2" source="1.2" includes="gnu/cajo/*.java"/> 
+        <javac includeAntRuntime="false" srcdir="." target="1.2" source="1.2" includes="gnu/cajo/*.java"/> 
         <rmic stubversion="vcompat" classname="gnu.cajo.invoke.Remote" base="."/>
-        <javac srcdir="." target="1.2" source="1.2" includes="gnu/cajo/utils/CodebaseServer.java"/> 
+        <javac includeAntRuntime="false" srcdir="." target="1.2" source="1.2" includes="gnu/cajo/utils/CodebaseServer.java"/> 
         <delete>
             <fileset dir="." includes="
                 gnu/cajo/utils/ItemServer$JarClassLoader.class
@@ -67,8 +67,8 @@
         </delete>
     </target>
     <target name="client">
-        <javac srcdir="." target="1.2" source="1.2" includes="gnu/cajo/invoke/Client.java"/> 
-        <javac srcdir="." target="1.2" source="1.2" includes="gnu/cajo/invoke/JClient.java"/> 
+        <javac includeAntRuntime="false" srcdir="." target="1.2" source="1.2" includes="gnu/cajo/invoke/Client.java"/> 
+        <javac includeAntRuntime="false" srcdir="." target="1.2" source="1.2" includes="gnu/cajo/invoke/JClient.java"/> 
         <rmic stubversion="vcompat" classname="gnu.cajo.invoke.Remote" base="."/>
         <jar basedir="."
              jarfile="client.jar"
@@ -83,8 +83,8 @@
         </delete>
     </target>
     <target name="proxy">
-        <javac srcdir="." target="1.2" source="1.2" includes="example/Builder.java"/> 
-        <javac srcdir="." target="1.2" source="1.2" includes="gnu/cajo/utils/ProxyLoader.java"/> 
+        <javac includeAntRuntime="false" srcdir="." target="1.2" source="1.2" includes="example/Builder.java"/> 
+        <javac includeAntRuntime="false" srcdir="." target="1.2" source="1.2" includes="gnu/cajo/utils/ProxyLoader.java"/> 
         <java classpath="." classname="example.Builder" fork="true"/> 
         <jar basedir="."
              jarfile="proxy.jar"
@@ -106,7 +106,7 @@
         </delete>
     </target>
     <target name="server" depends="client, proxy">
-        <javac srcdir="." target="1.2" source="1.2" includes="example/Main.java"/> 
+        <javac includeAntRuntime="false" srcdir="." target="1.2" source="1.2" includes="example/Main.java"/> 
         <rmic stubversion="vcompat" classname="gnu.cajo.invoke.Remote" base="."/>
     </target>
     <target name="make1" depends="client, proxy, server">
@@ -167,7 +167,7 @@
         </delete>
     </target>
     <target name="make4" depends="client, proxy, library">
-        <javac srcdir="." target="1.2" source="1.2" includes="example/Main.java"/> 
+        <javac includeAntRuntime="false" srcdir="." target="1.2" source="1.2" includes="example/Main.java"/> 
         <jar basedir="."
              jarfile="server.jar"
              manifest="example/example.mft"
