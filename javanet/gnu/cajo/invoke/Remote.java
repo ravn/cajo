@@ -114,7 +114,6 @@ public final class Remote extends UnicastRemoteObject
    private static final Vector items    = new Vector();
    private static final Class[] NULL    = {}, OBJECT = { Object.class };
    private static final Object[] NOARGS = {};
-   private boolean unexportOnUnreference;
    /**
     * If the remote wrapper is being garbage collected, and it hasn't already
     * been manually unexported, let's do that now, as a courtesy.
@@ -302,17 +301,17 @@ public final class Remote extends UnicastRemoteObject
    }
    /**
     * This method will brutally un-remote all currently remotely invocable
-    * wrappers. This can be used to allow the JVM to shut down without having
-    * to call <tt>System.exit()</tt> also, to support use in managed container
-    * systems. Following this execution, objects can be newly remoted again.
+    * wrappers, except those in clientScope. This can be used to allow the
+    * JVM to shut down without having to call <tt>System.exit()</tt> also,
+    * to support use in JEE container systems. Following this execution,
+    * objects can be newly remoted again.
     */
    public static void shutdown() {
       synchronized(items) {
          for (int i = items.size() - 1; i >= 0; i--)
-            try { Remote.unexportObject((Remote)items.elementAt(i), true); }
+            try { unexportObject((java.rmi.Remote)items.elementAt(i), true); }
             catch(NoSuchObjectException x) {}
          items.clear();
-         synchronized(cache) { cache.clear(); }
       }
    }
    /**
@@ -672,17 +671,17 @@ public final class Remote extends UnicastRemoteObject
       items.add(this);
    }
    /**
-    * This method will attempt to make the wrapper no longer remotely invocable.
-    * As a list of all remoted wrappers is maintained, this method will remove
-    * the reference from the list. If a lot of objects are being remoted and
-    * unremoted during the life of the JVM, it is highly recommended to use this
-    * method, rather than the inherited static unexportObject method, as it will
-    * not remove the reference from the internal list.
-    * @param force true to un-remote the object wrapper, even if invocations are in
-    * progress or pending, if false, do not un-remote unless idle.
+    * This method will attempt to make the wrapper no longer remotely
+    * invocable. As a list of all remoted wrappers is maintained, this method
+    * will remove the reference from the list. It is highly recommended to
+    * use this method, rather than the inherited static unexportObject method,
+    * as it will not remove the reference from the internal list.
+    * @param force true to un-remote the object wrapper, even if invocations
+    * are in progress or pending, if false, do not un-remote unless idle.
     * @return true if the wrapper was successfully un-remoted, false if it is
-    * still remoted.
-    * @throws NoSuchObjectException If this wrapper has already been un-remoted
+    * still remoted due to invocations being in progress.
+    * @throws NoSuchObjectException If this wrapper has already been
+    * un-remoted
     */
    public boolean unexport(boolean force) throws NoSuchObjectException {
       if (UnicastRemoteObject.unexportObject(this, force)) {
@@ -690,20 +689,6 @@ public final class Remote extends UnicastRemoteObject
          return true;
       } else return false;
    }
-   /**
-    * This this method overrides the implementation provided by
-    * the superclass UnicastRemoteObject. It will route the invocation to the
-    * instance unexport method of this class, to properly remove the remote
-    * reference from the internal list of exported objects. This list is
-    * needed to support the static shutdown method provided by this class.
-    * @deprecated It is strongly recommended to use the instance method
-    * unexport, for improved code clarity.
-    */
-    public static boolean unexportObject(java.rmi.Remote obj, boolean force)
-       throws NoSuchObjectException {
-       return obj instanceof Remote ? ((Remote)obj).unexport(force) :
-          UnicastRemoteObject.unexportObject(obj, force);
-    }
    /**
     * The sole generic, multi-purpose interface for communication between VMs.
     * This function may be called reentrantly, so the inner object <i>must</i>
@@ -763,39 +748,33 @@ public final class Remote extends UnicastRemoteObject
    }
    /**
     * This method is called by the RMI runtime after it determines the
-    * current collection of listening clients is empty. If the wrapped
+    * there are no pending invocations on the wrapper. If the wrapped
     * object whishes to be notified of being unreferenced, it need only
     * implement the <tt>java.rmi.server.Unreferenced</tt> interface itself,
-    * and the invocation will be passed along. Normally it is used to close
-    * any open resources, needed to serve its clients. Highest thanks to
-    * Petr Stepan, for the suggestion for this most excellent addition.
+    * and the invocation will be passed along. Normally this would be used
+    * to free any lazily instantiated resources used in client service, to
+    * free up memory. Thanks to Petr Stepan, for the suggestion for this most
+    * excellent addition.
     */
    public void unreferenced() {
-      if (unexportOnUnreference) try { unexport(true); }
-      catch(NoSuchObjectException x) {}
       if (item instanceof Unreferenced) ((Unreferenced)item).unreferenced();
    }
    /**
     * This method controls the automatic-unexporting of a remote reference
     * when it is no longer referenced by any clients. Often an application
     * will provide a remote reference to a special short-term use object on
-    * the client side. The RMI runtime does not automatically unexport remote
-    * references, as they typically belong to server objects. Remoted object
-    * references used for temporary transactions, e.g. Futures, can quickly
-    * accumulate into a large memory leak. Once unexported, this remote
-    * object wrapper is no longer remotely invocable. The wrapped object can
-    * be provided to a new instance of Remote, to make it remotely invocable
-    * again. It effectively places the lifetime of this object under the
-    * control of the client(s), rather than the server, which is normally the
-    * case. Quite simply, it causes the unexport method to be called
-    * implicitly, when the wrapper becomes unreferenced by all clients.
-    * Very handy and important!
+    * the client side. Server remote references will not be automatically
+    * unexport, this is accomplished by calling the static shutdown method.
+    * Remoted object references used for temporary client use, e.g. Futures,
+    * can quickly accumulate into large memory use. This places the lifetime
+    * of this object under the control of the client(s), rather than the
+    * server, which would normally be the case.
     * @return A reference to this wrapper, purely to allow the convenient
     * construct of:<p>
     * <tt> return new Remote(tempObj).clientScope();</tt>
     */
    public Remote clientScope() {
-      unexportOnUnreference = true;
+      items.remove(this);
       return this;
    }
    /**
