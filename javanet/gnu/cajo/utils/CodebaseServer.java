@@ -413,13 +413,13 @@ public final class CodebaseServer extends Thread {
                         os.write(out);
                      }
                   } catch (Exception x) { os.write(bye); }
-               } else if (!itemName.endsWith("service.jar")) { // file request
-                  if (
+               } else if (!itemName.endsWith("server.jar")) {
+                  if ( // file request
                      itemName.equals("/favicon.ico") ||
                      itemName.endsWith(".jar")       ||
                      itemName.endsWith(".class")     ||
-                     itemName.endsWith(".gif")      ||
-                     itemName.endsWith(".jpg")      ||
+                     itemName.endsWith(".gif")       ||
+                     itemName.endsWith(".jpg")       ||
                      itemName.endsWith(".jpeg")
                   ) try {
                      InputStream ris = getClass().getResourceAsStream(itemName);
