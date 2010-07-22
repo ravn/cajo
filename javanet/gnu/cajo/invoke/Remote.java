@@ -50,6 +50,7 @@ import java.lang.reflect.Method;
  */
 public final class Remote extends UnicastRemoteObject
    implements RemoteInvoke, Unreferenced {
+   private static final Class[] CLASS = {};
    private static final class RSSF implements RMIServerSocketFactory {
       private int port;
       private String host;
@@ -562,7 +563,7 @@ public final class Remote extends UnicastRemoteObject
                   c = c.getSuperclass())
                   interfaces.addAll(Arrays.asList(c.getInterfaces()));
                o_args[i] = gnu.cajo.utils.extra.TransparentItemProxy.getItem(
-                  o_args[i], (Class[])interfaces.toArray(new Class[0]));
+                  o_args[i], (Class[])interfaces.toArray(CLASS));
             }
          }
       }
@@ -590,7 +591,7 @@ public final class Remote extends UnicastRemoteObject
             for (Class c = result.getClass(); c != null; c = c.getSuperclass())
                interfaces.addAll(Arrays.asList(c.getInterfaces()));
             return gnu.cajo.utils.extra.TransparentItemProxy.getItem(
-               result, (Class[])interfaces.toArray(new Class[0]));
+               result, (Class[])interfaces.toArray(CLASS));
          } catch(ServerNotActiveException x) { /* not a remote call */ }
          return result;
       } catch(java.lang.reflect.InvocationTargetException x) {
