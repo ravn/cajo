@@ -342,8 +342,9 @@ public final class Cajo implements Grail {
     * to furnish library version information. It provides an execution point
     * called when the library jar is executed. It simply copies the contents
     * of the internal readme.txt file to the console.
+    * @throws IOException If the readme.txt file cannot be found
     */
-    public static void main(String args[]) throws Exception {
+    public static void main(String args[]) throws IOException {
        java.io.InputStream is =
           Cajo.class.getResourceAsStream("/readme.txt");
        byte text[] = new byte[is.available()];
