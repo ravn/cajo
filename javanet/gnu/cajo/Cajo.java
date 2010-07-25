@@ -221,9 +221,9 @@ public final class Cajo implements Grail {
    public Cajo(int port, String serverHost, String clientHost)
       throws java.net.UnknownHostException, IOException {
       Remote.config(serverHost, port, clientHost, port);
-      multicast = new Multicast("224.0.23.162", port);
+      multicast = new Multicast("224.0.23.162", 1198);
       multicast.listen(registrar);
-      multicast.announce(registrar, 255);
+      multicast.announce(registrar, 32);
       ItemServer.bind(registrar, "registrar");
    }
    /**
