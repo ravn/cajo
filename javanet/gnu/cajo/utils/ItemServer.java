@@ -136,7 +136,8 @@ public class ItemServer {
    */
   public static void acceptProxies() throws SecurityException {
      System.setProperty("java.rmi.server.useCodebaseOnly", "false");
-     System.setSecurityManager(new java.rmi.RMISecurityManager());
+     if (System.getSecurityManager() == null)
+        System.setSecurityManager(new java.rmi.RMISecurityManager());
   }
   /**
    * This method remotes the provided object in the local rmiregistry. The
