@@ -58,23 +58,33 @@ public final class CodebaseServer extends Thread {
          + "</i></body></html>").getBytes(),
       apl = ("HTTP/1.0 200 OK\r\n"
          + "Content-type: text/html\r\n"
+         + "Cache-control: no-cache\r\n"
+         + "Cache-control: no-store\r\n"
          + "Server: cajo/CodebaseServer\r\n"
          + "Last-Modified: " + formatter.format(new Date()) + "\r\n"
          + "Connection: close\r\n\r\n").getBytes(), // for applets
       jws = ("HTTP/1.0 200 OK\r\n"
          + "Content-type: application/x-java-jnlp-file\r\n"
+         + "Cache-control: no-cache\r\n"
+         + "Cache-control: no-store\r\n"
          + "Server: cajo/CodebaseServer\r\n"
          + "Last-Modified: " + formatter.format(new Date()) + "\r\n"
          + "Connection: close\r\n\r\n").getBytes(), // for WebStart
       jarHdr = ("HTTP/1.0 200 OK\r\n" // for jar files
          + "Content-type: application/x-java-archive\r\n"
-         + "Server: cajo/CodebaseServer\r\n").getBytes(), // for WebStart
+         + "Cache-control: no-cache\r\n"
+         + "Cache-control: no-store\r\n"
+         + "Server: cajo/CodebaseServer\r\n").getBytes(),
       classHdr = ("HTTP/1.0 200 OK\r\n" // for class files
          + "Content-type: application/x-java-vm\r\n"
-         + "Server: cajo/CodebaseServer\r\n").getBytes(), // for WebStart
+         + "Cache-control: no-cache\r\n"
+         + "Cache-control: no-store\r\n"
+         + "Server: cajo/CodebaseServer\r\n").getBytes(),
       imgHdr = ("HTTP/1.0 200 OK\r\n" // for image files
          + "Content-type: image/jpeg\r\n"
-         + "Server: cajo/CodebaseServer\r\n").getBytes(), // for WebStart
+         + "Cache-control: no-cache\r\n"
+         + "Cache-control: no-store\r\n"
+         + "Server: cajo/CodebaseServer\r\n").getBytes(),
 
       end = ( // http footers:
          "PLUGINSPAGE=\"http://java.sun.com/j2se/1.5.0/download.html\">\r\n"
