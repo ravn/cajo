@@ -37,8 +37,8 @@ import java.rmi.RemoteException;
  */
 
 /**
- * This class implements the Generic Standard Interface for the cajo library.
- * It is designed to work with all JRE's: 1.3 and higher.
+ * This class implements the Generic Standard Interface using the cajo
+ * library. It is designed to work with all JRE's: 1.3 and higher.
  *
  * @version 1.0, 21-Aug-07
  * @author John Catherino
@@ -194,37 +194,19 @@ public final class Cajo implements Grail {
       }
    }
    /**
-    * The constructor configures the network address settings. If a machine
-    * is operating behind a Network Adress Translating router (NAT), the
-    * internal and external addresses are requried. If not, then both
-    * addresses can be the same, or null arguments can be used.
-    * @param port The TCP port to be used for communications, for servers
-    * canonically it is the IANA assigned cajo port of 1198, for clients it
-    * can be any value, including 0, meaining chosen from any unused port
-    * available at the time of startup
-    * @param serverHost The local network interface on which the item will
-    * will be remotely invokable. Typically it is specified when the server
-    * has multiple phyisical network interfaces, or is multi-homed, i.e.
-    * having multiple logical network interfaces. The value can be null,
-    * which will make the item accessible on <i>all</i> network interfaces,
-    * this is identical to providing the special port address "0.0.0.0".
-    * @param clientHost The host name, or IP address the remote client will
-    * use to communicate with this server.  If null, it will be the same as
-    * serverHost resolution.  This would need to be explicitly specified if
-    * the server is operating behind NAT; i.e. when the server's subnet IP
-    * address is <i>not</i> the same as its address outside the subnet.
-    * @throws UnknownHostException If the either host address/name cannot be
-    * resolved, or is invalid
+    * The constructor announces the cajo object on the cajo IANA standard
+    * address and port. <i><u>Note</u>:</i> invoke
+    * gnu.cajo.invoke.Remote.config, and construct a
+    * gnu.cajo.utils.CodebaseServer if needed, to configure the JVM
+    * <i>before</i> invoking this constructor.
     * @throws IOException If the startup announcement datagram packet could
     * not be sent
     */
-   public Cajo(int port, String serverHost, String clientHost)
-      throws java.net.UnknownHostException, IOException {
-      Remote.config(serverHost, port, clientHost, port);
+   public Cajo() throws IOException {
+      ItemServer.bind(registrar, "registrar");
       multicast = new Multicast("224.0.23.162", 1198);
       multicast.listen(registrar);
       multicast.announce(registrar, 32);
-      ItemServer.bind(registrar, "registrar");
    }
    /**
     * This method makes any object's public methods, whether instance or
