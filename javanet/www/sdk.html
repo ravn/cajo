@@ -1,0 +1,394 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN""http://www.w3.org/TR/html4/loose.dtd">
+<html>
+
+<head>
+   <title>The cajo project</title>
+   <meta name="Keywords" content="cajo, rmi, java, distributed computing,
+      Transparent Distributed Computing, network computing, cajo project,
+      cajo framework, wwvm, John Catherino">
+   <meta name="Description" content="Cajo Distributed Application Framework">
+   <meta name="Author" content="John Catherino">
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <link href="ventro/css.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+
+<table width="98%" border="0" cellpadding="0" cellspacing="0">
+   <tr>
+      <table width="100%" height="67"  border="0" cellpadding="4" cellspacing="0">
+         <tr>
+            <td background="ventro/vert_logobarbg.gif">
+               <table width="100%" height="47"  border="0" cellpadding="4" cellspacing="0">
+                  <tr><br>
+                     <td width="85" valign="bottom">
+                        <div align="right">
+                           <img src="ventro/cajologo.gif" alt="the cajo project"
+                              title="cajo: free dynamic transparent distributed computing"
+                              width="61" height="34">
+                           <img src="ventro/blank.gif" width="6" height="8">
+                        </div>
+                     </td>
+                     <td width="10"><img src="ventro/seperatorline.gif" width="1" height="38"></td>
+                     <td style="vertical-align:middle">
+                        <span class="style8">
+                           <font size="+1">
+                              <b>Free, simple, powerful: Transparent Distributed Computing</b>
+                           </font>
+                        </span>
+                     </td>
+                  </tr>
+               </table>
+            </td>
+         </tr>
+      </table>
+
+
+<!-- page body: -->
+
+      <table border="0" cellspacing="0" cellpadding="4">
+         <tr>
+            <td height="331" valign="top" bgcolor="#FFFFFF">
+               <td width="100%" valign="top" bgcolor="#FFFFFF">
+                  <table width="100%" border="0" cellpadding="4" cellspacing="0" bgcolor="#FFFFFF">
+                     <tr>
+                        <td>
+                           <table width="100%" height="35" border="0" cellpadding="0" cellspacing="0">
+                              <tr>
+                                 <td width="2%" background="ventro/bar_bg.gif"><img src="ventro/arrowed.gif" width="30" height="35"></td>
+                                 <td width="100%" background="ventro/bar_bg.gif">
+                                    <table width="100%" height="31" border="0" cellpadding="0" cellspacing="0">
+                                       <tr>
+                                          <td style="vertical-align:middle">
+                                             <span class="style8 style12">
+<!-- main page title bar -->                    <div align="left">Overview of the cajo SDK</div>
+                                             </span>
+                                          </td>
+                                       </tr>
+                                    </table>
+                                 </td>
+                                 <td width="3%"><img src="ventro/bar_Right.gif" width="10" height="35"></td>
+                              </tr>
+                           </table>
+                           <table width="95%" height="96" border="0" cellpadding="9" cellspacing="0">
+                              <tr>
+
+                                 <td valign="top">
+                                    <span class="spacing style4 style7 style9">
+                                      The cajo SDK provides a small yet detailed example, to easily develop Rich
+                                      Internet Applications. These can be launched as full-screen Applets, and
+                                      via WebStart. It also provides a powerful approach to dynamic distributed
+                                      computing. The SDK is intended as a quick yet comprehensive introduction
+                                      into the application of cajo.<br><br>
+
+                                      The simple architecture of the SDK is the foundation; no detailed knowledge
+                                      of the inner workings of the cajo library is necessary, as it makes no
+                                      significant impact on the source code. Everything is plain-old Java, no
+                                      special tools are needed, nor IDE plug-ins, nor other 3rd party libraries;
+                                      not even a JEE container. The remoted Graphical User Interfaces are just
+                                      plain-old JComponents: your Swing learning investment is preserved.
+                                    </span>
+                                 </td>
+                              </tr>
+                           </table></td>
+                        </tr>
+                     </table>
+
+<!-- begin regular section -->
+
+            <table height="35" border="0" align="center" cellpadding="0" cellspacing="0">
+               <tr>
+                  <td width="2%" background="ventro/bar_bg.gif"><img src="ventro/arrowed.gif" width="30" height="35"></td>
+                  <td valign="top" background="ventro/bar_bg.gif">
+                     <table width="100%" height="31" border="0" cellpadding="0" cellspacing="0">
+                        <tr>
+                           <td style="vertical-align:middle">
+                              <span class="style8"><b>Architectural Overview</b></span>
+                           </td>
+                        </tr>
+                     </table>
+                  </td>
+                  <td width="3%"><img src="ventro/bar_Right.gif" width="10" height="35"></td>
+               </tr>
+            </table>
+            <table width="98%" height="96" border="0" align="center" cellpadding="9" cellspacing="0">
+               <tr>
+                  <td valign="top">
+                     <span class="spacing style4 style7 style9">
+                        The are three fundamental components:<ol>
+
+                        <li><b>Services</b><br>
+                        A service is simply a Java object, all of whose public methods are callable,
+                        from other remote objects. No special annotations are needed, nor XML files,
+                        it is fully transparent. A service object furnishes interesting functionality
+                        that another service can use. A service may even use other remote service
+                        objects, to fulfill its functionality. A service is used to distribute
+                        functional modules across multiple JVMs.<br><br>
+
+                        <li><b>Proxies</b><br>
+                        A proxy is an object <i>sent to</i> a remote service, to operate within its
+                        JVM. A proxy arrives with a remote reference to its sending service, and a
+                        local reference to its receiving service. The sending service, in turn,
+                        receives a remote reference to its proxy. A proxy is used to minimise network
+                        traffic, and improve performance; particularly when a lot of invocations are
+                        needed on the receiving object, or the data sets being manipulated at the
+                        receiver are large. A service can provide as many types of proxies as it
+                        wishes.<br><br>
+
+                        <li><b>Controllers</b><br>
+                        A controller is an object <i>requested by</i> a remote service, to operate
+                        within its JVM. In essence it is the logical inverse of a proxy. The
+                        controller arrives with a remote reference to its sending service, and has no
+                        reference to its receiving object; as it is a servant. A controller is used
+                        to minimise network network traffic, and improve performance; particularly
+                        when a lot of invocations are needed on the sending object, or a lot of
+                        processing unique to the receiver is necessary. A service can furnish as many
+                        controllers as it needs, but is typically one.<br><br>
+
+                        In both cases, the receiving service views a proxy or controller as an
+                        local <i>"intelligent stand-in"</i> for the sending service. A service can,
+                        if necessary, interact with a remote service directly; without using proxies
+                        or controllers.
+
+<blockquote><pre>
+Sending Service <--------------> Proxy <--> Receiving Service <i>(sent to)</i>
+Sending Service <---------> Controller <--> Receiving Service <i>(requested by)</i>
+</pre></blockquote>
+
+                        </ol><b>Ancillary components</b><ul>
+
+                        <li> A Server is a Java object furnishing one or more services.<br>
+                        <li> A View is an optional JComponent, furnished by a controller. It allows
+                        users, to interact with a service, in a controlled manner.<br>
+                        <li> A <a href=https://cajo.dev.java.net/files/documents/974/66686/Cajo.html>
+                        cajo object</a> is provided to all components, this allows them to look up
+                        services needed for assistance <a href=https://www.dev.java.net/files/documents/974/64714/Grail.html>
+                        dynamically</a>, by interface.
+                     </span>
+                  </td>
+               </tr>
+            </table>
+<!-- end regular section -->
+
+<!-- begin regular section -->
+   <table height="35" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+         <td width="2%" background="ventro/bar_bg.gif"><img src="ventro/arrowed.gif" width="30" height="35"></td>
+         <td valign="top" background="ventro/bar_bg.gif">
+            <table width="100%" height="31" border="0" cellpadding="0" cellspacing="0">
+               <tr>
+                  <td style="vertical-align:middle">
+                     <span class="style8"><b>Class Diagramme</b></span>
+                  </td>
+               </tr>
+            </table>
+         </td>
+         <td width="3%"><img src="ventro/bar_Right.gif" width="10" height="35"></td>
+      </tr>
+   </table>
+   <table width="98%" border="0" align="center" cellpadding="9" cellspacing="0">
+      <tr>
+         <td valign="top">
+            <span class="spacing style4 style7 style9">
+               The following is a schematic of the cajo SDK architecture:<br><br>
+
+               <center><img src="https://cajo.dev.java.net/files/documents/974/151769/SDK.png"
+               alt="cajo sdk architecture model" title="cajo SDK class diagramme"></center>
+            </span>
+         </td>
+      </tr>
+   </table>
+<!-- end regular section -->
+
+<!-- begin regular section -->
+   <table height="35" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+         <td width="2%" background="ventro/bar_bg.gif"><img src="ventro/arrowed.gif" width="30" height="35"></td>
+         <td valign="top" background="ventro/bar_bg.gif">
+            <table width="100%" height="31" border="0" cellpadding="0" cellspacing="0">
+               <tr>
+                  <td style="vertical-align:middle">
+                     <span class="style8"><b>Source Code Examples</b></span>
+                  </td>
+               </tr>
+            </table>
+         </td>
+         <td width="3%"><img src="ventro/bar_Right.gif" width="10" height="35"></td>
+      </tr>
+   </table>
+   <table width="98%" border="0" align="center" cellpadding="9" cellspacing="0">
+      <tr>
+         <td valign="top">
+            <span class="spacing style4 style7 style9">
+               <b>Example Service:</b>
+
+<blockquote><tt><pre>
+package service;
+
+public class Service extends util.AbstractService implements IService {
+   public Service(String name) throws Exception {
+      super("controller.Controller", name); // service specific controller
+      // use cajo member object to connect to other services as needed
+   }
+   public String foo(String bar) { // service public method
+      if (bar == null) throw new NullPointerException("null arg");
+      return "foo invocation completed for " + bar;
+   }
+}
+</tt></pre></blockquote>
+
+               <b>Example Proxy:</b>
+
+<blockquote><tt><pre>
+package proxy;
+
+public class Proxy extends util.AbstractProxy implements IProxy {
+   // This is the interface on which the proxy will asynchronously
+   // communicate with its Remote service.
+   private final HomeService homeProxy;
+   // This is the interface on which the proxy will communicate with
+   // its Local service.
+   private LocalService localProxy;
+   // This is the proxy's interface to its Remote service.
+   private interface HomeService {
+      String foo(String bar);
+   }
+   // This is the proxy's interface to its Local service.
+   private interface LocalService {
+      String baz(String bar);
+   }
+   public Proxy(Object homeService) {
+      super(homeService);
+      homeProxy = proxy(homeService, HomeService.class);
+   }
+   public void init(Object localService, gnu.cajo.Cajo cajo) {
+      super.init(localService, cajo);
+      localProxy = proxy(localService, LocalService.class);
+      System.out.println("Proxy arrived at service!");
+      // use cajo object to connect to other services as needed
+   }
+   // This method is invoked by the remote service
+   public String bar(String baz) { return localProxy.baz(baz); }
+}
+</tt></pre></blockquote>
+
+               <b>Example Controller:</b>
+
+<blockquote><tt><pre>
+package controller;
+
+public class Controller extends util.AbstractController implements IController {
+   // This is the interface on which the controller will communicate with
+   // its remote service asynchronously.
+   private final Service serviceProxy;
+   // This defines the controller's interface to its remote service.
+   private interface Service {
+      Object foo(String bar); // this method is just an example
+   }
+   public Controller(Object service) {
+      super(service);
+      serviceProxy = proxy(Service.class);
+   }
+   public void init(gnu.cajo.Cajo cajo) {
+      super.init(cajo);
+      System.out.println("Controller arrived at service!");
+      // use cajo object to connect to other services as needed
+   }
+   public util.AbstractView getView() {
+      view = new view.View(); // controller specific view
+      String result = baz("hello"); // for illustration
+      ((View)view).center.display(result); // show in view
+      // attach controller specific view action listeners here...
+      return view;
+   }
+   public String baz(String bar) { // call remote service function
+      return serviceProxy.foo(bar).toString();
+   }
+}
+</tt></pre></blockquote>
+            </span>
+         </td>
+      </tr>
+   </table>
+<!-- end regular section -->
+
+<!-- begin regular section -->
+   <table height="35" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+         <td width="2%" background="ventro/bar_bg.gif"><img src="ventro/arrowed.gif" width="30" height="35"></td>
+         <td valign="top" background="ventro/bar_bg.gif">
+            <table width="100%" height="31" border="0" cellpadding="0" cellspacing="0">
+               <tr>
+                  <td style="vertical-align:middle">
+                     <span class="style8"><b>Conclusion</b></span>
+                  </td>
+               </tr>
+            </table>
+         </td>
+         <td width="3%"><img src="ventro/bar_Right.gif" width="10" height="35"></td>
+      </tr>
+   </table>
+   <table width="98%" border="0" align="center" cellpadding="9" cellspacing="0">
+      <tr>
+         <td valign="top">
+            <span class="spacing style4 style7 style9">
+               <b>Security Topic:</b><br>
+               Accepting the mobile code of proxies and controllers can be risky. A rogue
+               object could hobble or even crash the server JVM simply by allocating lots
+               of memory for instance. For this reason acceptance of proxies and controllers
+               is disabled by default. It should go without saying that an internet facing
+               server should <u><i>not</i></u> accept mobile code. However inside the
+               firewall, the other servers can enable it by calling a single line of code.
+               <i>(An example of this is included in the SDK)</i><br><br>
+
+               The cajo framework is just as intuitive and easy to use to as it looks.
+               All it takes to get started is to download the very small <a href=https://cajo.dev.java.net/sdk.zip>
+               (108kB) SDK</a>. The example source is public domain, and it compiles and
+               runs right out of the box. The generated javadoc provides extremely detailed
+               comments. Modify the example classes as you wish, and you can have your own
+               ideas up and running quickly.
+            </span>
+         </td>
+      </tr>
+   </table>
+<!-- end regular section -->
+
+<!-- footer: -->
+   <table width="95%" height="56" border="0" align="center" cellpadding="9" cellspacing="0">
+      <tr>
+         <td valign="top">
+            <div align="center">
+               <hr width=90%">
+               <span class="spacing style4 style7 style9">
+                  The goal of the cajo SDK is to show how much is possible, so simply
+               </span>
+            </div>
+         </td>
+      </tr>
+   </table><br>
+
+   <table width="98%" height="35" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+         <td width="2%" background="ventro/bar_bg.gif"><img src="ventro/arrowed.gif" width="30" height="35"></td>
+         <td width="95%" valign="top" background="ventro/bar_bg.gif">
+            <table width="100%" height="31" border="0" cellpadding="0" cellspacing="0">
+               <tr>
+                  <td style="vertical-align:middle">
+                     <span class="style11">&copy; 2004 John Catherino, <a href=license.html>GNU FDL</a></span>
+                  </td>
+                  <td width="53%"><div align="right"></div></td>
+               </tr>
+            </table>
+         </td>
+               <td width="3%"><img src="ventro/bar_Right.gif" width="10" height="35"></td>
+            </tr>
+         </table>
+      </td>
+   </tr>
+   </table>
+         </td>
+      </tr>
+   </table>
+
+</body>
+</html>
