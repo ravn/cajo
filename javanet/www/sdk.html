@@ -88,7 +88,7 @@
                                       not even a JEE container. The remoted Graphical User Interfaces are just
                                       plain-old JComponents: your Swing learning investment is preserved. The
                                       cajo library takes care of presenting them in the browser, or as remote
-                                      desktop application.
+                                      desktop applications.
                                     </span>
                                  </td>
                               </tr>
@@ -136,7 +136,7 @@
                         traffic, and improve performance; particularly when a lot of invocations are
                         needed on the receiving object, or the data sets being manipulated at the
                         receiver are large. A service can provide as many types of proxies as it
-                        wishes.<br><br>
+                        wishes, including none.<br><br>
 
                         <li><b>Controllers</b><br>
                         A Controller is an object <i>requested by</i> a remote service, to operate
@@ -146,7 +146,7 @@
                         to minimise network network traffic, and improve performance; particularly
                         when a lot of invocations are needed on the sending object, or a lot of
                         processing unique to the receiver is necessary. A service can furnish as many
-                        controllers as it needs, but is typically one.<br><br>
+                        controllers as it wishes, including none, but typically only one.<br><br>
 
                         In both cases, the receiving service views a proxy or controller as a
                         local <i>"intelligent stand-in"</i> for the sending service. A service can,
@@ -158,12 +158,13 @@ Sending Service <--------------> Proxy <--> Receiving Service <i>(sent to)</i>
 Sending Service <---------> Controller <--> Receiving Service <i>(requested by)</i>
 </pre></blockquote>
 
-                        </ol><b>Ancillary components</b><ul>
+                        </ol>Ancillary components:<ul>
 
-                        <li> A Server is a Java object furnishing one or more services.<br>
-                        <li> A View is an optional JComponent, furnished by a controller. It allows
-                        users, to interact with a service, in a controlled manner.<br>
-                        <li> A <a href=https://cajo.dev.java.net/files/documents/974/66686/Cajo.html>
+                        <li> <b>Server</b> A Java object furnishing one or more services.<br>
+                        <li> <b>View</b> A JComponent furnished by a controller. It allows users
+                        to interact with a service, in a controlled manner.</ul>
+
+                        A <a href=http://weblogs.java.net/blog/cajo/archive/2007/09/simple_interjvm.html>
                         cajo object</a> is provided to all components, this allows them to look up
                         services needed for assistance <a href=https://www.dev.java.net/files/documents/974/64714/Grail.html>
                         dynamically</a>, by interface.
@@ -339,8 +340,8 @@ public class Controller extends util.AbstractController implements IController {
                Accepting the mobile code of proxies and controllers can be risky. A rogue
                object could hobble or even crash the server JVM simply by allocating lots
                of memory for instance. For this reason acceptance of proxies and controllers
-               is disabled by default. It should go without saying that an internet facing
-               server should <u><i>not</i></u> accept mobile code. However inside the
+               is <i>disabled</i> by default. It should go without saying that an internet
+               facing server should <u><i>not</i></u> accept mobile code. However inside the
                firewall, the other servers can enable it by calling a single line of code.
                <i>(An example of this is included in the SDK)</i><br><br>
 
@@ -348,8 +349,8 @@ public class Controller extends util.AbstractController implements IController {
                All it takes to get started is to download the very small <a href=https://cajo.dev.java.net/sdk.zip>
                (~100kB) SDK</a>. The example source is public domain, and compiles and runs
                right out of the box. The generated javadoc provides extremely detailed
-               comments. Modify the example classes as you wish, and you can have your own
-               ideas up and running quickly.
+               comments. Take the SDK as a starting point; modify the example classes as
+               you wish, and you can have your own system up and running quickly.
             </span>
          </td>
       </tr>
