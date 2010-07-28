@@ -259,7 +259,7 @@ public class Proxy extends util.AbstractProxy implements IProxy {
    }
    // This is the proxy's interface to its receiving service.
    private interface LocalService {
-      String baz(String bar);
+      String baz(String foo);
    }
    public Proxy(Object homeService) {
       super(homeService);
