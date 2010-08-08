@@ -161,7 +161,7 @@ public class MonitorItem implements Invoke {
          }
          Runtime rt = Runtime.getRuntime();
          int freeMemory =
-            (int)((rt.freeMemory() * 100) / rt.totalMemory());
+            100 - (int)(rt.freeMemory() * 100 / rt.totalMemory());
          ObjectOutputStream oos =
              os instanceof ObjectOutputStream ? (ObjectOutputStream) os : null;
          PrintStream ps = os instanceof PrintStream ? (PrintStream)  os : null;
