@@ -85,7 +85,7 @@
                                       of the inner workings of the cajo library is necessary, as it makes no
                                       significant impact on the source code. Everything is plain-old Java, no
                                       special tools are needed, nor IDE plug-ins, nor other 3rd party libraries;
-                                      not even a JEE container. The remoted Graphical User Interfaces are just
+                                      not even a servlet container. The remoted Graphical User Interfaces are just
                                       plain-old JComponents: your Swing learning investment is preserved. The
                                       cajo library takes care of presenting them in the browser, or as remote
                                       desktop applications.
@@ -154,8 +154,8 @@
                         or controllers.
 
 <blockquote><pre>
-Sending Service <--------------> Proxy <--> Receiving Service <i>(sent to)</i>
-Sending Service <---------> Controller <--> Receiving Service <i>(requested by)</i>
+Sending Service <--------------> Proxy ---> Receiving Service <i>(sent to)</i>
+Sending Service <---------- Controller <--- Receiving Service <i>(requested by)</i>
 </pre></blockquote>
 
                         </ol>Ancillary components:<ul>
