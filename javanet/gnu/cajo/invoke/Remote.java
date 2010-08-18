@@ -500,12 +500,7 @@ public final class Remote extends UnicastRemoteObject
             }
          }
       }
-      methods = (HashMap)cache.get(item.getClass());
-      if (methods != null) { // try quick exit
-         HashMap arguments = (HashMap)methods.get(method);
-         if (arguments != null && arguments.get(args) != null) return best;
-      }
-      synchronized(cache) { // update lookup cache
+      synchronized(cache) { // cache lookup
          methods = (HashMap)cache.get(item.getClass());
          if (methods == null) {
             methods = new HashMap();
