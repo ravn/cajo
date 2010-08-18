@@ -225,7 +225,7 @@ public final class Remote extends UnicastRemoteObject
       String clientHost, int clientPort) {
       Remote.defaultRCSF = new RCSF(clientHost, clientPort);
       Remote.defaultRSSF = new RSSF(serverHost, serverPort);
-      Remote.defaultRSSF.rcsf = Remote.defaultRCSF;
+      Remote.defaultRSSF.rcsf  = Remote.defaultRCSF;
       Remote.defaultServerHost = serverHost;
       Remote.defaultClientHost = clientHost;
       if (clientHost != null) try { // won't work if running as applet
@@ -460,7 +460,7 @@ public final class Remote extends UnicastRemoteObject
       Object item, String method, Class[] args) {
       if (args == null) args = NULL;
       HashMap methods = (HashMap)cache.get(item.getClass());
-      if (methods != null) { // item already chached?
+      if (methods != null) { // best method already chached?
          HashMap arguments = (HashMap)methods.get(method);
          if (arguments != null) { // method already chached?
             Object[] argumentSet = arguments.keySet().toArray();
@@ -500,7 +500,12 @@ public final class Remote extends UnicastRemoteObject
             }
          }
       }
-      synchronized(cache) { // update lookup cache, if necessary...
+      methods = (HashMap)cache.get(item.getClass());
+      if (methods != null) { // try quick exit
+         HashMap arguments = (HashMap)methods.get(method);
+         if (arguments != null && arguments.get(args) != null) return best;
+      }
+      synchronized(cache) { // update lookup cache
          methods = (HashMap)cache.get(item.getClass());
          if (methods == null) {
             methods = new HashMap();
@@ -511,7 +516,7 @@ public final class Remote extends UnicastRemoteObject
             arguments = new HashMap();
             methods.put(method, arguments);
          }
-         if (arguments.get(args) == null) arguments.put(args, best);
+         arguments.put(args, best);
       }
       return best;
    }
