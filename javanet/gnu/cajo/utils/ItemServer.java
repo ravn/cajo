@@ -158,7 +158,8 @@ public class ItemServer {
    * machine, or remote, it can even be a proxy from a remote object, if proxy
    * {@link #acceptProxies acceptance} was enabled for this VM.
    * @param name The name under which to bind the object reference in the
-   * local rmiregistry.
+   * a local rmiregistry. If an object is already bound under this name, this
+   * object will replace it.
    * @return A remoted reference to the object within the context of this VM's
    * settings.
    * @throws IOException For network configuration related issues.
@@ -195,7 +196,9 @@ public class ItemServer {
    * is because the system rmi codebase property is typically set by the
    * master server, to serve its own proxy jar file, when it has one. There
    * can be only one codebase for a given JVM instance.
-   * @param name The name to bind the loaded server object in the registry.
+   * @param name The name under which to bind the object reference in the
+   * a local rmiregistry. If an object is already bound under this name, this
+   * object will replace it.
    * @param item The name of the class from which to instantiate the object.
    * Example: myclass.mypackage.MyServerObject
    * @param file The absolute/relative path/filename where to find the jar
@@ -234,7 +237,8 @@ public class ItemServer {
    * machine, or remote, it can even be a proxy from a remote object, if proxy
    * {@link #acceptProxies acceptance} was enabled for this VM.
    * @param name The name under which to bind the object reference in the
-   * local rmiregistry.
+   * a local rmiregistry. If an object is already bound under this name, this
+   * object will replace it.
    * @param proxy The proxy object to be sent to requesting clients, it is
    * normally encased in a java.rmi.MarshalledObject, for efficiency. If it
    * is not when passed in, it will be, automatically.
@@ -261,7 +265,8 @@ public class ItemServer {
    * machine, or remote, it can even be a proxy from a remote object, if proxy
    * {@link #acceptProxies acceptance} was enabled for this VM.
    * @param name The name under which to bind the object reference in the
-   * a local rmiregistry.
+   * a local rmiregistry. If an object is already bound under this name, this
+   * object will replace it.
    * @param proxy The proxy object to be sent to requesting clients, it is
    * normally encased in a java.rmi.MarshalledObject, for efficiency. If it
    * is not when passed in, it will be, automatically.
@@ -313,6 +318,18 @@ public class ItemServer {
         }
      }
      return handle;
+  }
+  /**
+   * This method makes a bound object unable to be found by any new clients.
+   * All existing remote references will remain valid. To make the object
+   * available to new clients again, the bind operation must be called. The
+   * operation is idempotent; i.e. if the name has already been unbound, or
+   * has never been bound, it will have no affect.
+   * @param name The name under which the object can be found on this server
+   */
+  public static void unbind(String name) {
+     try { if (registry != null) registry.unbind(name); }
+     catch(Exception x) {}
   }
   /**
    * The application loads either a zipped marshalled object (zedmob) from a
