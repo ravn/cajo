@@ -1,17 +1,23 @@
 package gnu.cajo.utils.extra;
 
 import gnu.cajo.invoke.*;
-import java.lang.reflect.*;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.lang.reflect.InvocationHandler;
 import java.io.IOException;
 import java.io.Serializable;
-
 import java.rmi.RemoteException;
 import java.rmi.NotBoundException;
 import java.net.MalformedURLException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.CancellationException;
 import java.lang.reflect.InvocationTargetException;
 
 /*
- * Item Transparent Dynamic Proxy (requires JRE 1.3+)
+ * Item Transparent Dynamic Proxy (requires JRE 1.5+)
  * Copyright (c) 2005 John Catherino
  * The cajo project: https://cajo.dev.java.net
  *
@@ -34,7 +40,7 @@ import java.lang.reflect.InvocationTargetException;
  */
 
 /**
- * This class creates an object, representing a server item. The returned
+ * This class creates an object, representing a service object. The returned
  * object will implement a list of interfaces defined by the client. The
  * interfaces are completely independent of interfaces the server object
  * implements, if any; they are simply logical groupings, of interest solely
@@ -42,7 +48,7 @@ import java.lang.reflect.InvocationTargetException;
  * throw <tt>java.lang.Exception</tt>: However, the Java dynamic proxy
  * mechanism very <i>dubiously</i> allows this to be optional.
  *
- * <p>Clients can dynamically create an item wrapper classes implementing
+ * <p>Clients can dynamically create object proxy objects implementing
  * <i>any</i> combination of interfaces. Combining interfaces provides a very
  * important second order of abstraction. Whereas an interface is considered
  * to be a grouping of functionality; the <i>'purpose'</i> of an item, could
@@ -52,8 +58,7 @@ import java.lang.reflect.InvocationTargetException;
  *
  * <p>The proxy instances returned from this class are serialisable. Proxies
  * can be persisted to storage for later use, and passed to other JVMs over
- * the network. However, the item referenced by the proxy must also be
- * serialisable necessarily, in order for this feature to work.
+ * the network.
  *
  * <p>If an item can be best represented with a single interface, it might be
  * well to consider using a {@link Wrapper Wrapper} class instead. It is
@@ -65,13 +70,64 @@ import java.lang.reflect.InvocationTargetException;
  * discussion</a> in the cajo project Developer's forum, with project member
  * Bharavi Gade, caused me to reconsider.
  *
- * @version 1.1, 11-Nov-05 Support multiple interfaces
+ * <p><b>Update:</b> For users of JRE 1.5+<br>
+ * It you wish to invoke timeconsuming methods asynchronously, simply
+ * declare that the method returns a java.util.Concurrent.Future of the
+ * required return type. The invocation will return immediately, and the
+ * future will contain the result when the invocation is completed. You can
+ * then peridocally check to see if it is done, then extract the result.
+ *
  * @author John Catherino
  */
 public final class TransparentItemProxy implements
    InvocationHandler, Serializable {
    private static final long serialVersionUID = 3L;
    private static final Object NULL[] = {};
+   private static final class ProxyFuture implements Future { // async helper
+      private Thread thread;
+      private Object result;
+      private Exception exception;
+      private boolean cancelled, done;
+      private ProxyFuture setFuture(Thread thread) {
+         this.thread = thread;
+         thread.start();
+         return this;
+      }
+      public boolean isCancelled() { return cancelled; }
+      public boolean isDone() { return done; }
+      public boolean cancel(boolean interrupt) {
+         if (cancelled || done) return false;
+         if (interrupt) thread.interrupt();
+         cancelled = true;
+         return true;
+      }
+      public Object get() throws InterruptedException, ExecutionException,
+         CancellationException {
+         if (!done) try { thread.join(); }
+         catch(InterruptedException x) {
+            cancelled = true;
+            throw x;
+         }
+         if (exception != null) throw new ExecutionException(exception);
+         if (cancelled) throw new CancellationException();
+         return result;
+      }
+      public Object get(long timeout, TimeUnit unit) throws
+         InterruptedException, ExecutionException, TimeoutException {
+         if (!done) try { // cant use switch, compiling under v1.2
+            if (unit == TimeUnit.NANOSECONDS)  thread.join(0L, (int)timeout);
+            else if (unit == TimeUnit.MICROSECONDS)
+               thread.join(0L, (int)timeout * 10);
+            else thread.join(unit.toMillis(timeout));
+         } catch(InterruptedException x) {
+            cancelled = true;
+            throw x;
+         }
+         if (exception != null) throw new ExecutionException(exception);
+         if (!done) throw new TimeoutException();
+         return result;
+      }
+   }
    private Object item;
    private void writeObject(java.io.ObjectOutputStream out)
       throws java.io.IOException {
@@ -88,15 +144,15 @@ public final class TransparentItemProxy implements
     * It is expected that this object will implement a method of the following
     * signature:<p>
     * <blockquote><tt>
-    * public Object handle(Object item, String method, Object args[], Throwable t)
-    * throws Throwable; </tt></blockquote><p>
+    * public Object handle(Object item, String method, Object args[] Throwable t)
+    * throws Exception; </tt></blockquote><p>
     * The first arguments are as follows:<ul>
     * <li>the remote item reference on which the method was being invoked
-    * <li>the method that was called on the remote object
+    * <li>the name of the method that was called on the remote object
     * <li>the arguments that were provided in the method call
     * <li>the error that resulted from the invocation</ul>
     * The handler will either successfully recover from the error, and return
-    * the appropriate result, or throw a hopefully more descriptive error.
+    * the appropriate result, or throw a hopefully more descriptive exception.
     */
    public static Object handler;
    /**
@@ -116,13 +172,10 @@ public final class TransparentItemProxy implements
     * on the server item.
     * @throws Exception If the server item rejected the invocation, for
     * application specific reasons.
-    * @throws Throwable For some <i>very</i> unlikely reasons, not outlined
-    * above. <i>(required, sorry)</i>
     */
-   public Object invoke(Object proxy, Method method, Object args[])
+   public Object invoke(Object proxy, Method method, final Object args[])
       throws Throwable {
-      String name = method.getName();
-      if (args == null) args = NULL;
+      final String name = method.getName();
       if (args.length == 0) {
          if (name.equals("toString")) { // attempt toString
             StringBuffer sb = new StringBuffer(toString());
@@ -152,12 +205,27 @@ public final class TransparentItemProxy implements
              args[2] instanceof Integer))
                 throw new IllegalMonitorStateException(
                    "Cannot wait on transparent proxy object");
-      try { // otherwise invoke the method on the proxied object
-         return Remote.invoke(item, name, args.length == 0 ? null : args);
-      } catch(Throwable t) { // invocation error, handle if possible
-         if (handler != null) return Remote.invoke(handler, "handle",
-            new Object[] { item, method, args, t });
-         throw t; // uncaught exception, rare but typically serious...
+      if (Future.class.isAssignableFrom(method.getReturnType())) {
+         final ProxyFuture future = new ProxyFuture();
+         return future.setFuture(new Thread() {
+            public void run() {
+               try { future.result = Remote.invoke(item, name, args); }
+               catch(Throwable t) {
+                  if (handler != null) try { // handle if possible
+                     future.result = Remote.invoke(handler,
+                        "handle", new Object[] { item, name, args, t });
+                  } catch(Exception x) { future.exception = x; }
+                  else future.exception = t instanceof Exception ?
+                     (Exception)t : new Exception(t);
+               } finally { future.done = true; }
+            }
+         });
+      } else try { return Remote.invoke(item, name, args); }
+      catch(Throwable t) { // invocation error, handle if possible
+         if (handler == null) throw t instanceof Exception ?
+            (Exception)t : new Exception(t);
+         return Remote.invoke(
+            handler, "handle", new Object[] { item, name, args, t });
       }
    }
    /**
