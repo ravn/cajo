@@ -72,16 +72,17 @@ import java.lang.reflect.InvocationTargetException;
  *
  * <p><b>Update:</b> For users of JRE 1.5+<br>
  * It you wish to invoke time consuming methods asynchronously, simply
- * declare that the method returns a java.util.Concurrent.Future of the
- * required return type. The invocation will return immediately, and the
- * future will contain the result when the invocation is completed. You can
- * then peridocally check to see if it is done, then extract the result.
+ * declare that the method returns a <a href=http://download.oracle.com/javase/6/docs/api/java/util/concurrent/Future.html>
+ * java.util.Concurrent.Future of the required return type. The invocation
+ * will return immediately, and the future will contain the result when the
+ * invocation is completed. You can then peridocally check to see if it is
+ * done, and extract the result.
  *
  * @author John Catherino
  */
 public final class TransparentItemProxy implements
    InvocationHandler, Serializable {
-   private static final long serialVersionUID = 3L;
+   private static final long serialVersionUID = 4L;
    private static final Object NULL[] = {};
    private static final class ProxyFuture implements Future { // async helper
       private Thread thread;
@@ -111,8 +112,8 @@ public final class TransparentItemProxy implements
          if (exception != null) throw new ExecutionException(exception);
          return result;
       }
-      public Object get(long timeout, TimeUnit unit) throws
-         InterruptedException, ExecutionException, TimeoutException {
+      public Object get(long timeout, TimeUnit unit)
+         throws InterruptedException, ExecutionException, TimeoutException {
          if (!done) try {
             if (unit == TimeUnit.NANOSECONDS)  thread.join(0L, (int)timeout);
             else if (unit == TimeUnit.MICROSECONDS)
@@ -200,11 +201,11 @@ public final class TransparentItemProxy implements
             Boolean.TRUE : Boolean.FALSE;
       if (args.length < 4 && name.equals("wait"))
          if (args.length < 1 ||
-             args[0] instanceof Long  && (args.length < 2 ? true :
-             args[1] instanceof Long) && (args.length < 3 ? true :
-             args[2] instanceof Integer))
-                throw new IllegalMonitorStateException(
-                   "Cannot wait on transparent proxy object");
+            args[0] instanceof Long  && (args.length < 2 ? true :
+            args[1] instanceof Long) && (args.length < 3 ? true :
+            args[2] instanceof Integer))
+               throw new IllegalMonitorStateException(
+                  "Cannot wait on transparent proxy object");
       if (Future.class.isAssignableFrom(method.getReturnType())) {
          final ProxyFuture future = new ProxyFuture();
          return future.setThread(new Thread() {
