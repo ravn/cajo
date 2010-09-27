@@ -1,6 +1,6 @@
 package gnu.cajo.utils.extra;
 
-import gnu.cajo.invoke.*;
+import gnu.cajo.invoke.Remote;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.lang.reflect.InvocationHandler;
@@ -71,7 +71,7 @@ import java.lang.reflect.InvocationTargetException;
  * Bharavi Gade, caused me to reconsider.
  *
  * <p><b>Update:</b> For users of JRE 1.5+<br>
- * It you wish to invoke timeconsuming methods asynchronously, simply
+ * It you wish to invoke time consuming methods asynchronously, simply
  * declare that the method returns a java.util.Concurrent.Future of the
  * required return type. The invocation will return immediately, and the
  * future will contain the result when the invocation is completed. You can
@@ -88,7 +88,7 @@ public final class TransparentItemProxy implements
       private Object result;
       private Exception exception;
       private boolean cancelled, done;
-      private ProxyFuture setFuture(Thread thread) {
+      private ProxyFuture setThread(Thread thread) {
          this.thread = thread;
          thread.start();
          return this;
@@ -101,20 +101,19 @@ public final class TransparentItemProxy implements
          cancelled = true;
          return true;
       }
-      public Object get() throws InterruptedException, ExecutionException,
-         CancellationException {
+      public Object get() throws InterruptedException, ExecutionException {
          if (!done) try { thread.join(); }
          catch(InterruptedException x) {
             cancelled = true;
             throw x;
          }
-         if (exception != null) throw new ExecutionException(exception);
          if (cancelled) throw new CancellationException();
+         if (exception != null) throw new ExecutionException(exception);
          return result;
       }
       public Object get(long timeout, TimeUnit unit) throws
          InterruptedException, ExecutionException, TimeoutException {
-         if (!done) try { // cant use switch, compiling under v1.2
+         if (!done) try {
             if (unit == TimeUnit.NANOSECONDS)  thread.join(0L, (int)timeout);
             else if (unit == TimeUnit.MICROSECONDS)
                thread.join(0L, (int)timeout * 10);
@@ -123,8 +122,9 @@ public final class TransparentItemProxy implements
             cancelled = true;
             throw x;
          }
-         if (exception != null) throw new ExecutionException(exception);
+         if (cancelled) throw new CancellationException();
          if (!done) throw new TimeoutException();
+         if (exception != null) throw new ExecutionException(exception);
          return result;
       }
    }
@@ -207,11 +207,11 @@ public final class TransparentItemProxy implements
                    "Cannot wait on transparent proxy object");
       if (Future.class.isAssignableFrom(method.getReturnType())) {
          final ProxyFuture future = new ProxyFuture();
-         return future.setFuture(new Thread() {
+         return future.setThread(new Thread() {
             public void run() {
                try { future.result = Remote.invoke(item, name, args); }
                catch(Throwable t) {
-                  if (handler != null) try { // handle if possible
+                  if (handler != null) try {
                      future.result = Remote.invoke(handler,
                         "handle", new Object[] { item, name, args, t });
                   } catch(Exception x) { future.exception = x; }
@@ -221,7 +221,7 @@ public final class TransparentItemProxy implements
             }
          });
       } else try { return Remote.invoke(item, name, args); }
-      catch(Throwable t) { // invocation error, handle if possible
+      catch(Throwable t) {
          if (handler == null) throw t instanceof Exception ?
             (Exception)t : new Exception(t);
          return Remote.invoke(
