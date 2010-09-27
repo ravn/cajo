@@ -255,11 +255,13 @@ public class Proxy extends util.AbstractProxy implements IProxy {
    private LocalService localProxy;
    // This is the proxy's interface to its sending service.
    private interface HomeService {
-      String foo(String bar);
+      Object foo(String bar); // call it synchronously (blocking)
+   // Future&lt;Object&gt; foo(String bar); // or call it asynchronously
    }
    // This is the proxy's interface to its receiving service.
    private interface LocalService {
-      String baz(String foo);
+   // String baz(String foo);
+      Future&lt;String&gt; baz(String bar); // call it asynchronously
    }
    public Proxy(Object homeService) {
       super(homeService);
@@ -287,7 +289,8 @@ public class Controller extends util.AbstractController implements IController {
    private final Service serviceProxy;
    // This is the controller's interface to its sending service.
    private interface Service {
-      Object foo(String bar); // this method is just an example
+      String foo(String baz); // this method is just an example
+   // Future&lt;String&gt; foo(String baz); // to call it asynchronously
    }
    public Controller(Object service) {
       super(service);
