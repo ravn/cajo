@@ -117,7 +117,7 @@ public final class TransparentItemProxy implements
          if (!done) try {
             if (unit == TimeUnit.NANOSECONDS)  thread.join(0L, (int)timeout);
             else if (unit == TimeUnit.MICROSECONDS)
-               thread.join(0L, (int)timeout * 10);
+               thread.join(0L, (int)(timeout * 1000));
             else thread.join(unit.toMillis(timeout));
          } catch(InterruptedException x) {
             cancelled = true;
