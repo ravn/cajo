@@ -86,9 +86,9 @@ public final class TransparentItemProxy implements
    private static final Object NULL[] = {};
    private static final class ProxyFuture implements Future { // async helper
       private Thread thread;
-      private Object result;
-      private Exception exception;
-      private boolean cancelled, done;
+      private volatile Object result;
+      private volatile Exception exception;
+      private volatile boolean cancelled, done;
       private ProxyFuture setThread(Thread thread) {
          this.thread = thread;
          thread.start();
@@ -99,22 +99,22 @@ public final class TransparentItemProxy implements
       public boolean cancel(boolean interrupt) {
          if (cancelled || done) return false;
          if (interrupt) thread.interrupt();
-         cancelled = true;
-         return true;
+         return cancelled = true;
       }
       public Object get() throws InterruptedException, ExecutionException {
-         if (!done) try { thread.join(); }
+         if (!cancelled && !done) try { thread.join(); }
          catch(InterruptedException x) {
             cancelled = true;
             throw x;
          }
+         thread = null;
          if (cancelled) throw new CancellationException();
          if (exception != null) throw new ExecutionException(exception);
          return result;
       }
       public Object get(long timeout, TimeUnit unit)
          throws InterruptedException, ExecutionException, TimeoutException {
-         if (!done) try {
+         if (!cancelled && !done) try {
             if (unit == TimeUnit.NANOSECONDS)  thread.join(0L, (int)timeout);
             else if (unit == TimeUnit.MICROSECONDS)
                thread.join(0L, (int)(timeout * 1000));
@@ -123,8 +123,9 @@ public final class TransparentItemProxy implements
             cancelled = true;
             throw x;
          }
-         if (cancelled) throw new CancellationException();
          if (!done) throw new TimeoutException();
+         thread = null;
+         if (cancelled) throw new CancellationException();
          if (exception != null) throw new ExecutionException(exception);
          return result;
       }
@@ -192,12 +193,13 @@ public final class TransparentItemProxy implements
             throw new IllegalMonitorStateException(
                "Cannot notify transparent proxy object");
       } else if (args.length == 1 && name.equals("equals")) // special equals
-         return args[0] == null ? Boolean.FALSE : proxy == args[0] ||
+         return args[0] == null ? Boolean.FALSE :
+            proxy == args[0] ||
             Proxy.isProxyClass(args[0].getClass()) &&
-            Proxy.getInvocationHandler(
-               args[0]) instanceof TransparentItemProxy &&
-            item.equals(((TransparentItemProxy)
-               Proxy.getInvocationHandler(args[0])).item) ?
+            Proxy.getInvocationHandler(args[0]) instanceof
+               TransparentItemProxy &&
+            item.equals(((TransparentItemProxy)Proxy.
+               getInvocationHandler(args[0])).item) ?
             Boolean.TRUE : Boolean.FALSE;
       if (args.length < 4 && name.equals("wait"))
          if (args.length < 1 ||
@@ -223,10 +225,10 @@ public final class TransparentItemProxy implements
          });
       } else try { return Remote.invoke(item, name, args); }
       catch(Throwable t) {
-         if (handler == null) throw t instanceof Exception ?
-            (Exception)t : new Exception(t);
-         return Remote.invoke(
+         if (handler != null) return Remote.invoke(
             handler, "handle", new Object[] { item, name, args, t });
+         else throw t instanceof Exception ?
+            (Exception)t : new Exception(t);
       }
    }
    /**
