@@ -41,12 +41,12 @@
         <javac includeAntRuntime="false" srcdir="." target="1.2" source="1.2" includes="gnu/cajo/*.java"/> 
         <rmic classname="gnu.cajo.invoke.Remote" base="."/>
         <javac includeAntRuntime="false" srcdir="." target="1.2" source="1.2" includes="gnu/cajo/utils/CodebaseServer.java"/> 
+        <javac includeAntRuntime="false" srcdir="." target="1.2" source="1.2" includes="gnu/cajo/utils/extra/ItemProxy.java"/>
+        <javac includeAntRuntime="false" srcdir="." target="1.2" source="1.2" includes="gnu/cajo/utils/extra/ClientProxy.java"/> 
+        <javac includeAntRuntime="false" srcdir="." target="1.2" source="1.2" includes="gnu/cajo/utils/extra/Xfile.java"/> 
         <delete>
-            <fileset dir="." includes="
-                gnu/cajo/utils/ItemServer$JarClassLoader.class
-            "/>
-            <!-- Not needed in grail.jar proper -->  
-        </delete>
+            <fileset dir="." includes="gnu/cajo/utils/ItemServer$JarClassLoader.class"/>
+        </delete><!-- Not needed in grail.jar proper -->
         <jar basedir="."
             jarfile="grail.jar"
             manifest="cajo.mft"
