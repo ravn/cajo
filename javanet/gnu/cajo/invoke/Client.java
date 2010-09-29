@@ -266,7 +266,9 @@ public final class Client extends java.applet.Applet {
     */
    public static void main(String args[]) throws Exception {
       if (System.getSecurityManager() == null)
-         System.setSecurityManager(new NoSecurityManager());
+         System.setSecurityManager(new SecurityManager() {
+            public void checkPermission(java.security.Permission perm) {}
+         });  // give loaded controllers FULL permissions
       if (args.length > 0) {
          int clientPort    = args.length > 1 ? Integer.parseInt(args[1]) : 0;
          String clientHost = args.length > 2 ? args[2] : null;
