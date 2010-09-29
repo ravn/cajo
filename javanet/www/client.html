@@ -240,13 +240,13 @@
             <span class="spacing style4 style7 style9">
                This client, when run as local a application, is excellent for testing
                and development purposes in a trusted enviornment. To make its use for
-               development purposes simpler, the client application employs a <a href=docs/gnu/cajo/invoke/NoSecurityManager.html>
-               NoSecurityManager</a>. As its name implies, this allows any loaded proxy to
-               do anything it wants, on the host's physical machine. Under some
-               circumstances granting proxy items full permissions may be <i>exactly</i>
-               what is needed; on kiosks, or thin client machines, on a protected newtork
-               for example.  It has a convenience in that it allows the client to run simply
-               as a single jar file, no security policy file is even needed.<br><br>
+               development purposes simpler, the client application employs no security
+               manager, this allows any loaded proxy to do anything it wants, on the host's
+               physical machine. Under some circumstances granting proxy items full
+               permissions may be <i>exactly</i> what is needed; on kiosks, or thin client
+               machines, on a protected newtork for example. It has a convenience in that
+               it allows the client to run simply as a single jar file, no security policy
+               file is even needed.<br><br>
 
                However, to protect the host in untrusted environments, it is
                <u>critical</u> to start this application with a proper security manager
