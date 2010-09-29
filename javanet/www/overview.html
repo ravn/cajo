@@ -75,15 +75,17 @@
 
                                  <td valign="top">
                                     <span class="spacing style4 style7 style9">
-                                      It is very easy to incorporate the cajo framework into applications. As you
-                                      will see very shortly; making an object in your application remotely
-                                      accessible, or obtaining a reference to an object in a remote application,
-                                      can be done with as little as <i>one</i> additional line of code!<br><br>
+                                      It is very easy to incorporate the cajo framework into applications. It
+                                      simply makes your object's public methods, both instance and static,
+                                      remotely callable. As you will see very shortly; making an object in your
+                                      application remotely accessible, or obtaining a reference to an object in a
+                                      remote application, can be done with as little as <i>one</i> additional
+                                      line of code!<br><br>
 
-                                      Take for example, the following simple object:
+                                      Consider for example, the following simple object:
 
 <blockquote><tt><pre>
-public class SomeObject {
+public class SomeObject { // the class need not be public
    protected String string;
    protected int stuff;
    public String foo() { return string; }
