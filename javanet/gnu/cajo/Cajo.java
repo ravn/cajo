@@ -59,12 +59,10 @@ public final class Cajo implements Grail {
    }
    /**
     * This internal use only helper class maintains a registry of exported
-    * objects. It cannot be instantiated outside this class, it is made
-    * public only because it is being invoked reflectively. It uses UDP
-    * multicasts to find other instances of registries, and shares references
-    * between them.
+    * objects. It uses UDP multicasts to find other instances of registries,
+    * and shares references between them.
     */
-   public static final class Registrar {
+   private static final class Registrar {
       private final Vector items;
       private Registrar(Vector items) { this.items = items; }
       /**
@@ -108,11 +106,9 @@ public final class Cajo implements Grail {
    };
    /**
     * This internal use only helper class scans an exported object to see if
-    * it has methods matching the client method set. It cannot be
-    * instantiated outside this class, it is made public only because it is
-    * being invoked reflectively.
+    * it has methods matching the client method set.
     */
-   public static final class Searchable implements Invoke {
+   private static final class Searchable implements Invoke {
       private static final long serialVersionUID = 1L;
       private final Object object;
       private Searchable(Object object) { this.object = object; }
@@ -161,11 +157,9 @@ public final class Cajo implements Grail {
    }
    /**
     * This internal use only helper class automatically removes unresponsive
-    * server references from the internal queue. It cannot be instantiated
-    * outside this class, it is made public only because it is being invoked
-    * reflectively.
+    * server references from the internal queue.
     */
-   public static final class Purger implements Invoke {
+   private static final class Purger implements Invoke {
       private static final long serialVersionUID = 1L;
       private final Object object;
       private transient Vector items;

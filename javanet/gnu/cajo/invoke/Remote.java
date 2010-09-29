@@ -500,7 +500,7 @@ public final class Remote extends UnicastRemoteObject
             }
          }
       }
-      synchronized(cache) { // cache lookup
+      synchronized(cache) { // cache method lookup
          methods = (HashMap)cache.get(item.getClass());
          if (methods == null) {
             methods = new HashMap();
@@ -584,6 +584,7 @@ public final class Remote extends UnicastRemoteObject
          o_args = new Object[] { args };
       }
       if (m != null) try {
+         try { m.setAccessible(true); } catch(SecurityException x) {}
          Object result = m.invoke(item, o_args != NOARGS ? o_args : null);
          if (result != null && !(result instanceof Serializable)) try {
             RemoteServer.getClientHost();
