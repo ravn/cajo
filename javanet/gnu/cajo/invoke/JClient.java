@@ -171,22 +171,25 @@ public final class JClient extends JApplet {
       catch(Exception x) {}
    }
    /**
-    * The application creates a graphical Component proxy hosting VM. With the
-    * URL argument provided, it will use the static {@link Remote#getItem getItem}
-    * method of the {@link Remote Remote} class to contact the server. It will
-    * then invoke a null-argument getProxy on the resulting reference to request
-    * the primary proxy object of the item.<br><br>
+    * The application creates a graphical Component proxy hosting VM. With
+    * the URL argument provided, it will use the static {@link Remote#getItem
+    * getItem} method of the {@link Remote Remote} class to contact the
+    * server. It will then invoke a null-argument getProxy on the resulting
+    * reference to request the primary proxy object of the item.<br><br>
     * When using the JClient from the command line, it is possible to set the
     * JClient frame title explicitly. To do this, simply type:<br><br><tt>
     * java -cp cajo.jar -Dgnu.cajo.invoke.JClient.title="My Frame Title"
     * gnu.cajo.invoke.JClient //myHost:1198/test</tt><br><br>
-    * <i><u>Note</u>:</i> When running as an application (<i><u>except</u> via
-    * WebStart</i>) it will load a NoSecurityManager, therefore, if no external
-    * SecurityManager is specified in the startup command line; the arriving
-    * proxies will have <i><u><b>full permissions</b></u></i> on this machine!<br><br>
+    * <i><u>Note</u>:</i> When running as an application (<i><u>except</u>
+    * via WebStart</i>) it will load no security manager, therefore, if no
+    * external SecurityManager is specified in the startup command line; the
+    * arriving proxies will have <i><u><b>full permissions</b></u></i> on this
+    * machine! This can be helpful however, if the proxy is intended to
+    * reconfigure the machine.<p>
     * To restrict client proxies permissions, use a startup invocation
     * similar to the following:<br><br>
-    * <tt>java -cp cajo.jar -Djava.security.manager -Djava.security.policy=client.policy
+    * <tt>java -cp cajo.jar -Djava.security.manager
+    * -Djava.security.policy=client.policy
     * ... gnu.cajo.invoke.JClient ... </tt><br><br>
     * See the project client <a href=https://cajo.dev.java.net/client.html>
     * documentation</a>, for more details.<br><br>

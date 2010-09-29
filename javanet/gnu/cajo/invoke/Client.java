@@ -240,9 +240,11 @@ public final class Client extends java.applet.Applet {
     * java -cp cajo.jar -Dgnu.cajo.invoke.Client.title="My Frame Title"
     * gnu.cajo.invoke.Client //myHost:1198/test</tt><br><br>
     * <i><u>Note</u>:</i> When running as an application (<i><u>except</u> via
-    * WebStart</i>) it will load a NoSecurityManager, therefore, if no external
-    * SecurityManager is specified in the startup command line; the arriving
-    * proxies will have <i><u><b>full permissions</b></u></i> on this machine!<br><br>
+    * WebStart</i>) it will load no security manager, therefore, if no
+    * external SecurityManager is specified in the startup command line; the
+    * arriving proxies will have <i><u><b>full permissions</b></u></i> on this
+    * machine! This can be helpful however, if the proxy is intended to
+    * reconfigure the machine.<br><br>
     * To restrict client proxies permissions, use a startup invocation
     * similar to the following:<br><br>
     * <tt>java -cp cajo.jar -Djava.security.manager -Djava.security.policy=client.policy
