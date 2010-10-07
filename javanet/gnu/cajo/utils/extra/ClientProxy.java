@@ -40,6 +40,10 @@ import java.rmi.server.UnicastRemoteObject;
  * ClientProxy, to the locally firewalled client, using an {@link ItemProxy
  * ItemProxy} object. The server item invokes methods on this client proxy
  * which result in an immediate callback invocation on the client. <p>
+ * Instances of ClientProxy can in turn be passed into a
+ * {@link TransparentItemProxy TransparentItemProxy} via its get method,
+ * to a address the firewalled client by interface. (either synchronously
+ * <i>or</i> asynchronously)<p>
  * <i>Note:</i> this paradigm is <u>not</u> threadsafe! It is expected that
  * callbacks to the remote client will <i>not</i> be invoked reentrantly.
  * Correspondingly, a unique instance of this object must be given to each
