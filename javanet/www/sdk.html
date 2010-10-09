@@ -257,7 +257,7 @@ public class Proxy extends util.AbstractProxy implements IProxy {
    // This is the proxy's interface to its sending service.
    private interface HomeService {
       Object foo(String bar); // call it synchronously (blocking)
-   // Future&lt;Object&gt; foo(String bar); // or call it asynchronously
+   // <a href=http://download.oracle.com/javase/6/docs/api/java/util/concurrent/Future.html>Future&lt;Object&gt;</a> foo(String bar); // or call it asynchronously
    }
    // This is the proxy's interface to its receiving service.
    private interface LocalService {
