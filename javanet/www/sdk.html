@@ -75,20 +75,20 @@
 
                                  <td valign="top">
                                     <span class="spacing style4 style7 style9">
-                                      The cajo SDK provides a small yet detailed example, to easily develop Rich
-                                      Internet Applications. These can be launched as full-screen Applets, and
-                                      via WebStart. It also provides a powerful approach to dynamic distributed
-                                      computing. The SDK is intended as a quick yet comprehensive introduction
-                                      into the application of cajo.<br><br>
+                                      The cajo SDK provides a small yet detailed example of two important
+                                      concepts: One is to easily develop Rich Internet Applications; which can
+                                      be launched as full-screen Applets, and via WebStart. Second is to provide
+                                      a powerful approach to dynamic distributed computing. The SDK is intended
+                                      as a quick, yet comprehensive introduction into the application of cajo.<br><br>
 
                                       The simple architecture of the SDK is the foundation; no detailed knowledge
                                       of the inner workings of the cajo library is necessary, as it makes no
                                       significant impact on the source code. Everything is plain-old Java, no
                                       special tools are needed, nor IDE plug-ins, nor other 3rd party libraries;
-                                      not even a servlet container. The remoted Graphical User Interfaces are just
-                                      plain-old JComponents: your Swing learning investment is preserved. The
-                                      cajo library takes care of presenting them in the browser, or as remote
-                                      desktop applications.
+                                      not even a servlet container. The optional remote Graphical User Interfaces
+                                      are just plain-old JComponents: your Swing learning investment is preserved.
+                                      The cajo library takes care of presenting them in the browser, <i>and</i> as
+                                      remote desktop applications.
                                     </span>
                                  </td>
                               </tr>
@@ -120,42 +120,43 @@
                         The are three fundamental components:<ol>
 
                         <li><b>Services</b><br>
-                        A Service is simply a Java object, all of whose public methods are callable,
-                        from other remote objects. No special annotations are needed, nor XML files,
-                        it is fully transparent. A service object furnishes interesting functionality
-                        that other services can use. A service may even use other remote service
-                        objects, to fulfill its functionality. A service is used to distribute
-                        functional modules across multiple JVMs for improved performance and
-                        reliability.<br><br>
-
-                        <li><b>Proxies</b><br>
-                        A Proxy is an object <i>sent to</i> a remote service, to operate within its
-                        JVM. A proxy arrives with a remote reference to its sending service, and a
-                        local reference to its receiving service. The sending service, in turn,
-                        receives a remote reference to its proxy. A proxy is used to minimise network
-                        traffic, and improve performance; particularly when a lot of invocations are
-                        needed on the receiving object, or the data sets being manipulated at the
-                        receiver are large. A service can provide as many types of proxies as it
-                        wishes, including none.<br><br>
+                        A Service is simply an ordinary Java object, all of whose public methods are
+                        callable, from other remote objects. No special annotations are needed, nor
+                        XML files, it is fully transparent. A service object furnishes interesting
+                        functionality that other objects can use. A service may even use other
+                        remote service objects, to fulfill its functionality. A service is used to
+                        distribute functional modules across multiple JVMs for improved performance,
+                        scalability, and reliability.<br><br>
 
                         <li><b>Controllers</b><br>
-                        A Controller is an object <i>requested by</i> a remote service, to operate
-                        within its JVM. In essence it is the logical inverse of a proxy. The
-                        controller arrives with a remote reference to its sending service, and has no
-                        reference to its receiving object; as it is a servant. A controller is used
-                        to minimise network network traffic, and improve performance; particularly
-                        when a lot of invocations are needed on the sending object, or a lot of
-                        processing unique to the receiver is necessary. A service can furnish as many
-                        controllers as it wishes, including none, but typically only one.<br><br>
+                        A Controller is an object <u><i>requested by</i></u> a remote object, to
+                        operate within its JVM. The controller arrives with a remote reference to its
+                        sending service, and has no reference to its receiving object, as it is
+                        strictly a servant. A controller is used to minimise network network traffic,
+                        and improve performance; particularly when a lot of invocations are needed on
+                        the sending service, or a lot of processing unique to the receiver is
+                        necessary. A service can furnish as many controllers as it wishes, including
+                        none, but typically only one.<br><br>
 
-                        In both cases, the receiving service views a proxy or controller as a
-                        local <i>"intelligent stand-in"</i> for the sending service. A service can,
-                        if necessary, interact with a remote service directly; without using proxies
-                        or controllers.
+                        <li><b>Proxies</b><br>
+                        A Proxy is an object <u><i>sent to</i></u> a remote object, to operate
+                        within its JVM. In essence it is the logical inverse of a controller. A proxy
+                        arrives with a remote reference to its sending service, <i>and</i> a local
+                        reference to its receiving service. The sending service, in turn, receives a
+                        remote reference to its proxy. A proxy is used to minimise network traffic,
+                        and improve performance; particularly when a lot of invocations are needed on
+                        the receiving object, or the data sets being manipulated at the receiver are
+                        large. A service can provide as many types of proxies as it wishes, including
+                        none.<br><br>
+
+                        In both cases, the receiving object views a controller or proxy as a
+                        local <i>"intelligent stand-in"</i> (aka agent) for the sending service. A
+                        service can, if necessary, interact with a remote service directly; using
+                        neither proxies nor controllers.
 
 <blockquote><pre>
-Sending Service <--------------> Proxy ---> Receiving Service <i>(sent to)</i>
-Sending Service <---------- Controller <--- Receiving Service <i>(requested by)</i>
+Sending Service <---------- Controller <--- Receiving Object <i>(requested by)</i>
+Sending Service <--------------> Proxy ---> Receiving Object <i>(sent to)</i>
 </pre></blockquote>
 
                         </ol>Ancillary components:<ul>
@@ -356,11 +357,11 @@ public class Controller extends util.AbstractController implements IController {
 
                The cajo framework is just as intuitive and easy to use to as it looks.
                All it takes to get started is to download the very small <a href=https://cajo.dev.java.net/sdk.zip>
-               (~100kB) SDK</a>. The example source is openly licensed by <a href=http://www.apache.org/licenses/LICENSE-2.0>
+               SDK (120kB)</a>. The example source is openly licensed under the <a href=http://www.apache.org/licenses/LICENSE-2.0>
                Apache Licence 2.0</a>, and compiles and runs right out of the box. The
-               generated javadoc provides extremely detailed comments. Take the SDK as a
-               starting point; modify the example classes as you wish, and you can have
-               your own system up and running quickly.<br><br>
+               autogenerated javadoc provides extremely detailed comments. Try the SDK as a
+               starting template; modify the example classes as you wish, and you can have
+               your <i>own</i> distributed system up and running Quickly.<br><br>
 
             </span>
          </td>
