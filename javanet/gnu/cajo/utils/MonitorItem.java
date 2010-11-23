@@ -3,7 +3,6 @@ package gnu.cajo.utils;
 import gnu.cajo.invoke.*;
 import java.rmi.server.RemoteServer;
 import java.rmi.RemoteException;
-import java.rmi.MarshalledObject;
 import java.rmi.server.ServerNotActiveException;
 import java.io.PrintStream;
 import java.io.OutputStream;
@@ -52,6 +51,12 @@ import java.io.ObjectOutputStream;
 public class MonitorItem implements Invoke {
    private final OutputStream os;
    private long count, oldtime = System.currentTimeMillis();
+   /**
+    * This flag, if true, will force all monitors to function, irrespective
+    * of the state of CLASSOFF or LOCALOFF. It is used primarily to diagnose
+    * problems, and is not needed in normal operation
+    */
+   public static boolean DEBUG;
    /**
     * This flag can be used to selectively enable and disable monitoring
     * on a class-wide level. By default it is set to false, when true, no
@@ -134,101 +139,84 @@ public class MonitorItem implements Invoke {
     * @throws Exception If the internal object's method rejects the invocation.
     */
    public Object invoke(String method, Object args) throws Exception {
-      if (CLASSOFF || LOCALOFF) return Remote.invoke(item, method, args);
-      long time = System.currentTimeMillis();
+      if (!DEBUG && (CLASSOFF || LOCALOFF))
+         return Remote.invoke(item, method, args);
       Object result = null;
+      long time = System.currentTimeMillis();
       try { return result = Remote.invoke(item, method, args); }
-      catch(Exception x) {
-         result = x;
-         throw x;
-      } finally {
-         int run = (int)(System.currentTimeMillis() - time);
-         String clientHost = null;
-         try { clientHost = RemoteServer.getClientHost(); }
-         catch(ServerNotActiveException x) {
-            StackTraceElement stes[] = x.getStackTrace();
-            StringBuffer sb = new StringBuffer("localhost <trace>");
-            for (int i = 4; i < stes.length; i++) {
-               sb.append("\n     method = ").append(stes[i].getClassName());
-               sb.append('.').append(stes[i].getMethodName());
-               if (stes[i].getLineNumber() >= 0) { // debug info available
-                  sb.append("\n     file   = ");
-                  sb.append(stes[i].getFileName());
-                  sb.append(" line ").append(stes[i].getLineNumber());
-               }
+      catch(Exception x) { result = x; }
+      int run = (int)(System.currentTimeMillis() - time);
+      String clientHost = null;
+      try { clientHost = RemoteServer.getClientHost(); }
+      catch(ServerNotActiveException x) {
+         StackTraceElement stes[] = x.getStackTrace();
+         StringBuffer sb = new StringBuffer("localhost <trace>");
+         for (int i = 4; i < stes.length; i++) {
+            sb.append("\n     method = ").append(stes[i].getClassName());
+            sb.append('.').append(stes[i].getMethodName());
+            if (stes[i].getLineNumber() >= 0) { // debug info available
+               sb.append("\n     file   = ");
+               sb.append(stes[i].getFileName());
+               sb.append(" line ").append(stes[i].getLineNumber());
             }
-            clientHost = sb.toString();
          }
-         Runtime rt = Runtime.getRuntime();
-         int freeMemory =
-            100 - (int)(rt.freeMemory() * 100 / rt.totalMemory());
-         ObjectOutputStream oos =
-             os instanceof ObjectOutputStream ? (ObjectOutputStream) os : null;
-         PrintStream ps = os instanceof PrintStream ? (PrintStream)  os : null;
-         synchronized(os) {
-            try {
-               if (oos != null) {
-                  oos.writeObject( new MarshalledObject(new Object[] {
-                     clientHost, item.getClass().getName() + " hashcode " + item.hashCode(),
-                     method, args, result, new Long(++count), new Long(time),
-                     new Long(time - oldtime), new Integer(run),
-                     new Integer(freeMemory)
-                  }));
-                  oos.flush(); // just for good measure...
-               } else if (ps != null) {
-                  ps.print("Caller host = ");
-                  ps.print(clientHost);
-                  ps.print("\nObject call = ");
-                  ps.print(item.getClass().getName() + " hashcode " + item.hashCode());
-                  ps.print("\nMethod call = ");
-                  ps.print(method);
-                  ps.print("\nMethod args = ");
-                  if (args instanceof java.rmi.MarshalledObject)
-                     args = ((java.rmi.MarshalledObject)args).get();
-                  if (args instanceof Object[]) {
-                     ps.print("array");
-                     for (int i = 0; i < ((Object[])args).length; i++) {
-                        ps.print("\n\t[");
-                        ps.print(i);
-                        ps.print("] = ");
-                        ps.print(((Object[])args)[i] != null ?
-                           ((Object[])args)[i].toString() : "null");
-                     }
-                  } else ps.print(args != null ? args.toString() : "none");
-                  ps.print("\nResult data = ");
-                  if (result instanceof java.rmi.MarshalledObject)
-                     result = ((java.rmi.MarshalledObject)result).get();
-                  if (result instanceof Exception) {
-                     ((Exception)result).printStackTrace(ps);
-                  } else if (result instanceof Object[]) {
-                     ps.print("array");
-                     for (int i = 0; i < ((Object[])result).length; i++) {
-                        ps.print("\n\t[");
-                        ps.print(i);
-                        ps.print("] = ");
-                        if (((Object[])result)[i] != null)
-                           ps.print(((Object[])result)[i].toString());
-                        else ps.print("null");
-                     }
-                     ps.println();
-                  } else ps.println(result != null ? result.toString() : "void");
-                  ps.print("Call count  = ");
-                  ps.print(++count);
-                  ps.print("\nTime stamp  = ");
-                  ps.print(time);
-                  ps.print("\nIdle time   = ");
-                  ps.print(time - oldtime);
-                  ps.print(" ms");
-                  ps.print("\nBusy time   = ");
-                  ps.print(run);
-                  ps.print(" ms");
-                  ps.print("\nFree memory = ");
-                  ps.print(freeMemory);
-                  ps.print("%\n\n");
-               }
-            } catch(Exception x) { x.printStackTrace(); }
-            oldtime = time;
-         }
+         clientHost = sb.toString();
+      }
+      Runtime rt = Runtime.getRuntime();
+      int freeMemory = 100 - (int)(rt.freeMemory() * 100 / rt.totalMemory());
+      ObjectOutputStream oos =
+          os instanceof ObjectOutputStream ? (ObjectOutputStream) os : null;
+      PrintStream ps = os instanceof PrintStream ? (PrintStream)  os : null;
+      synchronized(os) {
+         try {
+            if (oos != null) {
+               oos.writeObject( new java.rmi.MarshalledObject(new Object[] {
+                  clientHost, item.getClass().getName() + " hashcode " +
+                  item.hashCode(), method, args, result, new Long(++count),
+                  new Long(time), new Long(time - oldtime), new Integer(run),
+                  new Integer(freeMemory)
+               }));
+               oos.flush(); // just for good measure...
+            } else if (ps != null) {
+               ps.print("Caller host = ");
+               ps.print(clientHost);
+               ps.print("\nObject call = ");
+               ps.print(item.getClass().getName() + " hashcode " + item.hashCode());
+               ps.print("\nMethod call = ");
+               ps.print(method);
+               ps.print("\nMethod args = ");
+               if (args instanceof Object[]) {
+                  ps.print("array");
+                  for (int i = 0; i < ((Object[])args).length; i++) {
+                     ps.print("\n\t[");
+                     ps.print(i);
+                     ps.print("] = ");
+                     ps.print(((Object[])args)[i] != null ?
+                        ((Object[])args)[i].toString() : "null");
+                  }
+               } else ps.print(args != null ? args.toString() : "none");
+               ps.print("\nResult data = ");
+               if (result instanceof Exception)
+                  ((Exception)result).printStackTrace(ps);
+               else ps.println(result != null ? result.toString() : "null");
+               ps.print("Call count  = ");
+               ps.print(++count);
+               ps.print("\nTime stamp  = ");
+               ps.print(time);
+               ps.print("\nIdle time   = ");
+               ps.print(time - oldtime);
+               ps.print(" ms");
+               ps.print("\nBusy time   = ");
+               ps.print(run);
+               ps.print(" ms");
+               ps.print("\nFree memory = ");
+               ps.print(freeMemory);
+               ps.print("%\n\n");
+            }
+         } catch(Exception x) { x.printStackTrace(); }
+         oldtime = time;
+         if (result instanceof Exception) throw (Exception)result;
+         return result;
       }
    }
 }
