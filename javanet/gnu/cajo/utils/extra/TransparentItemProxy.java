@@ -125,6 +125,7 @@ public final class TransparentItemProxy implements
       }
    }
    private Object item;
+   private String toString;
    private void writeObject(java.io.ObjectOutputStream out)
       throws java.io.IOException {
       if (!(item instanceof Serializable))
@@ -175,15 +176,15 @@ public final class TransparentItemProxy implements
       final String name = method.getName();
       if (args.length == 0) {
          if (name.equals("toString")) { // attempt toString
+            if (toString != null) return toString;
             StringBuffer sb = new StringBuffer(toString());
             sb.append("->");
             try { sb.append(Remote.invoke(item, "toString", null)); }
             catch(Throwable t) { // handle if possible, do NOT throw!
                sb.append(handler != null ? Remote.invoke(handler, "handle",
-                  new Object[] { item, method, args, t }) :
-                  t.getLocalizedMessage()); // oh well...
+                  new Object[] { item, method, args, t }) : t.toString());
             }
-            return sb.toString();
+            return toString = sb.toString();
          } else if (name.equals("notify") || name.equals("notifyAll"))
             throw new IllegalMonitorStateException(
                "Cannot notify transparent proxy object");
@@ -214,7 +215,8 @@ public final class TransparentItemProxy implements
                         "handle", new Object[] { item, name, args, t });
                   } catch(Exception x) { future.exception = x; }
                   else future.exception = t instanceof Exception ?
-                     (Exception)t : new Exception(t);
+                     (Exception)t :
+                     new Exception(t.getMessage(), t.getCause());
                } finally { future.done = true; }
             }
          });
@@ -223,7 +225,7 @@ public final class TransparentItemProxy implements
          if (handler != null) return Remote.invoke(
             handler, "handle", new Object[] { item, name, args, t });
          else throw t instanceof Exception ?
-            (Exception)t : new Exception(t);
+            (Exception)t : new Exception(t.getMessage(), t.getCause());
       }
    }
    /**

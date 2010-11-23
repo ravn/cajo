@@ -597,7 +597,8 @@ public final class Remote extends UnicastRemoteObject
          return result;
       } catch(java.lang.reflect.InvocationTargetException x) {
          Throwable t = x.getTargetException();
-         throw t instanceof Exception ? (Exception)t : new Exception(t);
+         throw t instanceof Exception ?
+            (Exception)t : new Exception(t.getMessage(), t.getCause());
       }
       StringBuffer sb = new StringBuffer(item.getClass().getName());
       sb.append('.').append(method).append('(');
