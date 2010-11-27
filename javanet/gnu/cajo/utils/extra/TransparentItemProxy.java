@@ -64,7 +64,7 @@ import java.lang.reflect.InvocationTargetException;
  * discussion</a> in the cajo project Developer's forum, with project member
  * Bharavi Gade, caused me to reconsider.
  *
- * <p><b>Update:</b> For users of JRE 1.5+<br>
+ * <p><hr><br><b>Update:</b> For users of JRE 1.5+<br>
  * It you wish to invoke time consuming methods asynchronously, simply
  * declare that the method returns a <a href=http://download.oracle.com/javase/6/docs/api/java/util/concurrent/Future.html>
  * java.util.Concurrent.Future</a> of the required return type. The invocation
@@ -174,7 +174,7 @@ public final class TransparentItemProxy implements
    public Object invoke(Object proxy, Method method, final Object args[])
       throws Throwable {
       final String name = method.getName();
-      if (args.length == 0) {
+      if (args ==null || args.length == 0) {
          if (name.equals("toString")) { // attempt toString
             if (toString != null) return toString;
             StringBuffer sb = new StringBuffer(toString());
@@ -188,7 +188,7 @@ public final class TransparentItemProxy implements
          } else if (name.equals("notify") || name.equals("notifyAll"))
             throw new IllegalMonitorStateException(
                "Cannot notify transparent proxy object");
-      } else if (args.length == 1 && name.equals("equals")) // special equals
+      } else if (args !=null && args.length == 1 && name.equals("equals"))
          return args[0] == null ? Boolean.FALSE :
             proxy == args[0] ||
             Proxy.isProxyClass(args[0].getClass()) &&
@@ -197,7 +197,7 @@ public final class TransparentItemProxy implements
             item.equals(((TransparentItemProxy)Proxy.
                getInvocationHandler(args[0])).item) ?
             Boolean.TRUE : Boolean.FALSE;
-      if (args.length < 4 && name.equals("wait"))
+      if (args !=null && args.length < 4 && name.equals("wait"))
          if (args.length < 1 ||
             args[0] instanceof Long  && (args.length < 2 ? true :
             args[1] instanceof Long) && (args.length < 3 ? true :
