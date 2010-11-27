@@ -50,7 +50,6 @@ import java.lang.reflect.Method;
  */
 public final class Remote extends UnicastRemoteObject
    implements RemoteInvoke, Unreferenced {
-   private static final Class[] CLASS = {};
    private static final class RSSF implements RMIServerSocketFactory {
       private int port;
       private String host;
@@ -113,7 +112,7 @@ public final class Remote extends UnicastRemoteObject
    private static RSSF defaultRSSF;
    private static final HashMap cache   = new HashMap();
    private static final Vector items    = new Vector();
-   private static final Class[] NULL    = {}, OBJECT = { Object.class };
+   private static final Class[] CLASS   = {}, OBJECT = { Object.class };
    private static final Object[] NOARGS = {};
    /**
     * If the remote wrapper is being garbage collected, and it hasn't already
@@ -458,7 +457,7 @@ public final class Remote extends UnicastRemoteObject
     */
    public static Method findBestMethod(
       Object item, String method, Class[] args) {
-      if (args == null) args = NULL;
+      if (args == null) args = CLASS;
       HashMap methods = (HashMap)cache.get(item.getClass());
       if (methods != null) { // best method already chached?
          HashMap arguments = (HashMap)methods.get(method);
@@ -470,7 +469,7 @@ public final class Remote extends UnicastRemoteObject
          }
       } // else lookup best method...
       ArrayList matchList = new ArrayList();
-      if (((Object[])args).length > 0) { // if multiple arguments...
+      if (((Object[])args).length > 0) { // if arguments...
          Method[] ms = item.getClass().getMethods();
          list: for(int i = 0; i < ms.length; i++) { // list compatible methods
             if (ms[i].getName().equals(method) &&
@@ -568,20 +567,15 @@ public final class Remote extends UnicastRemoteObject
          }
       }
       if (item instanceof Invoke) return ((Invoke)item).invoke(method, args);
-      Class[] c_args = o_args != NOARGS ? new Class[o_args.length] : NULL;
-      if (c_args != NULL)
+      Class[] c_args = o_args != NOARGS ? new Class[o_args.length] : CLASS;
+      if (c_args != CLASS)
          for (int i = 0; i < c_args.length; i++)
-            c_args[i] = o_args[i] == null ? null : o_args[i].getClass();
+            c_args[i] = o_args[i] != null ? o_args[i].getClass() : null;
       Method m = findBestMethod(item, method, c_args);
-      if (m == null && args != null) {
-         c_args = new Class[] { args.getClass() };
-         m = findBestMethod(item, method, c_args);
-         o_args = new Object[] { args };
-      }
-      if (m == null) {
-         c_args = new Class[] { args.getClass() };
-         m = findBestMethod(item, method, OBJECT);
-         o_args = new Object[] { args };
+      if (m == null && args instanceof Object[]) {
+         m = findBestMethod(item, method, new Class[] { args.getClass() });
+         if (m == null) m = findBestMethod(item, method, OBJECT);
+         if (m != null) o_args = new Object[] { args };
       }
       if (m != null) try {
          try { m.setAccessible(true); } catch(SecurityException x) {}
@@ -604,7 +598,7 @@ public final class Remote extends UnicastRemoteObject
       sb.append('.').append(method).append('(');
       if (c_args.length > 0) for (int i = 0; i < c_args.length; i++) {
          sb.append(c_args[i] != null ? c_args[i].getName() : "null");
-         if (i + 1 < o_args.length) sb.append(", ");
+         if (i + 1 < c_args.length) sb.append(", ");
       }
       throw new NoSuchMethodException(sb.append(')').toString());
    }
