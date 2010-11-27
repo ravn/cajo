@@ -48,16 +48,6 @@ public final class Cajo implements Grail {
    private final Vector items = new Vector();
    private final Registrar registrar = new Registrar(items);
    /**
-    * The finaliser will cut connections to all of its exported objects on
-    * garbage collection.
-    * @throws Throwable due to Object class method definition, this method
-    * will throw nothing
-    */
-   protected void finalize() throws Throwable {
-      Remote.shutdown();
-      super.finalize();
-   }
-   /**
     * This internal use only helper class maintains a registry of exported
     * objects. It uses UDP multicasts to find other instances of registries,
     * and shares references between them.
@@ -110,31 +100,30 @@ public final class Cajo implements Grail {
     */
    private static final class Searchable implements Invoke {
       private static final long serialVersionUID = 1L;
-      private final Object object;
-      private Searchable(Object object) { this.object = object; }
+      private final Object target;
+      private final Method methods[];
+      private final String mnames[];
+      private final Class  mreturns[];
+      private Searchable(Object object, Object target) {
+         this.target = target;
+         methods     = object.getClass().getMethods();
+         mnames      = new String[methods.length];
+         mreturns    = new Class[methods.length];
+         for (int i  = 0; i < methods.length; i++) {
+            mnames[i]   = methods[i].getName();
+            mreturns[i] = methods[i].getReturnType();
+         }
+      }
       /**
        * This method, invoked transparently when any remote server method is
        * called, checks the exported server object's method signatures for
        * a match with the set provided by the client.
-       * @param method The name of the method to be invoked
-       * @param args The arguments to be provided to the method
-       * @return Boolean.TRUE if all of the requested methods matched, null
-       * otherwise
-       * @throws Exception For reflection based voilations, most commonly
-       * when an exported server class is not public
        */
       public Object invoke(String method, Object args) throws Exception {
          if (method == null) { // special case signal
             Class  ireturns[] = (Class[])((Object[])args)[0];
             String inames[]   = (String[])((Object[])args)[1];
             Class  iargs[][]  = (Class[][])((Object[])args)[2];
-            Method methods[]  = object.getClass().getMethods();
-            String mnames[]   = new String[methods.length];
-            Class  mreturns[] = new Class[methods.length];
-            for (int i = 0; i < methods.length; i++) {
-               mreturns[i] = methods[i].getReturnType();
-               mnames[i]   = methods[i].getName();
-            }
             searching: for (int i = 0; i < inames.length; i++) {
                for (int j = 0; j < mnames.length; j++) {
                   if (mnames[j].equals(inames[i])
@@ -152,7 +141,7 @@ public final class Cajo implements Grail {
                return null;
             }
             return Boolean.TRUE; // all methods were successfully matched
-         } else return Remote.invoke(object, method, args);
+         } else return Remote.invoke(target, method, args);
       }
    }
    /**
@@ -162,7 +151,7 @@ public final class Cajo implements Grail {
    private static final class Purger implements Invoke {
       private static final long serialVersionUID = 1L;
       private final Object object;
-      private transient Vector items;
+      private final Vector items;
       private Purger(Object object, Vector items) {
          this.object = object;
          this.items = items;
@@ -197,10 +186,9 @@ public final class Cajo implements Grail {
     * not be sent
     */
    public Cajo() throws IOException {
-      ItemServer.bind(registrar, "registrar");
       multicast = new Multicast("224.0.23.162", 1198);
       multicast.listen(registrar);
-      multicast.announce(registrar, 255);
+      multicast.announce(ItemServer.bind(registrar, "registrar"), 255);
    }
    /**
     * This method makes any object's public methods, whether instance or
@@ -218,12 +206,35 @@ public final class Cajo implements Grail {
     * POJO</a> to be made remotely invocable, i.e. there is no requirement
     * for it to implement any special interfaces, nor to be derived from any
     * particular class
-    * @throws RemoteException If the internal registry could not be created
     * @throws IOException If the announcement datagram packet could not be
     * sent
     */
    public void export(Object object) throws IOException {
-      items.add(new Remote(new Searchable(object)));
+      export(object, object);
+   }
+   /**
+    * This method makes any object's public methods, whether instance or
+    * static, remotely invocable. As the object being remoted is already
+    * instantiated, there is no <i>artificial</i> requirement for it to
+    * implement a no-arg constructor. If not all methods are safe to be made
+    * remotely invocable, then wrap the object with a special-case <a href=http://en.wikipedia.org/wiki/Decorator_pattern>
+    * decorator</a>.<p>
+    * <i><u>Note</u>:</i> if an object is exported more than once, it will be
+    * registered each time, you generally do not want to do this. Also, if
+    * you plan to use the register method, to contact remote registries
+    * directly, it is <i>highly</i> advisible to export all objects
+    * <i>prior</i> to doing so.
+    * @param object The <a href=http://en.wikipedia.org/wiki/Plain_Old_Java_Object>
+    * POJO</a> to be made remotely invocable, i.e. there is no requirement
+    * for it to implement any special interfaces, nor to be derived from any
+    * particular class
+    * @param target The object on which to invoke methods, this is used when
+    * object parameter is wrapped e.g. in a MonitorItem or AuditorItem
+    * @throws IOException If the announcement datagram packet could not be
+    * sent
+    */
+   public void export(Object object, Object target) throws IOException {
+      items.add(new Remote(new Searchable(object, target)));
       multicast.announce(registrar, 255);
    }
    /**
@@ -254,8 +265,8 @@ public final class Cajo implements Grail {
       ArrayList list    = new ArrayList();
       Object elements[] = items.toArray();
       for (int i = 0; i < elements.length; i++) try {
-         Object match = Remote.invoke(elements[i], null, params);
-         if (Boolean.TRUE.equals(match)) list.add(elements[i]);
+         if (Boolean.TRUE.equals(Remote.invoke(elements[i], null, params)))
+            list.add(elements[i]);
       } catch(Exception x) { items.removeElement(elements[i]); }
       return list.toArray();
    }
@@ -284,11 +295,14 @@ public final class Cajo implements Grail {
     * what is needed is for all users to have a reference to the same object
     * instance, on which to perform operations.
     * @param object The local client object for which a pass-by-reference is
-    * sought
-    * @return A proxy object, implementing all of the interfaces of the
-    * wrapped object argument, it will even work in the local context
+    * sought (if the reference has not been already remoted, it will be)
+    * @return A dynamic proxy object, implementing all of the interfaces of
+    * the wrapped object argument, it will even work in the local context
+    * @throws RemoteException If the remoting of the object, when necessary,
+    * fails, typically due to network configuration issues
     */
-   public static Object proxy(Object object) {
+   public static Object proxy(Object object) throws RemoteException {
+      if (!(object instanceof Remote)) object = new Remote(object);
       HashSet interfaces = new HashSet();
       for (Class c = object.getClass(); c != null; c = c.getSuperclass())
          interfaces.addAll(Arrays.asList(c.getInterfaces()));
