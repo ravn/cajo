@@ -89,7 +89,7 @@ public class ItemServer {
      System.setProperty("java.rmi.server.useCodebaseOnly", "true");
   }
   private static Registry registry;
-  private static HashMap registries;
+  private static HashMap registries = new HashMap();
   /**
    * Nothing happens in the default constructor of this class. This is used
    * when the server has its own internal {@link CodebaseServer CodebaseServer}
