@@ -244,6 +244,42 @@ public class Service extends util.AbstractService implements IService {
 }
 </tt></pre></blockquote>
 
+               <b>Example Controller:</b>
+
+<blockquote><tt><pre>
+package controller;
+
+public class Controller extends util.AbstractController implements IController {
+   // This is the reference on which the controller will communicate with
+   // its sending service.
+   private final Service serviceProxy;
+   // This is the controller's interface to its sending service.
+   private interface Service {
+      String foo(String baz); // this method is just an example
+   // <a href=http://download.oracle.com/javase/6/docs/api/java/util/concurrent/Future.html>Future&lt;String&gt;</a> foo(String baz); // to call it asynchronously
+   }
+   public Controller(Object service) {
+      super(service);
+      serviceProxy = proxy(Service.class);
+   }
+   public void init(gnu.cajo.Cajo cajo) {
+      super.init(cajo);
+      System.out.println("Controller arrived at service!");
+      // use the cajo object to connect to other services as needed
+   }
+   public util.AbstractView getView() {
+      view = new view.View(); // controller specific view
+      String result = baz("hello"); // for illustration
+      ((View)view).center.display(result); // show in view
+      // attach controller specific view action listeners here...
+      return view;
+   }
+   public String baz(String bar) { // call remote service function
+      return serviceProxy.foo(bar).toString();
+   }
+}
+</tt></pre></blockquote>
+
                <b>Example Proxy:</b>
 
 <blockquote><tt><pre>
@@ -278,42 +314,6 @@ public class Proxy extends util.AbstractProxy implements IProxy {
    }
    // This method is invoked by the remote service
    public String bar(String baz) { return localProxy.baz(baz); }
-}
-</tt></pre></blockquote>
-
-               <b>Example Controller:</b>
-
-<blockquote><tt><pre>
-package controller;
-
-public class Controller extends util.AbstractController implements IController {
-   // This is the reference on which the controller will communicate with
-   // its sending service.
-   private final Service serviceProxy;
-   // This is the controller's interface to its sending service.
-   private interface Service {
-      String foo(String baz); // this method is just an example
-   // <a href=http://download.oracle.com/javase/6/docs/api/java/util/concurrent/Future.html>Future&lt;String&gt;</a> foo(String baz); // to call it asynchronously
-   }
-   public Controller(Object service) {
-      super(service);
-      serviceProxy = proxy(Service.class);
-   }
-   public void init(gnu.cajo.Cajo cajo) {
-      super.init(cajo);
-      System.out.println("Controller arrived at service!");
-      // use the cajo object to connect to other services as needed
-   }
-   public util.AbstractView getView() {
-      view = new view.View(); // controller specific view
-      String result = baz("hello"); // for illustration
-      ((View)view).center.display(result); // show in view
-      // attach controller specific view action listeners here...
-      return view;
-   }
-   public String baz(String bar) { // call remote service function
-      return serviceProxy.foo(bar).toString();
-   }
 }
 </tt></pre></blockquote>
             </span>
