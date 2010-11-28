@@ -77,9 +77,10 @@
                                     <span class="spacing style4 style7 style9">
                                       The cajo SDK provides a small yet detailed example of two important
                                       concepts: One is to easily develop Rich Internet Applications; which can
-                                      be launched as full-screen Applets, and via WebStart. Second is to provide
-                                      a powerful approach to dynamic distributed computing. The SDK is intended
-                                      as a quick, yet comprehensive introduction into the application of cajo.<br><br>
+                                      be launched as full-window/screen Applets, and via WebStart. Second is to
+                                      provide a powerful approach to dynamic distributed computing. The SDK is
+                                      intended as a quick, yet comprehensive introduction into the application
+                                      and functionality of cajo.<br><br>
 
                                       The simple architecture of the SDK is the foundation; no detailed knowledge
                                       of the inner workings of the cajo library is necessary, as it makes no
@@ -124,7 +125,7 @@
                         callable, from other remote objects. No special annotations are needed, nor
                         XML files, it is fully transparent. A service object furnishes interesting
                         functionality that other objects can use. A service may even use other
-                        remote service objects, to fulfill its functionality. A service is used to
+                        remote service objects to fulfill its functionality. A service is used to
                         distribute functional modules across multiple JVMs for improved performance,
                         scalability, and reliability.<br><br>
 
@@ -142,17 +143,17 @@
                         A Proxy is an object <u><i>sent to</i></u> a remote object, to operate
                         within its JVM. In essence it is the logical inverse of a controller. A proxy
                         arrives with a remote reference to its sending service, <i>and</i> a local
-                        reference to its receiving service. The sending service, in turn, receives a
+                        reference to its receiving object. The sending service, in turn, receives a
                         remote reference to its proxy. A proxy is used to minimise network traffic,
                         and improve performance; particularly when a lot of invocations are needed on
                         the receiving object, or the data sets being manipulated at the receiver are
                         large. A service can provide as many types of proxies as it wishes, including
                         none.<br><br>
 
-                        In both cases, the receiving object views a controller or proxy as a
-                        local <i>"intelligent stand-in"</i> (aka agent) for the sending service. A
-                        service can, if necessary, interact with a remote service directly; using
-                        neither proxies nor controllers.
+                        In both cases, the receiving object views controllers and proxise as local
+                        <i>"intelligent stand-ins"</i> (aka agenta) for the sending services. An
+                        object can, if necessary, interact with a remote service directly; neither
+                        using controllers, nor accepting proxies.
 
 <blockquote><pre>
 Sending Service <---------- Controller <--- Receiving Object <i>(requested by)</i>
@@ -167,8 +168,8 @@ Sending Service <--------------> Proxy ---> Receiving Object <i>(sent to)</i>
 
                         A <a href=http://weblogs.java.net/blog/cajo/archive/2007/09/simple_interjvm.html>
                         cajo object</a> is provided to all components, this allows them to look up
-                        services needed for assistance <a href=https://www.dev.java.net/files/documents/974/64714/Grail.html>
-                        dynamically</a>, by interface.
+                        services needed for assistance: <a href=https://www.dev.java.net/files/documents/974/64714/Grail.html>
+                        dynamically</a> by interface, as well as statically by server address.
 
                      </span>
                   </td>
@@ -292,7 +293,7 @@ public class Controller extends util.AbstractController implements IController {
    // This is the controller's interface to its sending service.
    private interface Service {
       String foo(String baz); // this method is just an example
-   // Future&lt;String&gt; foo(String baz); // to call it asynchronously
+   // <a href=http://download.oracle.com/javase/6/docs/api/java/util/concurrent/Future.html>Future&lt;String&gt;</a> foo(String baz); // to call it asynchronously
    }
    public Controller(Object service) {
       super(service);
@@ -345,11 +346,11 @@ public class Controller extends util.AbstractController implements IController {
                Begin by subclassing AbstractService into MockService(s), providing
                simple/trivial implementations of the methods. This will provide a fully
                demonstrable system, in <i>literally</i> minutes. Next, subclass the
-               MockService(s) into ActualService(s) with an eye toward always being able to
-               demonstrate.<br><br>
+               MockService(s) into ActualService(s), implementing functionality
+               incrementally, with an eye toward always being able to demonstrate.<br><br>
 
                <b>Testing:</b><br>
-               For a distributed system, better than using unit tests; develop
+               For such a distributed system, better than using unit tests; develop
                <a href=http://wiki.java.net/bin/view/Communications/CajoScripting>scripts</a>
                of functional test scenarios.<br><br>
 
@@ -358,7 +359,7 @@ public class Controller extends util.AbstractController implements IController {
                use <i>Interfaces,</i> rather than <i>Objects,</i> for non-primitive
                arguments return types.<br>
                (non-serialisable arguments and returns are transparently converted into
-               dynamic remote proxies implementing all the associated object's interfaces.)<br><br>
+               dynamic remote proxies, implementing all the associated object's interfaces.)<br><br>
 
             </span>
          </td>
@@ -388,8 +389,8 @@ public class Controller extends util.AbstractController implements IController {
             <span class="spacing style4 style7 style9">
                <b>Security:</b><br>
                Accepting mobile code for proxies and controllers can be risky. A rogue
-               object could hobble or even crash the server JVM simply by allocating lots
-               of memory for instance. For this reason acceptance of mobile proxies and
+               object could hobble or even crash the receiving JVM simply by allocating lots
+               of memory for instance. For this reason, acceptance of mobile proxies and
                controllers is <i>disabled</i> by default. It should go without saying that
                an internet facing server should <u><i>not</i></u> accept mobile code.
                However inside the firewall, other servers can enable it by calling a single
@@ -397,11 +398,11 @@ public class Controller extends util.AbstractController implements IController {
 
                The cajo framework is just as intuitive and easy to use to as it looks.
                All it takes to get started is to download the very small <a href=https://cajo.dev.java.net/sdk.zip>
-               SDK (120kB)</a>. The example source is openly licensed under the <a href=http://www.apache.org/licenses/LICENSE-2.0>
+               SDK</a> (123kB). The example source is openly licensed under the <a href=http://www.apache.org/licenses/LICENSE-2.0>
                Apache Licence 2.0</a>, and compiles and runs right out of the box. The
                autogenerated javadoc provides extremely detailed comments. Try the SDK as a
                starting template; modify the example classes as you wish, and you can have
-               your <i>own</i> distributed system up and running Quickly.<br><br>
+               your <i>own</i> distributed system up and running very quickly.<br><br>
 
             </span>
          </td>
@@ -416,7 +417,7 @@ public class Controller extends util.AbstractController implements IController {
             <div align="center">
                <hr width=90%">
                <span class="spacing style4 style7 style9">
-                  The goal of <a href=https://cajo.dev.java.net>the cajo project</a> SDK is to show how much is possible, so simply
+                  <br>The goal of <a href=https://cajo.dev.java.net>the cajo project</a> SDK is to show how much is possible, so simply.
                </span>
             </div>
          </td>
