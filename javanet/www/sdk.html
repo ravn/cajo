@@ -139,25 +139,25 @@
                         necessary. A service can furnish as many controllers as it wishes, including
                         none, but typically only one.<br><br>
 
-                        <li><b>Proxies</b><br>
-                        A Proxy is an object <u><i>sent to</i></u> a remote object, to operate
-                        within its JVM. In essence it is the logical inverse of a controller. A proxy
-                        arrives with a remote reference to its sending service, <i>and</i> a local
-                        reference to its receiving object. The sending service, in turn, receives a
-                        remote reference to its proxy. A proxy is used to minimise network traffic,
-                        and improve performance; particularly when a lot of invocations are needed on
-                        the receiving object, or the data sets being manipulated at the receiver are
-                        large. A service can provide as many types of proxies as it wishes, including
-                        none.<br><br>
+                        <li><b>Agents</b><br>
+                        An agent is an object <u><i>sent to</i></u> a remote object, to operate
+                        within its JVM. In essence it is the logical inverse of a controller. An
+                        agent arrives with a remote reference to its sending service, <i>and</i> a
+                        local reference to its receiving object. The sending service, in turn,
+                        receives a remote reference to its agent. An agent is used to minimise
+                        network traffic, and improve performance; particularly when a lot of
+                        invocations are needed on the receiving object, or the data sets being
+                        manipulated at the receiver are large. A service can provide as many types
+                        of agents as it wishes, including none.<br><br>
 
-                        In both cases, the receiving object views controllers and proxise as local
+                        In both cases, the receiving object views controllers and agents as local
                         <i>"intelligent stand-ins"</i> (aka agenta) for the sending services. An
                         object can, if necessary, interact with a remote service directly; neither
-                        using controllers, nor accepting proxies.
+                        using controllers, nor accepting agents.
 
 <blockquote><pre>
 Sending Service <---------- Controller <--- Receiving Object <i>(requested by)</i>
-Sending Service <--------------> Proxy ---> Receiving Object <i>(sent to)</i>
+Sending Service <--------------> Agent ---> Receiving Object <i>(sent to)</i>
 </pre></blockquote>
 
                         </ol>Ancillary components:<ul>
@@ -235,11 +235,12 @@ package service;
 public class Service extends util.AbstractService implements IService {
    public Service(String name) throws Exception {
       super("controller.Controller", name); // service specific controller
-      // use cajo member object to connect to other services as needed
+      // use the cajo member object to connect to other services as needed
    }
-   public String foo(String bar) { // service public method
-      if (bar == null) throw new NullPointerException("null arg");
-      return "foo invocation completed for " + bar;
+   // this method can be called by remote JVMs
+   public String foo(String bar) {
+      if (bar != null) return "foo invocation completed for " + bar;
+      throw new NullPointerException("null arg"); // for illustration
    }
 }
 </tt></pre></blockquote>
@@ -249,70 +250,78 @@ public class Service extends util.AbstractService implements IService {
 <blockquote><tt><pre>
 package controller;
 
+import view.View;
+import java.util.concurrent.Future;
+
 public class Controller extends util.AbstractController implements IController {
-   // This is the reference on which the controller will communicate with
-   // its sending service.
-   private final Service serviceProxy;
    // This is the controller's interface to its sending service.
-   private interface Service {
-      String foo(String baz); // this method is just an example
-   // <a href=http://download.oracle.com/javase/6/docs/api/java/util/concurrent/Future.html>Future&lt;String&gt;</a> foo(String baz); // to call it asynchronously
+   private interface homeInterface { // example interface
+      String foo(String baz); // synchronous call
+   // <a href=http://download.oracle.com/javase/6/docs/api/java/util/concurrent/Future.html>Future&lt;String&gt;</a> foo(String baz); // or call it asynchronously
    }
-   public Controller(Object service) {
-      super(service);
-      serviceProxy = proxy(Service.class);
+   // The reference to the sending service, to make callback invocations.
+   private final HomeService homeService;
+   // The reference to the the view object to listen to, and modify at runtime.
+   private transient View view;
+   public Controller(Object homeService) {
+      this.homeService = proxy(homeService, HomeService.class);
    }
+   // this method is called when the controller arrives at the remote JVM
    public void init(gnu.cajo.Cajo cajo) {
       super.init(cajo);
       System.out.println("Controller arrived at service!");
       // use the cajo object to connect to other services as needed
    }
-   public util.AbstractView getView() {
-      view = new view.View(); // controller specific view
-      String result = baz("hello"); // for illustration
-      ((View)view).center.display(result); // show in view
-      // attach controller specific view action listeners here...
+   // this method is called by the receiving JVM to get the GUI view
+   public util.AbstractView getView() throws java.io.IOException {
+      // the view is hard-coded it could be read from a file, or a property
+      view = new View();
+      view.center.display("service call result:\n > ");
+      try { view.center.display(baz("hello")); } // for illustration
+      catch(Exception x) { x.printStackTrace(); }
       return view;
    }
-   public String baz(String bar) { // call remote service function
-      return serviceProxy.foo(bar).toString();
+   // this example method can be called by the sending and receiving JVM
+   public String baz(String bar) {
+      // return homeService.foo(null); // test error handling
+      return homeService.foo(bar).toString();
    }
 }
 </tt></pre></blockquote>
 
-               <b>Example Proxy:</b>
+               <b>Example Agent:</b>
 
 <blockquote><tt><pre>
-package proxy;
+package agent;
 
-public class Proxy extends util.AbstractProxy implements IProxy {
+public class Agent extends util.AbstractAgent implements IAgent {
+   // This defines the agent's interface to its sending service.
+   private interface HomeService {
+   // Object foo(String bar); // synchronous call
+      <a href=http://download.oracle.com/javase/6/docs/api/java/util/concurrent/Future.html>Future&lt;Object&gt;</a> foo(String bar); // or call it asynchronously
+   }
+   // This defines the proxy's interface to its receiving service.
+   private interface LocalService {
+      String baz(String foo); // synchronous call
+   // Future&lt;String&gt; baz(String foo); // or call it asynchronously
+   }
    // This is the reference on which the proxy will communicate with
    // its sending service.
-   private final HomeService homeProxy;
+   private final HomeService homeService;
    // This is the reference on which the proxy will communicate with
    // its receiving service.
-   private LocalService localProxy;
-   // This is the proxy's interface to its sending service.
-   private interface HomeService {
-      Object foo(String bar); // call it synchronously (blocking)
-   // <a href=http://download.oracle.com/javase/6/docs/api/java/util/concurrent/Future.html>Future&lt;Object&gt;</a> foo(String bar); // or call it asynchronously
+   private LocalService localService;
+   public Agent(Object homeService) {
+      this.homeService = proxy(homeService, HomeService.class);
    }
-   // This is the proxy's interface to its receiving service.
-   private interface LocalService {
-   // String baz(String foo);
-      Future&lt;String&gt; baz(String bar); // call it asynchronously
-   }
-   public Proxy(Object homeService) {
-      super(homeService);
-      homeProxy = proxy(homeService, HomeService.class);
-   }
+   // this method is called when the agent arrives at the receiver
    public void init(Object localService, gnu.cajo.Cajo cajo) {
-      super.init(localService, cajo);
-      localProxy = proxy(localService, LocalService.class);
-      System.out.println("Proxy arrived at service!");
+      super.init(cajo, localService);
+      this.localService = proxy(localService, LocalService.class);
+      System.out.println("Agent arrived at service!");
       // use the cajo object to connect to other services as needed
    }
-   // This method is invoked by the remote service
+   // This method can be by the sending and receiving service
    public String bar(String baz) { return localProxy.baz(baz); }
 }
 </tt></pre></blockquote>
@@ -359,7 +368,9 @@ public class Proxy extends util.AbstractProxy implements IProxy {
                use <i>Interfaces,</i> rather than <i>Objects,</i> for non-primitive
                arguments return types.<br>
                (non-serialisable arguments and returns are transparently converted into
-               dynamic remote proxies, implementing all the associated object's interfaces.)<br><br>
+               <a href=http://download.oracle.com/javase/1.3/docs/guide/reflection/proxy.html>
+               dynamic proxy</a> references, implementing all of the remote object's
+               interfaces.)<br><br>
 
             </span>
          </td>
@@ -388,9 +399,9 @@ public class Proxy extends util.AbstractProxy implements IProxy {
          <td valign="top">
             <span class="spacing style4 style7 style9">
                <b>Security:</b><br>
-               Accepting mobile code for proxies and controllers can be risky. A rogue
+               Accepting mobile code for agents and controllers can be risky. A rogue
                object could hobble or even crash the receiving JVM simply by allocating lots
-               of memory for instance. For this reason, acceptance of mobile proxies and
+               of memory for instance. For this reason, acceptance of mobile agents and
                controllers is <i>disabled</i> by default. It should go without saying that
                an internet facing server should <u><i>not</i></u> accept mobile code.
                However inside the firewall, other servers can enable it by calling a single
@@ -398,11 +409,11 @@ public class Proxy extends util.AbstractProxy implements IProxy {
 
                The cajo framework is just as intuitive and easy to use to as it looks.
                All it takes to get started is to download the very small <a href=https://cajo.dev.java.net/sdk.zip>
-               SDK</a> (123kB). The example source is openly licensed under the <a href=http://www.apache.org/licenses/LICENSE-2.0>
+               SDK</a> (125kB). The example source is openly licensed under the <a href=http://www.apache.org/licenses/LICENSE-2.0>
                Apache Licence 2.0</a>, and compiles and runs right out of the box. The
                autogenerated javadoc provides extremely detailed comments. Try the SDK as a
                starting template; modify the example classes as you wish, and you can have
-               your <i>own</i> distributed system up and running very quickly.<br><br>
+               your own distributed system up and running very quickly.<br><br>
 
             </span>
          </td>
