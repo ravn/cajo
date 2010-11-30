@@ -151,9 +151,9 @@
                         of agents as it wishes, including none.<br><br>
 
                         In both cases, the receiving object views controllers and agents as local
-                        <i>"intelligent stand-ins"</i> (aka agenta) for the sending services. An
-                        object can, if necessary, interact with a remote service directly; neither
-                        using controllers, nor accepting agents.
+                        <i>"intelligent stand-ins"</i> for the sending services. An object can, if
+                        necessary, interact with a remote service neither using controllers, nor
+                        accepting agents.
 
 <blockquote><pre>
 Sending Service <---------- Controller <--- Receiving Object <i>(requested by)</i>
@@ -366,7 +366,7 @@ public class Agent extends util.AbstractAgent implements IAgent {
                <b>Advanced:</b><br>
                Your applications will become increasingly flexible and powerful the more you
                use <i>Interfaces,</i> rather than <i>Objects,</i> for non-primitive
-               arguments return types.<br>
+               arguments, and return types.<br>
                (non-serialisable arguments and returns are transparently converted into
                <a href=http://download.oracle.com/javase/1.3/docs/guide/reflection/proxy.html>
                dynamic proxy</a> references, implementing all of the remote object's
