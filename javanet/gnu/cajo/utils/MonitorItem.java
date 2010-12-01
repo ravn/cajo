@@ -38,9 +38,8 @@ import java.io.ObjectOutputStream;
  * properly.  Specifically, it will gather information about the calling
  * client, the method called, the inbound and outbound data. It will also
  * record the approximate time between client invocations, the time used to
- * service the invocation, and the approximate percentage of free memory
- * available at the completion of the operation.  Subclassing of MonitorItem
- * is allowed; primarily to create self-monitoring classes.
+ * service the invocation. Subclassing of MonitorItem is allowed; primarily
+ * to create self-monitoring classes.
  * <p><i>Note:</i> monitoring an object can be expensive in runtime efficiency.
  * It is best used for debug and performance analysis, during development, or
  * in production, for objects that would not be called very frequently.
@@ -58,17 +57,11 @@ public class MonitorItem implements Invoke {
     */
    public static boolean DEBUG;
    /**
-    * This flag can be used to selectively enable and disable monitoring
-    * on a class-wide level. By default it is set to false, when true, no
-    * output to any logstream will take place.
+    * This flag can be used to selectively enable and disable monitoring.
+    * By default it is set to false, when true, no output to the logstream
+    * will take place. It is subjugate to the {@link #DEBUG DEBUG} flag.
     */
-   public static boolean CLASSOFF;
-   /**
-    * This flag can be used to selectively enable and disable monitoring
-    * on a instance-wide level. By default it is set to false, when true, no
-    * output to the logstream will take place.
-    */
-   public boolean LOCALOFF;
+   public boolean OFF;
    /**
     * The object being monitored. It is declared as public to allow the
     * reference of the MontorItem, and its wrapped object, from a single
@@ -124,12 +117,10 @@ public class MonitorItem implements Invoke {
     * <li> The number of times this method has been called
     * <li> The idle time between invocations, in milliseconds.
     * <li> The run time of the invocation time, in milliseconds
-    * <li> The free memory percentage, following the invocation</ul>
-    * If the write operation to the log file results in an exception, the
-    * stack trace of will be printed to System.err.<p>
+    * </ul>If the write operation to the log file results in an exception,
+    * the stack trace of will be printed to System.err.<p>
     * <i><u>Note</u>:</i> Logging may be activated and deactivated
-    * administratively as needed on both an instance-wide basis via the field
-    * LOCALOFF, and on a class-wide basis via the static field CLASSOFF.
+    * administratively as needed on via the field {@link #OFF OFF}.
     * @param method The internal object's public method being called.
     * @param  args The arguments to pass to the internal object's method.
     * @return The sychronous data, if any, resulting from the invocation.
@@ -139,8 +130,7 @@ public class MonitorItem implements Invoke {
     * @throws Exception If the internal object's method rejects the invocation.
     */
    public Object invoke(String method, Object args) throws Exception {
-      if (!DEBUG && (CLASSOFF || LOCALOFF))
-         return Remote.invoke(item, method, args);
+      if (!DEBUG && OFF) return Remote.invoke(item, method, args);
       Object result = null;
       long time = System.currentTimeMillis();
       try { return result = Remote.invoke(item, method, args); }
@@ -162,8 +152,6 @@ public class MonitorItem implements Invoke {
          }
          clientHost = sb.toString();
       }
-      Runtime rt = Runtime.getRuntime();
-      int freeMemory = 100 - (int)(rt.freeMemory() * 100 / rt.totalMemory());
       ObjectOutputStream oos =
           os instanceof ObjectOutputStream ? (ObjectOutputStream) os : null;
       PrintStream ps = os instanceof PrintStream ? (PrintStream)  os : null;
@@ -173,8 +161,7 @@ public class MonitorItem implements Invoke {
                oos.writeObject( new java.rmi.MarshalledObject(new Object[] {
                   clientHost, item.getClass().getName() + " hashcode " +
                   item.hashCode(), method, args, result, new Long(++count),
-                  new Long(time), new Long(time - oldtime), new Integer(run),
-                  new Integer(freeMemory)
+                  new Long(time), new Long(time - oldtime), new Integer(run)
                }));
                oos.flush(); // just for good measure...
             } else if (ps != null) {
@@ -209,8 +196,6 @@ public class MonitorItem implements Invoke {
                ps.print("\nBusy time   = ");
                ps.print(run);
                ps.print(" ms");
-               ps.print("\nFree memory = ");
-               ps.print(freeMemory);
                ps.print("%\n\n");
             }
          } catch(Exception x) { x.printStackTrace(); }
