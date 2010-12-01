@@ -44,6 +44,7 @@ import java.rmi.RemoteException;
  * @author John Catherino
  */
 public final class Cajo implements Grail {
+   private final int ttl;
    private final Multicast multicast;
    private final Vector items = new Vector();
    private final Registrar registrar = new Registrar(items);
@@ -177,18 +178,36 @@ public final class Cajo implements Grail {
       }
    }
    /**
-    * The constructor announces the cajo object on the cajo IANA standard
-    * address and port. <i><u>Note</u>:</i> invoke
-    * gnu.cajo.invoke.Remote.config, and construct a
-    * gnu.cajo.utils.CodebaseServer if needed, to configure the JVM
-    * <i>before</i> invoking this constructor.
+    * The defaule constructor announces the cajo object on the cajo IANA
+    * standard address and port, with a default ttl value of 16.
+    * <br><i><u>Note</u>:</i> invoke gnu.cajo.invoke.Remote.config, and
+    * construct a gnu.cajo.utils.CodebaseServer if needed, to configure
+    * the JVM <i>before</i> invoking this constructor.
     * @throws IOException If the startup announcement datagram packet could
     * not be sent
     */
-   public Cajo() throws IOException {
+   public Cajo() throws IOException { this(16); }
+   /**
+    * This constructor announces the cajo object on the cajo IANA standard
+    * address and port using a specific ttl value.
+    * <br><i><u>Note</u>:</i> invoke gnu.cajo.invoke.Remote.config, and
+    * construct a gnu.cajo.utils.CodebaseServer if needed, to configure the
+    * JVM <i>before</i> invoking this constructor.
+    * @param ttl The time for interface export announcements to live,
+    * it is decremented each time it is passed to a new router, a value of 0
+    * confines the announcement to the local subnet, the max value of 255
+    * could theoretically traverse the entire internet (assuming no routers
+    * blocked datagram packets)
+    * @throws IOException If the startup announcement datagram packet could
+    * not be sent
+    */
+   public Cajo(int ttl) throws IOException {
+      if (ttl < 0 || ttl > 255) throw new
+         IllegalArgumentException(ttl + "is an invalid ttl (0 - 255)");
+      this.ttl = ttl;
       multicast = new Multicast("224.0.23.162", 1198);
       multicast.listen(registrar);
-      multicast.announce(ItemServer.bind(registrar, "registrar"), 255);
+      multicast.announce(ItemServer.bind(registrar, "registrar"), ttl);
    }
    /**
     * This method makes any object's public methods, whether instance or
@@ -235,7 +254,7 @@ public final class Cajo implements Grail {
     */
    public void export(Object object, Object target) throws IOException {
       items.add(new Remote(new Searchable(object, target)));
-      multicast.announce(registrar, 255);
+      multicast.announce(registrar, ttl);
    }
    /**
     * This method finds all remotely invocable objects, supporting the
