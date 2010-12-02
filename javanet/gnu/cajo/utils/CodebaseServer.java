@@ -210,8 +210,8 @@ public final class CodebaseServer extends Thread {
          + "    <vendor>" + (vendor != null ? vendor : "The cajo project") + "</vendor>\r\n"
          + "    <description>Graphical cajo proxy client</description>\r\n"
          + "    <homepage href=\"https://cajo.dev.java.net\"/>\r\n"
-         + (icon == null ? "" : "    <icon href=\"" + icon + "\"/>\r\n")
-         + (splash == null ? "" : "    <icon href=\"" + splash + "\" kind=\"splash\"/>\r\n")
+         + (icon   == null ? "" : "    <icon href=\"" + icon + "\"/>\r\n")
+         + (splash == null ? "" : "    <icon kind=\"splash\" href=\"" + splash + "\"/>\r\n")
          + "    <shortcut><desktop/></shortcut>\r\n"
          + "  </information>\r\n" + "  <resources>\r\n"
          + "    <j2se version=\"1.5+\"/>\r\n");
