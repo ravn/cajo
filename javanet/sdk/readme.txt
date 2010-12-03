@@ -9,24 +9,29 @@ https://cajo.dev.java.net
           \_____/
 
 This SDK is intended to provide the fastest possible introduction to the
-capabilities of the cajo project, and its three primary goals:
+fundamental capabilities of the cajo project, and its four primary goals:
 
 * To seamlessly link JVMs transparently over the network
 * To provide dynamic transfer of controller objects to distribute workload
+* To provide dynamic transfer of proxy objects to distribute workload
 * To furnish remote Graphical User Interfaces
 
 Getting Started:
 
+If you have not already, please visit the SDK summary page at the cajo
+project: https://cajo.dev.java.net/sdk.html it provides a very quick
+overview.
+
 An ant script, build.xml is provided; you can either convert it into a
 project in your favourite IDE, or use it with command line tools. The
-design is so straightforward, no special IDE plug-ins are necessaru.
+design is so straightforward, no special IDE plug-ins are necessary.
 
 The ant script has four targets:
 
 javadoc         create a complete javadoc site, in a new doc directory
 build(default)  construct the example server, its controller, and view
-start           begin operation of the server (with default arguments)
-client          start a client application to connect to the server
+startserver     begin operation of the server (with default arguments)
+startclient     start a client application to connect to the server
 
 Once the doc directory is created, simply open your browser to
 doc/index.html to view the detailed documentation.
@@ -45,6 +50,6 @@ the GNU Lesser General Public Licence, please visit the following URL:
 http://www.gnu.org/licenses/lgpl.html
 
 For 64-bit developers:
-The grail.jar provided in the SDK is compoled for a 32-bit JRE. If you wish
-to 64-bit, download the cajo source https://cajo.dev.java.net/cajo.zip and
-execute the ant grail target with a 64-bit compiler.
+The grail.jar provided in the SDK is compiled for a 32-bit JRE. If you wish
+to run 64-bit, download the cajo source https://cajo.dev.java.net/cajo.zip
+and execute the ant grail target with a 64-bit compiler.
