@@ -64,6 +64,7 @@ import java.rmi.server.RMIServerSocketFactory;
  */
 public class ItemServer {
   // a small utility ClassLoader, to load server plug-in objects from jar files.
+  private static final String NONE[] = {};
   private static final class JarClassLoader extends ClassLoader {
      final String path;
      JarClassLoader(String jarFile) { path = "jar:file:" + jarFile + "!/"; }
@@ -330,6 +331,16 @@ public class ItemServer {
   public static void unbind(String name) {
      try { if (registry != null) registry.unbind(name); }
      catch(Exception x) {}
+  }
+  /**
+   * This utility method returns all of the objects currently bound in this
+   * JVM.
+   * @return Zero or more names of objects available for use
+   */
+  public static final String[] list() {
+     if (registry != null) try { return registry.list(); }
+     catch(RemoteException x) {} // won't happen since registry is local
+     return NONE;
   }
   /**
    * The application loads either a zipped marshalled object (zedmob) from a
