@@ -408,7 +408,9 @@ public class Agent extends util.AbstractAgent implements IAgent {
                agents is <i>disabled</i> by default. It should go without saying that an
                internet facing server should <u><i>not</i></u> accept mobile code. However
                inside the firewall, other servers can enable it by calling a single line of
-               code.* <i>(An example of this is included in the SDK)</i><br>
+               code.* <i>(An example of this is included in the SDK)</i> <i><u>Note</u>:</i>
+               As you may have surmised; a server can <i>send</i> its controller, without
+               <i>accepting</i> mobile code.<br>
                *If the controllers and agents code are in the receiving server's classpath,
                then they are not mobile by definition, rather quite static, and can be used
                without having to enable acceptance of mobile code.<br><br>
