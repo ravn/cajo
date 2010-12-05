@@ -169,9 +169,8 @@ Sending Service <--------------> Agent ---> Receiving Object <i>(sent to)</i>
 
                         A <a href=http://weblogs.java.net/blog/cajo/archive/2007/09/simple_interjvm.html>
                         cajo object</a> is provided to all components, this allows them to look up
-                        services needed for assistance: <a href=https://cajo.dev.java.net/nonav/docs/gnu/cajo/Grail.html#lookup(java.lang.Class)>
-                        dynamically</a> by interface, as well as <a href=https://cajo.dev.java.net/nonav/docs/gnu/cajo/Cajo.html#lookup(java.lang.Class)>
-                        statically</a> by server address.
+                        services needed for assistance: <a href=https://cajo.dev.java.net/nonav/docs/gnu/cajo/Cajo.html#lookup(java.lang.Class)>
+                        dynamically</a> by interface, as well as statically by server address.
 
                      </span>
                   </td>
@@ -359,8 +358,8 @@ public class Agent extends util.AbstractAgent implements IAgent {
                Begin by subclassing AbstractService into MockService(s), providing
                simple/trivial implementations of the methods. This will provide a fully
                demonstrable system, in <i>literally</i> minutes. Next, subclass the
-               MockService(s) into ActualService(s), implementing functionality
-               incrementally, with an eye toward always being able to demonstrate.<br><br>
+               MockService(s) into ActualService(s), incrementally implementing
+               functionality, with an eye toward always being able to demonstrate.<br><br>
 
                <b>Testing:</b><br>
                For such a distributed system, better than using unit tests; develop test
