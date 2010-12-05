@@ -324,8 +324,11 @@ public class Agent extends util.AbstractAgent implements IAgent {
       System.out.println("Agent arrived at service!");
       // use the cajo object to connect to other services as needed
    }
-   // This method can be by the sending and receiving service
-   public String bar(String baz) { return localService.baz(baz); }
+   public String bar(String baz) { // this method can be called by the sender
+      try { homeService.foo("hello from agent"); } // can talk to sender
+      catch(java.rmi.RemoteException x) { /* call home can fail */ }
+      return localService.baz(baz).toString(); //can talk to receiver
+   }
 }
 </tt></pre></blockquote>
             </span>
