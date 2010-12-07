@@ -3,11 +3,11 @@ package gnu.cajo.utils;
 import gnu.cajo.invoke.*;
 import java.rmi.registry.*;
 import java.text.DateFormat;
-import java.rmi.RemoteException;
 import java.net.URL;
 import java.util.HashMap;
 import java.io.InputStream;
 import java.io.IOException;
+import java.rmi.RemoteException;
 import java.rmi.MarshalledObject;
 import java.rmi.server.RMIClientSocketFactory;
 import java.rmi.server.RMIServerSocketFactory;
@@ -333,7 +333,7 @@ public class ItemServer {
      catch(Exception x) {}
   }
   /**
-   * This utility method returns all of the objects currently bound in this
+   * This utility function returns all of the objects currently bound in this
    * JVM.
    * @return Zero or more names of objects available for use
    */
@@ -341,6 +341,18 @@ public class ItemServer {
      if (registry != null) try { return registry.list(); }
      catch(RemoteException x) {} // won't happen since registry is local
      return NONE;
+  }
+  /**
+   * This utility function returns a reference to a remote object bound on
+   * this JVM, if it exists.
+   * @param name The name of the object in the registry
+   * @return A remote reference to the object
+   * 
+   */
+  public static java.rmi.Remote lookup(String name)
+     throws java.rmi.NotBoundException {
+     try { return registry.lookup(name); }
+     catch(RemoteException x) { return null; } // can't happen
   }
   /**
    * The application loads either a zipped marshalled object (zedmob) from a
