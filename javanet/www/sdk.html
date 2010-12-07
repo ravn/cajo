@@ -233,7 +233,7 @@ Sending Service <--------------> Agent ---> Receiving Object <i>(sent to)</i>
 <blockquote><tt><pre>
 package service;
 
-public class Service extends util.AbstractService implements IService {
+public class Service extends cajo.sdk.AbstractService implements IService {
    public Service(String name) throws Exception {
       super("controller.Controller", name); // service specific controller
       // use the cajo member object to connect to other services as needed
@@ -254,7 +254,7 @@ package controller;
 import view.View;
 import java.util.concurrent.Future;
 
-public class Controller extends util.AbstractController implements IController {
+public class Controller extends cajo.sdk.AbstractController implements IController {
    // This is the controller's interface to its sending service.
    private interface homeInterface { // example interface
       String foo(String baz); // synchronous call
@@ -274,7 +274,7 @@ public class Controller extends util.AbstractController implements IController {
       // use the cajo object to connect to other services as needed
    }
    // this method is called by the receiving JVM to get the GUI view
-   public util.AbstractView getView() throws java.io.IOException {
+   public cajo.sdk.AbstractView getView() throws java.io.IOException {
       // the view is hard-coded it could be read from a file, or a property
       view = new View();
       view.center.display("service call result:\n > ");
@@ -297,7 +297,7 @@ package agent;
 
 import java.util.concurrent.Future;
 
-public class Agent extends util.AbstractAgent implements IAgent {
+public class Agent extends cajo.sdk.AbstractAgent implements IAgent {
    // This defines the agent's interface to its sending service.
    private interface HomeService {
    // Object foo(String bar); // synchronous call
