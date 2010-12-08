@@ -38,7 +38,6 @@ import java.text.SimpleDateFormat;
  * <p>
  * <i><u>Note</u>:</i> There can be at most <i>one</i> CodebaseServer
  * instance per JVM.
- * 
  * @version 1.0, 01-Nov-99 Initial release
  * @author John Catherino
  */
@@ -112,7 +111,6 @@ public final class CodebaseServer extends Thread {
     * selected by the OS from any ports available at runtime. In that case, the
     * port actually offered by the operating system will be stored here
     * automatically, following construction.
-    * 
     * @deprecated The preferred field to check is <tt>serverPort</tt> as this
     * field is mutable unfortunately; it remains solely to maintain backward
     * compatibility.
@@ -122,7 +120,6 @@ public final class CodebaseServer extends Thread {
     * The main constructor will start up the server's codebase transport
     * mechanism on the specified port. To shut the service down, call its
     * inherited interrupt method. All other constructors in this class call it.
-    * 
     * @param jars An array of strings representing the path and filename of a
     * library jar needed by the client application. The CodebaseServer will
     * serve them to the remote JVM. The server will first search for the jar in
@@ -157,7 +154,7 @@ public final class CodebaseServer extends Thread {
     * @param splash The optional splash screen image to represent the WebStart
     * application while it is loading, it can also be null. It is typically of
     * the form "images/splash.jpeg", where it will be requested from the server.
-    * The image can be in either GIF or JPEG format.
+    * The image can be in either GIF, PNG, or JPEG format.
     * @throws IOException If the HTTP socket providing the codebase and applet
     * tag service could not be created.
     */
@@ -297,7 +294,7 @@ public final class CodebaseServer extends Thread {
     * <p> The format of a browser's proxy request URL one required, and five
     * optional parameters, utilizing the following format:
     * <p><code>
-    * http://serverHost[:serverPort]/[clientPort][:localPort][-proxyName][!]
+    * http://serverHost[:serverPort]/[clientPort:][localPort-][proxyName][!]
     * </code><p>
     * Where the parameters have the following meanings:
     * <ul>
@@ -317,17 +314,14 @@ public final class CodebaseServer extends Thread {
     * objects.
     * <li><i>!</i> This operator causes the proxy to be sent using JNLP. This
     * will launch the proxy as an application on the client using WebStart.
-    * </ul>
-    * <p>
+    * </ul><p>
     * To unspecify any optional object, simply omit it, from the URL, along
     * with its preceeding delimiter, if any. The <u>order</u> of the arguments
-    * must be maintained however.
-    * <p>
+    * must be maintained however.<p>
     * <i>Note:</i> other object servers can share this instance, by placing
     * their proxy classes or jar files in the same working directory. However,
     * those object servers will not be able to use the client service feature,
-    * as it is unique to the VM in which the CodebaseServer is running.
-    * <p>
+    * as it is unique to the VM in which the CodebaseServer is running.<p>
     * As a safety precaution, the server will send any requested jar or class
     * file in or below its working directory <i>except</i> the jar file of the
     * server itself. Typically people do not want to give this file out.
@@ -346,7 +340,7 @@ public final class CodebaseServer extends Thread {
                scan : for (int i = 0; i < ix; i++) { // scan client request
                   if (msg[i] == '/') {
                      for (int j = i + 1; j < msg.length; j++) {
-                        if (msg[j] == ' ') {
+                        if (msg[j] == ' ' || msg[j] == '/') {
                            itemName = new String(msg, i, j - i);
                            break scan;
                         }
@@ -357,28 +351,22 @@ public final class CodebaseServer extends Thread {
                if (log != null)
                   log.println("Client " + clientHost + " request: " + itemName);
                if (itemName == null) os.write(bye); // invalid request
-               else if (itemName.indexOf('.') == -1
+               else if (itemName.indexOf('.') == -1 // gui request
                   && itemName.indexOf('/', 1) == -1) {
                   try { // URL request: parse arguments
-                     int ia = itemName.indexOf(':') != -1 ? itemName
-                        .indexOf(':') : itemName.indexOf('-') != -1
-                        ? itemName.indexOf('-')
-                        : itemName.indexOf('!') != -1
-                        ? itemName.indexOf('!') : itemName.length();
-                     int ib = itemName.indexOf('-') != -1 ? itemName
-                        .indexOf('-') : itemName.indexOf('!') != -1
-                        ? itemName.indexOf('!')
-                        : itemName.length();
+                     int ia = itemName.indexOf(':') != -1
+                        ? itemName.indexOf(':') : 0;
+                     int ib = itemName.indexOf('-') != -1
+                        ? itemName.indexOf('-') : ia;
                      int ic = itemName.indexOf('!') != -1
                         ? itemName.indexOf('!') : itemName.length();
                      String clientPort = ia > 1
                         ? itemName.substring(1, ia) : "0";
-                     String localPort = ib > ia
-                        ? itemName.substring(ia + 1, ib) : "0";
-                     String proxyName = ic > ib
-                        ? itemName.substring(ib + 1, ic) : "main";
-                     Integer.parseInt(clientPort); // test URL validity
-                     Integer.parseInt(localPort); // test URL vaidity
+                     String localPort = ib > ++ia
+                        ? itemName.substring(ia, ib) : "0";
+                     String proxyName = ic > ++ib
+                        ? itemName.substring(ib, ic) : "main";
+                     ItemServer.lookup(proxyName); // is object bound?
                      int proxyPort = Remote.getDefaultClientPort();
                      if (itemName.indexOf('!') == -1) { // Applet request
                         byte iex[] = ( // used by Exploder:
@@ -423,12 +411,13 @@ public final class CodebaseServer extends Thread {
                         os.write(out);
                      }
                   } catch (Exception x) { os.write(bye); }
-               } else if (!itemName.endsWith("server.jar")) {
-                  if ( // file request
+               } else if (!itemName.endsWith("server.jar")) { // file request
+                  if (
                      itemName.equals("/favicon.ico") ||
                      itemName.endsWith(".jar")       ||
                      itemName.endsWith(".class")     ||
                      itemName.endsWith(".gif")       ||
+                     itemName.endsWith(".png")       ||
                      itemName.endsWith(".jpg")       ||
                      itemName.endsWith(".jpeg")
                   ) try {
