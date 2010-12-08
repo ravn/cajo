@@ -340,7 +340,7 @@ public final class CodebaseServer extends Thread {
                scan : for (int i = 0; i < ix; i++) { // scan client request
                   if (msg[i] == '/') {
                      for (int j = i + 1; j < msg.length; j++) {
-                        if (msg[j] == ' ' || msg[j] == '/') {
+                        if (msg[j] == ' ') {
                            itemName = new String(msg, i, j - i);
                            break scan;
                         }
