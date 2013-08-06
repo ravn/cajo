@@ -1,0 +1,43 @@
+<body>
+
+The &lt;Unnamed&gt; package contains the main {@link cajo.sdk.AbstractServer
+server} definition.<p>
+
+A server is a JVM which furnishes one or more {@link cajo.sdk.AbstractService
+service} objects. It can also optionally, have a main executable program as
+well. Typically, many light-load services are grouped in a JVM, whilst fewer
+heavier-load services are grouped into a single JVM.
+
+<p><b>Design Recommendation:</b> <i>(found to work very well)</i><ol>
+
+<li>Subclass {@link cajo.sdk.IService IService}, and well document method
+functionality. Be sure to fully document the service package.html with as
+much detail. Consider the generated javadoc as being the only documentation
+a user of the services should need.
+
+<li>Subclass {@link cajo.sdk.AbstractService AbstractService} into
+MockService(s), providing simple/trivial implementations of the methods. This
+will provide a fully demonstrable system, very quickly.
+
+<li>Subclass the MockService(s) into ActualService(s) implementing method
+functionality iteratively, with an eye toward always being able to
+demonstrate at any stage of development.
+
+</ol>
+
+Do similarly for Agents and Controllers.<p>
+
+For a distributed system, more useful than unit tests; develop test services,
+or even <a href=http://wiki.java.net/bin/view/Communications/CajoScripting>
+scripts</a>, of functional test scenarios.<p>
+
+Applications become increasingly flexible and powerful, the more
+<i>Interfaces,</i> rather than <i>Objects</i> are used, for non-primitive
+arguments and return types.<p>
+
+Over time, should service functionality requirements increase; subclass the
+previous service, to provide the additional methods. This incurs no impact on
+existing service clients, whilst allowing updated clients to access the new
+functionality.
+
+</body>

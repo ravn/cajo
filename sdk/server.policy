@@ -1,0 +1,9 @@
+grant codeBase "file:grail.jar" {
+   permission java.security.AllPermission;
+}; // the grail library can do anything it wants,
+grant codeBase "file:server.jar" {
+   permission java.security.AllPermission;
+}; // the server code can do anything it wants,
+grant { // allow controllers/agents only network connexions
+   permission java.net.SocketPermission "*", "connect, resolve";
+}; // grant more controller/agent permissions, if you wish

@@ -1,0 +1,107 @@
+<body>
+
+<!-- normally, this file would not need to be edited, rather the individual
+package.html files -->
+
+The <a href=package-summary.html>&lt;Unnamed&gt;</a> package is used startup
+and configure the server.<p>
+
+The <a href=http://java.net/projects/cajo/pages/Home>cajo SDK</a> is used for
+transparent distributed computing between remote Java Virtual Machines,
+providing client user interfaces via Applets and WebStart. Through the cajo
+<a href=http://weblogs.java.net/blog/cajo/archive/2007/09/simple_interjvm.htm>
+grail</a> mechanism, {@link cajo.sdk.AbstractService services} can dynamically
+discover and use each other, by specified functionality. Also, via the cajo
+<a href=https://cajo.dev.java.net/server.html>CodebaseServer</a> mechanism;
+rich distributed user interfaces to the service objects can be provided,
+services can also provide {@link cajo.sdk.AbstractController controller}
+objectst to themselves, and services can send {@link cajo.sdk.AbstractAgent
+agent} objects to other services for themselves. Full cajo framework <a href=https://cajo.dev.java.net/nonav/docs/index.html>
+Javadoc</a> is available, as is an <a href=https://cajo.dev.java.net/sdk.html>
+introductory overview.</a><p>
+
+The intended use of this SDK is as a <i>'starting point'</i> for new
+projects. Feel free to overwrite it, and add classes to it, and when you are
+ready to create another server, simply start with an original copy of the
+SDK again. Later, if you wish to take advantage of some of the more advanced
+features of the full cajo library, simply replace grail.jar with cajo.jar.
+The grail.jar library is a proper subset of cajo.jar.<p>
+
+The <a href=http://today.java.net/pub/a/today/200l7/04/24/top-50-john-catherino-project-cajo-interview.html>
+cajo grail framework</a> allows Java Virtual Machines to dynamically
+distribute their functionality, and user interfaces, across the network
+transparently. It essentially creates a <i>seamless continuum</i> between
+cooperating remote Java Virtual Machines, or in other words, a <a href=http://weblogs.java.net/pub/wlg/1715>
+World Wide Virtual Machine</a>. <i>(wwvm)</i> The classes defined in this
+SDK, along with the included <a href=https://cajo.dev.java.net/nonav/docs/gnu/cajo/Cajo.html>
+Cajo</a> object, can provide full functional completeness. A single JVM can
+furnish more than one service/controller/view combination, if it wishes.<p>
+
+An overview of the fundamental architecture:<p>
+
+<center><img src="../SDK.png" title="cajo sdk architecture diagramme"></center><p>
+
+A typical cajo server deployment consists minimally of the following nine files:<ul>
+
+ <li> <b>grail.jar</b> - the standard cajo grail library
+ <li> <b>server.jar</b> - the implementation(s) of the service(s), and optional main application
+ <li> <b>controller.jar</b> - the <i>hot swappable</i> implementation(s) of the controler(s), and optional view(s)
+ <li> <b>agent.jar</b> - the <i>hot swappable</i> implementation(s) of the agent(s)
+ <li> <b>client.jar</b> - the standard cajo controller view GUI viewer
+ <li> <b>favicon.ico</b> - to give the Applet a little style
+ <li> <b>splash.jpeg</b> - to give the WebStart app a little style (gif or png too)
+ <li> <b>icon.gif</b> - to provide the WebStart app its own icon  (png or jpeg too)
+ <li> <b>server.policy</b> - a security policy for the server JVM<br><br>
+ <li> <i>optionally,</i> any other library jars needed by either controllers, or services.*</ul>
+
+<p>A <i>hot-swappable</i> controller and agent jar means that new user
+interfaces, controllers, and agents can be developed for currently running
+services. Simply overwriting the jar file will cause all subsequent clients
+to use the <i>new</i> controllers/views/agents.
+
+<p>*The optional CodebaseServer utility class can be used to send any mobile
+code .jar files, for agents and controllers, from its immediate
+subdirectories, with the notable exception of server.jar. Jars used only by
+the server are conventionally renamed with the .zip extension, to stop
+CodebaseServer from sending them. The .zip and .jar file formats are identical
+as far as the Java runtime environment is concerned.<p>
+
+To view the service client in a full-browser Java Applet, visit the
+http service, e.g. <tt>http://myhost:port/name</tt> (name being replaced
+by the actual name of the service to be used)<p>
+
+The application can also be started via WebStart by visiting the server
+thusly: <tt>http://myhost:port/name!</tt> (note the addition of the
+exclamation mark!) Following the WebStart launch, the system will ask if you
+wish a shortcut icon placed on the desktop. If yes, clicking on this icon can
+be used for all subsequent client application launches for that service.<p>
+
+For highest performance, the client can be run as a standard Java application,
+via the following invocation:<p>
+
+<tt>java -cp client.jar:grail.jar -Djava.security.manager
+-Djava.security.policy=client.policy cajo.sdk.Client //myhost:port/name</tt><br>
+<i>(replace : with ; for windows users)</i><p>
+
+<u>Notes from a network perspective</u>:<ul>
+ <li> Servers need to have <u>two</u> open inbound ports <i>(typically 80
+      and 1196)</i> The first is optional, and only needed if the service
+      is furnishing controllers, agents, or other mobile code classes.
+ <li> Clients can operate with <u>all</u> of their inbound ports closed
+ <li> Servers <i>and</i> clients both can be behind NAT routers
+</ul><p>
+
+The grail.jar library also contains three commonly used cajo classes, not
+demonstrated in the SDK example:<p><ul>
+
+<li><a href=https://cajo.dev.java.net/nonav/docs/gnu/cajo/utils/extra/ItemProxy.html>
+ItemProxy</a> and <a href=https://cajo.dev.java.net/nonav/docs/gnu/cajo/utils/extra/ClientProxy.html>
+ClientProxy</a>, these are used to allow callback method invocations to JVMs
+which are <a href=http://wiki.java.net/bin/view/Communications/FirewalledClients>
+firewalled</a>.
+
+<li><a href=https://cajo.dev.java.net/nonav/docs/gnu/cajo/utils/extra/Xfile.html>
+Xfile</a> is used to pass files between JVMs.
+</ul>
+
+</body>
