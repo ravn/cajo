@@ -24,18 +24,24 @@ package gnu.cajo.invoke;
  */
 
 /**
- * The Remote Component Communication Interface, and reason for this package.
- * An empty extension of the Invoke interface, it allows both local, and
- * remote objects, i.e. those from another VM, to be handled interchangably in
- * code, through their superclass interface Invoke. When a VM wishes to allow
- * remote access to an object, the local object would be passed to the
- * constructor of the {@link Remote Remote} class included in this package.
- * <p>The implementation is so trivial, it is included it here:<p>
+ * The Remote Component Communication Interface, and reason for this package. An
+ * empty extension of the Invoke interface, it allows both local, and remote
+ * objects, i.e. those from another VM, to be handled interchangably in code,
+ * through their superclass interface Invoke. When a VM wishes to allow remote
+ * access to an object, the local object would be passed to the constructor of
+ * the {@link Remote Remote} class included in this package.
+ * <p>
+ * The implementation is so trivial, it is included it here:
+ * <p>
  * <code>public interface RemoteInvoke extends Invoke, Remote {}</code>
- * <p><i>Note:</i> this interface is never implemented by classes directly,
- * rather, a client only uses this interface to test if an object is remote,
- * in cases where that would be of interest to the application.
- *<p> To test the locality of an object reference:<p>
+ * <p>
+ * <i>Note:</i> this interface is never implemented by classes directly, rather,
+ * a client only uses this interface to test if an object is remote, in cases
+ * where that would be of interest to the application.
+ * <p>
+ * To test the locality of an object reference:
+ * <p>
+ * 
  * <pre>
  * if (foo instanceof RemoteInvoke) { // the object reference is remote
  *    ...
@@ -44,8 +50,9 @@ package gnu.cajo.invoke;
  * }
  * </pre>
  *
+ * @author John Catherino Initial release
  * @version 1.0, 01-Nov-99
- * @author John Catherino  Initial release
  */
 
-public interface RemoteInvoke extends Invoke, java.rmi.Remote {}
+public interface RemoteInvoke extends Invoke, java.rmi.Remote {
+}
