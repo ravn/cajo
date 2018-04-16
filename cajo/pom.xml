@@ -4,11 +4,11 @@
 
 	<groupId>gnu.cajo</groupId>
 	<artifactId>cajo</artifactId>
-	<version>1.176-SNAPSHOT</version>
+	<version>2.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>cajo</name>
-	<url>http://maven.apache.org</url>
+	<url>https://github.com/ravn/cajo</url>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -19,27 +19,31 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>3.8.1</version>
+			<version>4.12</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
 			<plugin>
+				<!-- https://maven.apache.org/plugins/maven-compiler-plugin/usage.html -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
+				<version>3.7.0</version>
 				<configuration>
+                    <!-- for target != source we need the eclipse compiler, do the voodoo -->
 					<source>1.6</source>
 					<target>1.2</target>
 					<debug>true</debug>
+					<!-- https://maven.apache.org/plugins/maven-compiler-plugin/non-javac-compilers.html -->
 					<compilerId>eclipse</compilerId>
 				</configuration>
 				<dependencies>
+					<!-- https://mvnrepository.com/artifact/org.codehaus.plexus/plexus-compiler-eclipse -->
 					<dependency>
 						<groupId>org.codehaus.plexus</groupId>
 						<artifactId>plexus-compiler-eclipse</artifactId>
-						<version>2.2</version>
+						<version>2.8.4</version>
 					</dependency>
 				</dependencies>
 			</plugin>
