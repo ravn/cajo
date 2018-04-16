@@ -1,0 +1,86 @@
+<!-- sdk example build file, feel free to modify to meet your needs! -->
+<project name="cajo SDK" default="build">
+   <property name="service" value=""/>
+   <target name="build" depends="clean, client, server, controllers, agents"/>
+   <target name="clean">
+      <echo message="deleting old jar files"/>
+      <delete>
+         <fileset dir="." includes="client.jar server.jar controller.jar
+          agent.jar"/>
+      </delete>
+   </target>
+   <target name="client">
+      <javac includeAntRuntime="false" srcdir="src" classpath="grail.jar"
+         includes="cajo/sdk/Client.java cajo/sdk/ProxyLoader.java"/>
+      <jar basedir="src" jarfile="client.jar" includes="cajo/sdk/*.class">
+         <manifest>
+            <attribute name="Main-Class" value="cajo.sdk.Client"/>
+         </manifest>
+      </jar>
+      <delete><fileset dir="src" includes="cajo/sdk/*.class"/></delete>
+   </target>
+   <target name="server">
+      <javac includeAntRuntime="false"
+         debug="on" debuglevel="lines, vars, source"
+         srcdir="src" classpath="grail.jar" includes="Server.java"/>
+      <jar basedir="src" jarfile="server.jar"
+         includes="*.class service/*.class cajo/sdk/*.class">
+         <manifest><attribute name="Main-Class" value="Server"/></manifest>
+      </jar>
+      <delete>
+         <fileset dir="src" includes="*.class service/*.class
+          cajo/sdk/*.class"/>
+      </delete>
+   </target>
+   <target name="controllers"> <!-- build optional controllers, if used -->
+      <javac includeAntRuntime="false"
+         debug="on" debuglevel="lines, vars, source"
+         srcdir="src" classpath="grail.jar" includes="controller/*.java"/>
+      <jar basedir="src" jarfile="controller.jar"
+         includes="controller/*.class view/*.class view/inc/*.*
+         cajo/sdk/*.class cajo/sdk/gui/*.class"/>
+      <delete>
+         <fileset dir="src" includes="controller/*.class view/*.class
+          cajo/sdk/*.class cajo/sdk/gui/*.class"/>
+      </delete>
+   </target>
+   <target name="agents"> <!-- build optional agents, if used -->
+      <javac includeAntRuntime="false"
+         debug="on" debuglevel="lines, vars, source"
+         srcdir="src" classpath="grail.jar" includes="agent/*.java"/>
+      <jar basedir="src" jarfile="agent.jar"
+         includes="agent/*.class cajo/sdk/*.class"/>
+      <delete>
+         <fileset dir="src" includes="agent/*.class cajo/sdk/*.class"/>
+      </delete>
+   </target>
+   <target name="startserver"> <!-- a handy target to launch the server -->
+      <java fork="true" failonerror="true" classname="Server"
+         classpath="grail.jar:server.jar:controller.jar:agent.jar">
+         <sysproperty key="java.security.manager" value=""/>
+         <sysproperty key="java.security.policy" value="server.policy"/>
+         <jvmarg value="-Xmx256M"/> <!-- optional: add more memory -->
+         <jvmarg value="-Xss16M"/>  <!-- optional: add more stack  -->
+         <arg value="8080"/> <!-- http codebase service port -->
+         <arg value="1198"/> <!-- standard cajo server port -->
+      </java>
+   </target>
+   <target name="startclient"> <!-- a handy target to launch the client -->
+      <!-- usage: ant startclient -Dservice=//hostname:port/name -->
+      <!-- if service is not specified, it will be //localhost:1198/main -->
+      <java fork="true" failonerror="true" classname="cajo.sdk.Client"
+         classpath="grail.jar:client.jar">
+         <sysproperty key="java.security.manager" value=""/>
+         <sysproperty key="java.security.policy" value="client.policy"/>
+         <sysproperty key="cajo.sdk.Client.title" value="cajo viewer"/>
+         <arg value="${service}"/>
+      </java>
+   </target>
+   <target name="javadoc"> <!-- open doc/index.html in a browser to view -->
+      <delete dir="doc"/><mkdir dir="doc"/>
+      <javadoc destdir="doc" overview="src/overview.html" linksource="yes"
+         windowtitle="cajo SDK">
+         <fileset dir="src"/>
+      </javadoc>
+   </target>
+</project>

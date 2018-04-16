@@ -1,0 +1,1215 @@
+<html xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:x="urn:schemas-microsoft-com:office:excel"
+xmlns="http://www.w3.org/TR/REC-html40">
+<head>
+<title>Java.net JIRA</title>
+<style type="text/css">
+table {
+    mso-displayed-decimal-separator:"\.";
+    mso-displayed-thousand-separator:"\,";
+}
+body
+{
+    margin: 0px;
+    font-size: 12px;
+    font-family: Arial, sans-serif;
+    color:black;
+}
+
+</style>
+<META HTTP-EQUIV="Content-Type" Content="application/vnd.ms-excel; charset=UTF-8">
+<!-- JRA-7598 - ensure fields (e.g. description) occupy only one cell - even fields containing newlines. -->
+<!--
+Vertical align all cells to the top, in order to align all issue rows of issuetable to the top,
+since Excel does not use or save the css files it is hardcoded here.
+-->
+<style>
+@page
+{
+mso-page-orientation:landscape;
+margin:.25in .25in .5in .25in;
+mso-header-margin:.5in;
+mso-footer-margin:.25in;
+mso-footer-data:"&R&P of &N";
+mso-horizontal-page-align:center;
+mso-vertical-page-align:center;
+}
+
+td.issuekey,
+td.issuetype,
+td.status {
+    mso-style-parent: "";
+    mso-number-format: \@;
+    text-align: left;
+}
+br
+{
+    mso-data-placement:same-cell;
+}
+
+td
+{
+    vertical-align: top;
+}
+</style>
+
+<!--[if gte mso 9]><xml>
+<x:ExcelWorkbook>
+<x:ExcelWorksheets>
+<x:ExcelWorksheet>
+<x:Name>general_report</x:Name>
+<x:WorksheetOptions>
+<x:Print>
+<x:ValidPrinterInfo/>
+</x:Print>
+</x:WorksheetOptions>
+</x:ExcelWorksheet>
+</x:ExcelWorksheets>
+</x:ExcelWorkbook>
+</xml><![endif]-->
+</head>
+<body>
+
+<table border="1">
+    <tr bgcolor="#205081" height="30">
+        <td colspan="45">
+            <img src="https://java.net/jira/images/icon-jira-logo.png" width="57" height="30" border="0" alt="Java.net JIRA">
+        </td>
+    </tr>
+    <tr>
+        <td colspan="45">
+            <a href="https://java.net/jira/secure/IssueNavigator.jspa?reset=true&jqlQuery=project+%3D+CAJO">Java.net JIRA</a>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="45">
+            Displaying <strong>10</strong> issues at <strong>28/Apr/17 1:26 PM</strong>.
+        </td>
+    </tr>
+</table>
+
+
+
+
+                                        <table id="issuetable"  border="1" cellpadding="3" cellspacing="1" width="100%">
+                        <thead>
+        <tr class="rowHeader">
+            
+                                                            <th class="colHeaderLink headerrow-project" data-id="project">
+                            Project
+                                                    </th>
+                                                
+                                                            <th class="colHeaderLink headerrow-issuekey" data-id="issuekey">
+                            Key
+                                                    </th>
+                                                
+                                                            <th class="colHeaderLink headerrow-summary" data-id="summary">
+                            Summary
+                                                    </th>
+                                                
+                                                            <th class="colHeaderLink headerrow-issuetype" data-id="issuetype">
+                            Issue Type
+                                                    </th>
+                                                
+                                                            <th class="colHeaderLink headerrow-status" data-id="status">
+                            Status
+                                                    </th>
+                                                
+                                                            <th class="colHeaderLink headerrow-priority" data-id="priority">
+                            Priority
+                                                    </th>
+                                                
+                                                            <th class="colHeaderLink headerrow-resolution" data-id="resolution">
+                            Resolution
+                                                    </th>
+                                                
+                                                            <th class="colHeaderLink headerrow-assignee" data-id="assignee">
+                            Assignee
+                                                    </th>
+                                                
+                                                            <th class="colHeaderLink headerrow-reporter" data-id="reporter">
+                            Reporter
+                                                    </th>
+                                                
+                                                            <th class="colHeaderLink headerrow-creator" data-id="creator">
+                            Creator
+                                                    </th>
+                                                
+                                                            <th class="colHeaderLink headerrow-created" data-id="created">
+                            Created
+                                                    </th>
+                                                
+                                                            <th class="colHeaderLink headerrow-lastViewed" data-id="lastViewed">
+                            Last Viewed
+                                                    </th>
+                                                
+                                                            <th class="colHeaderLink headerrow-updated" data-id="updated">
+                            Updated
+                                                    </th>
+                                                
+                                                            <th class="colHeaderLink headerrow-resolutiondate" data-id="resolutiondate">
+                            Resolved
+                                                    </th>
+                                                
+                                                            <th class="colHeaderLink headerrow-versions" data-id="versions">
+                            Affects Version/s
+                                                    </th>
+                                                
+                                                            <th class="colHeaderLink headerrow-fixVersions" data-id="fixVersions">
+                            Fix Version/s
+                                                    </th>
+                                                
+                                                            <th class="colHeaderLink headerrow-components" data-id="components">
+                            Component/s
+                                                    </th>
+                                                
+                                                            <th class="colHeaderLink headerrow-duedate" data-id="duedate">
+                            Due Date
+                                                    </th>
+                                                
+                                                            <th class="colHeaderLink headerrow-votes" data-id="votes">
+                            Votes
+                                                    </th>
+                                                
+                                                            <th class="colHeaderLink headerrow-watches" data-id="watches">
+                            Watchers
+                                                    </th>
+                                                
+                                                            <th class="colHeaderLink headerrow-thumbnail" data-id="thumbnail">
+                            Images
+                                                    </th>
+                                                
+                                                            <th class="colHeaderLink headerrow-timeoriginalestimate" data-id="timeoriginalestimate">
+                            Original Estimate
+                                                    </th>
+                                                
+                                                            <th class="colHeaderLink headerrow-timeestimate" data-id="timeestimate">
+                            Remaining Estimate
+                                                    </th>
+                                                
+                                                            <th class="colHeaderLink headerrow-timespent" data-id="timespent">
+                            Time Spent
+                                                    </th>
+                                                
+                                                            <th class="colHeaderLink headerrow-workratio" data-id="workratio">
+                            Work Ratio
+                                                    </th>
+                                                
+                                                            <th class="colHeaderLink headerrow-subtasks" data-id="subtasks">
+                            Sub-Tasks
+                                                    </th>
+                                                
+                                                            <th class="colHeaderLink headerrow-issuelinks" data-id="issuelinks">
+                            Linked Issues
+                                                    </th>
+                                                
+                                                            <th class="colHeaderLink headerrow-environment" data-id="environment">
+                            Environment
+                                                    </th>
+                                                
+                                                            <th class="colHeaderLink headerrow-description" data-id="description">
+                            Description
+                                                    </th>
+                                                
+                                                            <th class="colHeaderLink headerrow-security" data-id="security">
+                            Security Level
+                                                    </th>
+                                                
+                                                            <th class="colHeaderLink headerrow-progress" data-id="progress">
+                            Progress
+                                                    </th>
+                                                
+                                                            <th class="colHeaderLink headerrow-aggregateprogress" data-id="aggregateprogress">
+                            Σ Progress
+                                                    </th>
+                                                
+                                                            <th class="colHeaderLink headerrow-aggregatetimespent" data-id="aggregatetimespent">
+                            Σ Time Spent
+                                                    </th>
+                                                
+                                                            <th class="colHeaderLink headerrow-aggregatetimeestimate" data-id="aggregatetimeestimate">
+                            Σ Remaining Estimate
+                                                    </th>
+                                                
+                                                            <th class="colHeaderLink headerrow-aggregatetimeoriginalestimate" data-id="aggregatetimeoriginalestimate">
+                            Σ Original Estimate
+                                                    </th>
+                                                
+                                                            <th class="colHeaderLink headerrow-labels" data-id="labels">
+                            Labels
+                                                    </th>
+                                                
+                                                            <th class="colHeaderLink headerrow-customfield_10130" data-id="customfield_10130">
+                            Rank
+                                                    </th>
+                                                
+                                                            <th class="colHeaderLink headerrow-customfield_10001" data-id="customfield_10001">
+                            Status Whiteboard
+                                                    </th>
+                                                
+                                                            <th class="colHeaderLink headerrow-customfield_10032" data-id="customfield_10032">
+                            Epic Link
+                                                    </th>
+                                                
+                                                            <th class="colHeaderLink headerrow-customfield_10002" data-id="customfield_10002">
+                            Tags
+                                                    </th>
+                                                
+                                                            <th class="colHeaderLink headerrow-customfield_10020" data-id="customfield_10020">
+                            Flagged
+                                                    </th>
+                                                
+                                                            <th class="colHeaderLink headerrow-customfield_10030" data-id="customfield_10030">
+                            Rank (Obsolete)
+                                                    </th>
+                                                
+                                                            <th class="colHeaderLink headerrow-customfield_10021" data-id="customfield_10021">
+                            Epic/Theme
+                                                    </th>
+                                                
+                                                            <th class="colHeaderLink headerrow-customfield_10031" data-id="customfield_10031">
+                            Sprint
+                                                    </th>
+                                                
+                                                            <th class="colHeaderLink headerrow-customfield_10000" data-id="customfield_10000">
+                            Issuezilla Id
+                                                    </th>
+                                                                    </tr>
+    </thead>
+    <tbody>
+                    
+
+                <tr id="issuerow98145" rel="98145" data-issuekey="CAJO-10" class="issuerow">
+                                            <td class="project">    cajo
+</td>
+                                            <td class="issuekey">
+
+    <a class="issue-link" data-issue-key="CAJO-10" href="https://java.net/jira/browse/CAJO-10">CAJO-10</a>
+</td>
+                                            <td class="summary"><p>
+                Example not working, ItemProxy thread is not starting because of a NullPointerException, causing a &quot;InterruptedException: Client not listening&quot; on the server side
+    </p>
+</td>
+                                            <td class="issuetype"> Bug</td>
+                                            <td class="status">
+                Resolved
+    </td>
+                                            <td class="priority">   Major
+</td>
+                                            <td class="resolution">    Fixed
+</td>
+                                            <td class="assignee">            cajo
+    </td>
+                                            <td class="reporter">            user1919
+    </td>
+                                            <td class="creator">            user1919
+    </td>
+                                            <td class="created"> 27/Jan/11 6:30 AM </td>
+                                            <td class="lastViewed"> 28/Apr/17 1:26 PM </td>
+                                            <td class="updated"> 27/Jan/11 11:18 AM </td>
+                                            <td class="resolutiondate"> 27/Jan/11 11:18 AM </td>
+                                            <td class="versions">                        current            </td>
+                                            <td class="fixVersions">                        current            </td>
+                                            <td class="components">    &nbsp;
+</td>
+                                            <td class="duedate">    &nbsp;
+</td>
+                                            <td class="votes">0</td>
+                                            <td class="watches">1</td>
+                                            <td class="thumbnail"></td>
+                                            <td class="timeoriginalestimate">120</td>
+                                            <td class="timeestimate">120</td>
+                                            <td class="timespent"></td>
+                                            <td class="workratio">            0%
+    </td>
+                                            <td class="subtasks">                </td>
+                                            <td class="issuelinks">                </td>
+                                            <td class="environment">      Windows Vista, both server and client in the same machine. cajo library release 1.168 07-Dec-10. Java 1.6.0_16-b01.
+  </td>
+                                            <td class="description">      When trying the example provided in:<br/>
+<br/>
+http://wiki.java.net/bin/view/Communications/FirewalledClients<br/>
+( by the way, there is some kind of typo in Server line 12: <br/>
+server = Remote.getItem(&quot;//localhost:1198/main&quot; rel=&quot;nofollow&quot;);<br/>
+  and also in the Client line 3: import gnu.cajo.invoke.RemoteInvoke<br/>
+the &quot;;&quot; is missing<br/>
+ )<br/>
+<br/>
+I get the following message in the Server output:<br/>
+<br/>
+java.lang.InterruptedException: Client not listening<br/>
+	at gnu.cajo.utils.extra.ClientProxy.invoke(ClientProxy.java:134)<br/>
+	at gnu.cajo.invoke.Remote.invoke(Remote.java:576)<br/>
+	at Server$1.run(Server.java:20)<br/>
+	at java.lang.Thread.run(Thread.java:619)<br/>
+<br/>
+Digging into the concepts and the library, I believed the problem was that the ItemProxy thread was not running. I checked and indeed it was not. I got the sources, put them in my Eclipse project and then put a breakpoint in the line 94 of ItemProxy, where it is written:<br/>
+<br/>
+args = Remote.invoke(item, null, args);<br/>
+<br/>
+That line is throwing a NullPointerException. Digging more into it, inside class Remote, line 562 has a comparison that uses the supplied method name:<br/>
+<br/>
+if (method.equals(&quot;hashCode&quot;)) return new Integer(item.hashCode());<br/>
+<br/>
+Line 94 of ItemProxy called this method with a null argument. I believe that is wrong. There was some other user commenting on this some days ago, in <br/>
+<br/>
+https://cajo.dev.java.net/servlets/ProjectForumMessageView?messageID=34216&amp;forumID=428<br/>
+<br/>
+I could not see any link or anything to post there, seems like this will be the new home for the Cajo project since it has newer dates and looks nicer :-), so I wonder if you have any way of posting there as well?<br/>
+<br/>
+Hope this is really an issue and not a detail I am missing, I am looking forward for an answer, in the meantime I will work on a patch.
+  </td>
+                                            <td class="security"></td>
+                                            <td class="progress">     0%
+</td>
+                                            <td class="aggregateprogress">     0%
+</td>
+                                            <td class="aggregatetimespent"></td>
+                                            <td class="aggregatetimeestimate">120</td>
+                                            <td class="aggregatetimeoriginalestimate">120</td>
+                                            <td class="labels">    </td>
+                                            <td class="customfield_10130">      0|i04vh3:
+  </td>
+                                            <td class="customfield_10001"></td>
+                                            <td class="customfield_10032"></td>
+                                            <td class="customfield_10002">    </td>
+                                            <td class="customfield_10020">
+
+
+</td>
+                                            <td class="customfield_10030">      28428
+  </td>
+                                            <td class="customfield_10021">    </td>
+                                            <td class="customfield_10031"></td>
+                                            <td class="customfield_10000"></td>
+                    </tr>
+
+
+                <tr id="issuerow60319" rel="60319" data-issuekey="CAJO-9" class="issuerow">
+                                            <td class="project">    cajo
+</td>
+                                            <td class="issuekey">
+
+    <a class="issue-link" data-issue-key="CAJO-9" href="https://java.net/jira/browse/CAJO-9">CAJO-9</a>
+</td>
+                                            <td class="summary"><p>
+                TransparentItemProxy.invoke throws NPE when invoking method without arguments
+    </p>
+</td>
+                                            <td class="issuetype"> Bug</td>
+                                            <td class="status">
+                Resolved
+    </td>
+                                            <td class="priority">   Critical
+</td>
+                                            <td class="resolution">    Fixed
+</td>
+                                            <td class="assignee">            cajo-issues
+    </td>
+                                            <td class="reporter">            deleted_user
+    </td>
+                                            <td class="creator">            deleted_user
+    </td>
+                                            <td class="created"> 04/Nov/10 10:17 AM </td>
+                                            <td class="lastViewed"> 28/Apr/17 1:24 PM </td>
+                                            <td class="updated"> 27/Nov/10 5:15 PM </td>
+                                            <td class="resolutiondate"> 27/Nov/10 5:15 PM </td>
+                                            <td class="versions">                        current            </td>
+                                            <td class="fixVersions">                        milestone 1            </td>
+                                            <td class="components">                        www            </td>
+                                            <td class="duedate">    &nbsp;
+</td>
+                                            <td class="votes">0</td>
+                                            <td class="watches">0</td>
+                                            <td class="thumbnail"></td>
+                                            <td class="timeoriginalestimate"></td>
+                                            <td class="timeestimate"></td>
+                                            <td class="timespent"></td>
+                                            <td class="workratio">&nbsp;
+</td>
+                                            <td class="subtasks">                </td>
+                                            <td class="issuelinks">                </td>
+                                            <td class="environment">      Operating System: All<br/>
+Platform: All
+  </td>
+                                            <td class="description">      If a non argument method is invoked on a proxy created by <br/>
+TransparentItemProxy.getItem(...), a NPE is thrown.<br/>
+<br/>
+Example-Code:<br/>
+Object serverRef = Remote.getItem(&quot;//localhost:1198/server&quot;);<br/>
+Server server = (Server)TransparentItemProxy.getItem(serverRef, new Class[] <br/>
+{Server.class});<br/>
+server.getName();<br/>
+=&gt; NPE<br/>
+<br/>
+Reason: TransparentItemProxy.invoke does not accept null as Object[]-argument, <br/>
+although the Proxy-API javadoc explicitely allows a null value here:<br/>
+<br/>
+args an array of objects containing the values of the arguments passed in the <br/>
+method invocation on the proxy instance, or &lt;code&gt;null&lt;/code&gt; if interface <br/>
+method takes no arguments.
+  </td>
+                                            <td class="security"></td>
+                                            <td class="progress">     
+</td>
+                                            <td class="aggregateprogress">     
+</td>
+                                            <td class="aggregatetimespent"></td>
+                                            <td class="aggregatetimeestimate"></td>
+                                            <td class="aggregatetimeoriginalestimate"></td>
+                                            <td class="labels">    </td>
+                                            <td class="customfield_10130">      0|i031jj:
+  </td>
+                                            <td class="customfield_10001"></td>
+                                            <td class="customfield_10032"></td>
+                                            <td class="customfield_10002">    </td>
+                                            <td class="customfield_10020">
+
+
+</td>
+                                            <td class="customfield_10030">      17747
+  </td>
+                                            <td class="customfield_10021">    </td>
+                                            <td class="customfield_10031"></td>
+                                            <td class="customfield_10000">    9
+</td>
+                    </tr>
+
+
+                <tr id="issuerow60318" rel="60318" data-issuekey="CAJO-8" class="issuerow">
+                                            <td class="project">    cajo
+</td>
+                                            <td class="issuekey">
+
+    <a class="issue-link" data-issue-key="CAJO-8" href="https://java.net/jira/browse/CAJO-8">CAJO-8</a>
+</td>
+                                            <td class="summary"><p>
+                Each invocation is expensive
+    </p>
+</td>
+                                            <td class="issuetype"> Improvement</td>
+                                            <td class="status">
+                Resolved
+    </td>
+                                            <td class="priority">   Major
+</td>
+                                            <td class="resolution">    Fixed
+</td>
+                                            <td class="assignee">            cajo-issues
+    </td>
+                                            <td class="reporter">            dhalyk
+    </td>
+                                            <td class="creator">            dhalyk
+    </td>
+                                            <td class="created"> 14/Apr/10 5:15 AM </td>
+                                            <td class="lastViewed"> &nbsp; </td>
+                                            <td class="updated"> 27/Nov/10 5:13 PM </td>
+                                            <td class="resolutiondate"> 27/Nov/10 5:13 PM </td>
+                                            <td class="versions">                        current            </td>
+                                            <td class="fixVersions">                        milestone 1            </td>
+                                            <td class="components">                        www            </td>
+                                            <td class="duedate">    &nbsp;
+</td>
+                                            <td class="votes">0</td>
+                                            <td class="watches">0</td>
+                                            <td class="thumbnail"></td>
+                                            <td class="timeoriginalestimate"></td>
+                                            <td class="timeestimate"></td>
+                                            <td class="timespent"></td>
+                                            <td class="workratio">&nbsp;
+</td>
+                                            <td class="subtasks">                </td>
+                                            <td class="issuelinks">                </td>
+                                            <td class="environment">      Operating System: All<br/>
+Platform: All
+  </td>
+                                            <td class="description">      This project is exactly what I was looking for, it is very simple to use and<br/>
+provides exactly the functionality I required. The only issue I have is that it<br/>
+is VERY expensive for each remote call to an interface member. If I use the<br/>
+&quot;duck&quot; sample it takes 37 seconds to do 200 invocations to a remote server on a<br/>
+high speed network. If I change one of the interface members to return a long<br/>
+string, say 512 characters in length the invocation time is the same (37<br/>
+seconds) even though an additional 100K of data is being sent between server and<br/>
+client<br/>
+<br/>
+If I only call one interface member (say the one that returns the 512 byte<br/>
+string) the time drops to 10 seconds from 37. It appears that any remote<br/>
+application has to be designed to do as few invocations as possible. While I do<br/>
+understand this it still seems to me that their should be a way to make the<br/>
+performance better than what I am seeing, perhaps there is but with how simple<br/>
+using this project appears to be (which is a great thing) it would appear that<br/>
+there is little that can be done to change this.
+  </td>
+                                            <td class="security"></td>
+                                            <td class="progress">     
+</td>
+                                            <td class="aggregateprogress">     
+</td>
+                                            <td class="aggregatetimespent"></td>
+                                            <td class="aggregatetimeestimate"></td>
+                                            <td class="aggregatetimeoriginalestimate"></td>
+                                            <td class="labels">    </td>
+                                            <td class="customfield_10130">      0|i02zr3:
+  </td>
+                                            <td class="customfield_10001"></td>
+                                            <td class="customfield_10032"></td>
+                                            <td class="customfield_10002">    </td>
+                                            <td class="customfield_10020">
+
+
+</td>
+                                            <td class="customfield_10030">      17457
+  </td>
+                                            <td class="customfield_10021">    </td>
+                                            <td class="customfield_10031"></td>
+                                            <td class="customfield_10000">    8
+</td>
+                    </tr>
+
+
+                <tr id="issuerow60317" rel="60317" data-issuekey="CAJO-7" class="issuerow">
+                                            <td class="project">    cajo
+</td>
+                                            <td class="issuekey">
+
+    <a class="issue-link" data-issue-key="CAJO-7" href="https://java.net/jira/browse/CAJO-7">CAJO-7</a>
+</td>
+                                            <td class="summary"><p>
+                ItemServer#registries is not initialized
+    </p>
+</td>
+                                            <td class="issuetype"> Bug</td>
+                                            <td class="status">
+                Resolved
+    </td>
+                                            <td class="priority">   Major
+</td>
+                                            <td class="resolution">    Fixed
+</td>
+                                            <td class="assignee">            cajo-issues
+    </td>
+                                            <td class="reporter">            flohack
+    </td>
+                                            <td class="creator">            flohack
+    </td>
+                                            <td class="created"> 13/Jan/10 9:05 AM </td>
+                                            <td class="lastViewed"> &nbsp; </td>
+                                            <td class="updated"> 27/Nov/10 5:18 PM </td>
+                                            <td class="resolutiondate"> 27/Nov/10 5:18 PM </td>
+                                            <td class="versions">                        current            </td>
+                                            <td class="fixVersions">                        milestone 1            </td>
+                                            <td class="components">                        www            </td>
+                                            <td class="duedate">    &nbsp;
+</td>
+                                            <td class="votes">0</td>
+                                            <td class="watches">0</td>
+                                            <td class="thumbnail"></td>
+                                            <td class="timeoriginalestimate"></td>
+                                            <td class="timeestimate"></td>
+                                            <td class="timespent"></td>
+                                            <td class="workratio">&nbsp;
+</td>
+                                            <td class="subtasks">                </td>
+                                            <td class="issuelinks">                </td>
+                                            <td class="environment">      Operating System: All<br/>
+Platform: All
+  </td>
+                                            <td class="description">      When passing RMIServerSocketFactory ssf and RMIClientSocketFactory csf to<br/>
+ItemServer#bind(), a NullPointerException is thrown, because the registries<br/>
+HashMap has never been initialized. Changing the declaration from:<br/>
+<br/>
+ private static HashMap registries;<br/>
+<br/>
+to<br/>
+<br/>
+ private static HashMap registries = new HashMap();<br/>
+<br/>
+solves that.
+  </td>
+                                            <td class="security"></td>
+                                            <td class="progress">     
+</td>
+                                            <td class="aggregateprogress">     
+</td>
+                                            <td class="aggregatetimespent"></td>
+                                            <td class="aggregatetimeestimate"></td>
+                                            <td class="aggregatetimeoriginalestimate"></td>
+                                            <td class="labels">    </td>
+                                            <td class="customfield_10130">      0|i03ctr:
+  </td>
+                                            <td class="customfield_10001"></td>
+                                            <td class="customfield_10032"></td>
+                                            <td class="customfield_10002">    </td>
+                                            <td class="customfield_10020">
+
+
+</td>
+                                            <td class="customfield_10030">      19575
+  </td>
+                                            <td class="customfield_10021">    </td>
+                                            <td class="customfield_10031"></td>
+                                            <td class="customfield_10000">    7
+</td>
+                    </tr>
+
+
+                <tr id="issuerow60316" rel="60316" data-issuekey="CAJO-6" class="issuerow">
+                                            <td class="project">    cajo
+</td>
+                                            <td class="issuekey">
+
+    <a class="issue-link" data-issue-key="CAJO-6" href="https://java.net/jira/browse/CAJO-6">CAJO-6</a>
+</td>
+                                            <td class="summary"><p>
+                Allowing RMISocketFactory override &amp; question
+    </p>
+</td>
+                                            <td class="issuetype"> Improvement</td>
+                                            <td class="status">
+                Resolved
+    </td>
+                                            <td class="priority">   Major
+</td>
+                                            <td class="resolution">    Fixed
+</td>
+                                            <td class="assignee">            cajo-issues
+    </td>
+                                            <td class="reporter">            armoret
+    </td>
+                                            <td class="creator">            armoret
+    </td>
+                                            <td class="created"> 05/Dec/08 5:41 AM </td>
+                                            <td class="lastViewed"> &nbsp; </td>
+                                            <td class="updated"> 27/Nov/10 5:27 PM </td>
+                                            <td class="resolutiondate"> 27/Nov/10 5:27 PM </td>
+                                            <td class="versions">                        current            </td>
+                                            <td class="fixVersions">                        milestone 1            </td>
+                                            <td class="components">                        www            </td>
+                                            <td class="duedate">    &nbsp;
+</td>
+                                            <td class="votes">0</td>
+                                            <td class="watches">0</td>
+                                            <td class="thumbnail"></td>
+                                            <td class="timeoriginalestimate"></td>
+                                            <td class="timeestimate"></td>
+                                            <td class="timespent"></td>
+                                            <td class="workratio">&nbsp;
+</td>
+                                            <td class="subtasks">                </td>
+                                            <td class="issuelinks">                </td>
+                                            <td class="environment">      Operating System: All<br/>
+Platform: All
+  </td>
+                                            <td class="description">      In Remote.java file, I suggest to add the possibility for a developper to<br/>
+override the RMISocketFactory if needed (I had to for adding timeout management).<br/>
+The only way I found was changing the way below (this allows me to change<br/>
+externally the RMISocketFactory) :<br/>
+<br/>
+<br/>
+// In createSocket function :<br/>
+			RMISocketFactory sf = RMISocketFactory.getSocketFactory();<br/>
+			if (sf == null)<br/>
+				sf = RMISocketFactory.getDefaultSocketFactory();<br/>
+			Socket s = sf.createSocket(this.host, this.port);<br/>
+			return s;<br/>
+			/*<br/>
+			 * ORIGINAL CODE<br/>
+			 * <br/>
+			 * Socket s =<br/>
+			 * RMISocketFactory.getDefaultSocketFactory().createSocket(this.host,<br/>
+			 * this.port); return s;<br/>
+			 */<br/>
+<br/>
+// In createServerSocket function:<br/>
+			RMISocketFactory sf = RMISocketFactory.getSocketFactory();<br/>
+			if (sf == null)<br/>
+				sf = RMISocketFactory.getDefaultSocketFactory();<br/>
+			ServerSocket ss = host == null ? sf.createServerSocket(this.port)<br/>
+					: new ServerSocket(this.port, 50, InetAddress<br/>
+							.getByName(host));<br/>
+<br/>
+			/*<br/>
+			 * ORIGINAL CODE<br/>
+			 * <br/>
+			 * ServerSocket ss = host == null ? RMISocketFactory<br/>
+			 * .getDefaultSocketFactory().createServerSocket(this.port) : new<br/>
+			 * ServerSocket(this.port, 50, InetAddress .getByName(host));<br/>
+			 */<br/>
+<br/>
+<br/>
+PS : I also found this code &quot;host=host&quot; instead of usual &quot;this.host=host&quot; in<br/>
+RCSF constructor, is that made on purpose ?
+  </td>
+                                            <td class="security"></td>
+                                            <td class="progress">     
+</td>
+                                            <td class="aggregateprogress">     
+</td>
+                                            <td class="aggregatetimespent"></td>
+                                            <td class="aggregatetimeestimate"></td>
+                                            <td class="aggregatetimeoriginalestimate"></td>
+                                            <td class="labels">    </td>
+                                            <td class="customfield_10130">      0|i03txb:
+  </td>
+                                            <td class="customfield_10001"></td>
+                                            <td class="customfield_10032"></td>
+                                            <td class="customfield_10002">    </td>
+                                            <td class="customfield_10020">
+
+
+</td>
+                                            <td class="customfield_10030">      22345
+  </td>
+                                            <td class="customfield_10021">    </td>
+                                            <td class="customfield_10031"></td>
+                                            <td class="customfield_10000">    6
+</td>
+                    </tr>
+
+
+                <tr id="issuerow60315" rel="60315" data-issuekey="CAJO-5" class="issuerow">
+                                            <td class="project">    cajo
+</td>
+                                            <td class="issuekey">
+
+    <a class="issue-link" data-issue-key="CAJO-5" href="https://java.net/jira/browse/CAJO-5">CAJO-5</a>
+</td>
+                                            <td class="summary"><p>
+                ItermServer 6-arg bind method fails with NPE
+    </p>
+</td>
+                                            <td class="issuetype"> Bug</td>
+                                            <td class="status">
+                Resolved
+    </td>
+                                            <td class="priority">   Major
+</td>
+                                            <td class="resolution">    Fixed
+</td>
+                                            <td class="assignee">            cajo-issues
+    </td>
+                                            <td class="reporter">            rooma
+    </td>
+                                            <td class="creator">            rooma
+    </td>
+                                            <td class="created"> 02/Dec/08 11:55 AM </td>
+                                            <td class="lastViewed"> &nbsp; </td>
+                                            <td class="updated"> 27/Nov/10 5:24 PM </td>
+                                            <td class="resolutiondate"> 27/Nov/10 5:24 PM </td>
+                                            <td class="versions">                        current            </td>
+                                            <td class="fixVersions">                        milestone 1            </td>
+                                            <td class="components">                        www            </td>
+                                            <td class="duedate">    &nbsp;
+</td>
+                                            <td class="votes">0</td>
+                                            <td class="watches">0</td>
+                                            <td class="thumbnail"></td>
+                                            <td class="timeoriginalestimate"></td>
+                                            <td class="timeestimate"></td>
+                                            <td class="timespent"></td>
+                                            <td class="workratio">&nbsp;
+</td>
+                                            <td class="subtasks">                </td>
+                                            <td class="issuelinks">                </td>
+                                            <td class="environment">      Operating System: All<br/>
+Platform: All
+  </td>
+                                            <td class="description">      When both a server and client custom socket factories are provided, the method<br/>
+fails with NPE.<br/>
+<br/>
+Sample code:<br/>
+<br/>
+<br/>
+Remote.config(&quot;localhost&quot;, 1198, null, 1198);<br/>
+RMIClientSocketFactory csf = new ClientSocketFactory();<br/>
+RMIServerSocketFactory ssf = new ServerSocketFactory();<br/>
+ItemServer.bind(new CajoServer(), &quot;someName&quot;, null, ssf, csf, 0);
+  </td>
+                                            <td class="security"></td>
+                                            <td class="progress">     
+</td>
+                                            <td class="aggregateprogress">     
+</td>
+                                            <td class="aggregatetimespent"></td>
+                                            <td class="aggregatetimeestimate"></td>
+                                            <td class="aggregatetimeoriginalestimate"></td>
+                                            <td class="labels">    </td>
+                                            <td class="customfield_10130">      0|i03thr:
+  </td>
+                                            <td class="customfield_10001"></td>
+                                            <td class="customfield_10032"></td>
+                                            <td class="customfield_10002">    </td>
+                                            <td class="customfield_10020">
+
+
+</td>
+                                            <td class="customfield_10030">      22275
+  </td>
+                                            <td class="customfield_10021">    </td>
+                                            <td class="customfield_10031"></td>
+                                            <td class="customfield_10000">    5
+</td>
+                    </tr>
+
+
+                <tr id="issuerow60314" rel="60314" data-issuekey="CAJO-4" class="issuerow">
+                                            <td class="project">    cajo
+</td>
+                                            <td class="issuekey">
+
+    <a class="issue-link" data-issue-key="CAJO-4" href="https://java.net/jira/browse/CAJO-4">CAJO-4</a>
+</td>
+                                            <td class="summary"><p>
+                Cajo failed to run on Mac OS X ?
+    </p>
+</td>
+                                            <td class="issuetype"> Bug</td>
+                                            <td class="status">
+                Resolved
+    </td>
+                                            <td class="priority">   Major
+</td>
+                                            <td class="resolution">    Fixed
+</td>
+                                            <td class="assignee">            cajo-issues
+    </td>
+                                            <td class="reporter">            hchar
+    </td>
+                                            <td class="creator">            hchar
+    </td>
+                                            <td class="created"> 02/Nov/08 10:30 AM </td>
+                                            <td class="lastViewed"> &nbsp; </td>
+                                            <td class="updated"> 02/Nov/08 8:29 PM </td>
+                                            <td class="resolutiondate"> 02/Nov/08 8:29 PM </td>
+                                            <td class="versions">                        current            </td>
+                                            <td class="fixVersions">                        milestone 1            </td>
+                                            <td class="components">                        www            </td>
+                                            <td class="duedate">    &nbsp;
+</td>
+                                            <td class="votes">0</td>
+                                            <td class="watches">0</td>
+                                            <td class="thumbnail"></td>
+                                            <td class="timeoriginalestimate"></td>
+                                            <td class="timeestimate"></td>
+                                            <td class="timespent"></td>
+                                            <td class="workratio">&nbsp;
+</td>
+                                            <td class="subtasks">                </td>
+                                            <td class="issuelinks">                </td>
+                                            <td class="environment">      Operating System: All<br/>
+Platform: Macintosh
+  </td>
+                                            <td class="description">      When I tried on Mac OSX the quick start example, SomeObject.java, I got the<br/>
+following error.<br/>
+<br/>
+uname -a<br/>
+<br/>
+Darwin 002241306102 9.5.0 Darwin Kernel Version 9.5.0: Wed Sep  3 11:29:43 PDT<br/>
+2008; root:xnu-1228.7.58~1/RELEASE_I386 i386<br/>
+<br/>
+The example works on both Windows and Linux, but seems to always fail on Mac<br/>
+OSX.  Any idea ?<br/>
+<br/>
+Hanson<br/>
+<br/>
+Exception in thread &quot;main&quot; java.rmi.server.ExportException: Port already in use:<br/>
+1198; nested exception is: <br/>
+	java.net.BindException: Can&#39;t assign requested address<br/>
+	at sun.rmi.transport.tcp.TCPTransport.listen(TCPTransport.java:310)<br/>
+	at sun.rmi.transport.tcp.TCPTransport.exportObject(TCPTransport.java:218)<br/>
+	at sun.rmi.transport.tcp.TCPEndpoint.exportObject(TCPEndpoint.java:393)<br/>
+	at sun.rmi.transport.LiveRef.exportObject(LiveRef.java:129)<br/>
+	at sun.rmi.server.UnicastServerRef.exportObject(UnicastServerRef.java:190)<br/>
+	at sun.rmi.registry.RegistryImpl.setup(RegistryImpl.java:92)<br/>
+	at sun.rmi.registry.RegistryImpl.&lt;init&gt;(RegistryImpl.java:68)<br/>
+	at java.rmi.registry.LocateRegistry.createRegistry(LocateRegistry.java:222)<br/>
+	at gnu.cajo.utils.ItemServer.bind(Unknown Source)<br/>
+	at SomeObject.main(SomeObject.java:17)<br/>
+Caused by: java.net.BindException: Can&#39;t assign requested address<br/>
+	at java.net.PlainSocketImpl.socketBind(Native Method)<br/>
+	at java.net.PlainSocketImpl.bind(PlainSocketImpl.java:359)<br/>
+	at java.net.ServerSocket.bind(ServerSocket.java:319)<br/>
+	at java.net.ServerSocket.&lt;init&gt;(ServerSocket.java:185)<br/>
+	at gnu.cajo.invoke.Remote$RSSF.createServerSocket(Unknown Source)<br/>
+	at sun.rmi.transport.tcp.TCPEndpoint.newServerSocket(TCPEndpoint.java:649)<br/>
+	at sun.rmi.transport.tcp.TCPTransport.listen(TCPTransport.java:299)<br/>
+	... 9 more
+  </td>
+                                            <td class="security"></td>
+                                            <td class="progress">     
+</td>
+                                            <td class="aggregateprogress">     
+</td>
+                                            <td class="aggregatetimespent"></td>
+                                            <td class="aggregatetimeestimate"></td>
+                                            <td class="aggregatetimeoriginalestimate"></td>
+                                            <td class="labels">    </td>
+                                            <td class="customfield_10130">      0|i02m67:
+  </td>
+                                            <td class="customfield_10001"></td>
+                                            <td class="customfield_10032"></td>
+                                            <td class="customfield_10002">    </td>
+                                            <td class="customfield_10020">
+
+
+</td>
+                                            <td class="customfield_10030">      15257
+  </td>
+                                            <td class="customfield_10021">    </td>
+                                            <td class="customfield_10031"></td>
+                                            <td class="customfield_10000">    4
+</td>
+                    </tr>
+
+
+                <tr id="issuerow60313" rel="60313" data-issuekey="CAJO-3" class="issuerow">
+                                            <td class="project">    cajo
+</td>
+                                            <td class="issuekey">
+
+    <a class="issue-link" data-issue-key="CAJO-3" href="https://java.net/jira/browse/CAJO-3">CAJO-3</a>
+</td>
+                                            <td class="summary"><p>
+                close ItemProxy
+    </p>
+</td>
+                                            <td class="issuetype"> Task</td>
+                                            <td class="status">
+                Resolved
+    </td>
+                                            <td class="priority">   Major
+</td>
+                                            <td class="resolution">    Fixed
+</td>
+                                            <td class="assignee">            cajo-issues
+    </td>
+                                            <td class="reporter">            empire_egp
+    </td>
+                                            <td class="creator">            empire_egp
+    </td>
+                                            <td class="created"> 23/Jun/08 5:09 PM </td>
+                                            <td class="lastViewed"> &nbsp; </td>
+                                            <td class="updated"> 24/Jun/08 3:56 AM </td>
+                                            <td class="resolutiondate"> 24/Jun/08 3:56 AM </td>
+                                            <td class="versions">                        current            </td>
+                                            <td class="fixVersions">                        milestone 1            </td>
+                                            <td class="components">                        www            </td>
+                                            <td class="duedate">    &nbsp;
+</td>
+                                            <td class="votes">0</td>
+                                            <td class="watches">0</td>
+                                            <td class="thumbnail"></td>
+                                            <td class="timeoriginalestimate"></td>
+                                            <td class="timeestimate"></td>
+                                            <td class="timespent"></td>
+                                            <td class="workratio">&nbsp;
+</td>
+                                            <td class="subtasks">                </td>
+                                            <td class="issuelinks">                </td>
+                                            <td class="environment">      Operating System: All<br/>
+Platform: All
+  </td>
+                                            <td class="description">      I use ItemProxy for creating firewalled client, but if I close my client<br/>
+programm deamon(ItemProxy) is still alive. I try called method interrupt() or<br/>
+stop() but deamon doesnt want to close. <br/>
+How can I stop it and close it?
+  </td>
+                                            <td class="security"></td>
+                                            <td class="progress">     
+</td>
+                                            <td class="aggregateprogress">     
+</td>
+                                            <td class="aggregatetimespent"></td>
+                                            <td class="aggregatetimeestimate"></td>
+                                            <td class="aggregatetimeoriginalestimate"></td>
+                                            <td class="labels">    </td>
+                                            <td class="customfield_10130">      0|i02dzz:
+  </td>
+                                            <td class="customfield_10001"></td>
+                                            <td class="customfield_10032"></td>
+                                            <td class="customfield_10002">    </td>
+                                            <td class="customfield_10020">
+
+
+</td>
+                                            <td class="customfield_10030">      13933
+  </td>
+                                            <td class="customfield_10021">    </td>
+                                            <td class="customfield_10031"></td>
+                                            <td class="customfield_10000">    3
+</td>
+                    </tr>
+
+
+                <tr id="issuerow60312" rel="60312" data-issuekey="CAJO-2" class="issuerow">
+                                            <td class="project">    cajo
+</td>
+                                            <td class="issuekey">
+
+    <a class="issue-link" data-issue-key="CAJO-2" href="https://java.net/jira/browse/CAJO-2">CAJO-2</a>
+</td>
+                                            <td class="summary"><p>
+                Cajo has no shutdown method.
+    </p>
+</td>
+                                            <td class="issuetype"> Bug</td>
+                                            <td class="status">
+                Resolved
+    </td>
+                                            <td class="priority">   Major
+</td>
+                                            <td class="resolution">    Fixed
+</td>
+                                            <td class="assignee">            cajo-issues
+    </td>
+                                            <td class="reporter">            luggypm
+    </td>
+                                            <td class="creator">            luggypm
+    </td>
+                                            <td class="created"> 23/Sep/07 5:55 AM </td>
+                                            <td class="lastViewed"> &nbsp; </td>
+                                            <td class="updated"> 17/Jun/08 11:15 AM </td>
+                                            <td class="resolutiondate"> 17/Jun/08 11:15 AM </td>
+                                            <td class="versions">                        current            </td>
+                                            <td class="fixVersions">                        milestone 1            </td>
+                                            <td class="components">                        www            </td>
+                                            <td class="duedate">    &nbsp;
+</td>
+                                            <td class="votes">0</td>
+                                            <td class="watches">0</td>
+                                            <td class="thumbnail"></td>
+                                            <td class="timeoriginalestimate"></td>
+                                            <td class="timeestimate"></td>
+                                            <td class="timespent"></td>
+                                            <td class="workratio">&nbsp;
+</td>
+                                            <td class="subtasks">                </td>
+                                            <td class="issuelinks">                </td>
+                                            <td class="environment">      Operating System: All<br/>
+Platform: All
+  </td>
+                                            <td class="description">      Firstly, apologies if this exists but I haven&#39;t seen it.<br/>
+<br/>
+Once a Cajo object is created it runs inside it&#39;s own thread.   This keeps the<br/>
+java process alive.  This makes it tricky to incorporate the CAJO project into<br/>
+container managed systems (Tomcat) because the applications will not shutdown<br/>
+properly.<br/>
+<br/>
+What is needed is a shutdown() method which unexports all currently objects and<br/>
+stops Cajos thread.
+  </td>
+                                            <td class="security"></td>
+                                            <td class="progress">     
+</td>
+                                            <td class="aggregateprogress">     
+</td>
+                                            <td class="aggregatetimespent"></td>
+                                            <td class="aggregatetimeestimate"></td>
+                                            <td class="aggregatetimeoriginalestimate"></td>
+                                            <td class="labels">    </td>
+                                            <td class="customfield_10130">      0|i03sz3:
+  </td>
+                                            <td class="customfield_10001"></td>
+                                            <td class="customfield_10032"></td>
+                                            <td class="customfield_10002">    </td>
+                                            <td class="customfield_10020">
+
+
+</td>
+                                            <td class="customfield_10030">      22191
+  </td>
+                                            <td class="customfield_10021">    </td>
+                                            <td class="customfield_10031"></td>
+                                            <td class="customfield_10000">    2
+</td>
+                    </tr>
+
+
+                <tr id="issuerow60311" rel="60311" data-issuekey="CAJO-1" class="issuerow">
+                                            <td class="project">    cajo
+</td>
+                                            <td class="issuekey">
+
+    <a class="issue-link" data-issue-key="CAJO-1" href="https://java.net/jira/browse/CAJO-1">CAJO-1</a>
+</td>
+                                            <td class="summary"><p>
+                Please add some WebStart demos.
+    </p>
+</td>
+                                            <td class="issuetype"> Improvement</td>
+                                            <td class="status">
+                Resolved
+    </td>
+                                            <td class="priority">   Major
+</td>
+                                            <td class="resolution">    Fixed
+</td>
+                                            <td class="assignee">            cajo-issues
+    </td>
+                                            <td class="reporter">            coxcu
+    </td>
+                                            <td class="creator">            coxcu
+    </td>
+                                            <td class="created"> 22/Jul/04 9:13 AM </td>
+                                            <td class="lastViewed"> &nbsp; </td>
+                                            <td class="updated"> 23/Oct/04 9:52 AM </td>
+                                            <td class="resolutiondate"> 23/Oct/04 9:52 AM </td>
+                                            <td class="versions">                        current            </td>
+                                            <td class="fixVersions">                        milestone 1            </td>
+                                            <td class="components">                        www            </td>
+                                            <td class="duedate">    &nbsp;
+</td>
+                                            <td class="votes">0</td>
+                                            <td class="watches">0</td>
+                                            <td class="thumbnail"></td>
+                                            <td class="timeoriginalestimate"></td>
+                                            <td class="timeestimate"></td>
+                                            <td class="timespent"></td>
+                                            <td class="workratio">&nbsp;
+</td>
+                                            <td class="subtasks">                </td>
+                                            <td class="issuelinks">                </td>
+                                            <td class="environment">      Operating System: All<br/>
+Platform: All<br/>
+URL: https://cajo.dev.java.net/servlets/NewsItemView?newsItemID=653
+  </td>
+                                            <td class="description">      Please add some WebStart demos.
+  </td>
+                                            <td class="security"></td>
+                                            <td class="progress">     
+</td>
+                                            <td class="aggregateprogress">     
+</td>
+                                            <td class="aggregatetimespent"></td>
+                                            <td class="aggregatetimeestimate"></td>
+                                            <td class="aggregatetimeoriginalestimate"></td>
+                                            <td class="labels">    </td>
+                                            <td class="customfield_10130">      0|i043qn:
+  </td>
+                                            <td class="customfield_10001"></td>
+                                            <td class="customfield_10032"></td>
+                                            <td class="customfield_10002">    </td>
+                                            <td class="customfield_10020">
+
+
+</td>
+                                            <td class="customfield_10030">      23935
+  </td>
+                                            <td class="customfield_10021">    </td>
+                                            <td class="customfield_10031"></td>
+                                            <td class="customfield_10000">    1
+</td>
+                    </tr>
+                </tbody>
+    </table>
+    <div class="end-of-stable-message"></div>
+            <table border="1" >
+<tr>
+    <td bgcolor="#dddddd" colspan="45"><font size="1">
+        Generated at Fri Apr 28 13:26:51 UTC 2017 using JIRA 6.2.3#6260-sha1:63ef1d6dac3f4f4d7db4c1effd405ba38ccdc558.
+    </font></td>
+</tr>
+</table>
+
+</body>
+</html>

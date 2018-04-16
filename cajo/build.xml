@@ -1,0 +1,194 @@
+<!-- ANT BUILD FILE (Ref. http://jakarta.apache.org/ant ) -->
+<project name="cajo" default="library" basedir=".">
+    <description>
+        Simple powerful distributed computing.
+    </description>
+    <target name="library">
+        <!-- the standard library deployment package -->  
+        <javac includeAntRuntime="false" srcdir="." target="1.2" source="1.2" includes="gnu/cajo/invoke/*.java"/> 
+        <javac includeAntRuntime="false" srcdir="." target="1.2" source="1.2" includes="gnu/cajo/utils/*.java"/> 
+        <javac includeAntRuntime="false" srcdir="." target="1.2" source="1.2" includes="gnu/cajo/utils/extra/*.java"/> 
+        <javac includeAntRuntime="false" srcdir="." target="1.2" source="1.2" includes="gnu/cajo/*.java"/> 
+        <rmic classname="gnu.cajo.invoke.Remote" base="."/>
+        <delete>
+            <fileset dir="." includes="
+                gnu/cajo/utils/ProxyLoader.class
+                gnu/cajo/utils/BaseProxy*.class
+            "/>
+            <!-- ProxyLoader and BaseProxy must be dynamically loaded -->  
+        </delete>
+        <jar basedir="."
+            jarfile="cajo.jar"
+            manifest="cajo.mft"
+            includes="
+                readme.txt
+                gnu/cajo/*.class
+                gnu/cajo/invoke/*.class
+                gnu/cajo/utils/*.class
+                gnu/cajo/utils/extra/*.class
+            "/>
+        <delete>
+            <fileset dir="." includes="
+                gnu/cajo/*.class
+                gnu/cajo/invoke/*.class
+                gnu/cajo/utils/*.class
+                gnu/cajo/utils/extra/*.class
+            "/>
+        </delete>
+    </target>
+    <target name="grail">
+        <!-- the grail library deployment package -->  
+        <javac includeAntRuntime="false" srcdir="." target="1.2" source="1.2" includes="gnu/cajo/*.java"/> 
+        <rmic classname="gnu.cajo.invoke.Remote" base="."/>
+        <javac includeAntRuntime="false" srcdir="." source="1.2" includes="gnu/cajo/utils/CodebaseServer.java"/> 
+        <javac includeAntRuntime="false" srcdir="." source="1.2" includes="gnu/cajo/utils/extra/ItemProxy.java"/>
+        <javac includeAntRuntime="false" srcdir="." source="1.2" includes="gnu/cajo/utils/extra/ClientProxy.java"/> 
+        <javac includeAntRuntime="false" srcdir="." source="1.2" includes="gnu/cajo/utils/extra/Xfile.java"/> 
+        <delete>
+            <fileset dir="." includes="gnu/cajo/utils/ItemServer$JarClassLoader.class"/>
+        </delete><!-- Not needed in grail.jar proper -->
+        <jar basedir="."
+            jarfile="grail.jar"
+            manifest="cajo.mft"
+            includes="
+                readme.txt
+                gnu/cajo/*.class
+                gnu/cajo/invoke/*.class
+                gnu/cajo/utils/*.class
+                gnu/cajo/utils/extra/*.class
+            "/>
+        <delete>
+            <fileset dir="." includes="
+                gnu/cajo/*.class
+                gnu/cajo/invoke/*.class
+                gnu/cajo/utils/*.class
+                gnu/cajo/utils/extra/*.class
+            "/>
+        </delete>
+    </target>
+    <target name="client">
+        <javac includeAntRuntime="false" srcdir="." target="1.2" source="1.2" includes="gnu/cajo/invoke/Client.java"/> 
+        <javac includeAntRuntime="false" srcdir="." target="1.2" source="1.2" includes="gnu/cajo/invoke/JClient.java"/> 
+        <rmic classname="gnu.cajo.invoke.Remote" base="."/>
+        <jar basedir="."
+             jarfile="client.jar"
+             manifest="client.mft"
+             includes="
+                 gnu/cajo/invoke/*.class
+             "/>
+        <delete>
+            <fileset dir="." includes="
+                 gnu/cajo/invoke/*.class
+             "/>
+        </delete>
+    </target>
+    <target name="proxy">
+        <javac includeAntRuntime="false" srcdir="." target="1.2" source="1.2" includes="example/Builder.java"/> 
+        <javac includeAntRuntime="false" srcdir="." target="1.2" source="1.2" includes="gnu/cajo/utils/ProxyLoader.java"/> 
+        <java classpath="." classname="example.Builder" fork="true"/> 
+        <jar basedir="."
+             jarfile="proxy.jar"
+             includes="
+                 example/*.class
+                 example/include/*.*
+                 example/gui/*.class
+                 gnu/cajo/utils/BaseProxy*.class
+                 gnu/cajo/utils/ProxyLoader.class
+             "/>
+        <delete>
+            <fileset dir="." includes="
+                 example/*.class
+                 example/gui/*.class
+                 example/include/proxy.ser
+                 gnu/cajo/invoke/*.class
+                 gnu/cajo/utils/*.class
+             "/>
+        </delete>
+    </target>
+    <target name="server" depends="client, proxy">
+        <javac includeAntRuntime="false" srcdir="." target="1.2" source="1.2" includes="example/Main.java"/> 
+        <rmic classname="gnu.cajo.invoke.Remote" base="."/>
+    </target>
+    <target name="make1" depends="client, proxy, server">
+        <jar basedir="."
+             jarfile="server.jar"
+             manifest="example/example.mft"
+             includes="
+                 example/*.class
+                 gnu/cajo/invoke/*.class
+                 gnu/cajo/utils/*.class
+                 proxy.jar
+                 client.jar
+             "/>
+        <delete>
+            <fileset dir="." includes="
+                 example/*.class
+                 gnu/cajo/invoke/*.class
+                 gnu/cajo/utils/*.class
+                 proxy.jar
+                 client.jar
+             "/>
+        </delete>
+    </target>
+    <target name="make2" depends="client, proxy, server">
+        <jar basedir="."
+             jarfile="server.jar"
+             manifest="example/example.mft"
+             includes="
+                 example/*.class
+                 gnu/cajo/invoke/*.class
+                 gnu/cajo/utils/*.class
+                 proxy.jar
+             "/>
+        <delete>
+            <fileset dir="." includes="
+                 example/*.class
+                 gnu/cajo/invoke/*.class
+                 gnu/cajo/utils/*.class
+                 proxy.jar
+             "/>
+        </delete>
+    </target>
+    <target name="make3" depends="client, proxy, server">
+        <jar basedir="."
+             jarfile="server.jar"
+             manifest="example/example.mft"
+             includes="
+                 example/*.class
+                 gnu/cajo/invoke/*.class
+                 gnu/cajo/utils/*.class
+             "/>
+        <delete>
+            <fileset dir="." includes="
+                 example/*.class
+                 gnu/cajo/invoke/*.class
+                 gnu/cajo/utils/*.class
+             "/>
+        </delete>
+    </target>
+    <target name="make4" depends="client, proxy, library">
+        <javac includeAntRuntime="false" srcdir="." target="1.2" source="1.2" includes="example/Main.java"/> 
+        <jar basedir="."
+             jarfile="server.jar"
+             manifest="example/example.mft"
+             includes="
+                 example/*.class
+                 gnu/cajo/utils/ProxyLoader.class
+             "/>
+        <delete>
+            <fileset dir="." includes="
+                 example/*.class
+                 gnu/cajo/invoke/*.class
+                 gnu/cajo/utils/*.class
+             "/>
+        </delete>
+    </target>
+    <target name="doc">
+       <mkdir dir="docs" />
+       <javadoc destdir="docs" author="true"
+           windowtitle="The cajo project"
+           overview="gnu/cajo/overview.html" >
+           <fileset dir="gnu/cajo" />
+       </javadoc>
+    </target>
+</project>

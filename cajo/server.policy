@@ -1,0 +1,9 @@
+grant codeBase "file:cajo.jar" {
+   permission java.security.AllPermission;
+}; // the cajo library can do anything it wants,
+grant codeBase "file:${java.class.path}" {
+   permission java.security.AllPermission;
+}; // and the server classes can do anything they want, however ...
+grant { // loaded proxies get extremely limited permission:
+   permission java.net.SocketPermission "*", "connect, accept, resolve";
+};
