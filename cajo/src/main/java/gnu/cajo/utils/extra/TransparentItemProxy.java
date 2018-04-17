@@ -1,5 +1,7 @@
 package gnu.cajo.utils.extra;
 
+import gnu.cajo.invoke.Remote;
+
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
@@ -12,8 +14,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-
-import gnu.cajo.invoke.Remote;
 
 /*
  * Item Transparent Dynamic Proxy (requires JRE 1.5+)

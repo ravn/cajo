@@ -33,9 +33,12 @@
 				<version>3.7.0</version>
 				<configuration>
 					<!-- for target != source we need the eclipse compiler, do the voodoo -->
+					<!--
 					<source>1.6</source>
 					<target>1.2</target>
-					<debug>true</debug>
+					-->
+                    <source>1.2</source>
+					<target>1.2</target>
 					<!-- https://maven.apache.org/plugins/maven-compiler-plugin/non-javac-compilers.html -->
 					<compilerId>eclipse</compilerId>
 				</configuration>

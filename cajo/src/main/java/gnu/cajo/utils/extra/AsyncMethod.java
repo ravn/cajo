@@ -1,8 +1,8 @@
 package gnu.cajo.utils.extra;
 
-import java.lang.reflect.InvocationTargetException;
-
 import gnu.cajo.invoke.Remote;
+
+import java.lang.reflect.InvocationTargetException;
 
 /*
  * Asynchronous Method Invocation Class

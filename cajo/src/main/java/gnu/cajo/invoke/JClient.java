@@ -1,14 +1,13 @@
 package gnu.cajo.invoke;
 
+import javax.swing.JApplet;
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 import java.awt.Component;
 import java.awt.event.WindowListener;
 import java.rmi.MarshalledObject;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-
-import javax.swing.JApplet;
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
 
 /*
  * Graphical Proxy Loader JApplet

@@ -1,13 +1,13 @@
 package gnu.cajo.utils.extra;
 
-import java.rmi.RemoteException;
-import java.util.LinkedList;
-
 import gnu.cajo.invoke.Invoke;
 import gnu.cajo.invoke.Remote;
 import gnu.cajo.utils.ItemServer;
 import gnu.cajo.utils.MonitorItem;
 import gnu.cajo.utils.Multicast;
+
+import java.rmi.RemoteException;
+import java.util.LinkedList;
 
 /*
  * cajo asynchronous object method invocation queue

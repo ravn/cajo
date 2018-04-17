@@ -1,5 +1,8 @@
 package gnu.cajo.utils;
 
+import gnu.cajo.invoke.Remote;
+import gnu.cajo.invoke.RemoteInvoke;
+
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -8,9 +11,6 @@ import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-
-import gnu.cajo.invoke.Remote;
-import gnu.cajo.invoke.RemoteInvoke;
 
 /*
  * Abstract Proxy Item Base Class

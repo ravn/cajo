@@ -1,5 +1,8 @@
 package gnu.cajo.utils;
 
+import gnu.cajo.invoke.Remote;
+import gnu.cajo.invoke.RemoteInvoke;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -8,9 +11,6 @@ import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.net.UnknownHostException;
 import java.rmi.MarshalledObject;
-
-import gnu.cajo.invoke.Remote;
-import gnu.cajo.invoke.RemoteInvoke;
 
 /*
  * Multicast Announcement Class

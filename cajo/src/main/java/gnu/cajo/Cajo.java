@@ -1,5 +1,11 @@
 package gnu.cajo;
 
+import gnu.cajo.invoke.Invoke;
+import gnu.cajo.invoke.Remote;
+import gnu.cajo.utils.ItemServer;
+import gnu.cajo.utils.Multicast;
+import gnu.cajo.utils.extra.TransparentItemProxy;
+
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -8,12 +14,6 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-
-import gnu.cajo.invoke.Invoke;
-import gnu.cajo.invoke.Remote;
-import gnu.cajo.utils.ItemServer;
-import gnu.cajo.utils.Multicast;
-import gnu.cajo.utils.extra.TransparentItemProxy;
 
 /*
  * A Generic Standard Interface to the cajo distributed computing library.

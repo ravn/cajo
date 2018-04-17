@@ -1,10 +1,10 @@
 package gnu.cajo.utils;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-
 import gnu.cajo.invoke.Invoke;
 import gnu.cajo.invoke.Remote;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 
 /*
  * Compressed Proxy Wrapper

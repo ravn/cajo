@@ -1,8 +1,8 @@
 package gnu.cajo.utils.extra;
 
-import java.util.LinkedList;
-
 import gnu.cajo.invoke.Remote;
+
+import java.util.LinkedList;
 
 /*
  * General Purpose Task Synchronizer

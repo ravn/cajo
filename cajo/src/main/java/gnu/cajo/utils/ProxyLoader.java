@@ -1,11 +1,11 @@
 package gnu.cajo.utils;
 
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-
 import gnu.cajo.invoke.Invoke;
 import gnu.cajo.invoke.Remote;
 import gnu.cajo.invoke.RemoteInvoke;
+
+import java.io.InputStream;
+import java.io.ObjectInputStream;
 
 /*
  * Item Proxy Loader Wrapper

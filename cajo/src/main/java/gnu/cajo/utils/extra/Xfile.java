@@ -1,8 +1,8 @@
 package gnu.cajo.utils.extra;
 
-import java.io.IOException;
-
 import gnu.cajo.invoke.Remote;
+
+import java.io.IOException;
 
 /*
  * File transfer utility

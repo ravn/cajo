@@ -1,11 +1,11 @@
 package gnu.cajo.utils.extra;
 
-import java.rmi.server.ServerNotActiveException;
-import java.util.Hashtable;
-
 import gnu.cajo.invoke.Remote;
 import gnu.cajo.invoke.RemoteInvoke;
 import gnu.cajo.utils.Multicast;
+
+import java.rmi.server.ServerNotActiveException;
+import java.util.Hashtable;
 
 /*
  * Global Remote Object Reference Registry

@@ -1,13 +1,13 @@
 package gnu.cajo.utils;
 
+import gnu.cajo.invoke.Remote;
+import gnu.cajo.invoke.RemoteInvoke;
+
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.rmi.MarshalledObject;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-
-import gnu.cajo.invoke.Remote;
-import gnu.cajo.invoke.RemoteInvoke;
 
 /*
  * Server Item Base Class

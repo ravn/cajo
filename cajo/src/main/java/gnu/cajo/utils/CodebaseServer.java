@@ -1,5 +1,7 @@
 package gnu.cajo.utils;
 
+import gnu.cajo.invoke.Remote;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -12,8 +14,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import gnu.cajo.invoke.Remote;
 
 /*
  * RMI Codebase and Graphical Proxy Server

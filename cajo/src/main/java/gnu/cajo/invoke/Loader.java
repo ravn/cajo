@@ -1,5 +1,7 @@
 package gnu.cajo.invoke;
 
+import javax.swing.JComponent;
+import javax.swing.JFrame;
 import java.awt.Button;
 import java.awt.Component;
 import java.awt.Cursor;
@@ -15,9 +17,6 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.rmi.MarshalledObject;
 import java.util.LinkedList;
-
-import javax.swing.JComponent;
-import javax.swing.JFrame;
 
 /*
  * Generic Graphical Proxy Loader Dialog Box

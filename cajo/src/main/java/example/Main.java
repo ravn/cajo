@@ -1,12 +1,12 @@
 package example;
 
-import java.text.DateFormat;
-
 import gnu.cajo.invoke.Remote;
 import gnu.cajo.utils.CodebaseServer;
 import gnu.cajo.utils.ItemServer;
 import gnu.cajo.utils.MonitorItem;
 import gnu.cajo.utils.ProxyLoader;
+
+import java.text.DateFormat;
 
 public class Main { // General purpose server startup pattern
 	// optional arguments; previous must be declared, but not successive:

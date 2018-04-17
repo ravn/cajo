@@ -1,15 +1,15 @@
 package example;
 
+import example.gui.Display;
+import example.gui.TileLayout;
+import example.gui.Wallpaper;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Rectangle;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
-
-import example.gui.Display;
-import example.gui.TileLayout;
-import example.gui.Wallpaper;
 
 // The most formal way to build a proxy.
 // Note:

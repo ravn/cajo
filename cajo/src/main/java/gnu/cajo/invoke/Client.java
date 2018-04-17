@@ -1,5 +1,7 @@
 package gnu.cajo.invoke;
 
+import javax.swing.JComponent;
+import javax.swing.JFrame;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Frame;
@@ -10,9 +12,6 @@ import java.awt.event.WindowListener;
 import java.rmi.MarshalledObject;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-
-import javax.swing.JComponent;
-import javax.swing.JFrame;
 
 /*
  * Graphical Proxy Loader Applet / Application

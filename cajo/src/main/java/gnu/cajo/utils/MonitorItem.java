@@ -1,14 +1,14 @@
 package gnu.cajo.utils;
 
+import gnu.cajo.invoke.Invoke;
+import gnu.cajo.invoke.Remote;
+
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.rmi.RemoteException;
 import java.rmi.server.RemoteServer;
 import java.rmi.server.ServerNotActiveException;
-
-import gnu.cajo.invoke.Invoke;
-import gnu.cajo.invoke.Remote;
 
 /*
  * Item Invocation Monitor

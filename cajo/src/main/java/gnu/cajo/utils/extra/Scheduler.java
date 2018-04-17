@@ -1,10 +1,10 @@
 package gnu.cajo.utils.extra;
 
+import gnu.cajo.invoke.Remote;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
-
-import gnu.cajo.invoke.Remote;
 
 /*
  * General purpose cooperative task scheduler

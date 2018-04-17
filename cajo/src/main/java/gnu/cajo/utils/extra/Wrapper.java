@@ -1,14 +1,14 @@
 package gnu.cajo.utils.extra;
 
+import gnu.cajo.invoke.Invoke;
+import gnu.cajo.invoke.Remote;
+import gnu.cajo.invoke.RemoteInvoke;
+
 import java.io.IOException;
 import java.io.StreamCorruptedException;
 import java.net.MalformedURLException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-
-import gnu.cajo.invoke.Invoke;
-import gnu.cajo.invoke.Remote;
-import gnu.cajo.invoke.RemoteInvoke;
 
 /*
  * Generic Object Invocation Wrapper

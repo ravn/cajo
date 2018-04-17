@@ -1,9 +1,9 @@
 package gnu.cajo.utils.extra;
 
-import java.rmi.RemoteException;
-
 import gnu.cajo.invoke.Invoke;
 import gnu.cajo.invoke.Remote;
+
+import java.rmi.RemoteException;
 
 /*
  * Item Auditor

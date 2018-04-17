@@ -1,5 +1,7 @@
 package gnu.cajo.utils;
 
+import gnu.cajo.invoke.Remote;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -11,8 +13,6 @@ import java.rmi.server.RMIClientSocketFactory;
 import java.rmi.server.RMIServerSocketFactory;
 import java.text.DateFormat;
 import java.util.HashMap;
-
-import gnu.cajo.invoke.Remote;
 
 /*
  * Standard Item Registry Utility

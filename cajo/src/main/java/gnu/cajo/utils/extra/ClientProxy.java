@@ -1,11 +1,11 @@
 package gnu.cajo.utils.extra;
 
+import gnu.cajo.invoke.Invoke;
+import gnu.cajo.invoke.Remote;
+
 import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-
-import gnu.cajo.invoke.Invoke;
-import gnu.cajo.invoke.Remote;
 
 /*
  * Callback proxy for a firewalled client, used by a server item
